@@ -1,0 +1,232 @@
+   08-Feb-06 ...... U235  SCOP - Scaler Display for Operators ....... PAGE   1
+ 
+   Sec  Page Contents
+ 
+   010    1  Introduction
+ 
+   020    2  How to Get Started
+ 
+   030    3  List of Commands
+ 
+   040    4  Creation of a Scaler Initialization File - snit-file
+ 
+   050    4  Comments
+ 
+ 
+   U235.010  Introduction - features
+ 
+   o......Scop  provides  a CAMAC scaler interface between experiments and the
+          accelerator operators.
+ 
+   o......Scaler "rate data" (in counts/sec -  normalized  to  the  computer's
+          internal  clock)  is provided to the operators via a "connection" to
+          the EPICS accelerator control system.
+ 
+   o......When first started scop  will ask you to  specify  a  beamline.  The
+          possible beamline names are listed.
+ 
+   o......The  scalers  can  then  be displayed by the operators in windows on
+          the same screens they use for tuning.
+ 
+   o......As experimenters, you need only tell  the  operators  that  you  are
+          sending  scaler  rate  data  to  them, specify the beamline name and
+          which scaler/s they should monitor. scop  permits  up  to  8  scaler
+          rates to be displayed.
+ 
+   o......scop  also  displays  (at the experimentors terminal) the count rate
+          (in counts/sec) of the scalers being sent to the  operators  in  the
+          form  of  software  generated  meters.  Normalization  is  via   the
+          computer's internal clock.
+ 
+   o......Scalers  to  be  displayed are specified via the usual "snit file" -
+          the same syntax as for program scad. (see SEC# 040 for an example)
+ 
+                    The Figure Below Illustrates the Display
+ 
+   3 scalers  -     MASTER         PSAC-LEFT      PSAC-RIGHT     are displayed
+   counts/sec =         32,             1500,           7900     approximately
+ 
+ 
+ 
+ 
+ 
+ 
+         (See ORPHAS Handbook Tab-8 for a picture of an example display)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+   Note: The inside poniter indicates the power-of-10 scale factor and is  the
+   same as that given in the banner.
+    
+   08-Feb-06 ...... U235  SCOP - Scaler Display for Operators ....... PAGE   2
+ 
+ 
+   U235.020  How to Get Started
+ 
+   o......Make a snit-file for only the scalers to be displayed (max# = 8)
+ 
+   o......If you are logging (from lochost) onto another platform (remhost)
+          via telnet (instead of ssh)  you will need enable the display on
+          your platform (lochost). To do this:
+ 
+          Before you login, Type: xhost +remhost
+ 
+          After  you login, Type: setenv DISPLAY lochost:0.0
+ 
+   o......Type: setenv VME vmex - where vmex denotes the name of the vme
+                                  processor that you are using - vme1, vme2..
+ 
+   o......Type: scop            ;To start and attempt to process operator.sca
+ 
+   o......Type: scop  filename  ;To start and process filename
+ 
+   o......Type: snit  filename  ;To process another file after starting scop
+ 
+   o......Type: tst             ;To test the display with generated data
+ 
+          or
+ 
+   o......Type: run             ;To do CAMAC reads & display
+ 
+   o......Type: Ctrl/C          ;To interrupt read/display
+ 
+   ---------------------------------------------------------------------------
+ 
+   o......When  first  started  scop   will ask you to specify a beamline. The
+          possible beamline names from which you can choose are listed.  These
+          are currently rms, drs, enge, bl21 & bl23.
+ 
+   o......Also  when  scop  is  first  started,  it attempts to open a default
+          snit-file operator.sca. If this file  is  found,  it  is  processed,
+          displays  are  generated  and  you  are  ready  to  run (or tst). If
+          operator.sca is not found, you must specify another file  using  the
+          snit filename command.
+ 
+   ---------------------------------------------------------------------------
+    
+   08-Feb-06 ...... U235  SCOP - Scaler Display for Operators ....... PAGE   3
+ 
+ 
+ 
+   U235.030  List of Commands
+ 
+   LON              Turns ON  output to scop.log  (default)
+   LOF              Turns OFF output to scop.log
+ 
+   CMD   filename   Processes commands from filename
+ 
+   SNIT  filename   Opens & processes standard snit-file
+ 
+   RAV   N          Sets to display an average of N readings
+                    allowed value of N is 0 to 100
+                    N = 0 or blank sets N = 5 (the default)
+ 
+   DPS   N          Specifies display rate to be N/sec
+                    allowed value of N is 0 to 20
+                    N = 0 or blank sets 10 displays/sec (the default)
+ 
+   REVV             Sets to reverse color mapping on next FIG
+ 
+   FIG              Does a FIG for the # of scalers defined (1 to 8)
+ 
+   STAT             Displays/logs current status
+ 
+   DLIN             Set  experimenter's display to linear (default)
+   DLOG             Set  experimenter's display to log
+ 
+   DOF              Turn experimenter's display OFF
+                    (DLIN, DLOG & DOF do not affect operator's display)
+   ---------------------------------------------------------------------------
+   glim NAME lo hi  Set limits (lo hi) for NAMEd graphic scaler
+ 
+   glim NAME on     Enable  limits for NAMEd graphic scaler display
+   glim NAME off    Disable limits for NAMEd graphic scaler display
+   glim NAME null   Deletes limits for NAMEd graphic scaler display
+ 
+   glim on          Enable  limits for ALL   graphic scaler displays
+   glim off         Disable limits for ALL   graphic scaler displays
+   glim null        Deletes limits for ALL   graphic scaler displays
+ 
+   glim sho         Display all graphic scaler limits
+   ---------------------------------------------------------------------------
+   GLIM defined limits generate visual alarms on experimentors display:
+ 
+   IF(rate.GT.HI) - Displays flashing yellow disks at upper left & right
+   IF(rate.LT.LO) - Displays flashing white  disks at lower left & right
+ 
+   GLIM defined limits have NO EFFECT on Operator's display
+   ---------------------------------------------------------------------------
+ 
+   TST              Tests operation - no scalers required
+ 
+   RUN              Start read/display
+ 
+   CTRL/C           Interrupts read & display operation
+ 
+   END              Ends scop
+    
+   08-Feb-06 ...... U235  SCOP - Scaler Display for Operators ....... PAGE   4
+ 
+ 
+ 
+   U235.040  Creation of a Scaler Initialization File - snit-file
+ 
+   Use  the  editor  to  prepare a scaler initialization file (snit file - the
+   filename extension is usually .sca). The general form of the snit  file  is
+   shown below:
+ 
+   ---------------------------------------------------------------------------
+   LABEL C N A
+     .
+   LABEL C N A
+     .
+   LABEL C N A ECL
+     .
+   LABEL C N A ECL
+     .
+   $END                          (flags the end of scalers to be read)
+   ---------------------------------------------------------------------------
+   Note: No computed scalers are supported by scop
+   ---------------------------------------------------------------------------
+ 
+   LABEL..denotes  a  unique  label  (11 characters max) which must contain no
+          imbedded blanks or the characters + - / *
+ 
+   C......denotes the scaler module crate number.
+ 
+   N......denotes the scaler module slot number.
+ 
+   A......denotes the scaler sub-address (numbers start at 0).
+ 
+   ECL....denotes an ECL-scaler (requires special read/clear functions).
+ 
+   ---------------------------------------------------------------------------
+ 
+   Example snit file
+ 
+   Integrator 9 17  2
+   Ge.Trigs   9 17  4
+   See.Trigs  9 17  5
+   $END
+ 
+ 
+   U235.050  Comments
+ 
+   o......This program was written  in  attempt  to  provide  the  accelerator
+          operators with a "cable free" tuning aid.
+ 
+   o......Remember  that  when  you interrupt scop via a ctrl/c, the operators
+          will no longer be recieving rate data.
+ 
+   o......This is the reason that I have not included the "send  data  to  the
+          operator"  feature  in  scad.  There may be reasom to interrupt scad
+          more often to do such things  as  seting  limits,  changing  display
+          types, telling alarms to "shut up" (if play ever works again), etc.
+ 
+   o......So  the  idea  for  scop is that you set up the few scalers that the
+          operators need to monitor and start it & leave it alone!'

@@ -1,0 +1,14 @@
+#! /bin/bash -v
+install -o hhirf -p acqcleanup /usr/acq/wks/
+install -o hhirf -m 0444 -p acqlib.a /usr/acq/wks/
+install -o hhirf -p datamon /usr/acq/wks/
+install -o hhirf -p Dtape/tape /usr/acq/wks/
+install -o hhirf -p femsg /usr/acq/wks/
+install -o hhirf -p ipcmon /usr/acq/wks/
+install -o hhirf -p logger /usr/acq/wks/
+install -o hhirf -p pacman /usr/acq/wks/
+install -o hhirf -m 0644 pacman.hep pacman.fig /usr/acq/wks
+install -o root -m 4755 -p pftoipc /usr/acq/wks/
+install -o hhirf -p rmpftoipc /usr/acq/wks/
+install -o root -m 4755 -p acq_priority /usr/acq/etc
+install -o hhirf -p xdir /usr/acq/wks

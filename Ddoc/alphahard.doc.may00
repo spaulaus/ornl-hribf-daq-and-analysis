@@ -1,0 +1,235 @@
+RPD$075059001
+NPS$01
+RSH$0505
+CHP$0000  - Alpha Power supply CPU Board -
+TPF$
+SP1$
+CY1$
+  SECTION 
+
+    010      Hardware setup
+    020      Software setup
+    030      Power supply parameters
+
+BLP$
+SEC$.010  Hardware Setup
+SIN$
+BLP$
+You will need the following to setup the CPU board:
+ODP$
+1)....  A 5 volt power supply
+ODP$
+2)....  A 'dumb' terminal or a PC with terminal emulation software
+BLP$
+There are three jumper positions on the CPU board.  These are labeled
+W1, W2 and W3.  They should be set as follows:
+ODP$
+1)...   W1 - jumper pin 1 to pin 2
+ODP$
+1)...   W2 - jumper pin 1 to pin 2
+ODP$
+1)...   W3 - jumper pin 2 to pin 3
+BLP$
+Install the Flash EEPROM chip (29C256) in socket U3. Note that the
+socket at U3 has 32 pins but the 29C256 chip has only 28 leads.  Install
+the chip at the bottom of the socket.  This should leave 4 unused
+pins at the top of the socket(nearest the U3 label on the CPU board).
+Check to see that its position matches the CPU board you are replacing.
+BLP$
+Install the SmartSocket.  To do this you must first remove the RAM
+chip in socket U2.  Next insert the SmartSocket in U2. Now put the
+RAM chip into the SmartSocket.
+BLP$
+Connect the 5 volt supply to the CPU board using the screw terminals
+on the board.
+BLP$
+Connect the terminal or PC to the COM1 port on the CPU board.  The cable
+provided adapts the 10 contact ribbon to a 25 pin D connector.  Make sure
+that the triangle on the ribbon connector is positioned at the triangle
+on the board socket.
+You may need a gender changer and/or a NULL modem depending on the
+terminal or PC.  The setup for the terminal is:
+CYB$
+      9600 Baud, 8 data bits, no parity and 1 stop bit
+BLP$
+You should be ready to power on the CPU board.
+BLP$
+SEC$.020  Software Setup
+BLP$
+On power up the CPU should start the program stored in the Flash EEPROM.
+This is the program for Q7 power supply.  If you are replacing the
+CPU for some other power supply, changes to the program  WILL BE
+required!!!
+BLP$
+To stop the program, type the <ESC> key on the terminal.  You
+should get a message
+CYB$
+     <STOP> <Ln xxxx>
+    >
+BLP$
+where xxxx is the line number where the execution was interrupted.
+You may now change the program as required.
+BLP$
+There are three lines of code which MUST be changed to match the
+power supply.  The following is the routine which contains these
+lines of code.
+CYB$
+2810 ..GETCONFIGURATION
+2820 PNAME$="Q7"
+2830 IRAT=460
+2840 INAME$(1)="Phase_Unbal"
+2850 INAME$(2)="Temperature"
+2860 INAME$(3)="Lo_Water_Flow"
+2870 INAME$(4)="External"
+2880 INAME$(5)="Overcurrent"
+2890 ISCALE=.92
+2900 CL=B%
+2910 CS=A%
+2920 CR=C%
+2930 OCT=D%
+2940 IP=2:                                              '# OF DECIMAL PLACES TO
+SHOW
+2950 RETURN
+2960 ..
+BLP$
+The lines which must be changed are 2820, 2830 and 2890.  In line 2820,
+change Q7 to the power supply you are preparing this CPU board for.
+In line 2830, change 460 to the rated output current.  In line 2890,
+change .92 to the proper scale factor.  The factor is the ratio of
+the rated output current to the full scale rating of the current shunt
+or DC transformer.  
+BLP$
+There is available a code for each power supply which has the changes
+above.  Look at the routine to get the proper values for lines 2830 and
+2890.  These program files are:
+CYB$
+       /usr/users/mcsq/Drms/alphaq1.bas
+       /usr/users/mcsq/Drms/alphaq2.bas
+       /usr/users/mcsq/Drms/alphaq3.bas
+       /usr/users/mcsq/Drms/alphaq4.bas
+       /usr/users/mcsq/Drms/alphaq5.bas
+       /usr/users/mcsq/Drms/alphaq6.bas
+       /usr/users/mcsq/Drms/alphaq7.bas
+       /usr/users/mcsq/Drms/alphas1.bas
+       /usr/users/mcsq/Drms/alphas2.bas
+       /usr/users/mcsq/Drms/alphad1.bas
+       /usr/users/mcsq/Drms/alphad2.bas
+       /usr/users/mcsq/Drms/alphad3.bas
+BLP$
+Section 030 also lists the parameters for all Alpha supplies.
+BLP$
+There are four variables stored in the battery backed RAM.  These
+are A%, B%, C% and D% which are the current setpoint, current limit point,
+current slew rate and the overcurrent trip point.  It is convient but
+not necessary to initalize these variables before installing the CPU
+board.  Set these variables as follows:
+CYB$
+       current set point   = 0
+       current limit point = rated output current
+       current slew rate   = 5
+       overcurrent trip    = rated output current
+BLP$
+An example of setting these variables for power supply Q1 follows:
+CYB$
+     >A% = 0
+     >B% = 655
+     >C% = 5
+     >D% = 655
+BLP$
+These values may be changed after installation. BUT due to limit
+checking they must be initally set in the following order:
+CYB$
+       overcurrent trip  = 0 to 105% of rated current
+       current limit     = 0 to overcurrent trip
+       current set       = 0 to current limit
+       current slew rate = 0 to 500
+BLP$
+When all modifications to the program have been completed, you
+MUST save the program in the Flash EEPROM.  To do this, use the SAVE
+command.
+CYB$
+      > save
+BLP$
+Cycle power on the CPU board.  Stop the program by typing <ESC> key.
+Check to see that the changes you made to the program are still
+there.
+SEC$.030  Power Supply Parameters
+BLP$
+CYB$
+
+ISET = Output current in amps
+IADC = 16-bit word read from ADC
+MCUR = Measured current in amps
+ACUR = Actual current in amps
+
+DAC output word(16-bit) = ((ISET *ISCALE)/IRAT * 32768) + 32768
+                        = (ISET/ISENSE) * 32768 + 32768
+DAC output (volts)      = ISET/ISENSE * 10.000
+
+MCUR measured amps      = ((IADC - 32768)/32768) * IRAT)/ISCALE
+                        = (IADC - 32768)/32768) * ISENSE
+
+ADC input (volts)       = ACUR/ISENSE * 10.000
+
+Hardware regulator tries to make ADC input volts = DAC output volts.
+
+PS Q1
+   IRAT   =  655.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.8733        !ratio of IRAT and ISENSE
+   ISENSE =  750.00        !Current for 0.1 volt output on shunt
+
+PS Q2
+   IRAT   =  460.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.92          !ratio of IRAT and ISENSE
+   ISENSE =  500.00        !Current for 0.1 volt output on shunt
+
+PS D1
+   IRAT   =  540.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.90          !ratio of IRAT and ISENSE
+   ISENSE =  600.00        !Current for 10.0 volt output from DCT
+
+PS S1
+   IRAT   =  470.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.94          !ratio of IRAT and ISENSE
+   ISENSE =  500.00        !Current for 0.1 volt output on shunt
+
+PS Q3
+   IRAT   =  540.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.90          !ratio of IRAT and ISENSE
+   ISENSE =  600.00        !Current for 0.1 volt output on shunt
+
+PS S2
+   IRAT   =  470.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.94          !ratio of IRAT and ISENSE
+   ISENSE =  500.00        !Current for 0.1 volt output on shunt
+
+PS D2
+   IRAT   =  540.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.90          !ratio of IRAT and ISENSE
+   ISENSE =  600.00        !Current for 10.0 volt output from DCT
+
+PS Q4
+   IRAT   =  330.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.825         !ratio of IRAT and ISENSE
+   ISENSE =  400.00        !Current for 0.1 volt output on shunt
+
+PS Q5
+   IRAT   =  330.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.825         !ratio of IRAT and ISENSE
+   ISENSE =  400.00        !Current for 0.1 volt output on shunt
+
+PS D3
+   IRAT   =  540.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.90          !ratio of IRAT and ISENSE
+   ISENSE =  600.00        !Current for 10.0 volt output from DCT
+
+PS Q6
+   IRAT   =  330.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.825         !ratio of IRAT and ISENSE
+   ISENSE =  400.00        !Current for 0.1 volt output on shunt
+
+PS Q7
+   IRAT   =  460.00 amps   !Rating -- Current Limit Point in ?SU
+   ISCALE =  0.92          !ratio of IRAT and ISENSE
+   ISENSE =  500.00        !Current for 0.1 volt output on shunt
+QIT$

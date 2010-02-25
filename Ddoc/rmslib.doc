@@ -1,0 +1,250 @@
+RPD$075059001
+NPS$01
+RSH$0505
+CHP$2000  - RMSLIB -
+TPF$
+SP1$
+CY1$
+  SECTION   ROUTINE             FUNCTION
+
+      010  CREATE_RMS_IPC  -  Create IPC resources required for RMS control
+      020  OPEN_RMS_IPC    -  Connect process to RMS resources
+      030  REMOVE_RMS_IPC  -  Delete IPC resources used by RMS control
+
+      040  READ_SHM        -  Read from RMS shared memory segment
+      050  WRITE_SHM       -  Write to RMS shared memory segment
+      060  LOG_MSG         -  Send message to a logger process
+
+      070  RMS_ERROR       -  Convert error code to ASCII string
+
+      080  ERROR CODES     -  FORTRAN include file
+
+      090  How to link with RMSLIB
+
+      100  Routine to record log messages
+
+SEC$.010 CREATE_RMS_IPC - Create IPC resources for RMS control
+SIN$
+BLP$
+The UNIX Interprocess Communications(IPC) facilities are used for communications
+between tasks of the RMS control system.  This routine creates all the
+necessary resources.  Unique keys are defined for each IPC resource and
+the resources are:
+FIP$
+1)..  A shared memory segment.  This segment is accessed as if it
+were an array of REAL*4 variables.
+FIP$
+2)..  A message queue for sending messages to a process which
+writes the log file.
+BLP$
+If the IPC resources already exist, this routine returns an error only
+if the UID of the owner is not the same as the effective UID
+of the caller.  If the caller is the owner, existing resources are
+used as is or reallocated if necessary.
+BLP$
+Two RMS devices are currently defined.  Each device has it's own set
+of keys.  The devices are referenced by name: rms1 or rms2.
+CY1$
+       CHARACTER*XX  DEVICE
+       INTEGER*4     ARRAY_SIZE,IERR
+
+       CALL CREATE_RMS_IPC(DEVICE,ARRAY_SIZE,IERR)
+where:
+          DEVICE      -  Name of RMS device. (rms1 or rms2)
+          ARRAY_SIZE  -  Size of shared memory segment in number of
+                         REAL*4 elements
+returns:
+          IERR        -  Returned status code. 0 means OK. Nonzero
+                         means error.
+BLP$
+SEC$.020 OPEN_RMS_IPC - Connect process to IPC resources
+SIN$
+BLP$
+In order for a process to access any RMS resource, it must connect
+to the required IPC resources.  Any attempt to access the shared memory
+segment or the message queue prior to a call to OPEN_RMS_IPC will
+return an error code.  OPEN_RMS_IPC returns an error if:
+FIP$
+1).. Any IPC resource does not exist.
+FIP$
+2).. Caller does not have read and write permissions.  Currently, the
+owner and all members of the owner's group have permission.
+BLP$
+The size of the existing shared memory segment is returned to the caller.
+CY1$
+       CHARACTER*XX  DEVICE
+       INTEGER*4     ARRAY_SIZE,IERR
+
+       CALL OPEN_RMS_IPC(DEVICE,ARRAY_SIZE,IERR)
+where:
+          DEVICE      -  Name of RMS device. (rms1 or rms2)
+returns:
+          IERR        -  Returned status code. 0 means OK. Nonzero
+                         means error.
+          ARRAY_SIZE  -  Size of shared memory segment in number of
+                         REAL*4 elements
+BLP$
+SEC$.030 REMOVE_RMS_IPC - Delete IPC resources used by RMS control
+SIN$
+BLP$
+This routine deletes, if possible, all IPC resources associated with
+the RMS device.  The caller must be the owner of the IPC resources to delete
+them.
+There is no error if resources could not be deleted because of ownership.
+The only possible error code is for an undefined RMS device name.
+CY1$
+       CHARACTER*XX  DEVICE
+       INTEGER*4     IERR
+
+       CALL REMOVE_RMS_IPC(DEVICE,IERR)
+where:
+          DEVICE   -  Name of RMS device. (rms1 or rms2)
+returns:
+          IERR     -  Returned status code. 0 means OK. Nonzero
+                      means error.
+BLP$
+SEC$.040 READ_SHM - Read from RMS shared memory segment
+SIN$
+BLP$
+The RMS shared memory segment is organized as an array of REAL*4
+variables.  This routine returns the value stored in one element
+of that array.  An error code is returned if the call was not
+preceded by a call to OPEN_RMS_IPC or the INDEX is invalid.
+CY1$
+       INTEGER*4     INDEX,IERR
+       REAL*4        VALUE
+
+       CALL READ_SHM(INDEX,VALUE,IERR)
+where:
+          INDEX    - Index to the element of the REAL*4 array
+                     stored in shared memory.
+returns:
+          VALUE    -  Returned REAL*4 value stored in shared memory.
+          IERR     -  Returned status code. 0 means OK. Nonzero
+                      means error.
+SEC$.050 WRITE_SHM - Write to RMS shared memory segment
+SIN$
+BLP$
+The RMS shared memory segment is organized as an array of REAL*4
+variables.  This routine stores the REAL*4 value in one element
+of the array in shared memory.
+An error code is returned if the call was not
+preceded by a call to OPEN_RMS_IPC or the INDEX is invalid.
+CY1$
+       INTEGER*4     INDEX,IERR
+       REAL*4        VALUE
+
+       CALL WRITE_SHM(INDEX,VALUE,IERR)
+where:
+          INDEX    - Index to the element of the REAL*4 array
+                     stored in shared memory.
+          VALUE    - REAL*4 value to store in shared memory.
+returns:
+          IERR     -  Returned status code. 0 means OK. Nonzero
+                      means error.
+SEC$.060 LOG_MSG - Send message to logger process
+SIN$
+BLP$
+This routine writes a message to the message queue of the open
+RMS device.  A date/time stamp is added to the message.
+CY1$
+    WARNING:  Messages written to the queue are stored in the UNIX kernel.
+              Unless some process is reading the message queue, in time
+              all the available space will be used and your process will
+              wait forever!
+
+
+       INTEGER*4     IERR,TEXT_LEN
+       CHARACTER*8   SENDER  [may be INTEGER*4 SENDER(2)]
+       CHARACTER*104 TEXT    [may be INTEGER*4 TEXT(26)]
+
+       CALL LOG_MSG(TYPE,SENDER,TEXT,TEXT_LEN,IERR)
+where:
+          TYPE     -  Message type. 1 = inform, 2 = warning,
+                      3 = panic.
+          SENDER   -  Name of sender process.  Eight ASCII characters
+                      are used.  This variable may be an integer*4
+                      array.
+          TEXT     -  ASCII message text.  Maximum length is 104
+                      characters.  This variable may be an integer*4
+                      array.
+          TEXT_LEN -  If a character variable is used, use the LEN
+                      function.  Otherwise, this should be the number
+                      of ASCII characters to use.
+returns:
+          IERR     -  Returned status code. 0 means OK. Nonzero
+                      means error.
+BLP$
+SEC$.070 RMS_ERROR - Convert error code to ASCII string
+SIN$
+BLP$
+All the above routines can return error codes.  A call to this routine
+with a nonzero status, IERR, returns an ASCII error message in MESS.
+CY1$
+       INTEGER*4     IERR
+       CHARACTER*XX  MESS
+
+       CALL RMS_ERROR(IERR,MESS)
+where:
+          IERR     -  Nonzero error code returned by any of the
+                      RMS routines.
+returns:
+          MESS     -  ASCII string message for error.
+BLP$
+SEC$.080 ERROR CODES - FORTRAN include file
+SIN$
+BLP$
+Included below is a listing of the file /usr/users/mcsq/Drms/rmsipc.for
+which may be useful in writing error message routines.
+CY1$
+******************************************************************************
+*
+*   Error codes returned by RMS IPC routines
+*
+*  The code format is:
+*          code = resource*256 + error
+*
+*  The resource part should be 0 or 1 (i.e. SHM or QUE).  The error
+*  part should be one of the RMS_XXXX codes listed below.
+*
+      integer*4 SHM,QUE
+      integer*4 RMS_DEVICE,RMS_TBLSPACE,RMS_MEMORY,RMS_SIZE
+      integer*4 RMS_PERM,RMS_OWNER,RMS_EXIST,RMS_OPEN
+      integer*4 RMS_INDEX
+*
+      parameter (SHM = 0)          !Shared memory
+      parameter (QUE = 1)          !Message queue
+*
+      parameter (RMS_DEVICE = 1)   !Nonexistent RMS device name
+      parameter (RMS_TBLSPACE = 2) !No System table space for IPC resource
+      parameter (RMS_MEMORY = 3)   !Insufficient memory for segment
+      parameter (RMS_SIZE = 4)     !Shared memory size request too large
+      parameter (RMS_PERM = 5)     !No permission to use IPC resource
+      parameter (RMS_OWNER = 6)    !Not owner of IPC resource
+      parameter (RMS_EXIST = 7)    !IPC resource does not exist
+      parameter (RMS_SEGS = 8)     !Too many segments attached
+      parameter (RMS_OPEN = 9)     !Must open before use
+      parameter (RMS_INDEX = 10)   !Index out of range
+BLP$
+SEC$.090 How to link with RMSLIB
+SIN$
+BLP$
+To access routines described herein, you must link your FORTRAN
+object with two libraries:
+CY1$
+       /usr/users/mcsq/Drms/rmslib.a
+       /usr/users/mcsq/Dshm/ipclib.a
+BLP$
+SEC$.100 Routine to record log messages
+SIN$
+BLP$
+rms_logger is a process which reads the RMS message queue and writes
+messages to a log file and also to the screen.  The log file is
+always in your home directory and the file name is RMS1.LOG or
+RMS2.log.  Example usage:
+CY1$
+        /usr/users/mcsq/Drms/rms_logger rms2
+BLP$
+In this example, rms_logger reads messages from RMS device rms2.  The
+log file name is RMS2.LOG.
+QIT$

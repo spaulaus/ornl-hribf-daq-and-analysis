@@ -1,0 +1,5 @@
+export VME=vme3
+while [ 1 ]
+ do
+   /usr/acq/vme/statvme
+done

@@ -1,0 +1,2 @@
+#!/bin/csh -f
+/tera/mcsq/Dlinux/Dvme/acq_run stopvme >& /dev/null

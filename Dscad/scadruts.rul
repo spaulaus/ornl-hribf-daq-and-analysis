@@ -1,0 +1,6 @@
+     1  CMPSCAD   - Command processor for program SCAD                          
+   220  DOMETER   - Draws scaler display "meter face"                           
+   581  GLABNDX   - Searches for & returns LABEL index in current LIST          
+   614  GLIMSET   - Sets up rate-limits for GRAPHIC display & test              
+   778  GNITTER   - Opens & processes graphic scaler init file                  
+   962  STATMAN   - Status display routine for SCAD                             

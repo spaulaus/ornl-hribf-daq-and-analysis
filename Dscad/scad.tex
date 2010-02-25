@@ -1,0 +1,563 @@
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   1
+ 
+   Sec Page Contents
+ 
+   010   1  Introduction
+ 
+   020   2  Main Features
+ 
+   030   3  Tabular Display - Command List - General
+ 
+   040   4  Tabular Display - Command list - for Rate Limits
+ 
+   050   4  Tabular Display - Discussion of Audio Alarms - BONGO
+ 
+   060   5  Graphic Display - Introduction
+ 
+   070   6  Graphic Display - Command List
+ 
+   080   6  Graphic Display - Comments
+ 
+   090   7  Preparation of Scalar Initialization (snit) Files
+ 
+   100   8  Example snit file
+ 
+   110   9  Example Display with Display Limits set
+ 
+   120  10  How to Copy CAMAC Scalers to Tape
+ 
+ 
+   U230.010  Introduction
+ 
+   scad  is New & Improved - it now provides for graphical rate displays (like
+   scudd) in addition  to  the  standard  tabular  displays  of  earlier  scad
+   versions.  It also provides for printing scaler tables on a printer of your
+   choice and simultaneously copying same to a "snap file" (see SEC# 030).
+ 
+   The tabular display is defined by one "scaler initialization"  (snit)  file
+   (you  are  prompted  for  this one when scad is first started). This is the
+   only opportunity that you have to specify this file.
+ 
+   Graphical rate   displays  are  defined  by  another  snit  file  which  is
+   specified by the command:
+ 
+   gnit filename
+ 
+   This  file  can  be the same as the file for tabular displays if the number
+   of scalers are no more than 8. This file may be redefined at  any  time  or
+   the graphic display eliminated by the command:
+ 
+   clrg
+ 
+                               How to Get Started
+ 
+   Make a snit-file for the tabular display (required)
+ 
+   Make a snit-file for any graphic display (optional) (max# = 8)
+ 
+   Type: setenv VME vmex   ;where vmex denotes the name of the vme
+                           ;processor that you are using - vme1, vme2..
+ 
+   Type: /usr/hhirf/scad   ;To start program
+                           ;Enter tabular snit file name as directed
+                           ;Then enter commands from following lists
+ 
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   2
+ 
+ 
+   U230.020  Main Features
+ 
+   o......Supports  "live" display of raw and computed (linear combinations of
+          hardware readings and/or computed values) scaler information.
+ 
+   o......Supports scaler logging to file scad.log via the command log or  via
+          auto-logging (see LSEC command SEC# 30).
+ 
+   o......A  maximum of 240 scalers (raw plus computed) may be displayed and a
+          maximum of 500 scalers may be logged.
+ 
+   o......The display interval may be changed at run-time from  1  to  20  sec
+          (the default is 5 sec). Display intervals are approximate.
+ 
+   o......Provides  for the setting of rate limits which generates an alerting
+          display (as well as an audio alarm - see SEC#  050)  if  limits  are
+          violated.
+ 
+   o......Automatically  adjusts display to window size and warns if window is
+          too small.
+ 
+   o......Supports Command File processing
+ 
+   o......Provides for graphic  display  of  up  to  8  scalers  via  software
+          generated meters (see SEC# 060 to 080).
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   3
+ 
+ 
+   U230.030  Tabular Display - Command List - General
+ 
+   h               Displays on-line help
+ 
+   lon             Turns ON  output to scad.log  (default)
+   lof             Turns OFF output to scad.log
+ 
+   zero            Zero all scalers defined in snit-file
+ 
+   sec  nsec       Set display interval to nsec seconds (default = 5 sec)
+ 
+   lsec nsec       Set autolog interval to nsec seconds (default = 0, OFF)
+                   (allowed values are 0 (OFF) and 300 to 3600 seconds)
+ 
+   nort            Normalize rates to cts/sec using internal clock (default)
+                   (any NOR specification in snit-file resets default to nors)
+ 
+   nors            Normalize rates as specified in snit-file (NOR spec)
+ 
+   tst             Tests display configuration only - uses random data
+ 
+   tsta            Tests ALARM generation (takes 15 seconds) (see SEC# 050)
+ 
+   run             Do repeative read/display operations
+ 
+   Ctrl-C          Interrupt RUN for subsequent commands
+ 
+   log             Record scalers on scad.log
+ 
+   snap            Records scalers on scad-yyyy-mm-dd_hh:mm:ss.snap
+                   Example ---------- scad-2005-03-08_10:53:12.snap
+                   Also prints file on printer (default printer or that
+                   specified by the namp command below)
+ 
+   Ctrl-
+                   That is Ctrl-backslash
+                   Does nothing in command-line mode
+ 
+   namp prname     Says print snaps on printer prname where
+                   prname is like (ps01, cp6000, jet6000, etc)
+ 
+   namp            Says print snaps on the default printer
+ 
+   stat            Displays/logs current status information
+ 
+   end             End program
+ 
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   4
+ 
+ 
+   U230.040  Tabular Display - Command List - for Rate Limits
+ 
+   rlim NAME LO HI  Sets rate-limits (LO, HI) for NAMEd scaler (max# = 10)
+ 
+   rlim NAME off    Deletes rate-limits for NAMEd scaler
+ 
+   rlim off         Deletes all defined scaler rate-limits
+ 
+   rlim sho         Displays all scaler rate-limits
+ 
+   bpof NUM         NUM = #beeps before beeper is turned OFF  (dflt=100)
+                    (allowed values are 0 to 1000)
+ 
+   bpon NUM         NUM = #in-limit displays before beeper ON (dflt=100)
+                    (allowed values are 0 to 1000)
+ 
+   hush NUM         Suspend bongo audio alarm for NUM minutes
+ 
+   See  the  SEC#  110  for an example display with 3 rate-limits set. This is
+   just a random data test display.
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   5
+ 
+ 
+ 
+   U230.050  Tabular Display - Discussion of Audio Alarms - BONGO
+ 
+   This is what scad does
+ 
+   o......When scad is started, it opens or creates a  file  scadalarm.dat  in
+          the directory in which scad is running.
+ 
+   o......If  one  or  more  limits  are defined and violated, scad writes the
+          epoch time (# seconds since Jan 1,1970) into record 1 of that file.
+ 
+   o......This occurs every 5 seconds as long as a limit is being violated.
+ 
+   This is how BONGO works
+ 
+   o......You must open a window on some LINUX CPU console that is  nearby  so
+          that you can hear it's speakers.
+ 
+   o......Set the directory to same as that where scad is running and type:
+ 
+   /usr/hhirf/bongo
+ 
+   o......BONGO  is a looping script which runs programs to read scadalarm.dat
+          every 5 seconds to see if  the  time  written  there  is  within  10
+          seconds of the current epoch time.
+ 
+   o......If it is, then a play process is executed which sounds a loud BONG!
+ 
+   o......This  BONG sound is repeated every 5 seconds until no limit is being
+          violated or the associated scad is halted via CTRL-C or  terminated.
+          The BONGing can be suspended by interrupting scad and typing:
+ 
+   hush MIN
+ 
+          Where  MIN  is  the  number  of  minutes  to  SHUT UP. This lets you
+          continue running scad without having to hear all of that BONGing!
+ 
+                    Well, this is how it is supposed to work!
+                                       but
+      The last upgrade to Redhat-10 seems to have broken the play function!
+         So I guess we'll have to see if it can be fixed by the experts!
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   6
+ 
+ 
+   U230.060  Graphic Display - Introduction
+ 
+   scad also provides for a graphic display of  a  limited  number  of  scaler
+   rates. Features are listed below:
+ 
+   o......Up  to  8  scalers  to be graphically displayed may be defined via a
+          standard snit file using the gnit command (see SEC# 070).
+ 
+   o......The count rate in  counts/sec  (based  on  the  computer's  internal
+          clock) is displayed in the form of software generated "meters".
+ 
+   o......Displays  may  be  either linear or log (all displays will be of the
+          same type).
+ 
+   o......For log display, The display range is 1 to  20  with  a  power-of-10
+          scale  factor  (shown  in  the  window  banner). The scale factor is
+          automatically changed when the count rate falls outside the  current
+          range.
+ 
+   o......For  linear display, the display range is 0 to 12 with a power-of-10
+          scale factor (shown in the  window  banner).  The  scale  factor  is
+          automatically  changed  when the count rate exceeds the current high
+          limit or falls below 0.8 times the current scale factor.
+ 
+             The Figure Below Illustrates the Graphic Scaler Display
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+         (See ORPHAS Handbook Tab-8 for a picture of an example display)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+      GLIM EVT 40  80         GLIM PMT 0  500          GLIM MCP_PSD 500 2000
+ 
+   Note: Rate limits have been defined by the GLIM command as  indicated.  See
+   the next page for command syntax which is (glim name lo hi).
+ 
+   Note:  The inside pointer indicates the power-of-10 scale factor and is the
+   same as that given in the banner.
+ 
+   Limits specified via the glim command specify "rate  values"  for  which  a
+   "visual alarm" will be displayed.
+ 
+   IF(rate.GT.hi) - Displays flashing yellow disks at upper left & right
+   IF(rate.LT.lo) - Displays flashing white  disks at lower left & right
+ 
+   The  number  at  the  bottom of each display gives the rate averaged over a
+   greater time than that of the meter (so you can read it). This  fact  leads
+   to  some  disagreement  between the two when rates change rapidly which was
+   the case here.
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   7
+ 
+ 
+   U230.070  Graphic Display - Command List
+ 
+ 
+   gnit  filename   Opens & processes standard snit-file
+ 
+   glin             Set graphic display to linear
+ 
+   glog             Set graphic display to log
+ 
+   clrg             Clear graphic display & deletes gnit definition
+ 
+   rav   N          Sets to display an average of N readings
+                    allowed value of N is 0 to 100
+                    N = 0 or blank sets N = 5 (the default)
+ 
+   dps   N          Specifies display rate to be N/sec
+                    allowed value of N is 0 to 20
+                    N = 0 or blank sets 10 displays/sec (the default)
+ 
+   glim NAME lo hi  Set limits (lo hi) for NAMEd graphic scaler
+ 
+   glim NAME on     Enable  limits for NAMEd graphic scaler display
+   glim NAME off    Disable limits for NAMEd graphic scaler display
+   glim NAME null   Deletes limits for NAMEd graphic scaler display
+ 
+   glim on          Enable  limits for ALL   graphic scaler displays
+   glim off         Disable limits for ALL   graphic scaler displays
+   glim null        Deletes limits for ALL   graphic scaler displays
+ 
+   glim sho         Display all graphic scaler limits
+ 
+   revv             Sets to reverse color mapping on subsequent FIG
+ 
+   fig              Does a FIG for the # of scalers defined (1 to 8)
+ 
+   stat             Displays/logs current status information
+ 
+ 
+ 
+   U230.080  Graphic Display - Comments
+ 
+   When a snit-file is processed via the gnit command,  any  computed  scalers
+   defined in that file are ignored.
+ 
+   Limits  specified  via  the  glim command specify "rate values" for which a
+   "visual alarm" will be displayed.
+ 
+   IF(rate.GT.hi) - Displays flashing yellow disks at upper left & right
+ 
+   IF(rate.LT.lo) - Displays flashing white  disks at lower left & right
+ 
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   8
+ 
+ 
+   U230.090  Preparation of Initialization (snit) files
+ 
+   Use the editor to prepare a scaler initialization file  (snit  file  -  the
+   filename  extension  is  usually  .sca).  The snit file is divided into two
+   sections. First the hardware scalers to be read are specified, followed  by
+   definitions  of  any computed scalers. The general form of the snit file is
+   shown below:
+ 
+   ----------------------------------------------------------------------
+   LABEL C N A
+     .
+   LABEL C N A       ;NOR NORF (normalize all rates to this scaler)
+     .
+   LABEL C N A ECL   ;NOD
+     .
+   LABEL C N A ECL
+     .
+   $END                          (flags the end of scalers to be read)
+   LABEL : EXPRESSION ...        (computed scaler - no display)
+   &       EXPRESSION-continued  (up to 20 lines per definition)
+   LABEL = EXPRESSION            (computed scaler - to be displayed)
+                                 (see SEC# 350.170 for EXPRESSION info)
+   ----------------------------------------------------------------------
+ 
+   LABEL..denotes a unique label (11 characters max)  which  must  contain  no
+          imbedded blanks or the characters + - / *
+ 
+   C......denotes the scaler module crate number.
+ 
+   N......denotes the scaler module slot number.
+ 
+   A......denotes the scaler sub-address (numbers start at 0).
+ 
+   ECL....denotes an ECL-scaler (requires special read/clear functions).
+ 
+   NOD....specifies no LIVE display when using program scad.
+ 
+   NOR....specifies  that  all  rates  (counts  accumulated during the display
+          interval) are to be normalized to this scaler.
+ 
+   NORF...specifies a rate normalization factor which is used as follows:
+ 
+          Rate = NORF*Count-Increment/(Normalizing Scaler Increment)
+   ----------------------------------------------------------------------
+ 
+   Discussion of Computed Scaler Expressions
+ 
+   All expressions are of the form:  OP LABEL OP LABEL OP LABEL ...
+ 
+   Where, OP denotes an operator (+ - / *) and LABEL  denotes  any  previously
+   defined  label.  If  the OP-field is omitted, + is assumed. All expressions
+   are evaluated LEFT-TO-RIGHT. Due to  the  limited  expression  syntax,  you
+   will  probably  need to define intermediate LABELs which you do not wish to
+   display. This is accomplished by using a : instead of an  =  in  the  label
+   definition, as illustrated above.
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE   9
+ 
+ 
+   U230.100  Example snit file
+ 
+   Time.100   9 17  0 -2 ; NOR 100
+   Live.Time  9 17  1
+   Integrator 9 17  2
+   Live.Int   9 17  3
+                                 (A blank line is displayed)
+   Ge.Trigs   9 17  4
+   See.Trigs  9 17  5
+   Acc.Trigs  9 17  6
+   #Clean & Dirty -------------- (27 characters of title is displayed)
+   Clean01..S3     9  1 3 0 ECL
+   Dirty01.BHB     9  2 3 0 ECL
+   Clean02..S2     9  1 2 0 ECL
+   Dirty02.NHC     9  2 2 0 ECL
+   Clean03..S8     9  1 1 0 ECL
+   Dirty03.BPE     9  2 1 0 ECL
+   Clean04.S10     9  1 0 0 ECL
+   Dirty04.NPC     9  2 0 0 ECL
+   Clean05..S1     9  1 7 0 ECL
+   Dirty05.BHC     9  2 7 0 ECL
+   Clean06..S4     9  1 6 0 ECL
+   Dirty06.BHD     9  2 6 0 ECL
+   Clean07..S7     9  1 5 0 ECL
+   Dirty07.BPC     9  2 5 0 ECL
+   Clean08..S0     9  1 4 0 ECL
+   Dirty08.NPA     9  2 4 0 ECL
+   Clean09..S5     9  1 11 0 ECL
+   Dirty09.NHD     9  2 11 0 ECL
+   Clean10..S6     9  1 10 0 ECL
+   Dirty10.BPD     9  2 10 0 ECL
+   Clean11..N5     9  1 9 0 ECL
+   Dirty11.NHB     9  2 9 0 ECL
+   Clean12..N6     9  1 8 0 ECL
+   Dirty12.BPB     9  2 8 0 ECL
+   Clean13..N8     9  1 15 0 ECL
+   Dirty13.NPB     9  2 15 0 ECL
+   Clean14..N0     9  1 14 0 ECL
+   Dirty14.NPE     9  2 14 0 ECL
+   Clean15..N4     9  1 13 0 ECL
+   Dirty15.BHA     9  2 13 0 ECL
+   Clean16.N10     9  1 12 0 ECL
+   Dirty16.BPA     9  2 12 0 ECL
+   Clean17..N7     9  1 31 0 ECL
+   Dirty17.BPF     9  2 31 0 ECL
+   Clean18..N2     9  1 30 0 ECL
+   Dirty18.NHA     9  2 30 0 ECL
+   Clean19..N3     9  1 29 0 ECL
+   Dirty19.BHE     9  2 29 0 ECL
+   Clean20..N1     9  1 28 0 ECL
+   Dirty20.BHF     9  2 28 0 ECL
+   #Computed Scalers ----------- (27 characters of title is displayed)
+   $END
+   GeTr
+   AccTr
+   Cln13
+    
+   10-Feb-06 ...... U230  SCAD - CAMAC Scaler Display Program ....... PAGE  10
+ 
+ 
+   U230.110  Example Display with Rate Limits Set
+ 
+   The  following  command file was used to set up the rate limits and start a
+   test display (just random data).
+ 
+   mxrc 30 128
+   rlim Time.100 0 200
+   rlim Ge.Trigs 0 10000
+   rlim See.Trigs 0 2000
+   tst
+ 
+ 
+   Time.100      10015  100.00    Dirty11.NHB   10064 18.6879
+   Live.Time      9256-11511-2    Clean12..N6    9791  110.74
+   Integrator     9357 26.4414    Dirty12.BPB    9437-83698-3
+   Live.Int       9420-14195-2    Clean13..N8    9721 21.6700
+                                  Dirty13.NPB    9556-93241-3
+   Ge.Trigs       9645-20676-3    Clean14..N0    9909-14115-3
+   See.Trigs      9845 30.6163    Dirty14.NPE    9897-39364-3
+   Acc.Trigs      9489-14115-2    Clean15..N4    9965 70.9742
+   #Clean & Dirty ------------    Dirty15.BHA    9329-13837-2
+   Clean01..S3    9411-15348-2    Clean16.N10    9448 46.1233
+   Dirty01.BHB    9636 64.8111    Dirty16.BPA    9457-55666-4
+   Clean02..S2    9670  6.3618    Clean17..N7    9395-63419-3
+   Dirty02.NHC    9880       0    Dirty17.BPF    9986-19483-3
+   Clean03..S8    9655 53.2803    Clean18..N2    9654-29225-3
+   Dirty03.BPE    9862-34990-3    Dirty18.NHA   10143-41750-4
+   Clean04.S10    9802 88.0716    Clean19..N3   10064  6.5606
+   Dirty04.NPC    9553-82306-3    Dirty19.BHE    9255-57853-3
+   Clean05..S1    9657-91849-3    Clean20..N1    9446 40.1590
+   Dirty05.BHC    9210-51292-3    Dirty20.BHF    9834-46720-3
+   Clean06..S4   10127 30.4175    #Computed Scalers ---------
+   Dirty06.BHD    9932-14314-3    GeTr
+   Clean07..S7    9233-18390-2    AccTr
+   Dirty07.BPC    9650 47.1173    Cln13
+   Clean08..S0    9409-11948-2
+   Dirty08.NPA    9364 13.1213
+   Clean09..S5    9239-50696-3
+   Dirty09.NHD    9545 33.0020
+   Clean10..S6    9281-34791-3
+   Dirty10.BPD    9721 20.4771
+   Clean11..N5    9809 74.1551
+   *******************************
+   Time.100    100.0     0 200.0
+   Ge.Trigs   -207-1     0 10000 L
+   See.Trigs   30.62     0  2000
+   -------------------------------
+    
+   10-Feb-06 ........ U230  SCAT  -  Scaler Dump Procedure .......... PAGE  11
+ 
+ 
+   U230.120  How to Copy CAMAC Scalers to Tape
+ 
+   CAMAC scalers may be read and written to the data acquisition  output  tape
+   during the acquisition process. The following features are supported:
+ 
+   (1)....Scalers  to  be  read  are  specified  in  exactly  the  same way as
+          described for program scad (i.e. for real time  display).  See  SEC#
+          090 and 100.
+ 
+   (2)....Scaler  records  may  be  written  to tape at timed intervals (10 to
+          1000 seconds are allowed), preceeding file-marks or both.
+ 
+   (3)....Scalers may be cleared after each reading if desired.
+ 
+   (4)....The   date  &  time  of  recording,  recording  time  interval,  and
+          clear-flag are included in each record.
+ 
+   (5)....Scaler records are 32000 bytes long and  written  in  ASCII.  If  we
+          assume an I*4 array SCAL(10,800), then:
+ 
+          (SCAL(I,1),I=1,10) - Contains 'SCALER DUMP'
+          (SCAL(I,2),I=1,10) - Contains Date & Time, Time-interval, Clear-flag
+          (SCAL(I,N),I=1,10) - Contains Label, Count, Rate
+                               FORMAT   3A4,   I12,   1PE12.3, 4X
+          Unused portions of the 32000-byte record are blank-filled.
+ 
+   (6)....Program  lemor  supports  the retrival, display and logging of these
+          records. While running lemor, Type: H LIST, for relevant commands.
+ 
+   (7)....The maximum number of scalers  supported  at  this  time  (raw  plus
+          computed) is 790.
+ 
+   PACMAN Commands
+   ---------------------------------------------------------------------------
+   SCAT  filename         ;Process scaler specification file (See scad Doc)
+ 
+   SCAT  ON               ;Dump before EOF only
+   SCAT  ON  CLR          ;Dump before EOF and (clr post dump)
+   SCAT  ON  TSEC         ;Dump every TSEC and before EOF
+   SCAT  ON  TSEC  CLR    ;Dump every TSEC and before EOF (clr post dump)
+   SCAT  OFF              ;Disable scaler dumps
+ 
+   SCAT  NORT             ;Normalize count rates to internal clock
+   SCAT  NORS             ;Normalize count rates as specified by snit-file
+   SCAT  UNOR             ;Count rates un-normalized
+ 
+   SCAT  STAT             ;Displays/logs setup status
+   SCAT  HELP             ;Displays on-line help
+   SCAT  H                ;Displays on-line help
+ 
+   SCAT  LERR ON/OFF      ;Turns error display/logging ON
+   SCAT  LERR OFF         ;Turns error display/logging OFF
+ 
+   SCAT  ZERR             ;Zeros read-error  counters
+   SCAT  ZDUM             ;Zeros scaler dump counter
+   SCAT  ZERO             ;Zero all scalers
+ 

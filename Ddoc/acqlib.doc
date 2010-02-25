@@ -1,0 +1,785 @@
+RPD$075059001
+NPS$01
+CHP$ACQLIB. Workstation Data Acquisition Library
+TPF$
+SP1$
+CY1$
+Sec Page               Function
+
+010   1  Introduction
+
+020   2  CREATE_ACQ_IPC - Create a set of IPC resources
+030   2  OPEN_ACQ_IPC   - Open an existing set of IPC resources
+040   3  OPEN_ACQ_LOG   - Open an existing logger queue
+050   3  REMOVE_ACQ_IPC - Remove/delete IPC resources
+060   4  READ_SHM       - Read a buffer from shared memory
+070   5  WRITE_SHM      - Write a buffer in shared memory
+080   5  CLOSE_SHM      - Close channel opened by READ_SHM or WRITE_SHM
+090   5  LOG_MSG        - Send message to acquisition logger queue
+100   6  ACQ_ERROR      - Translate error code to ASCII string(FORTRAN)
+110   6  ACQ_STATUS     - Display status of shared memory
+
+120   6  open_shm       - Open a channel for shared memory access
+130   7  close_shm      - Close channel for shared memory access
+140   7  write_shm      - Get pointer to write buffer in shared memory
+150   8  free_write_buf - Release write buffer in shared memory
+160   8  read_shm       - Get pointer to read buffer in shared memory
+170   9  free_read_buf  - Release read buffer in shared memory
+180   9  acq_error      - Translate error code to ASCII string(C)
+190   9  acq_shm_spy    - Display status of shared memory
+
+200  10  OPENIPC        - Create/Open a set of IPC resources
+210  10  CLOSEIPC       - Release/Delete a set of IPC resources
+220  11  READIPC        - Read a buffer from shared memory
+230  11  WRITEIPC       - Write a buffer in shared memory
+240  11  SHMREAD        - Get a pointer to a read buffer in shared memory
+250  12  SHMRELEASE     - Release a shared memory buffer
+
+260  13  MESSLOG        - Acquisition version of MESSLOG
+270  13  ACQLOG         - Message log routine for user setup codes
+
+280  13  UNPACKAA       - Unpack L003 format event data buffers
+290  14  UNPACKBB       - Unpack L003 format event data buffers
+
+300  14  MT_FORT        - Acquisition version of mag tape routines
+
+310  14  Linking this library with your code
+
+320  15  Include file for FORTRAN and C programmers
+BLP$
+SEC$.010  Introduction
+SIN$
+BLP$
+ACQLIB is a library of routines used in the workstation software for
+the ORPHAS data acquisition system.  The data acquisition system uses the
+Interprocess Communications (IPC) facilities of the UNIX operating system.
+Most of the routines in this library have to do with the creation, access
+and deletion of the the IPC resources required for data acquisition.
+BLP$
+The acquisition system uses two message queues, a shared memory segment,
+and a semaphore set.  Pseudo-device names are used to reference a complete
+set of IPC resources.  Associated with each device name is a unique
+set of keys for the IPC resources.  The following device names are
+defined:
+CYB$
+         vme, vme1, vme2, vme3, vme4, vme5, vme6, vme7
+BLP$
+Some applications require only a shared memory segment and a semaphore set.
+The code \b\fanout\\ is such an application.  \b\fanout\\ reads tape and
+writes the data to shared memory so that multiple histogramming processes
+may access the event data.  The following devices are of this type:
+CYB$
+         stream, stream1, stream2, stream3
+BLP$
+MT_FORT is a special version of Beene's mag tape routine library.
+All routines have the same calling arguments and have the same function
+as the original version.  The routines from this library should be used in
+applications which use UNIX signals.
+BLP$
+In this document, FORTRAN callable routines have upper case names.  Routines
+with lower case names are C language callable.
+BLP$
+SEC$.020  CREATE_ACQ_IPC - Create a set of IPC resources
+BLP$
+The argument DEVICE is the name of a set of IPC resources.  Invalid names
+return a nonzero error code in IERR.
+BLP$
+If none of the specified resources exist, they are created.  Resources
+which exist AND are owned by the user are first deleted and then created.
+BLP$
+If any required resource exists and is owned by another user, a nonzero
+error code is returned in IERR.
+BLP$
+The argument MEMSIZE is the requested size of each shared memory buffer.
+The actual size will always be a power of 2 and in the range of 2048
+thru 32768.  If MEMSIZE is less than 2048, the size is set to 2048 and
+if MEMSIZE is greater than 32768, the size is set to 32768.  If MEMSIZE
+is not a power of 2, the size is set to the next lower power of 2.
+CY1$
+     CALL CREATE_ACQ_IPC(DEVICE,MEMSIZE,IERR)
+
+call: 
+     CHARACTER*(*) DEVICE  - Device name
+     INTEGER*4     MEMSIZE - Buffer size in bytes
+return:
+     INTEGER*4     IERR    - Returned status code.  Zero means OK.
+BLP$
+SEC$.030  OPEN_ACQ_IPC - Open a set of IPC resources
+BLP$
+The argument DEVICE is the name of a set of IPC resources.  Invalid names
+return a nonzero error code in IERR.
+BLP$
+OPEN_ACQ_IPC must be called prior to any attempted use of resources associated
+with DEVICE.  Furthermore, only users in the same group as the owner may
+use the resources.
+BLP$
+On return, MEMSIZE is the actual size in bytes of each shared memory
+buffer.  This may differ from the size requested by the creator( See
+SEC 020).
+BLP$
+Only one device can be open at any time.  If a device is open when a
+call to OPEN_ACQ_IPC is made, the open device is first closed and then
+the new device is opened.
+CY1$
+     CALL OPEN_ACQ_IPC(DEVICE,MEMSIZE,IERR)
+
+call: 
+     CHARACTER*(*) DEVICE  - Device to open
+return:
+     INTEGER*4     MEMSIZE - Size of a shared memory buffer in bytes.
+     INTEGER*4     IERR    - Returned status of call.  Zero means OK
+                             and nonzero means an error.
+BLP$
+SEC$.040  OPEN_ACQ_LOG - Open the logger queue
+BLP$
+Some applications need only access the logger queue.  Many user hardware
+setup codes are examples of such applications.  This routine opens only the
+logger queue associated with the device.  Devices which do not have
+a logger queue return a nonzero error code in IERR.
+BLP$
+The argument DEVICE is the name of a set of IPC resources.  Invalid names
+return a nonzero error code in IERR.
+CY1$
+     CALL OPEN_ACQ_LOG(DEVICE,IERR)
+
+call: 
+     CHARACTER*(*) DEVICE  - Device to open.  Logger queue only.
+return:
+     INTEGER*4     IERR    - Returned status of call.  Zero means OK
+                             and nonzero means an error.
+BLP$
+SEC$.050  REMOVE_ACQ_IPC -  Remove/delete IPC resources
+BLP$
+IPC resources exist from creation until they are explicitly removed or
+the machine is rebooted.  This routine removes or marks for deletion
+all resources associated with the specified device.  Shared memory segments
+can only be removed when no process is attached to the segment.  If other
+processes are attached to the shared memory segment, it is marked for 
+deletion and will be removed when all other processes detach from the
+segment.
+BLP$
+The argument DEVICE is the name of a set of IPC resources.  Invalid names
+return a nonzero error code in IERR.
+BLP$
+CY1$
+     CALL REMOVE_ACQ_IPC(DEVICE,IERR)
+
+call: 
+     CHARACTER*(*) DEVICE - Device to remove
+return:
+     INTEGER*4     IERR   - Returned status code.  Zero means OK
+                            and nonzero means an error.
+BLP$
+SEC$.060  READ_SHM - Read a buffer from shared memory
+BLP$
+READ_SHM copies one shared memory buffer into the user array BUF.
+The call argument NBUF defines the size of the array BUF in bytes.
+NBUF should be at least as large as the size of the shared memory buffer.
+Your call to OPEN_ACQ_IPC returns the size of the shared memory buffer.
+If NBUF is less than the size of the shared memory buffer, the buffer is
+truncated and the excess data are lost.  There is no error indication
+in this case.  On return, NREAD is the number of bytes stored in the
+the array BUF.  NREAD is zero when an End-of-File is read. EVENTS is
+the number of events stored in array BUF.
+BLP$
+The VME front-end acquisition system assigns an event number to each
+event.  That number is incremented after each event is processed.
+Each Ethernet packet has information about the event numbers in that packet.
+The workstation software saves the event number of the first event in each
+buffer.  EVTNUM, returned by READ_SHM, is the event number of the first
+event stored in the array BUF.  EVTNUM can be useful in determining the
+number events lost to your code.  All front-end and workstation software
+treat the event number as a 32-bit unsigned number but, unfortunately, FORTRAN
+does not handle unsigned integers.  There are two alternatives.  First, there
+is a FORTRAN callable function, \b\floatuns\\, in the library 
+\b\/usr/hhirf/orphlib.a\\ which converts the unsigned integer to a REAL*8.
+The second option is to use the routine \b\READIPC\\ (See SEC 220).
+BLP$
+The process which writes the buffers assigns a buffer number to each buffer.
+Existing processes always start with buffer number 1 and increment the
+buffer number after each write.  BUFNUM can be used to determine the number
+of shared memory buffers lost to your code. BUFNUM should be used as
+a 32-bit unsigned integer.
+BLP$
+Normally a call to READ_SHM blocks the process until a buffer is available.
+The ABORT variable provides a way to stop a process blocked by a wait for
+data.  In the acquisition system, a routine is defined to intercept a
+CRTL C typed by the user.  This routine changes ABORT to something other
+than '20202020'X.  After the CRTL C is handled, READ_SHM returns an
+error code indicating the call to READ_SHM was interrupted by the user.
+CY1$
+     ABORT = '20202020'X
+      ...
+      ...
+     CALL  READ_SHM(BUF,NBUF,NREAD,EVTNUM,EVENTS,BUFNUM,IERR,ABORT)
+
+call: 
+     INTEGER*2  BUF   - Data array
+     INTEGER*4  NBUF  - Size of array BUF in bytes
+     INTEGER*4  ABORT - Milner's CTRL C variable
+return:
+     INTEGER*4  NREAD  - Number of bytes stored in array BUF
+     INTEGER*4  EVTNUM - Event number from VME system
+     INTEGER*4  EVENTS - Number of events stored in array BUF
+     INTEGER*4  BUFNUM - Buffer number
+     INTEGER*4  IERR   - 0 means OK.  Nonzero means an error
+BLP$
+SEC$.070  WRITE_SHM -  Write buffer in shared memory buffer
+BLP$
+WRITE_SHM copies NBUF bytes from BUF to a buffer in shared memory.
+On return, NWRITE is the number of bytes written in the shared memory 
+buffer.  If NBUF is greater than the size of the buffer, NWRITE will
+be the size of the shared memory buffer.  There is no other error
+indication.  A nonzero IERR indicates a write error.
+BLP$
+If NBUF is zero, a zero length buffer is written.  Readers of such a
+buffer recognize this as an End-of-File.
+CY1$
+     CALL WRITE_SHM(BUF,NBUF,NWRITE,IERR)
+
+call: 
+     INTEGER*2  BUF  - Integer array where data to be written is stored
+     INTEGER*4  NBUF - Number of data bytes stored in array BUF
+return:
+     INTEGER*4  NWRITE - Number of data bytes written
+     INTEGER*4  IERR   - 0 means OK.  Nonzero means an error.
+BLP$
+SEC$.080  CLOSE_SHM -  Close channel opened by READ_SHM or WRITE_SHM
+BLP$
+The initial call to READ_SHM and WRITE_SHM open access channels to the
+shared memory.  CLOSE_SHM closes the channel opened by these routines.
+The call argument DIR specifies which channel is to be closed. If DIR
+is 0, the write channel is closed and if DIR is 1, the read channel
+is closed.  This routine calls the C routine close_shm.  See SEC 130
+for further details.
+CY1$
+     CALL CLOSE_SHM(DIR)
+
+call: 
+     INTEGER*4  DIR - Specifies which channel is to be closed.
+                      If DIR is 0, close the channel opened by WRITE_SHM.
+                      If DIR is 1, close the channel opened by READ_SHM.
+BLP$
+SEC$.090  LOG_MSG - Send message to acquisition logger queue
+BLP$
+LOG_MSG formats one line of text and puts this message in the logger message
+queue.  The text line consists of the first 8 characters of SENDER, a
+time stamp and TEXT_LEN characters from TEXT. If TEXT_LEN is greater than
+104, only the first 104 characters of TEXT are used.
+CY1$
+     CALL LOG_MSG(TYPE,SENDER,TEXT,TEXT_LEN,IERR)
+
+call: 
+     INTEGER*4     TYPE     - Message type. 1 = inform, 2= warn, 3= panic
+     CHARACTER*8   SENDER   - Name of sender program
+     CHARACTER*104 TEXT     - Body of message
+     INTEGER*4     TEXT_LEN - Number of bytes in text string
+return:
+     INTEGER*4     IERR   - 0 means OK.  Nonzero means an error.
+BLP$
+SEC$.100  ACQ_ERROR - Convert error code to ASCII message
+BLP$
+Many routines in this library can return error codes.  ACQ_ERROR will
+translate the error code to an ASCII string.  The text is truncated to
+fit STRING if necessary.  If STRING is larger than the text, spaces are
+the fill characters.  The routine \b\acq_error\\ is provided for
+C language callers.  It returns a NULL terminated string.
+CY1$
+     CALL ACQ_ERROR(ERROR,STRING)
+
+call:  
+     INTEGER*4  ERROR - Error code return by a routines
+                        in this library
+return:
+     CHARACTER*(*) STRING  - ASCII message for this error code.
+BLP$
+SEC$.110  ACQ_STATUS - Display status of shared memory
+BLP$
+ACQ_STATUS may be useful in debugging codes using shared memory.  It
+displays the status of the shared memory.  Output is to the console.
+See SEC 190 for example output.
+CY1$
+     CALL ACQ_STATUS()
+BLP$
+SEC$.120  open_shm - Open channel for shared memory access
+BLP$
+In order to read or write buffers in shared memory, an access channel
+must be opened.  The system maintains a list of PIDs which have an open
+channel.  For each process, there is a list of the buffers assigned to
+that process.  At any time, only one process may be opened for writing
+shared memory buffers.  Up to 10 processes may be opened for reading.
+BLP$
+A call to open_shm opens a channel of the type specified by \u\flag\\.
+As part of the open process, the system scans the list of open channels
+for PIDs which no longer exist.  Any nonexistent processes are removed
+from the channel list and all buffers assigned to those processes are
+released.
+BLP$
+When a channel is opened for read, only buffers written after the call
+to open_shm are available for reading.
+BLP$
+On return, \u\lu\\ is an index to the list of open channels.  When
+opening the write channel, \u\lu\\ is zero.  For read channels,
+\u\lu\\ will be between 1 and 10.  If \u\error\\ is nonzero, \u\lu\\
+will be -1.
+CY1$
+     int error,flag,lu;
+      ...
+      ...
+     lu = open_shm(flag,&error)
+
+call: 
+     flag  -  0 means open the write channel and
+              1 means open a read channel.  Anything else
+              returns an error code.
+
+return:
+     lu    -  channel number to be used in future calls to
+              access shared memory.
+     error -  Returned error code.  0 means no error.
+BLP$
+SEC$.130  close_shm - Close channel for shared memory access
+BLP$
+Close channels for access to shared memory.  When a channel is closed,
+the PID is set to zero and any buffers in use are released.
+Also, a call to close_shm scans the PID list for nonexistent processes.
+If any are found, they are removed and their buffers are released.
+CY1$ 
+     int lu;
+      ...
+      ...
+     close_shm(lu)
+
+call: 
+     lu   - negative means close all read channels opened by this
+            process.
+          - zero means close the write channel.
+          - positive and nonzero means close only the read channel
+            specified.
+BLP$
+SEC$.140  write_shm - Get pointer to write buffer in shared memory
+BLP$
+The first call should always specify a NULL pointer as the argument.
+After the first call, the pointer argument should be the same pointer
+returned by the previous call.
+BLP$
+When the pointer is NULL, the only action is to return a pointer to
+a buffer in shared memory.  The user may attach to multiple buffers
+by calling multiple times with a NULL pointer.
+BLP$
+When the pointer is not NULL, the buffer pointed to is marked ready
+to be read.  A new buffer for writing is found and a pointer to
+this new buffer is returned.  \b\CAUTION:\\ a non-NULL pointer MUST
+be a pointer returned by a previous call to this routine!
+CY1$
+                int  error;
+     struct shm_buf *buffer_pointer;
+      ...
+      ...
+      buffer_pointer = write_shm(buffer_pointer,&error);
+
+return:
+      buffer_pointer - If call argument is an invalid pointer, a NULL
+                       pointer is returned.  Otherwise, the pointer
+                       returned points to a write buffer in shared memory.
+
+      error          - zero means OK. Nonzero is an error code.
+BLP$
+SEC$.150  free_write_buf - Release write buffer in shared memory
+BLP$
+A call to write_shm marks the buffer available to all
+readers and obtains a new buffer for writing. The routine 
+free_write_buf only marks the specified buffer available
+to all readers.
+CY1$
+                int  stat;
+     struct shm_buf *buffer_pointer;
+      ...
+      ...
+     stat = free_write_buf(buffer_pointer)
+
+call: 
+     buffer_pointer - pointer to a shared memory buffer   
+
+return:
+     stat  - 0 means OK. Nonzero means error.
+BLP$
+SEC$.160  read_shm -  Get pointer to read buffer in shared memory
+BLP$
+If the call argument buffer_pointer is NULL, only a pointer to a new read
+buffer is returned.  If the argument is a pointer returned by a prior call,
+the buffer pointed to is released to the writer to be filled again and
+a pointer to a new read buffer is returned.
+Multiple calls with NULL pointer will attach to multiple read buffers.
+These buffers can not be written again until one of the following:
+ODP$
+1).... This routine is called with the pointer.
+ODP$
+2).... A call to free_read_buf with the pointer.
+CY1$
+
+                int  abort,ierr,lu;
+     struct shm_buf *buffer_pointer;
+      ...
+      ...
+     buffer_pointer = read_shm(lu,buffer_pointer,&ierr,&abort);
+
+call:
+     lu  -  small positive nonzero integer return by a call to
+            open_shm(O_READ).  If lu is invalid, a NULL pointer
+            is returned.
+
+     abort - pointer to a user flag.  When the value stored in
+             the flag is not 0x20202020, the returned pointer
+             will be -1
+
+return:
+     buffer_pointer - Returns a NULL pointer is lu is invalid or
+                      buffer_pointer is invalid.  Returns -1 if user
+                      abort flag is not set to 0x20202020.
+
+     ierr           - 0 means OK. Nonzero means error.
+BLP$
+SEC$.170  free_read_buf - Release read buffer in shared memory
+BLP$
+A call to read_shm releases a buffer and obtains a new read buffer.
+The routine free_read_buffer just releases the specified buffer.
+CY1$
+                int  lu,stat;
+     struct shm_buf *buffer_pointer;
+      ...
+      ...
+     stat = free_read_buf(lu,buffer_pointer);
+
+call: 
+     lu             -  read channel number(1 thru NUMPROC)
+     buffer_pointer - pointer to a shared memory buffer   
+
+return:
+     stat  - 0 means OK. Nonzero means error.
+BLP$
+SEC$.180  acq_error - Convert error code to ASCII message
+BLP$
+This routine is nearly identical to ACQ_ERROR (See SEC 110).  The difference
+is that the string is NULL terminated.
+CY1$
+     int  error,string_len;
+     char string[65];
+      ...
+      ...
+     acq_error(&error,string,sizeof(string));
+call: 
+     error   - Error code returned by a routine in this library
+return:
+     string  - ASCII message.  NULL terminated.
+BLP$
+SEC$.190  acq_shm_spy - Display status of shared memory
+BLP$
+This routine may be useful in debugging codes accessing shared memory.  The
+output is always to the standard output device.  The routine ACQ_STATUS
+is a FORTRAN callable version of this routine.
+BLP$
+An example output is shown below.  \u\log\\ is the interval in seconds at which
+rate information is output to the log file.  The buffer sizes are shown in
+bytes.  \u\WRpid\\ is the PID of the process which is writing shared 
+memory buffers and \u\WRuse\\ is a bit mask of the buffers assigned to the 
+write process(each one bit in the mask represents a buffer in use).
+The wait flags are nonzero when a process is waiting for a buffer to be
+available.  There may be up to 10 read channels open.  The channel table
+shows the PID, a bit mask of buffers available for reading and a bit mask
+of the buffers being used by the read process.  A zero PID means the table
+entry is unused.  
+CY1$
+------------------------------------------------------------------------------
+
+            log = 310
+       max size = 32768
+           size = 32768
+           bufs = 16
+          procs = 10
+          WRpid = 10175
+          WRuse = c000
+write wait flag = 0
+ read wait flag = 0
+
+Proc   PID     Avail     Used
+  0  10176      3fff        0
+  1      0      3fff        0
+  2      0      3fff        0
+  3      0      3fff        0
+  4      0      3fff        0
+  5      0      3fff        0
+  6      0      3fff        0
+  7      0      3fff        0
+  8      0      3fff        0
+  9      0      3fff        0
+
+      Lock Semaphore: 1
+Write Wait Semaphore: 0
+Read Wait Semaphore Set:   0 0 0 0 0 0 0 0 0 0
+
+------------------------------------------------------------------------------
+BLP$
+SEC$.200  OPENIPC - Create/Open a set of IPC resources
+BLP$
+If DIRECTION is \b\READ\\, OPENIPC opens DEVICE.
+On return, if IERR is zero, BUFSIZ is the size of the shared memory
+buffers.  If the IPC resources do not exist, an error code is returned
+in IERR.  
+BLP$
+If DIRECTION is \b\WRITE\\, OPENIPC creates the IPC resources for DEVICE
+and then opens DEVICE.  The call argument BUFSIZE is the requested size
+of the shared memory buffers.  On return, if IERR is zero, BUFSIZE is the
+actual size of the shared memory buffers.  If IERR is nonzero, the 
+attempt to create the resources for DEVICE failed.
+BLP$
+Only one device can be open at any time.  If a device is open, a call
+to OPENIPC first closes the open device and then opens DEVICE.
+CY1$
+     CALL OPENIPC(DIRECTION, DEVICE, BUFSIZE, IERR)
+
+call: 
+     CHARACTER*(*) DIRECTION - 'READ' or 'WRITE'
+     CHARACTER*(*) DEVICE    - Device to open 
+     INTEGER*4     BUFSIZ    - If DIRECTION is 'WRITE', requested buffer
+                               size.  Unused if DIRECTION is 'READ'
+return:
+     INTEGER*4  BUFSIZ   - Actual buffer size
+     INTEGER*4  IERR     - 0 means OK.  Nonzero means an error.
+SEC$.210  CLOSEIPC - Release/Delete a set of IPC resources
+BLP$
+If a prior call to OPENIPC opened a device for \b\WRITE\\, the IPC resources
+are removed or marked for deletion.  If the previous open was for \b\READ\\,
+the IPC resources are released.
+CY1$
+     CALL CLOSEIPC()
+BLP$
+SEC$.220  READIPC - Read a buffer from shared memory
+BLP$
+READIPC differs from READ_SHM in the handling of the event number,
+number of events and the buffer number.  READIPC converts these three
+to REAL*8 variables stored in \b\COMMON/ORPHAS\\.  Errors are reported to
+the standard output device.  See SEC 060 for descriptions of the call
+arguments and returns.
+CY1$
+     REAL*8  EVTNUM,EVENTS,BUFNUM
+     COMMON/ORPHAS/ EVTNUM, EVENTS, BUFNUM
+      ...
+      ...
+     CALL READIPC(BUFFER,NBUF,NREAD,IERR,ABORT)
+call: 
+     INTEGER*2  BUFFER(*) - Data array
+     INTEGER*4  NBUF      - Size of data array in bytes
+     INTEGER*4  ABORT     - Milner's CTRL C variable
+return:
+     INTEGER*4  NREAD  - Number of bytes stored in BUFFER
+     INTEGER*4  IERR   - 0 means OK.  Nonzero means an error.
+BLP$
+SEC$.230  WRITEIPC - Write a buffer in shared memory
+BLP$
+WRITEIPC reports errors to the standard output device.  Otherwise,
+it is the same as WRITE_SHM(See SEC 070).
+CY1$
+     CALL WRITEIPC(BUFFER,NBUF,NWRITE,IERR)
+call: 
+     INTEGER*2  BUFFER(*) - Data array
+     INTEGER*4  NBUF      - Number of bytes to write
+     INTEGER*4  NWRITE    - Number of bytes written
+return:
+     INTEGER*4  IERR   - 0 means OK.  Nonzero means an error.
+BLP$
+SEC$.240  SHMREAD - Get pointer to read buffer in shared memory
+BLP$
+All other routines which read shared memory copy the contents of
+the shared memory buffer to a buffer in the user's code.  This routine
+does no copy.  It returns a pointer to the buffer in shared memory.
+CYB$
+     WARNING:  The user should not modify data in shared memory.
+               Other processes may currently have access to the
+               same buffer.
+BLP$
+The call argument PTR must be zero or a valid pointer to a buffer in
+shared memory.  If PTR is a pointer to a buffer in shared memory, that
+buffer is released and on return PTR is a pointer to another buffer in
+shared memory.  When a process starts, the first call(s) has PTR set
+to zero meaning that there is no buffer to be released.  Multiple calls
+to SHMREAD with PTR set to zero will assign multiple buffers to your process.
+BLP$
+On return, NREAD is the number of bytes stored in the buffer.  NREAD should
+be either the size of the shared memory buffer or zero.  Zero is taken to
+mean and End-of-File.
+BLP$
+See SEC 060 for a description of the variables EVTNUM, EVENTS, BUFNUM and
+ABORT.
+BLP$
+The contents of PTR is the address of the buffer in shared memory.
+In FORTRAN, you can use the built-in function \b\%VAL\\ to pass the pointer
+as an argument in a subroutine call.  In the subroutine, that argument should
+be defined as an INTEGER*2 array.  For example:
+CY1$
+      CALL HISSUB(%VAL(PTR),NREAD)
+BLP$
+The subroutine HISSUB would be as follows:
+CY1$
+      SUBROUTINE HISSUB(BUFFER,NBYTES)
+*
+      INTEGER*2  BUFFER(*)
+      INTEGER*4  NBYTES
+*
+*  Buffer processing code
+*
+      END
+
+
+CY1$
+     REAL*8  EVTNUM,EVENTS,BUFNUM
+     COMMON/ORPHAS/ EVTNUM, EVENTS, BUFNUM
+      ...
+      ...
+     CALL SHMREAD(PTR, NREAD, IERR, ABORT)
+call: 
+     INTEGER*4  PTR    - Pointer to a buffer in shared memory or ZERO
+     INTEGER*4  ABORT  - Milner's CTRL C variable
+return:
+     INTEGER*4  PTR    - Pointer to a buffer in shared memory
+     INTEGER*4  NREAD  - Number of bytes stored in buffer pointed
+                         to by PTR
+     INTEGER*4  IERR   - 0 means OK.  Nonzero means an error.
+BLP$
+SEC$.250  SHMRELEASE - Release read buffer in shared memory
+BLP$
+Once you have called SHMREAD, your process will always have at least one
+shared memory buffer assigned or be waiting for a buffer to be ready.
+Any buffer(s) assigned to your process cannot be written to again until
+all processes having read access have released the buffer(s).  SHMRELEASE
+may be used to release buffers no longer needed.
+BLP$
+PTR will bet set to zero on return from SHMRELEASE.
+CY1$
+     CALL SHMRELEASE(NUMBUF, PTR)
+call: 
+     INTEGER*4  NUMBUF  - Number of buffer pointers in PTR
+     INTEGER*4  PTR(*)  - Array of pointers to buffers in shared memory
+BLP$
+SEC$.260  MESSLOG - Acquisition version of Milner's MESSLOG
+BLP$
+This a version of MESSLOG found in \b\/usr/hhirf/orphlib.a\\.  If this version
+is used instead of the one in \b\orphlib.a\\, all output which would have been
+written in a log file will be sent to the acquisition logger queue.  This
+is then written to the acquisition log file.
+BLP$
+To get this version of MESSLOG, \b\/usr/acq/wks/acqlib.a\\ must
+occur in the list of libraries before \b\/usr/hhirf/orphlib.a\\.
+CY1$
+     INTEGER*4  MSSG,NAMPROG,LOGUT,LOGUP,LISFLG,MSGF
+     COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+
+     CALL MESSLOG(LUA,LUB)
+call: 
+     INTEGER*4  LUA - If great than zero, output message to FORTRAN
+                      logical unit LUA.
+     INTEGER*4  LUB - If greater than zero and LISFLG is equal to 'LON ',
+                      send message to the acquisition logger queue.
+BLP$
+SEC$.270  ACQLOG - Message log routine for user setup codes
+BLP$
+This routine is similar to MESSLOG.  Messages are sent \u\only\\ to the
+acquisition logger queue.  This may be slightly easier to add to
+existing codes then MESSLOG would be.
+CY1$
+     CALL ACQLOG(PROG,MESSAGE)
+call: 
+     CHARACTER*8   PROG    - Name of your code. Only first 8 characters
+                             are used.
+     CHARACTER*104 MESSAGE - Text message
+BLP$
+SEC$.280  UNPACKAA - Unpack L003 format data buffers
+BLP$
+The L003 format used in the ORPHAS data acquisition system consists of pairs
+of 16-bit words.  The first word is the parameter ID and the second word is
+the parameter data.  The end-of-event is marked by a pair for which both
+the ID and the data are 'FFFF'X.  An event data buffer always has an
+integral number of events.
+BLP$
+UNPACKAA unpacks single events from a buffer.  Each call returns a single
+event in the EVBUF array.  When all events in the buffer have been processed,
+the alternate FORTRAN return is taken.
+BLP$
+UNPACKAA returns data in a two dimensional array.  The first element is the
+parameter ID and second is the parameter data.
+CY1$
+     CALL UNPACKAA(IBUF,NHW,EVBUF,NPARAM,EVSIZE,IERR,&1100)
+
+call:
+     INTEGER*2  IBUF - raw event data buffer
+     INTEGER*4  NHW  - number of INT*2 words in IBUF
+     INTEGER*4  EVSIZE - Second dimension of array EVDAT
+return:
+     INTEGER*4  EVBUF(2,*) - Event data. EVBUF(1,*) is the parameter ID
+                             EVBUF(2,*) is the data.
+     INTEGER*4  NPARAM - Number of parameters in this event.
+     INTEGER*4  IERR  -  0 means OK.  Nonzero means too many parameters.
+Alternate return:
+     Return here when input buffer is empty or a L003 format error
+     occurs.  IERR = 0 means end of input buffer and IERR = 1 means
+     a L003 format error.
+BLP$
+SEC$.290  UNPACKBB - Unpack L003 format data buffers
+BLP$
+UNPACKBB performs the same function as UNPACKAA.  The parameter ID is
+used as an index to the EVBUF array to get the parameter data.  The EVBUF
+is zero for parameters which were not present in the event.
+CY1$
+     CALL UNPACKBB(IBUF,NHW,IDBUF,EVBUF,MAXID,NPARAM,IERR,&1000)
+
+call:
+     INTEGER*2  IBUF - raw event data buffer
+     INTEGER*4  NHW  - number of INT*2 words in IBUF
+     INTEGER*4  MAXID - Max ID. IDBUF and EVBUF must be dimensioned
+                        at least as great as MAXID
+return:
+     INTEGER*4  IDBUF()  - List of IDs in this event
+     INTEGER*4  EVBUF(id) - Event data for parameter id
+     INTEGER*4  NPARAM - Number of parameters in this event.
+     INTEGER*4  IERR  -  0 means OK.  Nonzero means too many parameters.
+Alternate return:
+     Return here when input buffer is empty or a L003 format error
+     occurs.  IERR = 0 means end of input buffer and IERR = 1 means
+     a L003 format error.
+BLP$
+SEC$.300  Acquisition version of Beene's mag tape routines
+BLP$
+MT_FORT is a special version of Beene's mag tape routine library.
+All routines have the same calling arguments and are functionally identical
+to the original version.  The routines from this library should be used in
+applications which use UNIX signals.
+BLP$
+Routines by the same names are also
+in the library \b\/usr/hhirf/orphlib.a\\.  You must be careful in linking
+your code.  This
+library should be linked prior to \b\orphlib.a\\.
+BLP$
+SEC$.310  Linking this library with your code
+BLP$
+Codes using routines in this library must be linked with
+\b\/usr/acq/wks/acqlib.a\\ and \b\/usr/acq/wks/ipclib.a\\.
+BLP$
+Since some routines in \b\acqlib.a\\ have the same names as routines
+in other libraries, the order in which libraries are specified is important.
+The linker scans libraries in the order they occur in the command string.
+Needed routines are taken from the first library which has the routine.
+Later occurrences of the routine are ignored.
+BLP$
+SEC$.320  Include files for FORTRAN and C programmers
+BLP$
+CYB$
+     /usr/acq/wks/acqlib.for ............................
+BLP$
+This include file defines the error code returned by routines in
+\b\/usr/acq/wks/acqlib.a\\.
+CYB$
+     /usr/acq/wks/acqlib.h ..............................
+BLP$
+File defines the data structures used for shared memory and has
+function prototypes for routines in \b\/usr/acq/wks/acqlib.a\\.
+QIT$

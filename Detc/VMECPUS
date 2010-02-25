@@ -1,0 +1,3 @@
+setenv DRS_VME vme7
+setenv LN_VME  vme8
+setenv RMS_VME vme1

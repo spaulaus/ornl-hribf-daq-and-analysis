@@ -1,0 +1,223 @@
+%!PS-Adobe-3.0
+%%Pages: (atend)
+%%Creator: txx to ps converter
+%%EndComments
+%%BeginProlog
+/S/show load def
+/bd { bind def } bind def
+/B{3 1 roll moveto S} bd
+/F{$fd exch get setfont} def
+/StartPage{/svpg save def .05 dup scale} bd
+/EndPage{svpg restore showpage} bd
+/SetUpFonts
+ {dup/$fd exch array def{findfont exch scalefont $fd 3 1 roll put}repeat}def
+1 220.000 /Courier-Bold
+0 220.000 /Courier
+2 SetUpFonts
+%%EndProlog
+%%Page: 1 1
+0 F
+StartPage
+1 F
+975 14755(  23-Oct-02 .... 0000  - TXXPS -  TXX to Postscript Converter ...... PAGE   1)B
+0 F
+975 13875(    SECTION           CONTENTS)B
+975 13435(        010  Introduction)B
+975 13215(        020  Running TXXPS)B
+975 12995(        030  TXXPS optional command line arguments)B
+975 12775(        040  Alternate Postscript prologue file)B
+975 12555(        050  TXXPS print script)B
+1 F
+975 11895(  0000.010  Introduction)B
+975 11895(  ___________________________________________________________________________)B
+0 F
+975 11455(  Most  of  the documentation for the Oak Ridge software and data acquisition)B
+975 11235(  hardware is produced using W.T. Milner's TXX  text  formatting  code.   The)B
+975 11015(  output        files  can  be  printed  on  printers  such as DEC LN03 which)B
+1 F
+975 11015(          .txx)B
+0 F
+975 10795(  recognize ANSII escape sequences for Bold print and underlining.   However,)B
+975 10575(  some systems only support Postscript printers.)B
+975 10135(  TSSPS  is  a code which converts      files to Postscript     files.  These)B
+1 F
+975 10135(                                   .txx                     .ps)B
+0 F
+975 9915(      files can be printed on most Postscript  printers.  Theory  says  that,)B
+1 F
+975 9915(  .ps)B
+0 F
+975 9695(  using  TXXPS,  anyone  can  print  the  Oak Ridge documentation in all it's)B
+975 9475(  glory.)B
+1 F
+975 8815(  0000.020  Running TXXPS)B
+975 8815(  ___________________________________________________________________________)B
+0 F
+975 8375(  Document files usually are          where code is the name of the  program.)B
+1 F
+975 8375(                             code.doc)B
+0 F
+975 8155(  See                          for the format of these      files.  The first)B
+1 F
+975 8155(       /usr/hhirf/doc/txx.tex                          .doc)B
+0 F
+975 7935(  step is to make a          file.  To do this, type:)B
+1 F
+975 7935(                    code.txx)B
+0 F
+975 7495(       /usr/hhirf/txx  code  x)B
+975 7055(  Next,  use  TXXPS  to  convert  the            file  to  a  new  Postscript)B
+1 F
+975 7055(                                       code.txx)B
+0 F
+975 6835(  compatible  file         .   If your system default printer is a Postscript)B
+1 F
+975 6835(                    code.ps)B
+0 F
+975 6615(  printer, you can usually print the document by typing:      lpr code.ps)B
+975 6175(  TXXPS   requires   a   Postscript   header   file   which   by  default  is)B
+975 5955(                          .  This  file  defines  both  the  normal  and Bold)B
+1 F
+975 5955(  /usr/hhirf/doc/hhirf.pro)B
+0 F
+975 5735(  fonts.   The  default  fonts  are  11  point  Courier and Courier-Bold. The)B
+975 5515(  default margins, defined in TXXPS, are approximately  0.50  inches  at  the)B
+975 5295(  top  of  the  page  and  0.68  inches  at  the  left of the page.  The line)B
+975 5075(  spacing, also defined in TXXPS,  is  approximately  0.153  inches\(  or  6.5)B
+975 4855(  lines  per  inch\).   These  parameters  can  be  customized  using optional)B
+975 4635(  command arguments to TXXPS.)B
+1 F
+975 3975(  0000.030  TXXPS optional command line arguments)B
+975 3975(  ___________________________________________________________________________)B
+0 F
+975 3535(  You can customize several parameters in TXXPS using optional  command  line)B
+975 3315(  arguments.  The following can be customized:)B
+975 2875(  1\)....  Prologue file.  Fonts are defined in this file.)B
+975 2435(  2\)....  Position of the first line relative to the bottom of the page)B
+975 1995(  3\)....   Position  of  the first character relative to the left side of the)B
+975 1775(         page.)B
+975 1335(  4\)....  Line to line spacing\(i.e. lines per inch\))B
+975 895(  The general form of the TXXPS command line is as show below.)B
+EndPage
+%%Page: 2 2
+StartPage
+1 F
+975 14755(  23-Oct-02 .... 0000  - TXXPS -  TXX to Postscript Converter ...... PAGE   2)B
+975 14095(       txxps code [prologue_file xposition yposition line_spacing])B
+0 F
+975 13655(  The arguments starting with prologue_file are optional.  The command)B
+975 13215(       txxps code)B
+975 12775(  is equivalent to)B
+975 12335(       txxps code /usr/hhirf/doc/hhirf.pro 975 14975 220)B
+975 11895(  A description of the optional command line arguments follows.)B
+1 F
+975 11455(    prologue_file ...........................................................)B
+0 F
+975 11015(  The prologue_file is copied to the     file when TXXPS starts.  It  defines)B
+1 F
+975 11015(                                     .ps)B
+0 F
+975 10795(  several  symbols used as TXXPS formats the      file.  Also defined in this)B
+1 F
+975 10795(                                             .txx)B
+0 F
+975 10575(  file are the scale of the Postscript document and the two fonts  which  are)B
+975 10355(  used.  The default prologue_file                          is show below.)B
+1 F
+975 10355(                                   /usr/hhirf/doc/hhirf.pro)B
+0 F
+975 9915(  -------------------------------------------------------------------------)B
+975 9475(  %!PS-Adobe-3.0)B
+975 9255(  %%Creator: txx to ps converter)B
+975 9035(  /S/show load def)B
+975 8815(  /bd { bind def } bind def)B
+975 8595(  /B{3 1 roll moveto S} bd)B
+975 8375(  /F{$fd exch get setfont} def)B
+975 8155(  /StartPage{/svpg save def .05 dup scale} bd)B
+975 7935(  /EndPage{svpg restore showpage} bd)B
+975 7715(  /SetUpFonts)B
+975 7495(   {dup/$fd exch array def{findfont exch scalefont $fd 3 1 roll put}repeat}def)B
+975 7275(  1 220.000 /Courier-Bold)B
+975 7055(  0 220.000 /Courier)B
+975 6835(  2 SetUpFonts)B
+975 6615(  %%EndProlog)B
+975 6175(  -------------------------------------------------------------------------)B
+975 5735(  The  scale  is defined as .05\(see line StartPage\).  What this means is that)B
+975 5515(  1 inch equals 1440 Postscript units.  You need this  factor  when computing)B
+975 5295(  the margins and line spacing below.)B
+975 4855(  The  fonts are defined starting at SetUpFonts.  The font family is Courier.)B
+975 4635(  You probably don't want to change this since  TXX  assumes  all  characters)B
+975 4415(  have  equal  width.   However,  220.000 defines the size of the characters.)B
+975 4195(  The font here is 11 point Courier\( 220/1440 equals 11/72 equals 11 point\).)B
+1 F
+975 3755(    xposition .............................................................)B
+0 F
+975 3315(  The origin of the Postscript page is the bottom left corner  of  the  page.)B
+975 3095(  The  xposition  is  offset  from  the  left  edge  of the page of the first)B
+975 2875(  character   on  the  line  expressed  in  Postscript  units.   The  default)B
+975 2655(  xposition is 975 or 975/1440 inches from the left edge of the page.)B
+1 F
+975 2215(    yposition .............................................................)B
+0 F
+975 1775(  The yposition is offset from the bottom of  the  page  of  the  first  line)B
+975 1555(  expressed  in  Postscript  units.   The  default  yposition  is  14975   or)B
+975 1335(  14975/1440 inches from the bottom of the page.)B
+1 F
+975 895(    line_spacing ..........................................................)B
+EndPage
+%%Page: 3 3
+StartPage
+1 F
+975 14755(  23-Oct-02 .... 0000  - TXXPS -  TXX to Postscript Converter ...... PAGE   3)B
+0 F
+975 14095(  The  line_spacing  parameter  defines  the vertical lin-to-line spacing. It)B
+975 13875(  must be expressed in  Postscript  units.   The  default  is  220  which  is)B
+975 13655(  220/1440 inches or approx. 6.5 lines per inch.)B
+1 F
+975 12995(  0000.030  Alternate Postscript prologue file)B
+975 12995(  ___________________________________________________________________________)B
+0 F
+975 12555(  This  prologue  file  differs  from  the  previous example only in the font)B
+975 12335(  definition.  This is an example of independent x and y scaling of  the font)B
+975 12115(  size.)B
+975 11675(  This approximates the original output of most of the hardware documents.)B
+975 11235(  -------------------------------------------------------------------------)B
+975 10795(  %!PS-Adobe-3.0)B
+975 10575(  %%Creator: MCSQ's txx to ps converter)B
+975 10355(  /S/show load def)B
+975 10135(  /bd { bind def } bind def)B
+975 9915(  /B{3 1 roll moveto S} bd)B
+975 9695(  /F{$fd exch get setfont} def)B
+975 9475(  /StartPage{/svpg save def .05 dup scale} bd)B
+975 9255(  /EndPage{svpg restore showpage} bd)B
+975 9035(  /SetUpFonts)B
+975 8815(   {dup/$fd exch array def{findfont exch makefont $fd 3 1 roll put}repeat}def)B
+975 8595(  1 [200 0 0 240 0 0] /Courier-Bold)B
+975 8375(  0 [200 0 0 240 0 0] /Courier)B
+975 8155(  2 SetUpFonts)B
+975 7935(  %%EndProlog)B
+975 7495(  -------------------------------------------------------------------------)B
+975 7055(  If this prologue file is used, the recommened TXXPS command line format is:)B
+975 6615(      /usr/hhirf/txxps file /usr/users/mcsq/doc/mcsq.pro 975 14975 232)B
+1 F
+975 5955(  0000.050  TXXPS print script)B
+975 5955(  ___________________________________________________________________________)B
+0 F
+975 5515(  If  you  don't  wish  to  save  the        file,   the example script below)B
+1 F
+975 5515(                                       .txx)B
+0 F
+975 5295(  produces the     file, queues it to be printed and deletes it.)B
+1 F
+975 5295(               .ps)B
+0 F
+975 4855(  -------------------------------------------------------------------------)B
+975 4415(  #!/bin/csh -f)B
+975 4195(  /usr/hhirf/txxps  $1)B
+975 3975(  lpr -Pps01 $1:t.ps)B
+975 3755(  rm $1:t.ps)B
+975 3315(  -------------------------------------------------------------------------)B
+EndPage
+%%Trailer
+%%Pages: 3
+%%EOF

@@ -1,0 +1,2 @@
+#!/bin/csh -f
+/usr/oasys2/l68 $1

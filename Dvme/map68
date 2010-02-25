@@ -1,0 +1,9 @@
+#!/bin/csh -f
+if (-e  $1.map) then
+  if (-e $1.sym) then
+  rm $1.sym
+  endif
+  /tera/mcsq/Dlinux/Dvme/map68f $1.map $1.sym
+else
+  echo "$1.map does not exist"
+endif

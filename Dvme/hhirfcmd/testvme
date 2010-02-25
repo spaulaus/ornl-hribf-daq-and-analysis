@@ -1,0 +1,46 @@
+#!/bin/csh -f
+echo "*********************** WARNING ************************"
+echo "*  Normal Acquisition Codes in the VME processor are   *"
+echo "*  being replaced with test programs.  These test      *"
+echo "*  programs generate an event stream for testing the   *"
+echo "*  VME/workstation connection.                         *"
+echo "*                                                      *"
+echo "* NOTE: When finished testing, you should execute the  *"
+echo "*       the command - loadacq                          *"
+echo "*********************** WARNING ************************"
+/usr/acq/vme/run /usr/acq/vme/kill_acq
+set err = $status
+if ($err != 0) then
+  echo "${0}: Cannot Kill Acquisition System - Error Status = $err"
+  exit
+endif
+echo "Delete the acquisition tasks in the VME processor"
+/usr/acq/vme/kt testvme >& /dev/null
+/usr/acq/vme/kt VMEtest >& /dev/null
+/usr/acq/vme/kt VMEacq >& /dev/null
+/usr/acq/vme/kt DSSDacq >& /dev/null
+/usr/acq/vme/kt data_proc >& /dev/null
+/usr/acq/vme/kt vmemon >& /dev/null
+/usr/acq/vme/kt vmexx >& /dev/null
+echo " "
+echo "Now load the VME/workstation test programs."
+/usr/acq/vme/run /usr/acq/vme/data_proc
+set err = $status
+if ($err != 0) then
+  echo "${0}: Unable to load task 'data_proc' - Error Status = $err"
+  exit
+endif
+/usr/acq/vme/run /usr/acq/vme/testvme 1024
+set err = $status
+if ($err != 0) then
+  echo "${0}: Unable to load task 'testvme' - Error Status = $err"
+  exit
+endif
+/usr/acq/vme/run /usr/acq/vme/VMEtest
+set err = $status
+if ($err != 0) then
+  echo "${0}: Unable to load task 'VMEtest' - Error Status = $err"
+  exit
+endif
+echo " "
+echo "VME/DECstation test codes are now loaded."

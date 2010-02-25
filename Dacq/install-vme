@@ -1,0 +1,5 @@
+install -o hhirf -p cnaf /usr/acq/vme/
+install -o hhirf -p docnaf /usr/acq/vme/
+install -o hhirf -p fifo /usr/acq/vme/
+install -o hhirf -p m_setup /usr/acq/vme/
+install -o hhirf -p vmelib.a /usr/acq/vme/

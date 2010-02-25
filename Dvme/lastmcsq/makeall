@@ -1,0 +1,25 @@
+#!/bin/csh -f
+rm -f run
+rm -f vmeboot
+rm -f acq_run
+if ($1 == "hhirf" || $1 == "HHIRF") then
+   setenv  CFLAGS '-O2 -DHHIRF'
+else
+   setenv  CFLAGS '-O2'
+endif
+make -e -f acq_run.make
+make -f debug.make
+make -f kt.make
+make -f lt.make
+make -f map68.make
+make -e -f run.make
+make -f setclock.make
+make -f srload.make
+make -f view3982.make
+make -f vmealloc.make
+make -e -f vmeboot.make
+make -f vmehardware.make
+make -f vmeload.make
+make -f vmereset.make
+make -f vmexxlib.make
+makevme

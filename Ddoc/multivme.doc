@@ -1,0 +1,127 @@
+RPD$075059001
+NPS$01
+CHP$1100  - Multi VME Crates -
+TPF$
+SP1$
+CY1$
+  SECTION   ROUTINE             FUNCTION
+
+      010  INTRODUCTION
+
+      020  Model 418 VMEbus Repeater Configuration
+      030  VME Modules
+      040  Timing Measurements
+      050  PAC files used for the timing measurements.
+
+BLP$
+SEC$.010 INTRODUCTION
+SIN$
+BLP$
+This document describes the setup and use of multiple VME crates
+for a data acquisition system.
+BLP$
+This document is available online - \b\/usr/hhirf/vme/doc/multivme.doc\\.
+Use \b\dodoc\\ to print a copy or \b\viewdoc\\ to view online.
+BLP$
+SEC$.020 Model 418 VMEbus Repeater Configuration
+SIN$
+BLP$
+The VMEbus repeater consists of two VME modules and two interconnect cables.
+BLP$
+The Primary/Master module should be installed in the crate which has a CPU
+module in slot 1. I recommend that the ORNL Trigger module and the Kinetics
+Systems Model 2917 CAMAC interface also be in the primary crate.
+BLP$
+The Secondary/Slave module MUST be installed in slot 1 of the secondary crate.
+BLP$
+The repeater modules should be configured in the "totally transparent"
+mode.  The factory configuration is for this mode.  Each module has three
+jumpers and an I/O jumper block(eight jumpers). 
+BLP$
+The primary module should be set as follows:
+CY1$
+     Jumper   
+
+      P/S   Installed
+      C/S   Removed
+      SYS   Installed
+      I/O   Don't care
+
+BLP$
+The secondary module should be set as follows:
+CY1$
+     Jumper   
+
+      P/S   Removed
+      C/S   Removed
+      SYS   Installed
+      I/O   Don't care
+SEC$.020 VME Modules
+SIN$
+BLP$
+The CPU module MUST be in slot 1 of the primary VME crate.  It is recommended
+that the Kinetics Systems Model 2917 be in slot 2 and the ORNL Trigger
+module be in slot 3.  The primary repeater module should be in the right
+most available slot in the primary VME crate.
+BLP$
+The secondary repeater module MUST be in slot 1 of the second VME crate.
+BLP$
+All other VME modules we use may be in either crate.
+
+CY1$
+SEC$.040 Timing Measurements
+SIN$
+BLP$
+As one should expect, accessing modules in the secondary crate takes
+longer than in the primary crate.  The difference is about 12%.
+BLP$
+The following times are the width of VMEBUSY output of the Trigger module.
+BLP$
+CY1$
+     KSC2917 in Crate 1(Primary/Master)
+
+     time1.pac   1 parameter   42 us
+     time2.pac   8 parameters 104 us
+     time3.pac  16 parameters 174 us
+
+     KSC2917 in Crate 2(Secondary/Slave)
+
+     time1.pac   1 parameter   45 us
+     time2.pac   8 parameters 114 us
+     time3.pac  16 parameters 194 us
+CY1$
+     CAEN785 in Crate 1(Primary/Master)
+
+     vme.pac  34 parameters 64 us
+
+     CAEN785 in Crate 2(Secondary/Slave)
+
+     vme.pac  34 parameters 72 us
+
+
+SEC$.050 PAC files used for the timing measurements.
+SIN$
+BLP$
+CY1$
+;**** time1.pac ****
+;
+$did  253,254,255
+$cam c01 n12 f02 a00-00 adc:1,01 id01,01 fc09 ac00
+
+;**** time2.pac ****
+;
+$did  253,254,255
+$cam c01 n12 f02 a00-07 adc:1,01 id01,01 fc09 ac00
+
+;**** time3.pac ****
+;
+$did  253,254,255
+$cam c01 n12 f02 a00-15 adc:1,01 id01,01 fc09 ac00
+
+;**** vme.pac ****
+;
+$dla vme 0
+
+$vme adc02 a01-34 id1,1 mt=CAEN-785
+
+QIT$

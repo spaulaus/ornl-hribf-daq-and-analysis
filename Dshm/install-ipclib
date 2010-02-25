@@ -1,0 +1,2 @@
+#!/bin/bash
+install -o hhirf -p ipclib.a /usr/acq/wks

@@ -1,0 +1,227 @@
+RPD$075059001
+NPS$01
+RSH$0505
+CHP$2020  VARIAN - Interactive readout and control
+TPF$
+SP1$
+CY1$
+  SECTION   COMMAND             FUNCTION
+
+    010   Introduction
+
+    020   gauge          - Select a gauge              
+    030   controller     - Select a controller
+    040   pressure       - Read a pressure gauge
+    050   emission       - Read or set emission parameters and status
+    060   degas          - Turn degas on or off and get degas status
+    070   sensitivity    - Read or set IG sensitivity
+    080   gascorrection  - Read or set IG gas correction factor
+    090   setpoints      - Read or set setpoints 
+    100   auto           - Set Auto turn on
+    110   units          - Set pressure measurement units
+    120   keypad         - Lock/Unlock local keypad
+    130   tc             - Show or set TC update rate
+    140   software       - Show Varian software revision
+    150   defaults       - Set controller to factory defaults
+    160   hardware       - Display controller hardware configuration
+    170   help           - List commands
+    180   end/exit/quit  - Exit program
+
+SEC$.010   Introduction
+SIN$
+BLP$
+CY1$
+orph38> \b\/usr/users/mcsq/Drms/varian\\
+*************** Varian Multi-Gauge Controller **************
+*                   Version 1.0  MCSQ                      *
+************************************************************
+  Type  help for a list of commands.
+  Type  end or exit to quit
+
+igc>
+BLP$
+SEC$.020   gauge - Select a gauge              
+SIN$
+
+BLP$
+CY1$
+igc> \b\gau\\
+Gauge #1 selected
+igc> \b\gau 5\\
+Gauge #5 selected
+igc> \b\gau ig01\\
+Gauge IG01 selected.  Controller #1, Gauge #5
+igc>
+BLP$
+SEC$.030   controller - Select a controller
+SIN$
+BLP$
+CY1$
+igc> \b\con\\
+Controller #1 selected
+igc> \b\con 2\\
+Controller #2 selected
+BLP$
+SEC$.040   pressure - Read a pressure gauge
+SIN$
+BLP$
+CY1$
+igc> \b\pres\\
+Gauge IG01 pressure = 0.000E+00
+BLP$
+SEC$.050   emission - Read or set emission parameters and status
+SIN$
+BLP$
+CY1$
+igc> \b\emis\\
+Gauge IG01 emission is off
+igc> \b\emis cur\\
+Gauge IG01 emission current:  0.100
+igc> \b\emis cur 1.0\\
+Gauge IG01 emission current:  1.000
+igc> \b\emis off\\
+Gauge IG01 emission is off
+BLP$
+SEC$.060   degas - Turn degas on or off and get degas status
+SIN$
+BLP$
+CY1$
+igc> \b\degas\\
+Gauge IG01 degas is off
+igc> \b\degas off\\
+Gauge IG01 degas is off
+BLP$
+SEC$.070   sensitivity - Read or set IG sensitivity
+SIN$
+BLP$
+CY1$
+igc> \b\sen\\
+Gauge IG01 sensitivity is  8.00
+igc> \b\sen 10.\\
+Gauge IG01 sensitivity is 10.00
+BLP$
+SEC$.080   gascorrection - Read or set IG gas correction factor
+SIN$
+BLP$
+CY1$
+igc> \b\gas\\
+Gauge IG01 gas correction factor is 1.000
+igc> \b\gas 1.125\\
+Gauge IG01 gas correction factor is 1.125
+BLP$
+SEC$.090   setpoints - Read or set setpoints
+SIN$
+BLP$
+CY1$
+igc> \b\set\\
+Number of Assigned setpoints is  0
+igc> \b\set 1 1.1e-5 1.6e-5\\
+Setpt 1, Gauge IG01, Thres = 1.100E-05 Hyster = 1.600E-05 Relay = 0.
+igc> \b\set\\
+Number of Assigned setpoints is  1
+Setpt 1, Gauge IG01, Thres = 1.100E-05 Hyster = 1.600E-05 Relay = 0.
+BLP$
+SEC$.100   auto - Set Auto turn on
+SIN$
+BLP$
+CY1$
+igc> \b\auto\\
+Auto on disabled
+igc> \b\auto tc01 1e-3\\
+Auto on gauge IG01 by TC01 at pressure 1.0E-03
+igc> \b\auto\\
+Auto on gauge IG01 by TC01 at pressure 1.0E-03
+BLP$
+SEC$.110   units - Set pressure measurement units
+SIN$
+BLP$
+CY1$
+igc> \b\unit\\
+Pressure unit is torr
+igc> unit mbar
+Pressure unit is mbar
+BLP$
+SEC$.120   keypad - Lock/Unlock local keypad
+SIN$
+BLP$
+CY1$
+igc> \b\key\\
+Local keypad is unlocked
+igc> \b\key lock\\
+Local keypad is locked
+BLP$
+SEC$.130   tc - Show or set TC update rate
+SIN$
+BLP$
+CY1$
+igc> \b\tc\\
+TC update rate is slow
+igc> \b\tc fast\\
+TC update rate is fast
+BLP$
+SEC$.140   software - Show Varian software revision
+SIN$
+BLP$
+CY1$
+igc> \b\soft\\
+Varian Software revision is P2.6
+BLP$
+SEC$.150   defaults - Set controller to factory defaults
+SIN$
+BLP$
+CY1$
+igc> \b\def\\
+This will reset the Varian Multi-Gauge controller to factory defaults !!
+ Are you sure you want to do this????
+
+Type y to continue or n to abort: n
+Reset command aborted.
+BLP$
+SEC$.160   hardware - Display controller hardware configuration
+SIN$
+BLP$
+CY1$
+igc> \b\hard\\
+Hardware configuration of Varian Controller #1
+  Slot 1:  TC Card
+  Slot 2:  Empty Slot
+  Slot 3:  Broad Range BA Card
+  Slot 4:  Broad Range BA Card
+  Slot 5:  Set Point Card
+BLP$
+SEC$.170   help - List commands
+SIN$
+BLP$
+CY1$
+igc> \b\help\\
+
+Command                    Description
+
+ controller  [n]  Show or select controller number. 1 <= n <= 4
+ gauge  [n]       Show or select gauge number. 1 <= n <= 6
+ gauge  name      Select controller and gauge.  Name may be
+                  TC01 thru TC16 or IG01 thru IG08
+ hardware         Display controller's hardware configuration
+ software         Display controller software revision
+ pressure         Show pressure for selected gauge
+ units [arg]      Show or select pressure units - torr, mbar, pascal
+ keypad [arg]     Show or select keypad state - lock, unlock, partial
+ tc [arg]         Show or select TC update rate - slow, fast
+ sensitivity [f]  Show or set sensitivity for selected
+                  gauge -  0.1 <= f <= 99.9
+ gascorrect [f]   Show or set the gas correction factor for
+                  selected gauge - 0.01 <= f <= 9.99
+ emission [a] [f] Show or set emission status. [a] = on1, on2,
+                  off, or current. If [a] is current, then
+                  0.01 <= f <= 9.99
+ degas [arg]      Show or set degas status - on, off
+
+ setpoint [n] [thres] [hyster]
+                  Show or set setpoints. [n] is setpoint
+                  number, 1 <= n <= 8. [thres] is threshold
+                  pressure. [hyster] is hysteresis pressure
+BLP$
+SEC$.180   end/exit/quit - Exit program
+SIN$
+BLP$
+QIT$

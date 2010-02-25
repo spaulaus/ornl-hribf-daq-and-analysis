@@ -1,0 +1,189 @@
+
+en_open.o:
+00000006 C My_HW_Address
+         U bind
+         U en_InitHis
+         U en_InitRecord
+00000008 C en_ReadQueue
+         U en_name_to_addr
+         U en_name_to_interf
+00000000 T en_open
+00000004 C en_timeout
+         U htonl
+         U htons
+         U if_nametoindex
+         U ioctl
+000005ec C local_ack
+000005ec C local_reci
+000005ec C local_xmit
+         U perror
+         U printf
+         U setsockopt
+         U socket
+         U strcpy
+
+en_write.o:
+         U __errno_location
+         U en_FindPacket
+         U en_ReadQueue
+000000e8 T en_get_ack
+         U en_pkt_recv
+         U en_snd_acknak
+         U en_tmo
+00000000 T en_write
+         U local_ack
+         U local_xmit
+         U memcpy
+         U write
+
+en_read.o:
+         U My_HW_Address
+         U __errno_location
+         U en_FindPacket
+         U en_ReadQueue
+00000168 T en_pkt_recv
+00000000 T en_read
+000000c8 T en_snd_acknak
+         U en_timeout
+         U exit
+         U local_ack
+         U local_reci
+         U memcpy
+         U perror
+         U printf
+         U read
+         U select
+         U write
+
+en_close.o:
+         U close
+00000000 T en_close
+
+en_tmo.o:
+         U en_timeout
+00000000 T en_tmo
+
+addr_reso.o:
+         U __strtol_internal
+00000000 T en_name_to_addr
+0000008c T en_name_to_interf
+         U fclose
+         U fgets
+         U fopen
+         U printf
+         U strcpy
+         U strstr
+         U strtok
+
+get_dest.o:
+00000000 T en_get_dest
+         U getenv
+
+hislist.o:
+         U ctime
+00000028 T en_AddHis
+00000000 T en_InitHis
+000000b4 T en_dump_his_
+         U fflush
+         U fprintf
+         U stderr
+         U time
+
+pktlist.o:
+00000010 T en_FindPacket
+00000000 T en_InitRecord
+000000d4 T en_dump_records_
+         U fprintf
+         U stderr
+
+pecamio.o:
+00000330 T bhio_
+000003c4 T camacio_
+         U camerr_
+00000458 T camlist_
+00000000 T cmcbsc_
+         U ipberr_
+         U pkt_io
+
+fastbusio.o:
+00000000 T fastbusio_
+00000194 T fblist_
+         U pkt_io
+
+libipberr.o:
+         U fprintf
+00000000 T ipberr_
+         U stderr
+
+libcamerr.o:
+00000000 T camerr_
+         U ipberr_
+
+for_acq_ctrl.o:
+         U en_close
+         U en_open
+         U en_read
+         U en_tmo
+         U en_write
+00000000 T for_acq_ctrl_
+         U getenv
+         U getpid
+         U strcpy
+         U strncmp
+         U tolower
+
+acq_vme_ctrl.o:
+00000018 T acq_vme_ctrl_
+00000000 T acq_vme_ctrl__
+00000128 T acq_vme_error
+0000017c T acq_vme_error_
+00000164 T acq_vme_error__
+         U pkt_close
+         U pkt_io
+         U sprintf
+         U strncat
+         U strncmp
+         U tolower
+
+pkt_io.o:
+         U __errno_location
+         U __h_errno_location
+         U close
+         U connect
+         U exit
+         U fprintf
+         U getenv
+         U gethostbyaddr
+         U gethostbyname
+         U gethostname
+         U inet_addr
+         U perror
+00000420 T pkt_close
+00000000 T pkt_io
+000001a4 T pkt_open
+000004bc T pkt_recv
+00000440 T pkt_send
+         U printf
+         U read
+00000100 T readn
+         U socket
+         U stderr
+         U strcpy
+         U write
+00000154 T writen
+
+load_acq_params.o:
+         U exit
+         U fprintf
+         U getenv
+00000014 T load_acq_params_
+00000000 T load_acq_params__
+         U memcpy
+         U pkt_close
+         U pkt_io
+         U pkt_open
+         U pkt_recv
+         U pkt_send
+         U stderr
+         U strcpy
+         U strncmp

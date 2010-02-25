@@ -1,0 +1,458 @@
+RPD$075059001
+NPS$01
+CHP$2030  - MORE RMSLIB Revised 5/17/95 -
+TPF$
+SP1$
+CY1$
+  SECTION   ROUTINE             FUNCTION
+
+      010  INTRODUCTION
+
+      020  ACRO_READ     - Read the 64-bit digital I/O
+      030  ACRO_WRITE    - Write a bit in the 64-bit digital I/O
+      040  ACRO_ERROR    - Convert error number to ASCII string
+
+      050  TESLA_COMMAND - Send ASCII command to a Teslameter
+      060  TESLA_ERROR   - Convert error number to ASCII string
+
+      070  ALPHA_COMMAND - Send ASCII command to ALPHA power supply
+      080  ALPHA_ERROR   - Convert error number to ASCII string
+
+      090  ADC_READ      - Read the 16 channel ADC.  DATEL 613
+      100  ADC_ERROR     - Convert error number to ASCII string
+
+      110  DAC_WRITE     - Write a DAC channel.  DATEL 626
+      120  DAC_ERROR     - Convert error number to ASCII string
+
+      130  STEPPER_MOVE  - Drive a Finger stepping motor
+      140  STEPPER_STAT  - Get status of the stepping motor controller.
+      150  STEPPER_ERROR - Return ASCII message for an STEPPER errors.
+
+BLP$
+SEC$.010 INTRODUCTION
+SIN$
+BLP$
+This document describes a set of FORTRAN callable routines for various
+hardware devices associated with the RMS.  There is a separate document
+for the Varian Ion Gauge Controllers - 
+\b\/usr/users/mcsq/Drms/rmsigc.doc\\.
+BLP$
+These routines are in the library - \b\/usr/users/mcsq/Drms/rmslib.a\\.
+BLP$
+The routines ITG_READ, ITG_ERROR, DATEL_WRITE and DATEL_ERROR have
+been deleted from the documentation and will be removed from rmslib.a.
+BLP$
+Added are routines to control the mighty finger system.
+BLP$
+SEC$.020 ACRO_READ - Read the 64-bit digital I/O module.
+SIN$
+BLP$
+Sixty-four bits of digital Input/output are available.  By default all I/O
+lines are configured for TTL levels (0 and +5 volts).  However, with an 
+external power supply and on-board jumper changes, the I/O levels can be
+changed to 0 and up to +30 volts in groups of 8 bits.
+BLP$
+Individual bits may be configured as input by writing a "0" in the 
+output register.  Readout reflects the state of all input and output bits.
+Power up or reset of the VME processor sets all 64 bits to "0".
+BLP$
+When an output bit is set to "1", the output level is 0 volts.  An input
+which reads as a "1", corresponds to an input line at 0 volts.
+BLP$
+A call to ACRO_READ returns to state of all 64 bits in the BYTE array
+DAT.  Readout reflects state of both input and output bits.
+CY1$
+ 
+  Call:   CALL ACRO_READ(DAT,IERR)
+ 
+  return:
+           DAT(8) - BYTE    Array - 8 bytes
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+ 
+BLP$
+SEC$.030 ACRO_WRITE - Write one bit in the 64-bit digital I/O module.
+SIN$
+BLP$
+A call to ACRO_WRITE writes one output bit.  The bit number to to written
+is specified in the call parameter BITNUM.  Bits are numbered 1 thru 64.
+The output bit is set to "0" if VAL is zero.  If VAL is non-zero the output
+bit is set to "1".  All bits which are be used as inputs should be set to 0.
+Outputs are set to "0" or "1".
+CY1$
+ 
+  Call:   CALL ACRO_WRITE(BITNUM,VAL,IERR)
+ 
+    call:
+           BITNUM - INT*4 - Bit number to write (1 thru 64)  
+           VAL    - INT*4 - Zero set bit to 0 and non-zero set to 1
+  return:
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+ 
+BLP$
+SEC$.040 ACRO_ERROR - Return ASCII message for an ACRO error.
+SIN$
+BLP$
+This routine converts an error code returned by ACRO_READ or ACRO_WRITE
+to an ASCII string stored in the FORTRAN character variable STRING.
+CY1$
+ 
+  Call:   CALL ACRO_ERROR(ERROR,STRING)
+ 
+  where:
+            INT*4  ERROR - Error code return by a call to ACRO_READ
+                           or ACRO_WRITE
+  return:
+            CHARACTER*(*)  -  ASCII message for this error code.
+BLP$
+SEC$.050 TESLA_COMMAND - Send ASCII command string to teslameter.
+SIN$
+BLP$
+There are 12 teslameters and the call argument CTRL specifies which
+teslameter is to receive the command.  CTRL is a physical address
+determined by hardware switches in each instrument.
+BLP$
+All messages to and from a teslameter are ASCII strings.  The call argument
+CMD is a command string and the response from the teslameter is
+returned in REPLY.
+BLP$
+For a complete list of commands see the Group 3 DTM-132 DIGITAL
+TESLAMETER User's Manual.  The file \b\/user/users/mcsq/Drms/tesla.hlp\\
+is a subset of the commands.
+CY1$
+ 
+  Call:   CALL TESLA_COMMAND(CTRL,CMD,REPLY,IERR)
+ 
+  where:   CTRL   - INT*4       - Controller number
+           CMD    - CHARACTER*  - Command string
+           REPLY  - CHARACTER*  - Reply string
+  return:
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+ 
+BLP$
+SEC$.060 TESLA_ERROR - Return ASCII message for a TESLA error.
+SIN$
+BLP$
+This routine converts an error code returned by TESLA_COMMAND
+to an ASCII string stored in the FORTRAN character variable STRING.
+CY1$
+ 
+  Call:   CALL TESLA_ERROR(ERROR,STRING)
+ 
+  where:
+            INT*4  ERROR - Error code return by a call to TESLA_COMMAND
+  return:
+            CHARACTER*(*)  -  ASCII message for this error code.
+
+BLP$
+SEC$.070 ALPHA_COMMAND - Send ASCII command string to Alpha power supply.
+SIN$
+BLP$
+To be determined!!
+CY1$
+ 
+  Call:   CALL ALPHA_COMMAND(CTRL,CMD,REPLY,NUM,IERR)
+ 
+  where:   CTRL      - INT*4       - Controller number
+           CMD       - CHARACTER*  - Command string
+           REPLY(*)  - CHARACTER*  - Array of reply strings.
+           NUM       - INT*4       - Dimension of REPLY
+  return:
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+ 
+BLP$
+SEC$.080 ALPHA_ERROR - Return ASCII message for a ALPHA error.
+SIN$
+BLP$
+This routine converts an error code returned by ALPHA_COMMAND
+to an ASCII string stored in the FORTRAN character variable STRING.
+CY1$
+ 
+  Call:   CALL ALPHA_ERROR(ERROR,STRING)
+ 
+  where:
+            INT*4  ERROR - Error code return by a call to ALPHA_COMMAND
+  return:
+            CHARACTER*(*)  -  ASCII message for this error code.
+
+BLP$
+SEC$.090 ADC_READ - Read analog input channels
+SIN$
+BLP$
+Sixteen channels of analog input are digitized by the DATEL 613 VME module.
+Each channel is configured for 0 to 10 volt input with 16-bit conversion.
+A call to ADC_READ returns the data for all 16 channels in REAL*4 format.
+Units are volts.
+BLP$
+Input channels 1 and 2 are connected to internal references.  Channel 1
+should read zero volts and channel 2 should read 4.5 volts.
+CY1$
+ 
+  Call:   CALL ADC_READ(DAT,IERR)
+ 
+  return:
+           DAT(16) - REAL*4  Array
+           IERR    - INT*4 - Returned status of call.  Zero means OK
+                             and nonzero means an error.
+ 
+BLP$
+SEC$.100 ADC_ERROR - Return ASCII message for an ADC_READ error.
+SIN$
+BLP$
+This routine converts an error code returned by ADC_READ to an ASCII string
+stored in the FORTRAN character variable STRING.
+CY1$
+ 
+  Call:   CALL ADC_ERROR(ERROR,STRING)
+ 
+  where:
+            INT*4  ERROR - Error code return by a call to ADC_READ
+  return:
+            CHARACTER*(*)  -  ASCII message for this error code.
+
+BLP$
+SEC$.110 DAC_WRITE - Write a DAC channel.
+SIN$
+BLP$
+Six channels of analog output are available.  Each channel is configured
+for 0 to +10 volts with 16-bit resolution.  Only one DAC is written per
+call to DAC_WRITE.  The channel to be written is specified by the call
+parameter DACNUM.  The value to be written is specified by the parameter
+VAL.  Data units are volts.
+CY1$
+ 
+  Call:   CALL DAC_WRITE(DACNUM,VAL,IERR)
+ 
+    call:  
+           DACNUM - INT*4  - DAC number to write (1 thru 6)
+           VAL    - REAL*4 - Value to write in volts.
+  return:
+           IERR   - INT*4  - Returned status of call.  Zero means OK
+                             and nonzero means an error.
+ 
+BLP$
+SEC$.120 DAC_ERROR - Return ASCII message for an DAC_WRITE error.
+SIN$
+BLP$
+This routine converts an error code returned by DAC_WRITE to an ASCII string
+stored in the FORTRAN character variable STRING.
+CY1$
+ 
+  Call:   CALL DAC_ERROR(ERROR,STRING)
+ 
+  where:
+            INT*4  ERROR - Error code return by a call to DAC_WRITE
+  return:
+            CHARACTER*(*)  -  ASCII message for this error code.
+
+BLP$
+SEC$.130 STEPPER_MOVE - Drive a Finger stepping motor
+SIN$
+BLP$
+The mighty Finger system consists of 7 fingers.  Each finger has a stepping
+motor but there is only one stepping motor controller module.  Therefore,
+only motor can be driven a any time.   The total travel of each finger is
+approx. 9.5 inches.  One inch of travel requires 32 revolutions of the motor.
+One revolution of the motor requires 200 steps.
+BLP$
+There are two sets of hardware limit switches.  At the outer limit (out of
+the beam) there is a switch which is common to ALL fingers.  At the inner limit
+there is a switch for EACH finger.  Because of the common outer limit, when
+any finger is at the outer limit, NO finger can be driven toward the outer
+limit.  Software must initialize the finger system such that all fingers
+are initially a known distance from the outer limit.
+BLP$
+The motor direction is specified as CW (clockwise) or CCW (counter clockwise).
+When any finger is at the outer limit, no finger can be driven CCW.  Any 
+finger which is not at it's inner limit may be driven CW.  The call argument
+DIR specifies the move direction.  Zero means CW and non-zero means CCW.  The
+stepping motor controller deals in steps and all position and speed calling
+arguments are in steps and steps per second.  All motion commands are
+relative to the current position.
+BLP$
+At most one motor has power applied a any time.  All other motors are 
+powered down.  The call argument MOT specifies which motor is to be powered.
+The argument must be in the range of 0 thru 7.  Zero means to power down
+ALL motors.  Also, when MOT is zero, no other call arguments have any
+meaning.  The VME software keeps track of which motor is powered on.
+When there is a change in the motor selection,  all motors are powered down
+for 1 second and then the newly selected motor powered up for 1 second before
+the specified motion command begins execution.
+BLP$
+There are two speed arguments, LSPEED and HSPEED.  Both are specified in
+steps per second.  If LSPEED equals HSPEED, the motor runs at constant 
+speed.  Constant speed may also be specified by setting LSPEED non-zero
+and setting HSPEED to zero.  If LSPEED and HSPEED are both non-zero,
+HSPEED must be greater than or equal to LSPEED.  In this case, the motor
+starts at LSPEED and ramps up to HSPEED.  Also there is a ramp down form
+HSPEED to LSPEED at the end of the move.  The argument RAMP specifies the
+time in seconds to ramp from LSPEED to HSPEED and from HSPEED to LSPEED.
+The maximum ramp time is approx. 33.5 seconds.  However, this ramp time
+depends on the specified speed and the difference between the two speeds.
+You may specify any positive value for RAMP.  The motor controller will execute
+your request or the maximum it can do.  The minimum LSPEED is 1 and the
+maximum is 8000.  HSPEED must be in the range of 0 thru 8000.
+BLP$
+The call argument STEPS is the number of steps to move.  The argument
+POSIT is arbitrary.  It has no effect on the operation of the motor
+controller.  The value specified by POSIT is loaded into a 24-bit
+counter in the stepping motor controller.  If the direction is CW,
+the counter is incremented for each step of the motor.  If the direction
+is CCW, the counter is decremented for each step.  The final value of
+the counter is returned by a call to STEPPER_STAT.  If the motion 
+terminates normally, the final value should be POSIT plus STEPS.  If,
+however, the motion is stopped by a limit switch, the final value will
+be POSIT plus the number of steps done.
+BLP$
+A call to STEPPER_MOVE returns when the requested motion is started.
+The user must use the routine STEPPER_STAT to determine when the motion
+command has finished execution.  If you call STEPPER_MOVE before the
+previous command has finished,  the motor is stopped and restarted with
+the new parameters!
+BLP$
+If IERR is non-zero on return, an error has occured.  The routine
+STEPPER_ERROR may be used to convert the error code in IERR to a
+printable ASCII message.
+CY1$
+
+  Call:   CALL STEPPER_MOVE(MOT,DIR,STEPS,LSPEED,HSPEED,RAMP,POSIT,IERR)
+
+  where:  MOT    - INT*4 - Motor number (0 thru 7). Zero means turn off all
+                           motors.  Non-zero selects one of 7 motors.
+          DIR    - INT*4 - Move direction, 0 = CW, nonzero = CCW
+          STEPS  - INT*4 - Number of steps to move
+          LSPEED - INT*4 - Low speed in steps per second
+          HSPEED - INT*4 - High speed in steps per second
+          RAMP   - INT*4 - Time to ramp from low to high speed in seconds
+          POSIT  - INT*4 - Current position in steps
+ return:
+          IERR   - INT*4 - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+
+BLP$
+SEC$.140 STEPPER_STAT - Get status of the stepping motor controller.
+SIN$
+BLP$
+A call to STEPPER_MOVE returns as soon as the requested motion command
+begins.   You must use STEPPER_STAT to determine the state of the motion
+request.  The routine returns the status of the motor controller, the
+current position in steps, a 24-bit digital input register and a 24-bit
+digital output register.  The primary motor status is returned in the 
+least significant byte of STAT.  I number bits 0 thru 31 with D0 being
+the least significant bit in the 32-bit integer.  The bits in STAT
+have the following meanings:
+CY1$
+          D7  D6  D5  D4  D3  D2  D1  D0     STAT
+           |   |   |   |   |   |   |   |
+           |   |   |   |   |   |   |    0 = No motor at outer limit
+           |   |   |   |   |   |   |    1 = Some motor at outer limit
+           |   |   |   |   |   |    0 = Selected motor not at inner limit
+           |   |   |   |   |   |    1 = Selected motor at inner limit
+           |   |   |   |   |     Don't care
+           |   |   |   |    0 = Down counter non-zero
+           |   |   |   |    1 = Down counter is zero
+           |   |   |    0 = ramping up or ramping down
+           |   |   |    1 = constant speed or stopped
+           |   |    Don't care
+           |    0 = motor stopped
+           |    1 = motor running
+            Don't care
+BLP$
+A call to STEPPER_MOVE loads the down counter with the argument STEPS.
+The down counter decrements by one for each step.  If the move terminates
+normally, the down counter will be zero when the motor stops.  However,
+the motion is stopped by a limit switch, the down counter may be non-zero.
+You cannot read the down counter but the POSIT returned can be used to
+determine the number of steps executed.
+BLP$
+If D4 is zero, the motor is ramping.  The extended status in ESTAT
+has bits to determine if the ramping is up or down.
+BLP$
+The 16-bit extended motor controller status is returned in ESTAT.  The
+state of the limit switches appear both in STAT and ESTAT.  The upper
+8-bits of the extended status are valid only if the motor is stopped.
+CY1$
+          D7  D6  D5  D4  D3  D2  D1  D0     ESTAT
+           |   |   |   |   |   |   |   |
+           |   |   |   |   |   |   |    Don't care
+           |   |   |   |   |   |    Don't care
+           |   |   |   |   |     0 = No motor at outer limit
+           |   |   |   |   |     1 = Some motor at outer limit
+           |   |   |   |    0 = Selected motor not at inner limit
+           |   |   |   |    1 = Selected motor at inner limit
+           |   |   |    0 = Not ramping up
+           |   |   |    1 = Ramping up
+           |   |    0 = Not ramping down
+           |   |    1 = Ramping down
+           |    0 = Not ramping down
+           |    1 = Ramping down
+            Don't care
+
+CY1$
+          D15 D14 D13 D12 D11 D10 D9  D8     ESTAT
+           |   |   |   |   |   |   |   |
+           |   |   |   |   |   |   |    1 = Stopped by outer limit
+           |   |   |   |   |   |    1 = Stopped by inner limit
+           |   |   |   |   |     Don't care
+           |   |   |   |    1 = Normal stop (i.e. completed move)
+           |   |   |    Don't care
+           |   |    Don't care
+           |    1 = Stop command
+            Don't care
+BLP$
+Returned in DIN and DOUT are the digital I/O bits which read all limit
+switches and select which, if any, motor is powered.   The state of the
+limit switches is in D0 - D7 of DIN.  The motor selection code is in
+D8 - D15 of both DIN and DOUT.  Bits D0 - D7 and D16 - D23 of DOUT
+should be all 1s meaning input is enabled for these bits.  Bits D16 - D23
+are enabled as input but ar not currently used.
+BLP$
+The motor selection code, D8 - D15 in DIN and DOUT, should match the
+MOT argument in the last call to STEPPER_MOVE provided MOT was non-zero.
+When all motors are powered off, the motor selection codes is all 1s.
+BLP$
+The limit switch readout, D0 - D7 of DIN, is as follows:
+CY1$
+          D7  D6  D5  D4  D3  D2  D1  D0     DIN  
+           |   |   |   |   |   |   |   |
+           |   |   |   |   |   |   |    1 = Finger #1 at inner limit
+           |   |   |   |   |   |    1 = Finger #2 at inner limit
+           |   |   |   |   |     1 = Finger #3 at inner limit
+           |   |   |   |    1 = Finger #4 at inner limit
+           |   |   |    1 = Finger #5 at inner limit
+           |   |    1 = Finger #6 at inner limit
+           |    1 = Finger #7 at inner limit
+            1 = Some finger at outer limit
+
+CY1$ 
+
+  Call:   CALL STEPPER_STAT(STAT,ESTAT,POSIT,DIN,DOUT,IERR)
+
+  return:
+          STAT   - INT*4 - Primary status    8-bits
+          ESTAT  - INT*4 - Extended status  16-bits
+          POSIT  - INT*4 - Current position
+          DIN    - INT*4 - Digital input register
+          DOUT   - INT*4 - Read-back of digital output register
+          IERR   - INT*4 - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+
+BLP$
+SEC$.150 STEPPER_ERROR - Return ASCII message for an STEPPER errors.
+SIN$
+BLP$
+This routine converts an error code returned by STEPPER_MOVE or STEPPER_STAT
+to an ASCII string
+stored in the FORTRAN character variable STRING.
+CY1$
+
+  Call:   CALL STEPPER_ERROR(ERROR,STRING)
+
+  where:
+           INT*4  ERROR - Error code return by a routine in this package
+  return:
+           CHARACTER*(*)  -  ASCII message for this error code.
+QIT$

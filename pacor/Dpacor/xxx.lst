@@ -1,0 +1,223 @@
+      1     1  $INI cnaf 3,10,0,16,377h                                                        
+      2     2                                                                                  
+      3     3  $INI cnaf 3,12,0,16,0h                                                          
+      4     4                                                                                  
+      5     5  $INI cnaf 7,12,0,16,100h                                                        
+      6     6                                                                                  
+      7     7  $DLA latch    10                                                                
+      8     8  $DLA uncondit 20                                                                
+      9     9  $DLA condit   30                                                                
+     10    10  $DLA camac    40                                                                
+     11    11  $DLA fastbus  50                                                                
+     12    12  $DLA fera     255                                                               
+     13    13  $DLA vme      100                                                               
+     14    14                                                                                  
+     15    15  $DUN cnaf 3,15,0,16,777h                                                        
+     16    16                                                                                  
+     17    17  $LAT c00 n10 f00 a00    GLAT:1              fc09 ac00                           
+     18    18                                                                                  
+     19    19  $LAT c03 n11 f00 a00    GLAT:2     id01     fc09 ac00                           
+     20    20                                                                                  
+     21    21  $LAT c03 n12 f00 a00    GLAT:3     id02     fc09 ac00                           
+     22    22                                                                                  
+     23    23  $LAT c03 n13 f00 a00    LATC:1                                                  
+     24    24                                                                                  
+     25    25  $CAM c01 n05 f00 a00-07 ADC1:1,1   id101,1  fc09 ac00                           
+     26    26  $CAM c01 n06 f00 a00-07 ADC1:9,1   id109,1  fc09 ac00                           
+     27    27  $CAM c01 n07 f00 a00-07 ADC1:17,1  id117,1  fc09 ac00                           
+     28    28  $CAM c01 n08 f00 a00-07 ADC1:25,1  id125,1  fc09 ac00                           
+     29    29                                                                                  
+     30    30  $CAM c01 n09 f00 a00-07 ADC2:1,1   id201,1  fc09 ac00                           
+     31    31  $CAM c01 n10 f00 a00-07 ADC2:9,1   id209,1  fc09 ac00                           
+     32    32  $CAM c01 n11 f00 a00-07 ADC2:17,1  id217,1  fc09 ac00                           
+     33    33  $CAM c01 n12 f00 a00-07 ADC2:25,1  id225,1  fc09 ac00                           
+     34    34                                                                                  
+     35    35  $CAM c01 n13 f00 a00-07 ADC3:1,1   id301,1  fc09 ac00                           
+     36    36  $CAM c01 n14 f00 a00-07 ADC3:9,1   id309,1  fc09 ac00                           
+     37    37  $CAM c01 n15 f00 a00-07 ADC3:17,1  id317,1  fc09 ac00                           
+     38    38  $CAM c01 n16 f00 a00-07 ADC3:25,1  id325,1  fc09 ac00                           
+     39    39                                                                                  
+     40    40  $CAM c02 n08 f00 a00-15 TDC1:1,1   id401,1  fc09 ac00                           
+     41    41  $CAM c02 n09 f00 a00-15 TDC1:17,1  id417,1  fc09 ac00                           
+     42    42                                                                                  
+     43    43  $CAM c02 n10 f00 a00-15 TDC2:1,1   id501,1  fc09 ac00                           
+     44    44  $CAM c02 n11 f00 a00-15 TDC2:17,1  id517,1  fc09 ac00                           
+     45    45                                                                                  
+     46    46  $CAM c02 n12 f00 a00-15 TDC3:1,1   id601,1  fc09 ac00                           
+     47    47  $CAM c02 n13 f00 a00-15 TDC3:17,1  id617,1  fc09 ac00                           
+     48    48                                                                                  
+     49    49  $FER c01 n08     a00-15 ADCTST_33:1,1 id701,1  mt=lrs_4300                      
+     50    50                                                                                  
+     51    51  $FAS c01 n15     a01-75 tdc-xxx:1,1   id801,1  mt=phil_10c6                     
+     52    52                                                                                  
+     53    53  $VME adc01  a01-34  id901,1 mt=CAEN-785                                         
+     54    54  $VME adc02  a01-34  id935,1 mt=CAEN-785                                         
+     55    55  $VME adc03  a01-34  id979,1 mt=CAEN-785                                         
+     56    56  $VME adc12  a01-34  id1013,1 mt=CAEN-785                                        
+     57    57                                                                                  
+     58    58  $VME tdc01  a01-34  id1101,1 mt=CAEN-775                                        
+     59    59  $VME tdc02  a01-34  id1135,1 mt=CAEN-775                                        
+     60    60  $VME tdc03  a01-34  id1179,1 mt=CAEN-775                                        
+     61    61  $VME tdc12  a01-34  id1213,1 mt=CAEN-775                                        
+     62    62                                                                                  
+     63    63  $VME qdc01  a01-34  id1321,1 mt=CAEN-792                                        
+     64    64  $VME qdc02  a01-34  id1355,1 mt=CAEN-792                                        
+     65    65  $VME qdc03  a01-34  id1389,1 mt=CAEN-792                                        
+     66    66  $VME qdc10  a01-34  id1423,1 mt=CAEN-792                                        
+     67    67                                                                                  
+     68    68  $DID 1023 1024 1025                                                             
+     69    69                                                                                  
+     70    70  $RIF GLAT(2),0F22H lrs_4300                                                     
+     71    71                                                                                  
+     72    72  $RIF GLAT(2),0F20H CAEN-775                                                     
+     73    73  $RIF GLAT(2),0F21H CAEN-785                                                     
+     74    74  $RIF GLAT(2),0F22H CAEN-792                                                     
+     75    75                                                                                  
+     76    76  $KIL any GLAT(1) 0Fh                                                            
+     77    77                                                                                  
+     78    78  $KIL none GLAT(2) 7000h                                                         
+     79    79                                                                                  
+     80    80  $PAT PAT =  GLAT(1)1,16                                                         
+     81    81  $PAT PAT =  GLAT(2)1,16                                                         
+     82    82  $PAT PAT =  LATC(1)1,16                                                         
+     83    83  $PAT PATTERN_2 = GLAT(1)1,2 GLAT(3)9,12                                         
+     84    84                                                                                  
+     85    85                                                                                  
+     86    86                                                                                  
+     87    87                                                                                  
+     88    88                                                                                  
+     89    89                                                                                  
+     90    90                                                                                  
+     91    91                                                                                  
+     92    92                                                                                  
+     93    93                                                                                  
+     94    94                                                                                  
+     95    95                                                                                  
+     96    96                                                                                  
+     97    97                                                                                  
+     98    98                                                                                  
+     99    99                                                                                  
+    100   100                                                                                  
+    101   101                                                                                  
+    102   102                                                                                  
+    103   103                                                                                  
+    104   104                                                                                  
+    105   105                                                                                  
+    106   106                                                                                  
+    107   107                                                                                  
+    108   108                                                                                  
+    109   109        IX=10                                                                     
+    110   110        MSK=[1,2,3,IX]+100H                                                       
+    111   111        I=1                                                                       
+    112   112        KIFN(GLAT(I),MSK)       ;Tst crash-bits; GLAT(1) must have                
+    113   113                                ;been read in via $lat directive                  
+    114   114        JJ=25                                                                     
+    115   115        READ ADC1(JJ)                                                             
+    116   116        READ ADC3(JJ)                                                             
+    117   117        READ ADC3(26)                                                             
+    118   118                                                                                  
+    119   119        CNAF 2,15,0,16,0377H                                                      
+    120   120                                                                                  
+    121   121        I=0                     ;Init pattern-word bit counter                    
+    122   122        J=0                     ;Init ADC, TDC, index value                       
+    123   123        MSK=12345678                                                              
+    124   124  L1    LOOP 3                  ;Loop over 3 "detectors"                          
+    125   125        I=I+1                   ;Increment bit-counter                            
+    126   126        J=J+1                   ;Increment ADC, TDC index                         
+    127   127        IFN(GLAT(J),0ACFh)GOTO NEXT                                               
+    128   128        IFU(PAT(I))GOTO  END1   ;Tst pattern bit - skip read if not set           
+    129   129        READ ADC1(J)            ;Read ADC1                                        
+    130   130        READ ADC2(J)            ;Read ADC2                                        
+    131   131        READ TDC1(J)            ;Read TDC1                                        
+    132   132        READ TDC2(J)            ;Read TDC2                                        
+    133   133  ENDX  CONTINUE                                                                  
+    134   134  END1  ENDLOOP                 ;End-of-loop                                      
+ ************ - LISTING OF EXPANDED LOOP FOLLOWS
+    124   135  L1    LOOP 3                  ;LOOP OVER 3 "DETECTORS"                          
+    125   136        I=I+1                   ;INCREMENT BIT-COUNTER                            
+    126   137        J=J+1                   ;INCREMENT ADC, TDC INDEX                         
+    127   138        IFN(GLAT(J),0ACFH)GOTO NEXT                                               
+    128   139        IFU(PAT(I))GOTO  END1   ;TST PATTERN BIT - SKIP READ IF NOT SET           
+    129   140        READ ADC1(J)            ;READ ADC1                                        
+    130   141        READ ADC2(J)            ;READ ADC2                                        
+    131   142        READ TDC1(J)            ;READ TDC1                                        
+    132   143        READ TDC2(J)            ;READ TDC2                                        
+    133   144  ENDX  CONTINUE                                                                  
+    134   145  END1  ENDLOOP                 ;END-OF-LOOP                                      
+    125   146        I=I+1                   ;INCREMENT BIT-COUNTER                            
+    126   147        J=J+1                   ;INCREMENT ADC, TDC INDEX                         
+    127   148        IFN(GLAT(J),0ACFH)GOTO NEXT                                               
+    128   149        IFU(PAT(I))GOTO  END1   ;TST PATTERN BIT - SKIP READ IF NOT SET           
+    129   150        READ ADC1(J)            ;READ ADC1                                        
+    130   151        READ ADC2(J)            ;READ ADC2                                        
+    131   152        READ TDC1(J)            ;READ TDC1                                        
+    132   153        READ TDC2(J)            ;READ TDC2                                        
+    133   154  ENDX  CONTINUE                                                                  
+    134   155  END1  ENDLOOP                 ;END-OF-LOOP                                      
+    125   156        I=I+1                   ;INCREMENT BIT-COUNTER                            
+    126   157        J=J+1                   ;INCREMENT ADC, TDC INDEX                         
+    127   158        IFN(GLAT(J),0ACFH)GOTO NEXT                                               
+    128   159        IFU(PAT(I))GOTO  END1   ;TST PATTERN BIT - SKIP READ IF NOT SET           
+    129   160        READ ADC1(J)            ;READ ADC1                                        
+    130   161        READ ADC2(J)            ;READ ADC2                                        
+    131   162        READ TDC1(J)            ;READ TDC1                                        
+    132   163        READ TDC2(J)            ;READ TDC2                                        
+    133   164  ENDX  CONTINUE                                                                  
+    134   165  END1  ENDLOOP                 ;END-OF-LOOP                                      
+ ************ - END OF EXPANDED LOOP LISTING
+    135   166                                                                                  
+    136   167  NEXT  CONTINUE                                                                  
+    137   168        I=10                    ;Init pattern-word bit counter                    
+    138   169        J=0                     ;Init ADC, TDC, index value                       
+    139   170  L2    LOOP 3                  ;Loop over 3 "detectors"                          
+    140   171        I=I+1                   ;Increment bit-counter                            
+    141   172        J=J+1                   ;Increment ADC, TDC index                         
+    142   173        IFN(GLAT(J),MSK)GOTO  QUIT                                                
+    143   174        IFU(PAT(I))GOTO END2   ;Tst pattern bit - skip read if not set            
+    144   175        READ ADC1(J)            ;Read ADC1                                        
+    145   176        READ ADC2(J)            ;Read ADC2                                        
+    146   177        READ TDC1(J)            ;Read TDC1                                        
+    147   178        READ TDC2(J)            ;Read TDC2                                        
+    148   179  END2  ENDLOOP                 ;End-of-loop                                      
+ ************ - LISTING OF EXPANDED LOOP FOLLOWS
+    139   180  L2    LOOP 3                  ;LOOP OVER 3 "DETECTORS"                          
+    140   181        I=I+1                   ;INCREMENT BIT-COUNTER                            
+    141   182        J=J+1                   ;INCREMENT ADC, TDC INDEX                         
+    142   183        IFN(GLAT(J),MSK)GOTO  QUIT                                                
+    143   184        IFU(PAT(I))GOTO END2   ;TST PATTERN BIT - SKIP READ IF NOT SET            
+    144   185        READ ADC1(J)            ;READ ADC1                                        
+    145   186        READ ADC2(J)            ;READ ADC2                                        
+    146   187        READ TDC1(J)            ;READ TDC1                                        
+    147   188        READ TDC2(J)            ;READ TDC2                                        
+    148   189  END2  ENDLOOP                 ;END-OF-LOOP                                      
+    140   190        I=I+1                   ;INCREMENT BIT-COUNTER                            
+    141   191        J=J+1                   ;INCREMENT ADC, TDC INDEX                         
+    142   192        IFN(GLAT(J),MSK)GOTO  QUIT                                                
+    143   193        IFU(PAT(I))GOTO END2   ;TST PATTERN BIT - SKIP READ IF NOT SET            
+    144   194        READ ADC1(J)            ;READ ADC1                                        
+    145   195        READ ADC2(J)            ;READ ADC2                                        
+    146   196        READ TDC1(J)            ;READ TDC1                                        
+    147   197        READ TDC2(J)            ;READ TDC2                                        
+    148   198  END2  ENDLOOP                 ;END-OF-LOOP                                      
+    140   199        I=I+1                   ;INCREMENT BIT-COUNTER                            
+    141   200        J=J+1                   ;INCREMENT ADC, TDC INDEX                         
+    142   201        IFN(GLAT(J),MSK)GOTO  QUIT                                                
+    143   202        IFU(PAT(I))GOTO END2   ;TST PATTERN BIT - SKIP READ IF NOT SET            
+    144   203        READ ADC1(J)            ;READ ADC1                                        
+    145   204        READ ADC2(J)            ;READ ADC2                                        
+    146   205        READ TDC1(J)            ;READ TDC1                                        
+    147   206        READ TDC2(J)            ;READ TDC2                                        
+    148   207  END2  ENDLOOP                 ;END-OF-LOOP                                      
+ ************ - END OF EXPANDED LOOP LISTING
+    149   208                                                                                  
+    150   209        J=1                                                                       
+    151   210        I=1                                                                       
+    152   211        IFA(GLAT(J),MSK)GOTO X1                                                   
+    153   212        GOTO QUIT                                                                 
+    154   213  X1    READ ADC3(I)                                                              
+    155   214        READ TDC3(I)                                                              
+    156   215        GOTO QUIT                                                                 
+    157   216        I=4                                                                       
+    158   217  X2    READ ADC3(I)                                                              
+    159   218        READ TDC3(I)                                                              
+    160   219  QUIT  CONTINUE                                                                  

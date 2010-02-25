@@ -1,0 +1,9 @@
+#!/bin/csh -f
+make -f vmelib.make
+make -f cnaf.make
+make -f fifo.make
+make -f ipberr.make
+make -f camerr.make
+#make -f load_acq_params.make
+#make -f scada.make
+#make -f modu_setup.make

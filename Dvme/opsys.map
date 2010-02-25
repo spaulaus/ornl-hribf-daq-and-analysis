@@ -1,0 +1,95 @@
+                                                                                                    PAGE 1
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+INPUT FILE: system.obj
+
+system                VERSION 0.0                                            
+
+open=9:00000064     read=9:000002BC     gmtime=9:00000734   ioctl=9:00000228    close=9:0000017C    
+creat=9:00000128    isatty=9:00000708   stat=9:0000056C     access=9:00000550   rename=9:00000AB0   
+system=9:00000DA8   unlink=9:00000554   localtime=9:0000093C                    start=9:00000EBC    
+_exit=9:000005C0    Init_IO=9:00000000  heap_init=9:00000E5C                    time=9:0000062C     
+sbrk=9:00000580     getpid=9:000005B0   truncate=9:00000C24 lseek=9:00000498    ticks=E:000008DE    
+environ=D:000000F6  __gh_timezone=9:00000A9C                args=9:00000E48     times=9:00000610    
+write=9:000003C8    signal=9:00000DF8   fstat=9:00000558    raise=9:00000DAC    
+
+RELOCATABLE SECTION 9   9:00000000 - 9:00000ECF SIZE = 00000ED0
+RELOCATABLE SECTION 13  D:00000000 - D:000000FD SIZE = 000000FE
+RELOCATABLE SECTION 14  E:00000000 - E:000008E1 SIZE = 000008E2
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+INPUT FILE: vmeprom.obj
+
+vmeprom               VERSION 0.0                                            
+
+log_phys_=9:00000F14                    super_mode_=9:000011EC                  
+mem_alloc_low_=9:00001072               delay_=9:00000EE0   get_mem_=9:000010E0 
+wait_phys_=9:00000F78                   send_msg_=9:00000FC2                    mem_lim_=9:000010FC 
+set_phys_=9:00000F56                    set_evt_=9:00000F3A task_priority_=9:000011CC               
+get_date_=9:00001294                    task_exit_=9:000011B2                   
+spawn_task_=9:000011A0                  user_mode_=9:000011F4                   OUTPUT=9:00001222   
+dly_clr_evt_=9:00000EEE                 test_evt_=9:00000F48                    
+task_swap_=9:000011C8                   receive_ptr_=9:00000F8E                 
+task_status_=9:000011BE                 INPUT=9:0000121E    unlock_=9:000011E8  
+mem_alloc_high_=9:00001018              byte_swap_=9:0000116A                   
+dly_set_evt_=9:00000F02                 get_line_=9:0000122A                    
+cache_inval_=9:00000FD8                 word_swap_=9:00001184                   
+send_ptr_=9:00000FAC                    lock_=9:000011DE    move_stack_=9:00001120                  
+free_mem_=9:000010D0                    wait_evts_=9:00000F68                   
+set_intr_level_=9:000011FE              clr_evt_=9:00000ED0 task_kill_=9:000011B6                   
+get_time_=9:0000128E                    
+
+RELOCATABLE SECTION 9   9:00000ED0 - 9:00001299 SIZE = 000003CA
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+INPUT FILE: lan_lib.obj
+
+lan_lib               VERSION 0.0                                            
+
+lan_ioctl=9:00001782                    lan_close=9:00001772                    reack=D:000001C8    
+lan_scanf=9:00001872                    retrycount=D:000001C4                   
+lan_printf=9:000017A2                   lan_write=9:00001466                    lan_open=9:0000129A 
+
+                                                                                                    PAGE 2
+
+
+lan_read=9:00001362 lan_reply=9:000015D2                    
+
+RELOCATABLE SECTION 9   9:0000129A - 9:000018C9 SIZE = 00000630
+RELOCATABLE SECTION 13  D:000000FE - D:000001CB SIZE = 000000CE
+RELOCATABLE SECTION 14  E:000008E2 - E:00001AC9 SIZE = 000011E8
+
+
+                                                                                                    PAGE 3
+
+
+PROGRAM LOAD LIMITS
+
+
+ABSOLUTE SECTION        EMPTY                                  
+RELOCATABLE SECTION 0   EMPTY                                  
+RELOCATABLE SECTION 1   EMPTY                                  
+RELOCATABLE SECTION 2   EMPTY                                  
+RELOCATABLE SECTION 3   EMPTY                                  
+RELOCATABLE SECTION 4   EMPTY                                  
+RELOCATABLE SECTION 5   EMPTY                                  
+RELOCATABLE SECTION 6   EMPTY                                  
+RELOCATABLE SECTION 7   EMPTY                                  
+RELOCATABLE SECTION 8   EMPTY                                  
+RELOCATABLE SECTION 9   9:00000000 - 9:000018C9 SIZE = 000018CA
+RELOCATABLE SECTION 10  EMPTY                                  
+RELOCATABLE SECTION 11  EMPTY                                  
+RELOCATABLE SECTION 12  EMPTY                                  
+RELOCATABLE SECTION 13  D:00000000 - D:000001CB SIZE = 000001CC
+RELOCATABLE SECTION 14  E:00000000 - E:00001AC9 SIZE = 00001ACA
+RELOCATABLE SECTION 15  EMPTY                                  

@@ -1,0 +1,6 @@
+export VME=vme3
+while [ 1 ]
+ do
+   /usr/acq/vme/startvme
+   /usr/acq/vme/stopvme
+done

@@ -1,0 +1,227 @@
+RPD$075066
+CHP$U235  SCOP - Scaler Display for Operators
+TPF$
+CYB$
+Sec  Page Contents
+ 
+010    1  Introduction
+
+020    2  How to Get Started
+
+030    3  List of Commands
+ 
+040    4  Creation of a Scaler Initialization File - snit-file
+
+050    4  Comments
+
+SEC$.010  Introduction - features
+ODP$
+o......\b\Scop\\ provides a CAMAC scaler interface between experiments and
+the accelerator operators.
+ODP$
+o......Scaler "rate data" (in counts/sec - normalized to the computer's
+internal clock) is provided to the operators via a
+"connection" to the EPICS accelerator control system.
+ODP$
+o......When first started \b\scop\\  will ask you to
+specify a beamline.  The possible beamline names are listed.
+ODP$
+o......The scalers can then be displayed by the operators in windows
+on the same screens they use for tuning. 
+ODP$
+o......As experimenters, you need only
+tell the operators that you are sending scaler rate data to them, specify
+the beamline name and which scaler/s they should monitor.
+\b\scop\\ permits up to 8 scaler rates to be displayed.
+ODP$$
+o......\b\scop\\ also displays (at the experimentors terminal) the
+count rate (in counts/sec) of the scalers being sent to the operators in
+the form of
+software generated meters. Normalization is via the computer's
+internal clock.
+ODP$
+o......Scalers to be displayed are specified via the usual 
+"snit file" - the same syntax as for program \b\scad\\.
+(see SEC# 040 for an example)
+TPF$
+SEC$.020  How to Get Started
+CYB$
+o......Make a snit-file for only the scalers to be displayed (max# = 8)
+ 
+o......If you are logging (from lochost) onto another platform (remhost)
+       via telnet (instead of ssh)  you will need enable the display on
+       your platform (lochost). To do this:
+
+       Before you login, Type: xhost +remhost
+       After  you login, Type: setenv DISPLAY lochost:0.0
+
+o......Type: setenv VME vmex - where vmex denotes vme1, vme2, etc
+
+o......Type: scop            ;To start and attempt to process operator.sca
+
+o......Type: scop  filename  ;To start and process filename
+
+o......Type: snit  filename  ;To process another file after starting scop
+
+o......Type: tst             ;To test the display with generated data
+       or
+o......Type: run             ;To do CAMAC reads & display
+
+o......Type: Ctrl/C          ;To interrupt read/display
+--------------------------------------------------------------------------
+BLP$
+When \b\scop\\  is first started it will ask you to specify a beamline.
+Possible beamline names are currently \b\rms, drs, enge, bl21 & bl23\\.
+BLP$
+Also, \b\scop\\ attempts to open a default
+snit-file \b\operator.sca\\. If this file is found,
+displays are generated and you are ready to run or tst.
+If it's not found, you must specify another file via
+the \b\snit filename\\ command.
+CEN$
+\bu\The Figure Below Illustrates the Display\\
+CY1$
+
+
+
+
+
+
+CEB$
+(See ORPHAS Handbook Tab-8 for a picture of an example display)
+CYB$
+
+
+
+
+
+
+CYB$
+   GLIM EVT 40  80         GLIM PMT 0  500          GLIM MCP_PSD 500 2000
+BLP$
+\b\Note:\\ Rate limits have been defined by the \b\GLIM\\ command as indicated.
+See the next page for command syntax which is \b\(glim name lo hi)\\.
+BLP$
+\b\Note:\\ The inside pointer indicates the power-of-10 scale factor and is
+the same as that given in the banner.
+BLP$
+Numbers at the bottom of displays give rates averaged over a
+greater time than that for meters (for readability) leading to
+some disagreement between the two when rates change rapidly as was
+the case here.
+TPF$
+SP2$
+SEC$.030  List of Commands
+CYB$
+LON              Turns ON  output to scop.log  (default)
+LOF              Turns OFF output to scop.log
+
+CMD   filename   Processes commands from filename
+
+SNIT  filename   Opens & processes standard snit-file
+
+RAV   N          Sets to display an average of N readings
+                 allowed value of N is 0 to 100
+                 N = 0 or blank sets N = 5 (the default)
+
+DPS   N          Specifies display rate to be N/sec
+                 allowed value of N is 0 to 20
+                 N = 0 or blank sets 10 displays/sec (the default)
+
+REVV             Sets to reverse color mapping on next FIG
+
+FIG              Does a FIG for the # of scalers defined (1 to 8)
+
+STAT             Displays/logs current status
+
+DLIN             Set  experimenter's display to linear (default)
+DLOG             Set  experimenter's display to log
+
+DOF              Turn experimenter's display OFF
+                 (DLIN, DLOG & DOF do not affect operator's display)
+---------------------------------------------------------------------------
+glim NAME lo hi  Set limits (lo hi) for NAMEd graphic scaler
+
+glim NAME on     Enable  limits for NAMEd graphic scaler display
+glim NAME off    Disable limits for NAMEd graphic scaler display
+glim NAME null   Deletes limits for NAMEd graphic scaler display
+
+glim on          Enable  limits for ALL   graphic scaler displays
+glim off         Disable limits for ALL   graphic scaler displays
+glim null        Deletes limits for ALL   graphic scaler displays
+
+glim sho         Display all graphic scaler limits
+---------------------------------------------------------------------------
+GLIM defined limits generate visual alarms on experimentors display:
+
+IF(rate.GT.HI) - Displays flashing yellow disks at upper left & right
+IF(rate.LT.LO) - Displays flashing white  disks at lower left & right
+
+GLIM defined limits have NO EFFECT on Operator's display
+---------------------------------------------------------------------------
+
+TST              Tests operation - no scalers required
+
+RUN              Start read/display
+
+CTRL/C           Interrupts read & display operation
+
+END              Ends scop
+TPF$
+SP2$
+SEC$.040  Creation of a Scaler Initialization File - snit-file
+BLP$
+Use the editor to prepare a scaler initialization file (snit file
+- the filename extension is usually .sca).
+The general form of the snit file is shown below:
+CY1$
+---------------------------------------------------------------------------
+LABEL C N A 
+  .
+LABEL C N A 
+  .
+LABEL C N A ECL
+  .
+LABEL C N A ECL
+  .
+$END                          (flags the end of scalers to be read)
+---------------------------------------------------------------------------
+\b\Note: No computed scalers are supported by scop\\
+---------------------------------------------------------------------------
+ODP$
+LABEL..denotes a unique label (11 characters max) which must contain
+no imbedded blanks or the characters + - / *
+ODP$
+C......denotes the scaler module crate number.
+ODP$
+N......denotes the scaler module slot number.
+ODP$
+A......denotes the scaler sub-address (numbers start at 0).
+ODP$
+ECL....denotes an ECL-scaler (requires special read/clear functions).
+CY1$
+---------------------------------------------------------------------------
+CY1$
+\bu\Example snit file\\
+CYB$
+Integrator 9 17  2
+Ge.Trigs   9 17  4
+See.Trigs  9 17  5
+$END
+SP1$
+SEC$.050  Comments
+ODP$
+o......This program was written in attempt to provide the accelerator
+operators with a "cable free" tuning aid.
+ODP$
+o......Remember that when you interrupt \b\scop\\ via a \b\ctrl/c\\, the
+operators will no longer be recieving rate data.
+ODP$
+o......This is the reason that I have not included the "send data to the
+operator" feature in \b\scad\\. There may be reasom to interrupt \b\scad\\
+more often to do such things as seting limits, changing display types,
+telling alarms to "shut up" (if \b\play\\ ever works again), etc.
+ODP$
+o......So the idea for \b\scop\\ is that you set up the few scalers that the 
+operators need to monitor and \b\start it & leave it alone!'\\
+QIT$

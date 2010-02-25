@@ -1,0 +1,68 @@
+C$PROG ERRORID
+C
+C     ************************************************************
+C     BY WT MILNER AT HHIRF - LAST MODIFIED 08/24/92
+C     ************************************************************
+C
+      SUBROUTINE ERRORID
+C
+      IMPLICIT INTEGER*4 (A-Z)
+C
+      COMMON/ML01/ IWD(20),LWD(2,40),ITYP(40),NF,NTER 
+C
+      COMMON/PACD/ FERID(32,576),FERC(576),FERN(576),FERT(576),NFER,
+     &             FERERID
+C
+      COMMON/PACE/ FASID(256,32),FASC(32), FASN(32), FAST(32), NFAS,
+     &             FASERID
+C
+      COMMON/PACN/ CAMID(32,32,8),CAMC(256),CAMN(256),CAMT(256),NCAM,
+     &             CAMERID
+C
+      COMMON/LLL/  MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+C
+      CHARACTER*112 CMSSG
+C
+      EQUIVALENCE (CMSSG,MSSG)
+C
+      INTEGER*4    X8000
+      DATA         X8000/'8000'X/
+C
+      SAVE
+C
+C     ************************************************************
+C     DECODES - $DID FASERID,FERERID   ENTRY
+C     ************************************************************
+C
+      CAMERID=0
+      FASERID=0
+      FERERID=0
+C
+      CALL MILV(LWD(1,2),IV,XV,KIND,IERR) 
+      IF(IERR.NE.0) GO TO 200
+      CALL MILV(LWD(1,3),JV,XV,KIND,IERR)
+      IF(IERR.NE.0) GO TO 200
+      CALL MILV(LWD(1,4),KV,XV,KIND,IERR)
+      IF(IERR.NE.0) GO TO 200
+C
+      IF(IV.LT.0.OR.IV.GT.32767) GO TO 210
+      IF(JV.LT.0.OR.JV.GT.32767) GO TO 210
+      IF(KV.LT.0.OR.KV.GT.32767) GO TO 210
+C
+      IF(IV.GT.0) IV=IV+X8000
+      IF(JV.GT.0) JV=JV+X8000
+      IF(KV.GT.0) KV=KV+X8000
+C
+      FASERID=IV
+      FERERID=JV
+      CAMERID=KV
+      RETURN
+C
+  200 WRITE(CMSSG,205)
+  205 FORMAT('ERROR DECODING FASTBUS, FERA, CAMAC ERROR ID ENTRY')
+      GO TO 300
+  210 WRITE(CMSSG,215)IV,JV,KV
+  215 FORMAT('FASTBUS, FERA OR CAMAC, ERROR-ID OUT OF RANGE =',3I8)
+  300 CALL ERRLOG(LOGUT,LOGUP)
+      RETURN
+      END

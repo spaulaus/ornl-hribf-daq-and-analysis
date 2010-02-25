@@ -1,0 +1,48 @@
+          Two Channel Count-down Single width CAMAC module
+
+Each input has a programmable threshold discriminator.  Threshold
+range is 0 to -2.56 volts in -10 mv steps.  The discriminator 0
+feeds the count-down circuit and a front panel NIM output.
+
+
+There are eight divisors for each count-down circuit; 1, 4, 8, 10, 40,
+100, 400, and 1000.
+
+CAMAC commands:
+
+F(16)A(0) - Write channel 1 threshold. 8 bit DAC with  -10 mv per bit.
+F(16)A(1) - Write channel 1 divisor. 3 bit code.
+              0 - divide by 1        5 - divide by 100
+              1             4        6             400
+              2             8        7             1000
+              3            10
+              4            40
+
+F(16)A(2) - Write channel 2 threshold
+F(16)A(3) - Write channel 2 divisor
+
+F(0)A(0)  - Read channel 1 threshold
+F(0)A(1)  - Read channel 1 divisor
+F(0)A(2)  - Read channel 2 threshold
+F(0)A(3)  - Read channel 2 divisor
+
+
+Front Panel Inputs:
+
+Channel 1 Discr Input:  Negative linear input.  Disc threshold
+                        is 0 to -2.56 volts in -10 mv steps
+
+Channel 2 Discr Input:  Negative linear input.  Disc threshold
+                        is 0 to -2.56 volts in -10 mv steps
+
+
+Front Panel Outputs:
+
+Channel 1 Discr Out:  Fast negative NIM output(16 ma)
+
+Channel 1 Outputs:  3 ea Fast negative NIM outputs(16 ma)
+
+
+Channel 2 Disc Out:  Fast negative NIM output(16 ma)
+
+Channel 2 Outputs:  3 ea Fast negative NIM outputs(16 ma)

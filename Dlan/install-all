@@ -1,0 +1,3 @@
+install -o root -m 4755 -p listen /usr/acq/vme
+install -o root -m 4755 -p vmecpus /usr/acq/vme
+install -o hhirf -p vmedII /usr/acq/etc

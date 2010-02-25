@@ -1,0 +1,158 @@
+$$$$CON   -  For Contents
+Type: h star - for how to get started
+
+Type: h gen  - for general commands
+
+Type: h tab  - for commands related to tabular   display
+
+Type: h graf - for commands related to graphical display (meters)
+
+Type: h new  - for commands related to new features
+
+$$$$GEN   -  For commands - general
+---------------------------------------------------------------------------
+General commands
+---------------------------------------------------------------------------
+H                   ;Displays help directory
+
+LON                 ;Turns ON  output to scadmo.log  (default)
+LOF                 ;Turns OFF output to scadmo.log
+
+CMD   filename      ;Processes commands from filename
+
+STAT                ;Displays/logs current status
+
+TST                 ;Tests operation with internally generated data 
+
+TSTA                ;Tests ALARM generation (takes about 15 seconds)
+
+RUN                 ;Start read/display
+
+CTRL-C              ;Interrupts read & display operation
+
+SNAP                ;Records scalers on scad-yyyy-mm-dd_hh:mm:ss.snap
+                    ;Example ---------- scad-2005-03-08_10:53:12.snap
+                    ;Also prints file on printer (default printer or that
+                    ;specified by the NAMP command below)
+
+CTRL-\              ;Does same thing as snap while scad is in display mode
+                    ;That's CTRL-backslash
+                    ;Does nothing in command-line mode
+
+NAMP prname         ;Says print snaps on printer prname 
+                    ;prname is like (ps01, cp6000, jet6000, etc)
+
+NAMP                ;Says print snaps on the default printer
+
+END                 ;Ends SCAD
+
+$$$$TAB   -  For commands related to tabular  display
+---------------------------------------------------------------------------
+Commands related to tabular display
+---------------------------------------------------------------------------
+ZERO                ;Zero all scalers defined for tabular display
+
+SEC  NSEC           ;Set display interval to NSEC secs (dflt=5)
+                    ;(legal values are 1 to 20
+
+LSEC NSEC           ;Set log interval to NSEC secs (dflt=0 OFF)
+                    ;(legal values are 0 (OFF) and 300 to 3600)
+
+NORT                ;Normalize rates to internal clock (dflt)
+NORS                ;Normalize rates as specified by SNIT-file 
+
+RLIM NAME LO HI     ;Set limits (LO, HI) for NAMEd scaler
+RLIM NAME OFF       ;Delete limits for NAMEd scaler
+RLIM OFF            ;Delete all defined scaler limits
+RLIM SHO            ;Display all scaler limits
+
+BPOF NUM            ;NUM = # beeps before beeper OFF
+BPON NUM            ;NUM = # in-limit displays before beeper ON
+
+LOG                 ;Record scalers on scadmo.log
+
+$$$$GRAF  -  For commands related to graphical display (meters)
+---------------------------------------------------------------------------
+Commands related to graphical display (meters)
+---------------------------------------------------------------------------
+GNIT  filename      ;Opens & processes standard snit-file
+
+GLIN                ;Set graphic display to linear
+
+GLOG                ;Set graphic display to log
+
+CLRG                ;Clear graphic display & deletes \b\GNIT\\ definition
+                    ;You must do another GNIT to restore graphical display
+
+RAV   N             ;Sets to display an average of N readings
+                    ;allowed value of N is 0 to 100
+                    ;N = 0 or blank sets N = 5 (the default)
+
+DPS   N             ;Specifies display rate to be N/sec
+                    ;allowed value of N is 0 to 20
+                    ;N = 0 or blank sets 10 displays/sec (the default)
+
+REVV                ;Sets to reverse color mapping on next FIG
+
+FIG                 ;Does a FIG for the # of scalers defined (1 to 8)
+---------------------------------------------------------------------------
+GLIM NAME LO HI     ;Set limits (LO, HI) for NAMEd graphic scaler
+
+GLIM NAME ON        ;Enable  limits for NAMEd graphic scaler display
+GLIM NAME OFF       ;Disable limits for NAMEd graphic scaler display
+GLIM NAME NULL      ;Deletes limits for NAMEd graphic scaler display
+
+GLIM ON             ;Enable  limits for ALL   graphic scaler displays
+GLIM OFF            ;Disable limits for ALL   graphic scaler displays
+GLIM NULL           ;Deletes limits for ALL   graphic scaler displays
+
+GLIM SHO            ;Display all graphic scaler limits
+---------------------------------------------------------------------------
+GLIM defined display limits generate visual alarms as follows:
+
+IF(rate.GT.HI) - Displays flashing yellow disks at upper left & right
+IF(rate.LT.LO) - Displays flashing white  disks at lower left & right
+$$$$NEW   -  For commands related to new features
+---------------------------------------------------------------------------
+Commands for defining rate limits for graphic displays
+See also scad document - pages 6 & 7
+---------------------------------------------------------------------------
+GLIM NAME LO HI     ;Set limits (LO, HI) for NAMEd graphic scaler
+
+GLIM NAME ON        ;Enable  limits for NAMEd graphic scaler display
+GLIM NAME OFF       ;Disable limits for NAMEd graphic scaler display
+GLIM NAME NULL      ;Deletes limits for NAMEd graphic scaler display
+
+GLIM ON             ;Enable  limits for ALL   graphic scaler displays
+GLIM OFF            ;Disable limits for ALL   graphic scaler displays
+GLIM NULL           ;Deletes limits for ALL   graphic scaler displays
+
+GLIM SHO            ;Display all graphic scaler limits
+---------------------------------------------------------------------------
+GLIM defined display limits generate visual alarms as follows:
+
+IF(rate.GT.HI) - Displays flashing yellow disks at upper left & right
+IF(rate.LT.LO) - Displays flashing white  disks at lower left & right
+---------------------------------------------------------------------------
+$$$$STAR  -  For how to get started
+---------------------------------------------------------------------------
+How to get started
+---------------------------------------------------------------------------
+o......Make a snit-file for the tabular display (required)
+
+o......Make a snit-file for any graphic display (optional) (max# = 8)
+
+Type: setenv VME vmex   ;where vmex denotes the name of the vme
+                        ;processor that you are using - vme1, vme2..
+
+Type: /usr/hhirf/scad   ;To start program
+                        ;Enter tabular snit-file name as directed
+                        ;Then enter commands from the lists defined herein
+
+Note: If you are logging (from lochost) onto another platform (remhost) via
+telnet (instead of ssh)  you will need enable the display on your platform
+(lochost). To do this:
+
+Before you login, Type: xhost +remhost
+
+After  you login, Type: setenv DISPLAY lochost:0.0

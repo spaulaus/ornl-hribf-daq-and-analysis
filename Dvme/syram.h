@@ -1,0 +1,149 @@
+#ifndef   SYRAM_H_
+#define   SYRAM_H_
+
+#define  NT  64                 /* number of tasks                         */
+#define  NM  ((NT+3)&0xFC)      /* number of task messages                 */
+#define  NP  16                 /* number of task message pointers         */
+#define  ND  ((NT+3)&0xFC)      /* number of delay events                  */
+#define  NC  8                  /* number of active channel buffers        */
+#define  NF  64                 /* number of file slots                    */
+#define  NU  15                 /* number of UART ports                    */
+#define  IZ  6                  /* input buffer size - IZ**2               */
+#define  MZ  0x4000000          /* max memory size                         */
+#define  TZ  64                 /* task message size                       */
+
+#define  NIE  (ND/2)
+#define  NPS  (NU+1)
+
+#define  IMK  (0xFF>>(8-IZ))    /* input buffer wrap around mask           */
+#define  NCP  ((1<<IZ)+2)       /* # chars/port + 2                        */
+#define  MPZ  2048              /* memory page size                        */
+#define  MBZ  (MZ/MPZ)          /* memory bitmap size                      */
+#define  NMB  (MBZ/8)           /* number of map bytes                     */
+#define  FSS  38                /* file slot size                          */
+#define  TQB  2                 /* TCB index                               */
+#define  TQM  (TQB+4)           /* map index                               */
+#define  TQE  (TQM+2)           /* event #1 / event #2                     */
+#define  TQS  (TQE+2)           /* scheduled event                         */
+#define  TBZ  (TQS+2+4)         /* Task entry size                         */
+#define  BPS  256               /* bytes per sector                        */
+#define  NRD  4                 /* number of RAM disks                     */
+
+struct SYRAM {
+  char *_bios;                  /* address of bios rom                     */
+  char *_mail;                  /* *mail array address                     */
+  unsigned short _rdkn;         /* *ram disk #                             */
+  unsigned short _rdks;         /* *ram disk size                          */
+  char *_rdka;                  /* *ram disk address                       */
+  char _bflg;                   /* basic present flag                      */
+  char _dflg;                   /* directory flag                          */
+  short _f681;                  /* 68000/680x0 flag                        */
+  char *_sram;                  /* run module B$SRAM                       */
+  short spare1;
+  short _fcnt;                  /* fine counter                            */
+  volatile int   _tics;         /* clock ticks counter                     */
+  unsigned char _smon;          /* month                                   */
+  unsigned char _sday;          /* day                                     */
+
+/*  VMEPROM Version 2.74 9-Apr-91 has two characters allocated for the
+*   year.  However, only the first is used since the real year - 1900
+*   is what is stored.  The second character appears to be unused.  So
+*   I will store the daylight savings time flag here.  Two characters
+*   are also allocated for seconds with only one used.  I will use
+*   the second for the timezone code.
+*/
+  unsigned char _syrs[2];       /* year                                    */
+  unsigned char _shrs;          /* hours                                   */
+  unsigned char _smin;          /* minutes                                 */
+  unsigned char _ssec[2];       /* seconds                                 */
+  char _patb[16];               /* input port allocation table             */
+  char _brkf[16];               /* input break flags                       */
+  char _f8bt[16];               /* port flags bits                         */
+  char _utyp[16];               /* port UART type                          */
+  char _urat[16];               /* port rate table                         */
+  char _evtb[10];               /* 0-79 event table                        */
+  char _evto[2];                /* 80-95 output events                     */
+  char _evti[2];                /* 96-111 input events                     */
+  char _evts[2];                /* 112-127 system events                   */
+  char _ev128[16];              /* 128 event - one per task                */
+  int  _evtm[4];                /* event 112-115 timers                    */
+  int  _bclk;                   /* clock adjust constant                   */
+  char *_tltp;                  /* task list pointer                       */
+  char *_utcb;                  /* user tcb pointer                        */
+  short _suim;                  /* supervisor interrupt mask               */
+  short _usim;                  /* user interrupt mask                     */
+  char _sptn;                   /* spawn task number                       */
+  char _utim;                   /* user task time                          */
+  char _tpry;                   /* task priority                           */
+  char _tskn;                   /* current task number                     */
+  char spare2;
+  char _tqux;                   /* task queue offset flag/number           */
+  char _tick[2];                /* task lock/reschedule flags              */
+  char _e122;
+  char _e123;
+  char _e124;
+  char _e125;
+  int  _cksm;                   /* system checksum                         */
+  short _pnod;                  /* pnet node #                             */
+  char bser[6];                 /* bus error vector                        */
+  char iler[6];                 /* illegal vector                          */
+  char ccnt[16];                /* control C count - one per port          */
+  char *_wind;                  /* window ID's                             */
+  char *_wadr;                  /* window addresses                        */
+  char *_chin;                  /* input stream                            */
+  char *_chot;                  /* output stream                           */
+  char *_iord;                  /* i/o redirect                            */
+  char _fect;                   /* file expand count                       */
+  char _pidn;                   /* processor ident byte                    */
+  int  *_begn;                  /* abs address of K1$BEGN table            */
+  short _rwc[14];               /* port row/col                            */
+  char *_opip[15];              /* output port pointers                    */
+  char *_uart[16];              /* uart base addresses                     */
+  int  _mapb;                   /* memory map bias                         */
+
+  char _maps[NMB];              /* system memory bitmap                    */
+  char _port[(NPS-1)*NCP];      /* character input buffers                 */
+  char _iout[(NPS-1)*NCP];      /* character output buffers                */
+  char rdtb[16];                /* redirect table                          */
+  short _tque[NT+1];            /* task queue                              */
+  char _tlst[NT*TBZ];           /* task list                               */
+  char _tsev[NT*32];            /* task schedule event table               */
+  int _tmtf[NM];
+  char _tmbf[TZ*NM];            /* task message buffers                    */
+  char _tmsp[NP*6];             /* task message pointers                   */
+  char _deiq[2+8+NIE*10];       /* delay evnet insert queue                */
+  char _devt[2+ND*10];          /* delay events                            */
+  short _bsct[32];              /* basic screen command table              */
+  short _xchi[NC];              /* channel buffer queue                    */
+  char _xchb[NC*BPS];           /* channel buffers                         */
+  char _xfs[NF*FSS];            /* file slots                              */
+  char _l2lk;                   /* level 2 lock                            */
+  char _l3lk;                   /* level 3 lock                            */
+  int  _drvl;                   /* driver link list entry point            */
+  int  _util;                   /* utility link list entry point           */
+  short _rdkl[NRD*4+1];         /* RAM disk list                           */
+/***************************************************************************
+*   The following was added at ORNL.
+*
+*   _devtbl - Flags which indicate what hardware is present.  Structure
+*             of the flag array is defined in devices.h.  Flags are set
+*             by the code devchk.c which runs each time the VME processor
+*             is booted.
+*
+*   _evtlist - Array used by the code rx_vmeprom.s.
+*
+*  Current address of _devtbl  is 0x5d12   MCSQ  10/20/95
+*
+*  4/ 4/01   Change size of _devtbl array from 32 to 64.  Change size of
+*            _spare3 array from 2288 to 2256.
+*
+*  1/21/04   Added another 100Hz counter for data acquisition use.
+*            _clk100
+****************************************************************************/
+  char _devtbl[64];             /* Hardware flags - see devices.h          */
+  unsigned int _clk100;         /* acq system 100Hz counter                */
+  char _spare3[2218];           /* padding                                 */
+  char _evtlist[768];           /* used in rx_vmeprom.s                    */
+} ;
+
+#endif             /* end   SYRAM_H_       */

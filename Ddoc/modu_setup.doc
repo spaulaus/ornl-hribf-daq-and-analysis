@@ -1,0 +1,628 @@
+RPD$075059001
+NPS$02
+CHP$MODU_SETUP - CAMAC & VME module setup code
+TPF$
+SP1$
+CY1$
+Sec Page               Function
+
+070   1  Introduction
+
+020   1  Data File Syntax
+030   2  Initialization by VME acquisition system
+040   3  HHIRF ADC Interface
+050   4  LRS 3511  Spectroscopy ADC
+060   4  LRS 4300  16-Channel Fast Encoding and Readout ADC
+070   5  LRS 4413  16-Channel Discriminator
+080   6  LRS 4415A  16-Channel Discriminator
+090   6  LRS 4416B  16-Channel Discriminator
+100   7  LRS 4418  Programmable Logic Delay/Fan-Out (LRS_4518)
+110   7  LRS 4508  Programmable Lookup Unit
+120   8  PHILLIPS  7106  16-Channel Discriminator
+130   8  PHILLIPS  7164, 7166, 7167, 7186 and 7187   ADCs and TDCs
+140   9  SILENA    4418/V  8-Channel Peak-Detect ADC (LRS_3351)
+150  10  UE_CLOCK  University of Edinburgh Clock
+160  10  LRS 3377  32-Channel TDC
+
+NEW  NEW  NEW  NEW  NEW  NEW
+
+170  11  CAEN V775 32-Channel TDC
+180  12  CAEN V785 32-Channel ADC
+
+SEC$.070 Introduction
+SIN$
+BLP$
+Many of the CAMAC modules used in data acquisition require some initialization.
+Examples of parameters which must be initialized include thresholds, pedestals,
+enables and modes.  There are several ways to do the initialization:
+INP$
+1)..  The $ini statement in your \b\pac\\ file.  This is probably the best
+way if you have simple modules and a small number of then.  Note that
+the $ini commands are executed each time you do \b\initvme\\.
+INP$
+2)..  User written codes.  As with using $ini, the users must understand
+the operation of the module in detail.  Several experimenters have written
+such codes.  The user should do \b\initvme\\ after executing their code.
+INP$
+3)..  The program modu_setup provides another method.  The user provides
+a data file which specifies the module type, hardware location and
+parameter data.  The code handles the details of initializing the
+modules.  The user need only understand the functional operation of each
+module.  The user should do \b\initvme\\ after executing modu_setup.
+BLP$
+The program is in directory \b\/usr/acq/vme\\.
+BLP$
+SEC$.020 Data file syntax
+BLP$
+The data file for \b\modu_setup\\ has only one format restriction.  The module
+type MUST be the first fields on a line.  Blank lines are allowed.  Comment
+fields begin with \b\* \\or \b\; \\ and extend to the end of the current
+line.  The input is case insensitive.   An \b\= \\ may be used to separate
+data fields.
+BLP$
+The module type is specified in the field following the keyword \b\mt\\.
+Again,
+\b\mt\\ MUST be the first field on a line.  The following fields must have
+at least the CAMAC crate number and the slot or slots where this type module
+is installed.  Any parameters not specified will either be disabled or 
+initalized to their default values.  See the individual module descriptions
+for the default values.  Data parameters may be in any order. 
+Everything following the \b\mt\\ applies to the specified module type at the
+specified hardware locations until a new \b\mt\\ statement is found
+or the end-of-file is detected.  Examples of module type specifications:
+CY1$
+        mt  phil_7164
+        mt=silena_4418
+BLP$
+The following is a list of module types which modu_setup knows how to
+initialize.  The module type may abbreviated as long as it remains unique.
+CY1$
+        hhirf_adc      lrs_4415a      phil_7164      silena_4418
+        lrs_3351       lrs_4416b      phil_7166      ue_clock
+        lrs_3511       lrs_4418       phil_7167      lrs_3377
+        lrs_4300       lrs_4508       phil_7186      caen_775
+        lrs_4413       phil_7106      phil_7187      caen_785
+BLP$
+The hardware location of the CAMAC module or modules must be specified.
+You must specify the CAMAC crate number and the slot(s) in the crate.
+Crate and slot numbers MUST be decimal.  The following are all equivalent:
+CY1$
+        crate 1  slot 22
+        crate=1  slot= 22
+        c=1  n=22
+        c=1  slot 22
+BLP$
+Multiple modules may be initialized identically.  For example, the
+specification
+CY1$
+        n=2-5
+BLP$
+means initialize modules 2, 3, 4 and 5.  The same data is used for all
+4 modules.
+BLP$
+VME modules are identified by internal switch settings. There are ten
+ADCs numbered 1 thru 10.  There are ten TDCs numbered 1 thru 10.  Which
+modules are installed in your VME crate can be determined by running
+\b\vmehardware\\.  In the ideal world, front panel labels would
+identify which module is which.  The user must specify which module(s)
+are to be initialized as follows:
+CY1$
+        adc=3
+        tdc=5
+BLP$
+Multiple modules may be initialized identically.  For example, the 
+specification
+CY1$
+        adc=3-5
+BLP$
+means initialize ADC modules 3, 4 and 5.  The same data is used for all
+3 modules.
+BLP$
+The fields following the keyword \b\data\\ specify the data type(s) and
+the data.  Known data types are:
+CY1$
+        anticoinc           enables           offset_memory
+        bgo_only            ge_only           overflow
+        common_threshold    lower_threshold   pedestals
+        conversion_gain     mode              upper_threshold
+        delays              maximum_time
+BLP$
+The data types may be abbreviated as long as they remain unique.  Multiple
+data types may be specified prior to the actual data.  The number of 
+datum required for a given type is module dependent.  For example, if the
+module has sixteen channels and has a pedestal data type, sixteen pedestal
+values MUST be specified.  Numeric data may decimal or hexadecimal.  There
+are two formats for hexadecimal data:  \b\0f07h\\ and \b\0xf07\\ are
+equivalent and are same as 3841 decimal.
+BLP$
+SEC$.030  Initialization by VME acquisition system
+BLP$
+Several of the modules we use have multiple readout modes.  Modules may
+have one or more of the following modes:
+ODP$
+1)...  Random access.  Channel determined by the CAMAC subaddress - A
+ODP$
+2)...  Compressed CAMAC.  Only channels having valid data are read.
+ODP$
+3)...  Compressed front panel FERA readout.
+BLP$
+The readout mode is determined by your \b\pac\\ program.  The default
+mode is random access.  If you add an \b\mt=\\ field to your \b\$cam\\
+statement, you are specifying that the compressed CAMAC mode be used.
+A \b\$fer\\ statement in your \b\pac\\ specifies front panel FERA readout.
+BLP$
+By default \b\modu_setup\\ sets the mode to random access.  When you run
+\b\initvme\\, the VME acquisition system may change the mode to either
+compressed CAMAC or front panel FERA depending on your \b\pac\\
+program.
+BLP$
+The VME acquisition changes only the mode register bits which have to do
+with the readout mode.  Other mode register bits may be set using
+\b\modu_setup\\.  See the specific module for details.
+BLP$
+SEC$.040 HHIRF ADC Interface
+BLP$
+The HHIRF_ADC interface is a CAMAC readout for Nuclear Data and
+Canberra NIM spectroscopy grade ADCs.  Up to 16 ADCs are multiplexed
+into a singe CAMAC module.  ADCs must be enabled on a channel by channel
+basis.
+CY1$
+      Data Type     Number     Range
+
+    enable            16       0 or 1
+
+BLP$
+If no enable data are specified, the default is to disable all
+channels.
+CY1$
+           Default Setup
+
+        enable            0
+BLP$
+An example for the hhirf_adc follows:
+CY1$
+mt=hhirf_adc crate=6 slot=1
+*
+*   Enable the first eight channels
+*
+data=enable 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0
+BLP$
+SEC$.050 LRS 3511  Spectroscopy ADC
+BLP$
+Two parameters may be set by the user: conversion_gain and offset.  The
+conversion gain can range from 250 channels full scale to 8000 channels.
+One should pick a value from the list below.  The offset is not very
+useful in our case but is included for completeness.  The ADC data is
+ORed with the offset to form the output data word.  Hence, the minimum
+value for the offset should be next power of 2 greater than the 
+conversion gain.  For example, if you set the conversion gain to 500,
+the minimum offset should be 512.
+CY1$
+      Data Type     Number      Values
+
+    conversion_gain    1    250, 500, 1000, 2000, 4000 or 8000
+    offset             1    256 to 32768
+
+BLP$
+If one or more parameters are not specified, the defaults
+are:
+CY1$
+           Default Setup
+
+        conversion_gain   8000
+        offset            0
+BLP$
+Example specification for the LRS_3511:
+CY1$
+mt=lrs_3511 c=6 n=23
+ data = conversion 250
+ data = offset 0
+BLP$
+SEC$.060 LRS 4300  16-Channel Fast Encoding and Readout ADC
+BLP$
+Normally the user should specify only the pedestal and overflow
+data types.  The default readout mode is random access.  The VME acquisition
+system will change the mode if your \b\pac\\ program specifies compressed
+CAMAC or front panel FERA readout.
+BLP$
+If you do not specify pedestal data, pedestal subtraction will be
+disabled.
+CY1$
+     \b\WARNING:\\  You must do \b\initvme\\ after modu_setup to
+               ensure proper readout.
+CY1$
+      Data Type     Number    Units         Range
+
+    pedestal          16     channels       0 to 255
+    mode               1     bit encoded    0 to 0ffffh
+    overflow           1                    0 or 1
+
+BLP$
+The parameter defaults are:
+CY1$
+           Default Setup
+
+        pedestal          Disabled
+        mode              0h
+        overflow          0
+BLP$
+Example specification for the LRS_4300:
+CY1$
+mt=lrs_4300 c=6 n=20   data=ped
+ 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0
+
+SEC$.070 LRS 4413  16-Channel Discriminator
+BLP$
+You can enable/disable each channel.  There is a common threshold for
+all channels in the module.  The common threshold may be controlled by
+a front panel screwdriver adjustment or programmed.
+CY1$
+      Data Type     Number    Units         Range
+
+    enable            16                    0 or 1
+    common_threshold   1     millivolts     0 to -1023
+BLP$
+The parameter defaults are:
+CY1$
+           Default Setup
+
+    enable             All channels enabled
+    common_threshold   Front panel adjust
+BLP$
+Example specification for the LRS_4413:
+CY1$
+*
+*  Enable all 16 channels
+*
+mt=lrs_4413 c 3 n 6 data = common  -30
+data=enable
+ 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1
+
+SEC$.080 LRS 4415A  16-Channel Discriminator
+BLP$
+You can enable/disable each channel.  There is a common threshold for
+all channels in the module.  The common threshold is controlled by a
+front panel screwdriver adjustment.
+BLP$
+In \b\normal\\ mode, channels are independent except for the common 
+threshold.  In \b\test\\ mode, a fast negative NIM signal at the
+test input generates an output for each enabled channel.
+BLP$
+You may specify the mode as 0 or 1 where 0 means normal mode. Alternately,
+you may specify the mode as normal or test.
+CY1$
+      Data Type     Number    Range
+
+    enable            16     0 or 1
+    mode               1     0 or 1 (normal or test)
+BLP$
+The parameter defaults are:
+CY1$
+           Default Setup
+
+        enable            1
+        mode              0 (normal)
+BLP$
+Example specification for the LRS_4415A:
+CY1$
+mt=lrs_4415a c=6 n=10
+data= mode normal
+*
+*  Enable all 16 channels
+*
+data=enable 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+BLP$
+SEC$.090 LRS 4416B  16-Channel Discriminator
+BLP$
+You can enable/disable each channel.  There is a common threshold for
+all channels in the module.  The common threshold may be controlled by
+a front panel screwdriver adjustment or programmed.
+CY1$
+      Data Type     Number    Units         Range
+
+    enable            16                    0 or 1
+    common_threshold   1     millivolt      0 to -1023
+BLP$
+The parameter defaults are:
+CY1$
+           Default Setup
+
+    enable             All channels enabled
+    common_threshold   Front panel adjust
+BLP$
+Example specification for the LRS_4416B:
+CY1$
+mt=lrs_4416b c=6 n=10  data = com -25
+*
+*  Enable all 16 channels
+*
+data=enable 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+BLP$
+SEC$.100 LRS 4418  Programmable Logic Delay/Fan-Out (LRS_4418)
+BLP$
+\b\BEWARE:\\ There are three versions of these modules.  All modules allow
+16 delay settings.  The Model 4418(4518) with no suffix provides 1 nanosecond
+steps for a maximum delay of 16 nanoseconds.  The Model 4418/100(4518/100)
+has steps of 2 nanoseconds with a maximum delay of 32 nanoseconds. The
+Model 4418/300(4518/300) has 16 nanosecond steps and a maximum delay of
+128 nanoseconds.
+BLP$
+This setup assumes that you have a Model 4418/300(4518/300) module.  For this
+module you select the desired delay in nanoseconds.  If you have a 
+Model 4418(4518), multiply the desired delay by 8.  For a Model 4418/100(
+4518/100), multiply the desired delay by 4.
+CY1$
+      Data Type     Number    Units         Range
+
+    delay             16     nanoseconds    0 to 128
+
+BLP$
+The delay default is:
+CY1$
+           Default Setup
+
+        delay             0
+BLP$
+Example specification for the LRS_4418:
+CY1$
+mt=lrs_4418  c=6 n=5 data = delay
+
+  0   0   0   0  60  60  60  60
+  0   0   0   0  60  60  60  60
+
+SEC$.110 LRS 4508  Programmable Lookup Unit
+BLP$
+\b\WARNING:\\ This is NOT a general setup for the 4508 module.  It is
+very specific to the use in the old Compton suppressed GE spectrometer.  The
+setup is the same for both halves of the module.
+BLP$
+Inputs 1 thru 4 are BGO signals and inputs 5 thru 8 are GE signals.
+For ge_only and bgo_only, only outputs 1 thru 4 are active.  For anticoinc,
+outputs 1 thru 4 are GE and not BGO while outputs 4 thru 8 are GE and BGO.
+CY1$
+      Data Type     Output Function
+
+      anticoinc      GE .and. .not.BGO also GE .and. BGO
+      ge_only        GE
+      bgo_only       BGO
+BLP$
+The default is:
+CY1$
+           Default Setup
+
+        anticoinc 
+BLP$
+Example specification for the LRS_4508:
+CY1$
+mt=lrs_4508  c=6 n=6 data=anti
+
+SEC$.120 PHILLIPS 7106  16-Channel Discriminator
+BLP$
+You can enable/disable each channel.  There is a common threshold for
+all channels in the module.  The common threshold may be controlled by
+a front panel screwdriver adjustment or programmed.
+BLP$
+In \b\local\\ mode, the common threshold is set by a front panel
+screwdriver adjustment.  In \b\remote\\ mode, the common threshold
+is programmed.
+BLP$
+If a common threshold is specified, the mode is set to remote.
+BLP$
+You may specify the mode as 0 or 1 where 0 means local mode. Alternately,
+you may specify the mode as local or remote.
+CY1$
+      Data Type     Number    Units         Range
+
+    enable            16                    0 or 1
+    common_threshold   1     millivolt    -10 to -1033
+    mode               1                    0 or 1 (local or remote)
+BLP$
+The parameter defaults are:
+CY1$
+           Default Setup
+
+        mode     0 (local)
+BLP$
+Example specification for the PHIL_7106:
+CY1$
+mt=phil_7106 c 3 n 6 data = common  -30
+*
+*  Enable all 16 channels
+*
+data=enable
+ 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1
+
+SEC$.130 PHILLIPS  7164, 7166, 7167, 7186 and 7187   ADCs and TDCs
+BLP$
+Separate pedestals, lower thresholds and upper thresholds by me set for
+each channel.  Note that the pedestal is added to the data PRIOR
+to threshold comparison.
+CY1$
+      Data Type     Number    Units         Range
+
+    lower_threshold    16    channels       0 to 4095
+    upper_threshold    16    channels       0 to 4095
+    pedestal           16    channels   -4096 to 4095
+BLP$
+The defaults are:
+CY1$
+           Default Setup
+
+        lower_threshold   Disabled
+        upper_threshold   Disabled
+        pedestal          Disabled
+BLP$
+Example specification for the PHIL_7186:
+CY1$
+mt=phil_7186  c=1 n=15  ; Channels 9 thru 14 are disabled
+data = ped
+        15    15    15    15    15    15    15    15  ; channels 1 thru 8
+        15    15    15    15    15    15    15    15  ; channels 9 thru 16
+data = low
+        16    16    16    16    16    16    16    16
+        16    16    16    16    16    16    16    16
+data = upper
+      4080  4080  4080  4080  4080  4080  4080  4080
+         0     0     0     0     0     0  4080  4080
+
+SEC$.140 SILENA 4418/V  8-Channel Peak-Detect ADC (LRS_3351)
+BLP$
+By default the readout mode is set to random access.  If your \b\pac\\
+program specifies one of the compressed modes, the VME acquisition
+system will change the mode register.  The user may set the overflow
+parameter independent of the readout mode.
+BLP$
+Note that all thresholds are set in millivolts referred to the
+input signal.
+CY1$
+     \b\WARNING:\\  You must do \b\initvme\\ after modu_setup to
+               ensure proper readout.
+CY1$
+      Data Type     Number    Units         Range
+
+    lower_threshold    8     millivolts     0 to 1000
+    upper_threshold    8     millivolts  8500 to 10000
+    offset_memory      8     channels    -123 to +123
+    common_threshold   1     millivolts     0 to 1200
+    mode               1     bit encoded    0 to 07fffh
+    overflow           1                    0 or 1
+CY1$
+           Default Setup
+
+        lower_threshold   0     mv
+        upper_threshold   10000 mv
+        offset_memory     0
+        common_threshold  150   mv
+        mode              0B00h
+        overflow          0
+BLP$
+Example specification for a SILENA_4418:
+CY1$
+mt=silena_4418  c=2 n=10
+*
+*                         Channel Number
+*               1      2      3      4      5      6      7      8
+*
+data=lower      0      0      0      0      0      0      0      0 ;millivolts
+data=upper  10000  10000  10000  10000  10000  10000  10000  10000 ;millivolts
+data=offset     0      0      0      0      0      0      0      0 ;channels
+data=common   375    ;millivolts
+
+SEC$.150 UE_CLOCK    University of Edinburgh Clock
+BLP$
+The most useful mode is mode 1. The clock is latched following the leading
+edge of the strobe input and remains constant until a clear is issued by
+front panel input or CAMAC command.  By default, module is set to mode 1.
+CY1$
+      Data Type     Number     Range
+
+    mode               1     0 or 1 (mode_0 or mode_1)
+
+CY1$
+           Default Setup
+
+        mode        1 (mode_1)
+BLP$
+Example specification for a UE_CLOCK:
+CY1$
+mt=ue_clock c=1 n=22  data=mode mode_1
+
+SEC$.160 LRS 3377  32-Channel TDC
+BLP$
+The TDC can be operated in Common Start or Common Stop mode.  The only
+other parameter which may specified is the maximum time.
+BLP$
+The readout is always the double word format.  This provides 0.5 nanosecond
+resolution over the full time range.  Only rising edges of inputs are
+recorded.
+BLP$
+The Measure Pause Interval is always set to zero.  In the common stop mode,
+there are rear panel trigger outputs available.  The trigger pulse delay
+is zero and trigger pulse output width is 50 nanoseconds.
+CY1$
+      Data Type     Number     Range
+
+    common             1      start or stop
+    maximum_time       1      0 thru 32767 nanoseconds
+
+CY1$
+           Default Setup
+
+        common           Start
+        maximum_time     32767
+BLP$
+Example specification for a LRS 3377:
+CY1$
+mt=lrs_3377 c=1 n=22  data= common start
+                      data= maximum_time 10000
+BLP$
+SEC$.170 CAEN V775 32-Channel TDC
+BLP$
+The user sets the low_threshold in channels from 0 to 2047.  The 
+hardware thresholds are in multiples of 16 channels.  The user specified
+threshold is converted to the nearest multiple of 16. 
+BLP$
+The TDC can be operated in Common Start or Common Stop mode.  The
+maximum_time (full scale time) may be set from 140 nanoseconds to
+1200 nanoseconds.
+BLP$
+CY1$
+      Data Type     Number     Range
+
+    common             1      start or stop
+    maximum_time       1      140 thru 1200 nanoseconds
+    lower_threshold   32      0 thru 2047 channels
+
+CY1$
+           Default Setup
+
+        common           Start
+        maximum_time     1200
+        lower_threshold  0
+BLP$
+Example specification for a CAEN_775:
+CY1$
+mt=caen_775 tdc=1
+data = low
+        07    07    07    07    07    07    07    07  ;Inputs 0 thru 7
+        07    07    07    07    07    07    07    07  ;Inputs 8 thru 15
+        07    07    07    07    07    07    07    07  ;Inputs 16 thru 23
+        07    07    07    07    07    07    07    07  ;Inputs 24 thru 31
+data = com
+         start     ;Common start
+*
+data = maximum_time
+         240   ; 240 ns full scale
+*
+
+BLP$
+SEC$.180 CAEN V785 32-Channel ADC
+BLP$
+The user sets the low_threshold in channels from 0 to 2047.  The 
+hardware thresholds are in multiples of 16 channels.  The user specified
+threshold is converted to the nearest multiple of 16. 
+BLP$
+CY1$
+      Data Type     Number     Range
+
+    lower_threshold   32      0 thru 2047 channels
+
+CY1$
+           Default Setup
+
+        lower_threshold  0
+
+BLP$
+Example specification for a CAEN V785:
+CY1$
+mt=caen_785 adc=5
+data = low
+        18    18    18    18    18    18    18    18   ;Inputs 0 thru 7
+        18    18    18    18    18    18    18    18
+        18    18    18    18    18    18    18    18
+        18    18    18    18    18    18    18    18   ;Inputs 24 thru 31
+BLP$
+QIT$

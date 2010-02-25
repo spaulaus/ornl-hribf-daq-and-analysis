@@ -1,0 +1,41 @@
+#!/bin/csh -f
+set cpu = "vme"
+if ($?VME == 1) then
+  set cpu = $VME
+endif
+#echo "Request to boot VME processor $cpu as an acquisition system"
+#echo "Type YES and a carriage return to continue. Type a carriage"
+#echo "return to abort."
+#echo ""
+#echo -n ">>> "
+#set p = $<
+#if ($p != "YES") then
+#  set status = 99
+#  echo "bootvme aborted"
+#  exit
+#endif
+echo "Boot VME processor $cpu"
+echo " "
+echo "Using  bootvme"
+echo " "
+echo "*********************** WARNING ************************"
+echo "* The VME processor is being rebooted.                 *"
+echo "*                                                      *"
+echo "* To run data acquisition, YOU MUST execute three      *"
+echo "* additional commands:                                 *"
+echo "*   1)  loadacq                                        *"
+echo "*   2)  pacor  userfile l                              *"
+echo "*   3)  initvme                                        *"
+echo "*********************** WARNING ************************"
+echo "Reboot the VME processor"
+/usr/acq/vme/vmereset
+set err = $status
+if ($err != 0) then
+  exit
+endif
+/usr/acq/vme/vmeboot
+set err = $status
+if ($err != 0) then
+  exit
+endif
+/usr/acq/vme/run /usr/acq/vme/bios

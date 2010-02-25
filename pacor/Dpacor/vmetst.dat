@@ -1,0 +1,3 @@
+$vme adc7 a1-34 id101,1 mt=caen-785
+$vme tdc7 a1-34 id201,1 mt=caen-775
+end

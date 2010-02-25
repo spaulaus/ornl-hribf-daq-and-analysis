@@ -1,0 +1,18 @@
+#  Host table for Oak Ridge PHysics VME based acquisition system
+#   Format-  hostname: address (hexadecimal)
+#   Text after # is ignored.
+vme1:   eth2 00-80-42-00-29-79
+vme2:   eth2 00-80-42-04-16-14
+vme3:   eth2 00-80-42-04-65-26
+vme4:   eth2 00-80-42-04-44-53
+vme5:   eth2 00-80-42-04-53-88
+vme6:   eth2 00-80-42-04-55-66
+vme7:   eth2 00-80-42-04-58-72
+vme8:   eth2 00-80-42-04-18-68
+vme9:   eth2 00-80-42-04-13-91
+vme10:  eth2 00-80-42-04-25-52
+vme11:  eth2 00-80-42-04-09-38
+vme12:  eth2 00-80-42-04-77-27
+vme20:  eth2 00-80-42-0d-03-62       #CPU-60
+vme21:  eth2 00-80-42-0d-0e-20       #CPU-60
+vme22:  eth2 00-80-42-0d-02-a7       #CPU-60
