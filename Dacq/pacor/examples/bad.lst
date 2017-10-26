@@ -1,0 +1,50 @@
+      1     1  !                                                                               
+      2     2  !       data format L003                                                        
+      3     3  $INIT cnaf 0,16,1,17,0h                                                         
+      4     4  $INIT cnaf 0,16,0,20,20h                                                        
+      5     5  $INIT cnaf 0,16,1,20,20h                                                        
+      6     6  $INIT cnaf 0,16,2,20,20h                                                        
+      7     7  $INIT cnaf 0,16,3,20,20h                                                        
+      8     8  $INIT cnaf 0,16,4,20,20h                                                        
+      9     9  $INIT cnaf 0,16,5,20,20h                                                        
+     10    10  $INIT cnaf 0,16,6,20,20h                                                        
+     11    11  $INIT cnaf 0,16,7,20 20h                                                        
+     12    12  $INIT cnaf 0,16,8,20,20h                                                        
+     13    13  $INIT cnaf 0,16,9,20,20h                                                        
+     14    14  $INIT cnaf 0,16,10,20,20h                                                       
+     15    15  $INIT cnaf 0,16,11,20,20h                                                       
+     16    16  $INIT cnaf 0,16,12,20,20h                                                       
+     17    17  $INIT cnaf 0,16,13,20,20h                                                       
+     18    18  $INIT cnaf 0,16,14,20,20h                                                       
+     19    19  $INIT cnaf 0,16,15,20,20h                                                       
+     20    20  $INIT cnaf 0,16,2,17,0h                                                         
+     21    21  $INIT cnaf 0,16,0,20,0fe0h                                                      
+     22    22  $INIT cnaf 0,16,1,20,0fe0h                                                      
+     23    23  $INIT cnaf 0,16,2,20,0fe0h                                                      
+     24    24  $INIT cnaf 0,16,3,20,0fe0h                                                      
+     25    25  $INIT cnaf 0,16,4,20,0fe0h                                                      
+     26    26  $INIT cnaf 0,16,5,20,0fe0h                                                      
+     27    27  $INIT cnaf 0,16,6,20,0fe0h                                                      
+     28    28  $INIT cnaf 0,16,7,20 0fe0h                                                      
+     29    29  $INIT cnaf 0,16,8,20,0fe0h                                                      
+     30    30  $INIT cnaf 0,16,9,20,0fe0h                                                      
+     31    31  $INIT cnaf 0,16,10,20,0fe0h                                                     
+     32    32  $INIT cnaf 0,16,11,20,0fe0h                                                     
+     33    33  $INIT cnaf 0,16,12,20,0fe0h                                                     
+     34    34  $INIT cnaf 0,16,13,20,0fe0h                                                     
+     35    35  $INIT cnaf 0,16,14,20,0fe0h                                                     
+     36    36  $INIT cnaf 0,16,15,20,0fe0h                                                     
+     37    37  $INIT cnaf 0,16,0,19,06h                                                        
+     38    38  ;                                                                               
+     39    39  $DID 255,255,255                                                                
+     40    40  ;                                                                               
+     41    41  !$LAT c00 n01 f00 a00 glat:01                                                   
+     42    42  $CAM c00 n01 f00 a00 tst:01                                                     
+     43    43  $CAM c00 n16 f00 a00-15 tdc:1,01 id01,01 dt25 mt=phil_7186                      
+ DT form of delay-time specification not supported                               at SOR-,EXP-LINE#=   43   43
+     44    44  ;                                                                               
+     45    45  $RGAT gate(4) tdc(2) 1,200                                                      
+     46    46  $RGAT gate(5) tdc(2) 2,99                                                       
+     47    47  $RGAT gate(1) tdc(16) 1792,2304                                                 
+     48    48  $RGAT gate(2) tdc(2) 200,3000                                                   
+     49    49  $RGAT gate(3) tdc(16) 1,100                                                     

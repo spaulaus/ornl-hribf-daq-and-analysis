@@ -1,0 +1,220 @@
+RPD$075059001
+NPS$01
+CHP$0000  - MCLIB -
+TPF$
+SP1$
+CY1$
+Sec Page               Function
+
+000   1  Introduction
+
+010   1  STRPARSE - Finds fields in FORTRAN character variable
+020   2  STRLEN   - Finds the length of the string in character variable
+030   2  STRLOWER - Converts character string to lower case
+040   3  STRUPPER - Converts character string to upper case
+050   3  STRAPPEND- Concatenates two character variables
+060   3  STRAPPNS - Concatenate two strings with one space between
+
+070   3  FLOATUNS - Convert unsigned 32 bit integer to REAL*8
+
+080   3  SHARED_WIPE - Remove unused shared memory segments
+
+SEC$.000 INTRODUCTION
+SIN$
+BLP$
+Most of these routines were in \b\/usr/hhirf/mclib.a\\.  That library
+is now obsolete and will disappear.
+BLP$
+The routines described herein are now in the library
+\b\/usr/hhirf/orphlib.a\\.
+BLP$
+W.T. Milner has added the routine STRAPPNS which concatenates two
+strings leaving one space character between the strings.  See
+section 060 for details.
+BLP$
+SEC$.010 STRPARSE - FIND FIELDS IN CHARACTER VARIABLE
+SIN$
+BLP$
+STRPARSE determines the position, field type and the number of fields
+in the input character string.
+CY1$
+       CHARACTER*XX  LINE
+       INTEGER*4     INDX(2,10),ITYPE(10),NF,INEXT
+
+       CALL STRPARSE(LINE,INDX,ITYPE,NF,INEXT)
+where:
+          LINE      - Input string to be parsed
+returns:
+          INDX(1,I) - Index of the first character in the Ith field
+          INDX(2,I) - Index of the last character in the Ith field
+          ITYP(I)   - Type of the Ith field (Numeric or Non-numeric)
+          NF        - Number of fields
+          INEXT     - Non-zero only if line has more than 10 fields
+BLP$
+Fields are delimited by the beginning and end of line and the following 
+characters:
+CYB$
+       blank tab newline null , =
+BLP$
+The type of the field is determined by the first character of the field.
+There are two types; ITYP(I) = 1 means a non-numeric field and ITYP(I) = 2
+means a numeric field.
+BLP$
+A numeric field is defined as a field which begins with one of the following
+characters:
+CYB$
+       0 1 2 3 4 5 6 7 8 9 + - .
+BLP$
+Using the indices returned by STRPARSE, you may extract a field of the
+input line or decode a field with an internal read.  For example, to
+extract the third field:
+CY1$
+       STRING(1:) = LINE(INDX(1,3):INDX(2,3))
+BLP$
+To decode an integer from the second field:
+CY1$
+       READ(LINE(INDX(1,2):INDX(2,2)),1000) IMIN
+ 1000  FORMAT(I)
+BLP$
+STRPARSE is limited to 10 fields per call.  If the input string
+has more than 10 fields, INEXT will be non-zero on return.  The variable
+INEXT may be used to extract additional fields from the input string.
+For example:
+CY1$
+       I = INEXT
+       STRPARSE(LINE(I:),INDX,ITYP,NF,INEXT)
+BLP$
+NOTE that the indices returned are always relative to the
+start of the input string.  To extract the second field following the
+example above:
+CY1$
+       STR(1:) = LINE(I+INDX(1,2)-1:I+INDX(2,2)-1)
+BLP$
+SEC$.020 STRLEN  -  FIND LENGTH OF STRING
+BLP$
+STRLEN is a function which returns the length of the string stored in
+a character variable.
+CY1$
+       CHARACTER*XX  LINE
+       INTEGER*4     STRLEN,LEN
+
+       LEN = STRLEN(LINE)
+BLP$
+To determine the length of the string, the function searchs the string
+from right to left until a character is found is not one of the
+following:
+CYB$
+       blank tab newline null
+BLP$
+Example:
+CY1$
+       CHARACTER*80  LINE
+       INTEGER*4     STRLEN,LEN
+
+       LINE(1:) = 'Testing 1,2,3,4'
+       LEN = STRLEN(LINE)
+BLP$
+In this example, LEN is 15.
+BLP$
+SEC$.030 STRLOWER  -  CONVERT TO LOWER CASE
+BLP$
+STRLOWER converts a character string to lower case.
+CY1$
+       CHARACTER*80  LINE
+
+       LINE = 'NOW IS the time'
+       CALL STRLOWER(LINE(1:3))
+       TYPE *,LINE
+
+The TYPE statement outputs:
+
+       now IS the time
+BLP$
+SEC$.040 STRUPPER  -  CONVERT TO UPPER CASE
+BLP$
+STRUPPER converts a character string to upper case.
+CY1$
+       CHARACTER*80  LINE
+
+       LINE = 'now is the time'
+       CALL STRUPPER(LINE(1:3))
+       TYPE *,LINE
+
+The TYPE statement outputs:
+
+       NOW is the time
+BLP$
+SEC$.050 STRAPPEND  -  CONCATENATE TWO STRINGS
+BLP$
+STRAPPEND concatenates STRING1 and STRING2 with the resulting string 
+returned in STRING1.  If the resulting string exceeds the storage
+allocated for STRING1, STRING2 is truncated.
+CY1$
+       CHARACTER*80  STR1,STR2
+
+       STR1 = 'Now is t'
+       STR2 = 'he time'
+       CALL  STRAPPEND(STR1,STR2)
+       TYPE *,STR1
+
+The TYPE statement outputs:
+
+       now is the time
+BLP$
+SEC$.060 STRAPPNS  -  CONCATENATE TWO STRINGS WITH ONE SPACE BETWEEN
+BLP$
+STRAPPNS concatenates STRING1 and STRING2 leaving one space character
+between the two strings.  The resulting string is returned in STRING1.
+If the resulting string exceeds the storage
+allocated for STRING1, STRING2 is truncated.
+CY1$
+       CHARACTER*80  STR1,STR2
+
+       STR1 = 'Now is'
+       STR2 = 'the time'
+       CALL  STRAPPEND(STR1,STR2)
+       TYPE *,STR1
+
+The TYPE statement outputs:
+
+       now is the time
+BLP$
+SEC$.070 FLOATUNS  - CONVERT UNSIGNED INTEGER TO REAL*8
+BLP$
+FLOATUNS is a function which returns a REAL*8 variable.  The call
+parameter is 32 bit unsigned integer.
+CY1$
+       REAL*8     FLOATUNS,NUM
+       INTEGER*4  VALUE
+
+       NUM = FLOATUNS(VALUE)
+BLP$
+SEC$.080 SHARED_WIPE - REMOVE UNUSED SHARED MEMORY SEGMENTS
+BLP$
+When programs which create shared memory segments terminate abnormally,
+the shared memory segment remains allocated indefinitely.  In time,
+all available shared memory segments become allocated and no one is
+able to used shared memory.
+BLP$
+There is a documented procedure for a user to remove his unused shared
+memory segments.  Unfortunately, some users do not always remove
+their unused segments.  This, in time, causes problems for other users.
+BLP$
+This FORTRAN callable routine is designed to be called at startup
+of any routine which creates new shared memory segments.  It identifies
+and removes any of the user's unused segments.  An unused shared memory
+segment is defined as one which meets ALL of the following:
+INP$
+1).. The OWNER is the current user
+INP$
+2).. The CREATOR is the current user
+INP$
+3).. No process is attached to the shared memory segment
+INP$
+4).. The process which created the shared memory segment no longer exists.
+BLP$
+The FORTRAN call is:
+CY1$
+        CALL SHARED_WIPE
+BLP$
+QIT$

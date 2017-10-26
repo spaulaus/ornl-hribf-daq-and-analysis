@@ -1,0 +1,509 @@
+RPD$075059001
+NPS$01
+RSH$0505
+CHP$0000  - AIOLIB -
+TPF$
+SP1$
+CY1$
+Sec Page               Function
+
+010   1  Introduction
+
+020   1  AIOOPEN   - Open a file.  You MUST use this open if you wish
+                     to use any other routines in the package.
+030   2  AIOCLOSE  - Close a file which was opened with AIOOPEN.
+040   2  AIOREAD   - Start a read operation.
+050   3  AIORDWAIT - Wait for a read operation started by AIOREAD to
+                     complete.
+060   3  AIOWRITE  - Start a write operation.
+070   4  AIOWRWAIT - Wait for a write operation started by AIOWRITE
+                     to complete.
+080   4  AIODONE   - Wait for all queued I/Os to complete.
+090   5  AIOERROR  - Converts an error code returned by one of these
+                     routines to an ASCII string.
+100   5  AIOSTATUS - Displays (standard output unit) status of queued
+                     I/O operations.
+110   5  MTUNIT    - Convert a logical unit number returned by AIOOPEN
+                     to a file descriptor.  Function is needed to use
+                     Judge Roy's tape motion routines.
+120   6  AIO_QIO   - Queue an I/O operation.  Similar to VMS  SYS$QIO.
+130   6  AIO_QIOW  - Queue an I/O operation and wait till complete.
+                     Similar to VMS SYS$QIOW.
+140   7  AIO_QIO_WAIT -  Suspend until an operation queued by AIO_QIO
+                         completes.
+
+150   7  Converting ULTRIX N-buf codes.
+160   8  Required Link flags.
+170   8  An example code having absolutely no practical use.
+180  10  Make file for example in SEC 170.
+
+BLP$
+SEC$.010  Introduction
+SIN$
+BLP$
+Through the ages we have come to know and love (well, at least accept)
+features of other operating systems which have no direct replacements
+in OSF/1.  This package of FORTRAN callable routines provide the
+functionality of two such features:
+ODP$
+1)....  N-buf I/O provided in ULTRIX
+ODP$
+2)....  SYS$QIO I/O routines provided in VMS
+BLP$
+SEC$.020  AIOOPEN - Open a file for Asynchronous I/O
+BLP$
+Any file to be accessed using these routines MUST be opened using AIOOPEN.
+If there is no error, LUN is returned as a small nonzero positive integer
+and IERR is zero.  If IERR is nonzero, an error was detected.  The error
+may be due to an invalid argument, AC or FSTAT, or an error code returned
+by the system call to open the file.  In either case, the routine AIOERROR
+may be used to get an ASCII message for the error code.
+BLP$
+LUN is the logical unit number assigned to the file.  It must be used in all
+subsequent read/write routine calls.  LUN is not equivalent to a logical
+unit number used in a FORTRAN  OPEN call.  Furthermore, it is not equivalent
+to a file descriptor required by the magnetic tape routines in jblibc1.a.
+The FORTRAN function MTUNIT can be used to convert LUN to a file descriptor.
+CY1$
+
+     CALL AIOOPEN(FILENAME,AC,FSTAT,LUN,IERR)
+
+where:
+     CHARACTER*(*)  FILENAME - Name of file to open.
+     INTEGER*4      AC       - File access code.  Four character ASCII code
+                               for file access.  Must be upper case. Codes
+                               are:
+                                'R   ' - Open file as read only
+                                'W   ' - Open file as write only
+                                'RW  ' - Open file as read/write
+     INTEGER*4      FSTAT    - File status code.  Four character ASCII code
+                               file status code.  Must be upper case.  Codes
+                               are:
+                                'OLD ' - File must already exist
+                                'NEW ' - File must not exist.  New file is
+                                         created.
+                                'UNK ' - If file exists, open for use.  If
+                                         file does not exist, create a new
+                                         file.
+
+returns:
+    INTEGER*4     LUN       - Logical unit number for use in subsequent
+                              calls to AIOxxxx functions.
+    INTEGER*4     IERR      - Zero means no errors.  Nonzero means an error.
+                              call AIOERROR to convert error code to an
+                              ASCII string.
+BLP$
+SEC$.030  AIOCLOSE - Close file opened for Asynchronous I/O
+BLP$
+The routine AIOCLOSE should be used to close files opened using AIOOPEN.
+It is important that AIOCLOSE be used if you subsequently plan to open
+other files within the same program.
+CY1$
+
+   CALL  AIOCLOSE(LUN)
+
+where:
+   INTEGER*4  LUN - Logical unit number.
+
+BLP$
+SEC$.040  AIOREAD - Start a read operation
+BLP$
+AIOREAD is used to start a read operation.  On return, the request operation
+has been queued if IERR is zero.  Before you access the data in BUF, you
+must call AIORDWAIT with the same BUF as was used in this call.  You may
+make multiple calls to AIOREAD prior to the first call to AIORDWAIT.
+CY1$
+
+   CALL  AIOREAD(LUN,BUF,NBYTES,OFFSET,IERR)
+
+where:
+    INTEGER*4  LUN     - Logical unit number
+    ARRAY      BUF(*)  - Data buffer.
+    INTEGER*4  NBYTES  - Number of bytes to read
+    INTEGER*8  OFFSET  - Offset from the beginning of the file in bytes.
+                         An offset of zero means the first byte in the file.
+return:
+    INTEGER*4  IERR    - Zero means no error.  Nonzero means an error.  Use
+                         AIOERROR to convert error code to an ASCII string.
+BLP$
+SEC$.050  AIORDWAIT - Wait for a read operation to complete
+BLP$
+AIORDWAIT is used to determine when  a buffer used in a prior AIOREAD call
+is available for use.  If IERR is nonzero, a read error has occured.  Use
+AIOERROR to convert the error code to an ASCII message.  If  BUF is not
+in the queue, IERR is nonzero on return.  If the read operation is complete
+when AIORDWAIT is called, the return is immediate with NBYTES set to the
+number of bytes read.  Otherwise, the process suspends until the read
+operation completes.
+BLP$
+If IERR is nonzero, NBYTES will be zero.  If IERR is zero and NBYTES is
+zero, an end-of-file (EOF) was read.
+CY1$
+
+   CALL  AIORDWAIT(LUN,BUF,NBYTES,IERR)
+
+where:
+   INTEGER*4  LUN     - Logical unit number
+   ARRAY      BUF(*)  - Data buffer
+
+returns:
+   INTEGER*4  NBYTES  - Number of bytes read
+   INTEGER*4  IERR    - Zero means no error.  Nonzero means an error.  Use
+                        AIOERROR to convert error code to an ASCII string.
+                        IERR zero and NBYTES zero means end-of-file (EOF)
+BLP$
+SEC$.060  AIOWRITE - Start a write operation
+BLP$
+AIOWRITE is used to start a write operation.  If IERR is zero, the write
+operation has been queued.  A nonzero IERR means the write was not queued
+due to an error.  AIOERROR may be used to convert the error code to an
+ASCII message.  AIOWRWAIT must be called with the same argument BUF before
+the buffer is used again.
+CY1$
+
+   CALL  AIOWRITE(LUN,BUF,NBYTES,OFFSET,IERR)
+
+where:
+    INTEGER*4  LUN     - Logical unit number
+    ARRAY      BUF(*)  - Data buffer.
+    INTEGER*4  NBYTES  - Number of bytes to write 
+    INTEGER*8  OFFSET  - Offset from the beginning of the file in bytes.
+                         An offset of zero means the first byte in the file.
+return:
+    INTEGER*4  IERR    - Zero means no error.  Nonzero means an error.  Use
+                         AIOERROR to convert error code to an ASCII string.
+BLP$
+SEC$.070  AIOWRWAIT - Wait for a write operation to complete
+BLP$
+AIOWRWAIT is used to wait for the completion of a write operation started by
+AIOWRITE.  You should not reuse a buffer until AIOWRWAIT returns.  If the
+write operation has already completed when AIOWRWAIT is called,  the routine
+returns immediately with NBYTES set to the number of bytes written.  Otherwise,
+the process suspends until the write is complete.  If IERR is nonzero, a
+write error has occured.  If IERR is nonzero, NBYTES is zero.
+CY1$
+
+   CALL  AIOWRWAIT(LUN,BUF,NBYTES,IERR)
+
+where:
+   INTEGER*4  LUN     - Logical unit number
+   ARRAY      BUF(*)  - Data buffer
+
+returns:
+   INTEGER*4  NBYTES  - Number of bytes written
+   INTEGER*4  IERR    - Zero means no error.  Nonzero means an error.  Use
+                        AIOERROR to convert error code to an ASCII string.
+BLP$
+SEC$.080  AIODONE - Wait for all queued I/Os to complete
+BLP$
+AIODONE is used to wait for all queued I/O operations on the specified logical
+unit to complete.  The best example of usage is writing tape where you need
+to wait for the write operations to complete before writing an end-of-file
+mark.
+BLP$
+If IERR return is zero, no error was detected for any of the queued I/O
+operations.  If IERR is nonzero, the error code is for the first operation
+which returned a system error.  If more than one I/O operation was queued,
+there is no way to determine which I/O generated the error code.
+BLP$
+If AIODONE is used with a unit opened for read, the data for the queued
+operations will be lost.
+BLP$
+CY1$
+
+   CALL  AIODONE(LUN,IERR)
+
+where:
+   INTEGER*4  LUN     - Logical unit number
+
+returns:
+   INTEGER*4  IERR    - Zero means no error.  Nonzero means an error.  Use
+                        AIOERROR to convert error code to an ASCII string.
+                        If more than I/O operation was queued, the error
+                        code is for the first one which failed.  Only
+                        errors from system calls are reported.
+BLP$
+SEC$.090  AIOERROR - Convert error code to ASCII string
+BLP$
+Most of the routines in this package return a call status code.  If the 
+status code is nonzero, an error has been detected.  There are two types
+of error codes.  The codes 1 thru 99 are returned from OSF system calls.
+Errors detected in these routines return codes 32768 and greater.
+BLP$
+This routine converts the error code to an ASCII string.
+CY1$
+
+   CALL  AIOERROR(IERR,STRING)
+
+where:
+   INTEGER*4  IERR   -  Error code 
+
+return:
+   CHARACTER*64   STRING - ASCII message for the code IERR
+BLP$
+SEC$.100  AIOSTATUS - Display status of queued AIO operations
+BLP$
+AIOSTATUS displays the status of all queued I/O operations for
+all units in use.  This routine is sometimes useful in debugging codes.
+CY1$
+
+   CALL  AIOSTATUS()
+
+Example output:
+
+******************  Channel 1  ******************
+ File = testf  Open for read only
+
+ Number of buffers read = 624
+ Read buf Addr       Status      Trap       Param
+    40021938      In Progress    200060d0    624
+
+BLP$
+SEC$.110  MTUNIT - Get file descriptor for a logical unit number
+BLP$
+This is a FORTRAN Function which converts a logical unit number
+returned by AIOOPEN to a OSF file descriptor.  This function is
+included for compatibility with Judge Roy's mag tape library.
+Calls to MT_xxxx routines require the file descriptor.
+CY1$
+
+    INTEGER*4  MTUNIT
+
+    TLU = MTUNIT(LUN)
+
+where:
+    INTEGER*4  LUN - AIO logical unit number.
+
+return:
+    INTEGER*4  TLU - UNIX file descriptor.  Returns -1 for an invalid
+                     logical unit number.  Also returns -1 is the
+                     channel is not open.
+BLP$
+SEC$.120  Queue I/O operation and wait for completion
+BLP$
+AIO_QIOW queues an I/O operation and suspends the process until the operation
+completes.  It is equivalent to sequences of AIOREAD and AIORDWAIT or
+AIOWRITE and AIOWRWAIT.  Since the process always suspends until the operation
+completes, there is no advantage to this routine over standard FORTRAN calls.
+BLP$
+If IOSB(1) is zero and IOSB(2) is zero, an end-of-file was read.  If IOSB(1)
+is nonzero, IOSB(2) will be zero.
+CY1$
+
+   CALL  AIO_QIOW(LUN,FUNC,IOSB,BUF,NBYTES,OFFSET)
+
+where:
+   INTEGER*4  LUN     - Logical unit number
+   INTEGER*4  FUNC    - Function code: 1 means read, 2 means write
+   ARRAY      BUF(*)  - Data buffer
+   INTEGER*4  NBYTES  - Number of bytes written
+   INTEGER*8  OFFSET  - Offset from the beginning of the file in bytes.
+                        An offset of zero means the first byte in the file.
+
+returns:
+   INTEGER*4  IOSB(2) - First word is status return for this call.
+                        Zero means OK. Nonzero means error.
+                        Second word is number of bytes transfered.
+                        IOSB(1) zero and IOSB(2) zero means end-of-
+                        file (EOF) for a read operation.
+BLP$
+SEC$.130  Queue I/O operation.  Execute routine 'TRAP' on completion.
+BLP$
+AIO_QIO starts the I/O operation and returns.   When the I/O operation
+completes, the user routine TRAP is called.  The argument TRAP_PARAM
+is saved and passed as an argument to the routine TRAP at completion.  
+CY1$
+    
+   CALL  AIO_QIO(LUN,FUNC,IOSB,TRAP,TRAP_PARAM,BUF,NBYTES,OFFSET)
+
+where:
+   INTEGER*4  LUN     - Logical unit number
+   INTEGER*4  FUNC    - Function code: 1 means read, 2 means write
+              TRAP    - A user FORTRAN routine which is executed when
+                        the I/O operation completes.
+   INTEGER*4  TRAP_PARAM - A parameter passed to the routine TRAP.
+   ARRAY      BUF(*)  - Data buffer
+   INTEGER*4  NBYTES  - Number of bytes written
+   INTEGER*8  OFFSET  - Offset from the beginning of the file in bytes.
+                        An offset of zero means the first byte in the file.
+
+returns:
+   INTEGER*4  IOSB(2) - First word is status return for this call.
+                        Zero means OK. Nonzero means error.
+                        Second word is not used.
+
+  The TRAP routine should be defined as follows:
+
+      SUBROUTINE  TRAP(TRAP_PARAM,IOSB)
+
+where:
+     INTEGER*4  TRAP_PARAM  - From the call to AIO_QIO.
+     INTEGER*4  IOSB(2)     - First word is status return for the I/O
+                              operation.  Zero means OK.  Nonzero means
+                              error.  The second word is the number of
+                              bytes transferred.  IOSB(1) zero and IOSB(2)
+                              zero means end-of-file (EOF) for a read
+                              operation.
+BLP$
+SEC$.140  AIO_QIO_WAIT - Suspend until a AIO_QIO operation completes.
+BLP$
+This routine suspends the process until an I/O previously queued using
+AIO_QIO completes.  The routine returns after the specified TRAP
+routine has executed.  In the case you no more work before an I/O
+completes, it may be better to call AIO_QIO_WAIT instead of looping
+waiting for a software flag which would be set in TRAP.
+CY1$
+
+    CALL  AIO_QIO_WAIT(LUN,ISTAT)
+
+where:
+    INTEGER*4  LUN     - Logical unit number
+
+return:
+    INTEGER*4  ISTAT   - Positive nonzero means error.  Zero means
+                         no I/O operation is pending.  Negative number
+                         of I/O pending when the call was make.  On return
+                         there is one less I/O pending.
+BLP$
+SEC$.150  Converting ULTRIX N-buf codes
+BLP$
+Things you must do to convert ULTRIX N-buf codes to work with AIO.
+ODP$
+1)....  Replace all calls to MT_OPENxx with calls to AIOOPEN.
+ODP$
+2)....  Replace calls to MT_READ and MT_READW with a sequence of 
+AIOREAD and AIORDWAIT.  Note that IERR zero and NBYTES zero means
+an end-of-file (EOF).  This differs from the ULTRIX N-buf routines.
+ODP$
+3)....  Replace calls to MT_WRITE and MT_WRITEW with a sequence of 
+AIOWRITE and AIOWRWAIT.
+ODP$
+4)....  Replace calls to MT_WAIT or MT_WAITND with calls to
+either AIORDWAIT or AIOWRWAIT.
+ODP$
+5)....  There is no equivalent things which turn on or turn off N-buf.
+The routines are MT_NB_OFF, MT_NB_ON, MT_NBND_ON and MT_ND_ON.
+Just delete this stuff.
+ODP$
+6)....  In calls to tape motion routines, MT_FF, MT_REW etc, change the 
+argument TLU (unit number) to MTUNIT(TLU).
+SEC$.160  Required Link flags
+BLP$
+There are some special flags required to link a code using these routines.
+The command line to compile and link your code must have the following:
+CYB$
+        -non_shared -L/usr/ccs/lib -laio -lpthreads -lmach -lc_r
+BLP$
+To get the routines described herein, you must link the following object
+file  with your code.
+CYB$
+        /usr/users/mcsq/Daio/aiolib.o
+BLP$
+SEC$.170  An example code having absolutely no practical use
+BLP$
+CY1$
+*****************************************************************************
+*   An example of the hard way to copy one file to a new file.  However, it
+*   does show the use of routines for Asynchronous I/O.
+*
+*****************************************************************************
+      implicit none
+      character*80  infile /'/usr/users/mcsq/Daio/vpromx.asm'/
+      character*80  outfile /'/usr/users/mcsq/Daio/outfile'/
+      character*64  mess
+      integer*4     inunit,outunit,rdbytes,wrbytes
+      integer*4     buffer(32768)
+      integer*4     buf1,buf2,rdbuf,wrbuf,ierr,i
+      integer*4     strlen
+      integer*8     offset
+
+*
+*   Open the input and output files
+*
+      call aioopen(infile,'R   ','OLD ',inunit,ierr)
+      if (ierr .ne. 0) then
+        call aioerror(ierr,mess)
+        type 9000,mess(1:strlen(mess))
+9000    format(' Open Input file - ',a)
+      endif
+      call aioopen(outfile,'W   ','NEW ',outunit,ierr)
+      if (ierr .ne. 0) then
+        call aioerror(ierr,mess)
+        type 9010,mess(1:strlen(mess))
+9010    format(' Open Output file - ',a)
+      endif
+
+      buf1 = 1
+      buf2 = 16385
+      rdbuf = buf1
+      offset = 0
+*
+*   Queue the first read operation
+*
+      call aioread(inunit,buffer(rdbuf),65536,offset,ierr)
+      if (ierr .ne. 0) go to 120
+*
+*  Start our loop by waiting for the queued read operation to finish
+*
+100   call aiordwait(inunit,buffer(rdbuf),rdbytes,ierr)
+      if (ierr .ne. 0) go to 120
+      wrbuf = rdbuf
+      if (rdbytes .eq. 0) go to 200
+*
+*  Start a write operation
+*
+      call aiowrite(outunit,buffer(wrbuf),rdbytes,offset,ierr)
+      if (ierr .ne. 0) go to 110
+*
+*  Switch buffers and start another read operation
+*
+      offset = offset + rdbytes
+      if (rdbuf .eq. buf1) then
+        rdbuf = buf2
+      else
+        rdbuf = buf1
+      endif
+      call aioread(inunit,buffer(rdbuf),65536,offset,ierr)
+      if (ierr .ne. 0) go to 120
+*
+*  Wait for the write operation to finish
+*
+      call aiowrwait(outunit,buffer(wrbuf),wrbytes,ierr)
+      if (ierr .ne. 0) go to 110
+      go to 100
+*
+*  Write error comes here
+*
+110   call aioerror(ierr,mess)
+      type 9020,mess(1:strlen(mess))
+9020  format(' Write error: ',a)
+      go to 300
+*
+*  Read error comes here
+*
+120   call aioerror(ierr,mess)
+      type 9030,mess(1:strlen(mess))
+9030  format(' Read error: ',a)
+      go to 300
+*
+*  End of file.  Wait for write to finish and exit.
+*
+200   call aiowrwait(outunit,buffer(buf1),wrbytes,ierr)
+      call aiowrwait(outunit,buffer(buf2),wrbytes,ierr)
+      call aiostatus()
+300   call aioclose(inunit)
+      call aioclose(outunit)
+      call aiostatus()
+      end
+BLP$
+SEC$.180  Make for example in SEC 170
+BLP$
+CY1$
+LDF = -laio -lpthreads -lmach -lc_r
+LIBS = /usr/users/mcsq/Dmclib/mclib.a
+OBJS = /usr/users/mcsq/Daio/aiolib.o
+
+aiotst:  aiotst.o $(OBJS) $(LIBS)
+	f77 -o aiotst aiotst.f $(OBJS) $(LDF) $(LIBS)
+BLP$
+QIT$

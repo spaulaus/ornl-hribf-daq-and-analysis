@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include "../include/pkt_io.h"
+#include "../include/orph_udp.h"
+#include "../include/orphmsg.h"
+
+
+/*   Global variables       */
+
+char server[12] = "vme";
+struct UDP_Packet xbuf,rbuf;
+static struct sockaddr_in cli_addr;
+struct VMEmsg *femess = (struct VMEmsg *)&rbuf.Data[0];
+
+/****************************************************************************
+****************************************************************************/
+void swap(char *cptr,int len)
+{
+  char temp;
+  while(len)
+    {
+      temp = *cptr;
+      *cptr = *(cptr+1);
+      *(cptr+1) = temp;
+      cptr += 2;
+      len -= 2;
+    }
+}
+/****************************************************************************
+****************************************************************************/
+main()
+{
+  int  i,status,len,sockfd;
+           char *vptr;
+  unsigned short *sptr;
+  unsigned short *lan_buf = (unsigned short *)rbuf.Data;
+
+       sockfd = socket(AF_INET,SOCK_DGRAM,0);
+       if (sockfd == -1) {
+           perror(" Pkt_io_udp - socket creation error");
+           exit(99);
+         }
+       /* Bind the socket for listening on private socket */
+       bzero((char *) &cli_addr, sizeof(cli_addr));    /* zero out */
+       cli_addr.sin_family      = AF_INET;
+       cli_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+       cli_addr.sin_port        = htons(45000+FEMSG);
+       if (bind(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr)) < 0)
+         {
+           perror(" Pkt_io_udp - cannot bind local address");
+           exit(99);
+         }
+
+   while(1)
+     {
+       int status;
+
+   status = recvfrom(sockfd,(void *)&rbuf, sizeof(rbuf),
+                     0, (struct sockaddr *) 0, (int *) 0);
+   if (status <= 0)
+     {
+       perror(" VMESERVER - read");
+       exit(99);
+     }
+       len = rbuf.DataSize;
+         printf("%s: %s\n",femess->sender,femess->text);
+/*************************
+       if (rbuf.error)
+         {
+           if (rbuf.error == ETHER_OPEN)
+                                 printf("Ethernet open failure.\n",rbuf.error);
+           else printf("Unknown error code: %i\n",rbuf.error);
+           exit(99);
+         }
+       if (rbuf.DataSize == 0)
+         {
+           printf("Timeout -- no data in 60 secs on device '%s'\n",server);
+           continue;
+         }
+       sptr = lan_buf;
+       printf ("%4.4x%4.4x  ",*(sptr+1),*sptr);
+       sptr += 2;
+       for(i=4; i < len; i += 2)
+         {
+           if(i%32 == 0) printf("\n");
+           printf("%4.4x ",*sptr++);
+         }
+       printf("\n");
+       fflush(stdout);
+printf("Byte count = %i\n",rbuf.DataSize);
+*************************/
+/*
+       write(1,lan_buf,len);
+*/
+     }
+   return(0);
+}

@@ -1,0 +1,22 @@
+MASTER       1    16     00      
+PSAC-SUM     1    16     01      
+PSAC-LEFT    1    16     02      
+PSAC-RIGHT   1    16     03      
+LeRoy1       1    12     00 0 ECL
+LeRoy2       1    12     01 0 ECL
+LeRoy3       1    12     02
+LeRoy4       1    12     03
+LeRoy1       1    12     04
+LeRoy2       1    12     05
+LeRoy3       1    12     06
+LeRoy4       1    12     07
+LeRoy1       1    12     08
+LeRoy2       1    12     09
+LeRoy3       1    12     10
+LeRoy4       1    12     11
+struct1   SIS3820 1      0
+struct1   SIS3820 1      31
+struct1   SIS3820 2      0
+LeRoy3       1    12     02 0 ECL
+$END
+

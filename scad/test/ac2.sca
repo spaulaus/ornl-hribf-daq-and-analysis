@@ -1,0 +1,55 @@
+#Time, Live-Time, etc -------------
+Time.100   9 17  0 -2 ; NOR 100
+Live.Time  9 17  1
+Integrator 9 17  2
+Live.Int   9 17  3
+
+Ge.Trigs   9 17  4
+See.Trigs  9 17  5
+Acc.Trigs  9 17  6
+#Clean & Dirty --------------------
+Clean01..S3     9  1 3 0 VME
+Dirty01.BHB     9  2 3 0 ECL
+Clean02..S2     9  1 2 0 ECL
+Dirty02.NHC     9  2 2 0 ECL
+Clean03..S8     9  1 1 0 ECL
+Dirty03.BPE     9  2 1 0 ECL
+Clean04.S10     9  1 0 0 ECL
+Dirty04.NPC     9  2 0 0 ECL
+Clean05..S1     9  1 7 0 ECL
+Dirty05.BHC     9  2 7 0 ECL
+Clean06..S4     9  1 6 0 ECL
+Dirty06.BHD     9  2 6 0 ECL
+Clean07..S7     9  1 5 0 ECL
+Dirty07.BPC     9  2 5 0 ECL
+Clean08..S0     9  1 4 0 ECL
+Dirty08.NPA     9  2 4 0 ECL
+Clean09..S5     9  1 11 0 ECL
+Dirty09.NHD     9  2 11 0 ECL
+Clean10..S6     9  1 10 0 ECL
+Dirty10.BPD     9  2 10 0 ECL
+Clean11..N5     9  1 9 0 ECL
+Dirty11.NHB     9  2 9 0 ECL
+Clean12..N6     9  1 8 0 ECL
+Dirty12.BPB     9  2 8 0 ECL
+Clean13..N8     9  1 15 0 ECL
+Dirty13.NPB     9  2 15 0 ECL
+Clean14..N0     9  1 14 0 ECL
+Dirty14.NPE     9  2 14 0 ECL
+Clean15..N4     9  1 13 0 ECL
+Dirty15.BHA     9  2 13 0 ECL
+Clean16.N10     9  1 12 0 ECL
+Dirty16.BPA     9  2 12 0 ECL
+Clean17..N7     9  1 31 0 ECL
+Dirty17.BPF     9  2 31 0 ECL
+Clean18..N2     9  1 30 0 ECL
+Dirty18.NHA     9  2 30 0 ECL
+Clean19..N3     9  1 29 0 ECL
+Dirty19.BHE     9  2 29 0 ECL
+Clean20..N1     9  1 28 0 ECL
+Dirty20.BHF     9  2 28 0 ECL
+#computed scalers -------------------------
+$END
+GeTr\LivInt = Ge.Trigs/Live.Int
+AccTr\LivIn = Acc.Trigs/Live.Int
+Cln13\LivIn = Clean13..N8/Live.Int

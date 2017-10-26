@@ -1,0 +1,216 @@
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS= $(LIBDIR)/vmelib.a
+INCS= $(INCDIR)/pkt_io_udp.h  $(INCDIR)/orph_udp.h $(INCDIR)/acq_ctl.h
+CFLAGS = -g -I$(INCDIR)
+OBJECTS =
+
+acq_run: acq_run.c  $(OBJECTS) $(INCS) $(LIBS)
+	gcc $(CFLAGS) -o acq_run acq_run.c $(OBJECTS) $(LIBS)
+
+install: acq_run
+	install acq_run $(INSTALLDIR)
+	install startvme $(INSTALLDIR)
+	install stopvme $(INSTALLDIR)
+	install statvme $(INSTALLDIR)
+	install initvme $(INSTALLDIR)
+	install pacfile $(INSTALLDIR)
+
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+FFLAGS= -O2 -I$(INCDIR)
+#
+DIRA= /usr/hhirf/
+#DIRB= /tera/mcsq/Drtems/Dvmexx/
+#DIRC= /tera/mcsq/Drtems/Dacq/
+#
+LIBS= $(DIRA)/orphlib.a $(LIBDIR)/vmexxlib.a $(LIBDIR)/vmelib.a
+caenr: caenr.f $(LIBS) $(INCS)
+	f77 $(FFLAGS) caenr.f $(LIBS) -o caenr
+
+install: caenr
+	install caenr $(INSTALLDIR)
+HHIRFDIR=/usr/hhirf
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+FFLAGS= -O2 -I$(INCDIR)
+#
+#
+LIBS= $(HHIRFDIR)/orphlib.a $(LIBDIR)/vmexxlib.a $(LIBDIR)/vmelib.a
+
+caenw: caenw.f $(LIBS) $(INCS)
+	f77 $(FFLAGS) caenw.f $(LIBS) -o caenw
+
+install: caenw
+	install caenw $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+CFLAGS= -O2
+#
+#
+LIBS = /usr/hhirf/orphlib.a $(LIBDIR)/vmelib.a
+
+cnaf: cnaf.c  $(INCS)
+	cc $(CFLAGS) cnaf.c $(LIBS) -o cnaf
+
+install: cnaf
+	install cnaf $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS=$(LIBDIR)/vmelib.a /usr/hhirf/orphlib.a
+INCS=docnaf.h $(INCDIR)/pkt_io_udp.h
+CFLAGS= -O -I$(INCDIR)
+docnaf: docnaf.c  $(LIBS) $(INCS)
+	$(CC) $(CFLAGS) -o docnaf docnaf.c $(OBJS) $(LIBS)
+
+install: docnaf
+	install -p docnaf $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS=$(LIBDIR)/vmelib.a 
+INCS=$(INCDIR)/spkt_io_udp.h  $(INCDIR)/orph_udp.h $(INCDIR)/orphmsg.h
+CFLAGS = -g -I$(INCDIR)
+OBJECTS = 
+
+femsg-stdout: femsg-stdout.c  $(OBJECTS) $(INCS) $(LIBS)
+	$(CC) $(CFLAGS) -o femsg-stdout femsg-stdout.c  $(OBJECTS) $(LIBS)
+
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS=$(LIBDIR)/vmelib.a $(LIBDIR)/acqlib.a $(LIBDIR)/ipclib.a
+INCS=$(INCDIR)/spkt_io_udp.h  $(INCDIR)/orph_udp.h $(INCDIR)/orphmsg.h
+CFLAGS = -g -I$(INCDIR)
+OBJECTS = 
+
+femsg: femsg.c  $(OBJECTS) $(INCS) $(LIBS)
+	$(CC) $(CFLAGS) -o femsg femsg.c  $(OBJECTS) $(LIBS)
+
+install: femsg
+	install femsg $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+CFLAGS= -O2 -I$(INCDIR)
+#
+#
+LIBS= $(LIBDIR)/vmelib.a
+fifo: fifo.o  
+	cc $(CFLAGS) fifo.c $(LIBS) -o fifo
+
+install: fifo
+	install $^ $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS= $(LIBDIR)/vmelib.a $(LIBDIR)/acqlib.a $(LIBDIR)/ipclib.a
+INCS= $(INCDIR)/ipcdefs.h  $(INCDIR)/acqlib.h 
+
+CFLAGS = -O2
+OBJECTS = 
+
+ipcmon: ipcmon.c  $(OBJECTS) $(INCS) $(LIBS)
+	$(CC) $(CFLAGS) -o ipcmon ipcmon.c  $(OBJECTS) $(LIBS)
+
+install: ipcmon
+	install ipcmon $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS=$(LIBDIR)/acqlib.a $(LIBDIR)/ipclib.a
+INCS=$(INCDIR)/orphmsg.h $(INCDIR)/ipcdefs.h $(INCDIR)acqlib.h
+
+CFLAGS= -O2 -I$(INCDIR)
+
+logger: logger.c $(LIBS) $(INC)
+	cc $(CFLAGS) -o logger logger.c $(LIBS)
+
+install: logger
+	install logger $(INSTALLDIR)
+#
+DIRA= /usr/hhirf/
+#
+FFLAGS=
+LIBS= $(DIRA)orphlib.a ../lib/vmelib.a ../lib/vmexxlib.a
+OBJS=
+m_setup: m_setup.c $(OBJS) $(LIBS) $(INCS)
+	gcc $(FFLAGS) m_setup.c $(OBJS) $(LIBS) -o m_setup
+install: m_setup
+	install m_setup ../bin
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS= $(LIBDIR)/vmelib.a $(LIBDIR)/vmexxlib.a /usr/hhirf/orphlib.a 
+INCS= 
+#
+FFLAGS= --o2 --sav
+#
+OBJS= modu_setup.o
+#
+modu_setup: $(OBJS) $(LIBS)
+	lf95 $(FFLAGS) $(OBJS) $(LIBS)  -o modu_setup
+
+install: modu_setup
+	install modu_setup $(INSTALLDIR)
+
+.f.o:
+	lf95 -c $(FFLAGS)  $<
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS= $(LIBDIR)/vmelib.a
+INCS= $(INCDIR)/pkt_io_udp.h  $(INCDIR)/orph_udp.h 
+
+CFLAGS = -O
+OBJECTS = 
+
+udpmon: udpmon.o  $(OBJECTS) $(INCS) $(LIBS)
+	$(CC) $(CFLAGS) -o udpmon udpmon.c  $(OBJECTS) $(LIBS)
+
+install: udpmon
+	install udpmon $(INSTALLDIR)
+BASE=..
+INSTALLDIR=$(BASE)/bin
+INCDIR=$(BASE)/include
+LIBDIR=$(BASE)/lib
+
+LIBS= $(LIBDIR)/vmelib.a
+INCS= $(INCDIR)/pkt_io_udp.h $(INCDIR)/mem_mgr.h
+CFLAGS = -O2 -I$(INCDIR)
+OBJECTS =
+
+vmehardware: vmehardware.c  $(OBJECTS) $(INCS) $(LIBS)
+	$(CC) $(CFLAGS) -o vmehardware vmehardware.c  $(OBJECTS) $(LIBS)
+
+install: vmehardware
+	install vmehardware $(INSTALLDIR)

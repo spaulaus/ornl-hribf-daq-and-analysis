@@ -1,0 +1,39 @@
+ROOT=/tera/varner/Acq-development
+INC=$(ROOT)/acq2/include
+LIB=$(ROOT)/acq2/lib
+BIN=$(ROOT)/acq2/bin
+
+CFLAGS = -O -I $(INC)
+
+OBJS = pecamio.o\
+       libipberr.o\
+       libcamerr.o\
+       pkt_io_udp/pkt_io_udp.o\
+       pkt_io_udp/spkt_io_udp.o
+#       load_acq_params.o
+#       fastbusio.o\
+
+vmelib.a: vmelib.a($(OBJS))
+	ranlib vmelib.a
+
+pecamio.o: $(INC)/cnaf.h $(INC)/spkt_io_udp.h $(INC)/orph_udp.h
+pkt_io_udp.o: $(INC)/pkt_io_udp.h
+
+spkt_io_udp.o: $(INC)/spkt_io_udp.h
+
+load_acq_params.o: $(INC)/pkt_io_udp.h $(INC)/orph_udp.h\
+                    $(INC)/mem_mgr.h
+
+install: vmelib.a
+	install $^ $(LIB)
+
+.PHONY: cleanobjs cleanall ran
+
+cleanobjs:
+	rm -f $(OBJS)
+
+cleanall:
+	rm -f vmelib.a $(OBJS)
+
+ran:
+	ranlib vmelib.a
