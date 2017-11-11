@@ -26,7 +26,7 @@
 *
 *    Environment:  VME based Data Acquisition System
 *
-*    File:         acq2/Myriad/rtems/vmeacq/vmexx.c
+*    File:         acq2/rtems/vmeacq/vmexx.c
 *
 *    Description:  A RTEMS task to do setup for VME modules
 ******************************************************************************
@@ -86,7 +86,7 @@ extern unsigned long debugdata_index;
 /*
 *   Pointers to CAEN ADCs and TDCs
 */
-static struct CAEN *CAEN785_LIST[12] = {       /* V785 ADC             */
+static struct CAEN *CAEN785_LIST[24] = {       /* V785 ADC             */
                                   (struct CAEN *)CAEN785_1,
                                   (struct CAEN *)CAEN785_2,
                                   (struct CAEN *)CAEN785_3,
@@ -98,7 +98,19 @@ static struct CAEN *CAEN785_LIST[12] = {       /* V785 ADC             */
                                   (struct CAEN *)CAEN785_9,
                                   (struct CAEN *)CAEN785_10,
                                   (struct CAEN *)CAEN785_11,
-                                  (struct CAEN *)CAEN785_12};
+                                  (struct CAEN *)CAEN785_12,
+                                  (struct CAEN *)CAEN785_13,
+                                  (struct CAEN *)CAEN785_14,
+                                  (struct CAEN *)CAEN785_15,
+                                  (struct CAEN *)CAEN785_16,
+                                  (struct CAEN *)CAEN785_17,
+                                  (struct CAEN *)CAEN785_18,
+                                  (struct CAEN *)CAEN785_19,
+                                  (struct CAEN *)CAEN785_20,
+                                  (struct CAEN *)CAEN785_21,
+                                  (struct CAEN *)CAEN785_22,
+                                  (struct CAEN *)CAEN785_23,
+                                  (struct CAEN *)CAEN785_24};
 
 static struct CAEN *CAEN775_LIST[12] = {       /* V775 TDC             */
                                   (struct CAEN *)CAEN775_1,
@@ -290,7 +302,7 @@ static char caen785_ctl(struct caen_ctl *cmd)
    struct CAEN *caen;
 
    cvtnum = cmd->cvt_num;
-   if (cvtnum < 0 || cvtnum > 11) return(CAEN_ERR_NONEXIST);
+   if (cvtnum < 0 || cvtnum > 23) return(CAEN_ERR_NONEXIST);
    if (!dev785[cvtnum]) return(CAEN_ERR_NONEXIST);
    caen =  CAEN785_LIST[cvtnum];
    byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));

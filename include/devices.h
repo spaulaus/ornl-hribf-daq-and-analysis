@@ -163,6 +163,7 @@ struct devices {
   char caen792_12;   /* Last  CAEN V792 QDC                          */
   char sis3820_1;    /* First SIS3820 Scaler                         */
   char sis3820_2;    /* Last  SIS3820 Scaler                         */
+  char myriad_1;     /* MyRIAD trigger module                        */
       };
 
 /*********************

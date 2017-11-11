@@ -562,12 +562,12 @@ static      char field[160],*cptr;
         if (sscanf(field,"%i",n1) == 0) goto L10;
         if (sscanf(cptr,"%i",n2) == 0) goto L10;
        }
-      if (*n1 < 1 || *n1 > 23)
+      if (*n1 < 1 || *n1 > 24)
        {
         *err = ERR_N_VAL;
         return;
        }
-      if (*n2 < 1 || *n2 > 23)
+      if (*n2 < 1 || *n2 > 24)
        {
         *err = ERR_N_VAL;
         return;

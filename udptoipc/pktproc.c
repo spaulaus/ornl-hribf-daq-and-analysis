@@ -187,8 +187,7 @@ struct UDP_Packet *pktprocess(struct UDP_Packet *pkt_buf,int buflen)
      {
        if (thispkt == STOP) buflen = 0;
        else  buflen = FindEventEnd(&en_buf->Buffer,
-//                       (int)((long)buflen-offsetof(struct orpas_data,Buffer)));
-                       (int)((int32_t)buflen-offsetof(struct orpas_data,Buffer)));
+                       (int)((long)buflen-offsetof(struct orpas_data,Buffer)));
      }
    else   buflen = buflen - DATAHDRSZ;
    size = used + buflen;

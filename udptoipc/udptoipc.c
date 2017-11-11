@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 
 /*    Print help if requested  */
    if (argc > 1 && !strcmp(argv[1], "-?")) {
-      printf("Usage: udptoipc [-d nodename]\n");
+      fprintf(stdout,"Usage: udptoipc [-d nodename]\n");
       return(1);
    }
 
@@ -180,11 +180,11 @@ signal(SIGTERM, TermHandle);
        strncpy(server, optarg, sizeof(server));
        break;
      default:
-       printf ("Error - getopt returned character code 0%o ??\n", c);
+       fprintf (stderr,"Error - getopt returned character code 0%o ??\n", c);
      }
    }
    
-   printf("The server entered is: %s\n",server);
+   fprintf(stderr,"The server entered is: %s\n",server);
 
    /* Open the socket for the server */
 
@@ -204,6 +204,11 @@ signal(SIGTERM, TermHandle);
       fputs("udptoipc - TERMINATED\7\n",stderr);
       return(1);
    }
+   // Log the VME host being used
+   sprintf(&msg_pfipc.text[9],
+	     "Server entered is %s\n", server);
+   msgsnd(Ids.log_msg, &msg_pfipc, sizeof(struct orphmsg), IPC_NOWAIT);
+
    buffers_init();
  
 /*-------  Wait for and copy data packets        --------------*/
@@ -217,6 +222,9 @@ signal(SIGTERM, TermHandle);
 	 continue;   
        else if (status==-1) {
            fputs("\n\7udptoipc - Error reading from Front-end\n",stderr);
+           sprintf(&msg_pfipc.text[9],
+	           "Error status reading packet: %s\n", strerror(errno));
+           msgsnd(Ids.log_msg, &msg_pfipc, sizeof(struct orphmsg), IPC_NOWAIT);
            break;
        }
 //       else 
@@ -445,7 +453,7 @@ int split_pkt(unsigned char *buffer,int *events,int buflen,int avail)
 }
 /*****************************************************************************
 *
-*   Find number of data bytes in an Ethernet minium size packet.
+*   Find number of data bytes in an Ethernet minimum size packet.
 *
 *   
 *****************************************************************************/

@@ -218,6 +218,30 @@ int main(int argc, char *argv[])
                            printf("CAEN785_11 - 32 Chan, 12-bit ADC Module\n");
      if (cmd->devtbl.caen785_12 != 0)
                            printf("CAEN785_12 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_13 != 0)
+                           printf("CAEN785_13 -  32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_14 != 0)
+                           printf("CAEN785_14 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_15 != 0)
+                           printf("CAEN785_15 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_16 != 0)
+                           printf("CAEN785_16 -  32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_17 != 0)
+                           printf("CAEN785_17 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_18 != 0)
+                           printf("CAEN785_18 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_19 != 0)
+                           printf("CAEN785_19 -  32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_20 != 0)
+                           printf("CAEN785_20 -  32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_21 != 0)
+                           printf("CAEN785_21 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_22 != 0)
+                           printf("CAEN785_22 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_23 != 0)
+                           printf("CAEN785_23 - 32 Chan, 12-bit ADC Module\n");
+     if (cmd->devtbl.caen785_24 != 0)
+                           printf("CAEN785_24 - 32 Chan, 12-bit ADC Module\n");
      if (cmd->devtbl.caen775_1 != 0)
                            printf("CAEN775_1 -  32 Chan, 12-bit TDC Module\n");
      if (cmd->devtbl.caen775_2 != 0)

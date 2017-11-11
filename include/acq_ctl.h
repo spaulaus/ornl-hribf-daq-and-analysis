@@ -148,7 +148,9 @@
 #define ACQ_NO_CAEN_TDC   (-64)  /* CAEN ADC not present in VME crate    */
 #define ACQ_NO_CAEN_QDC   (-65)  /* CAEN QDC not present in VME crate    */
 
-
 #define ACQ_NO_SIS_SCL    (-66)  /* SIS3820 not present in VME           */
 #define ACQ_NO_MYRIAD     (-67)  /* MYRIAD module not present in VME     */
+#define ACQ_MYRIAD_SETUP_ERROR (-68)  /* MYRIAD module not present in VME     */
+
+
 #endif       /* end  ACQ_CTL_H_    */

@@ -73,4 +73,4 @@ struct fortinmsg {
            char  text[FTN_SIZE];
 };
 
-#endif    /*  end ORPHMSH_H  */
+#endif    /*  end ORPHMSG_H  */

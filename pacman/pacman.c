@@ -717,10 +717,10 @@ int cmd_exec(char *cmdstr)
      {
      case  TRUN:
        uxptr = getfield(args,cptr,5);
-       for(i=0;i<5;i++)            /* Lowercase for tests */
+       for(i=0;i<5;i++)            // Lowercase for tests 
 	 args[i]=tolower(args[i]);
        
-       if (uxptr == NULL)
+/*       if (uxptr == NULL)
 	 {
 	   printf(
 		  "\n\7TRUN needs argument: BON (beam on) or BOFF (beam off) - %s -\n",line);
@@ -734,6 +734,7 @@ int cmd_exec(char *cmdstr)
 	   log = NOLOG;
 	   break;
 	 }
+*/
        if (pacloaded != 0 && initvme != 0)
 	 {
 	   strcpy(lastinit,lastpac);
@@ -754,7 +755,7 @@ int cmd_exec(char *cmdstr)
        for(i=0;i<5;i++)            /* Lowercase for tests */
 	 args[i]=tolower(args[i]);
        
-       if (uxptr == NULL)
+/*       if (uxptr == NULL)
           {
             printf(
 		   "\n\7TON needs argument: BON (beam on) or BOFF (beam off) - %s -\n",line);
@@ -768,6 +769,7 @@ int cmd_exec(char *cmdstr)
 	   log = NOLOG;
 	   break;
 	 }
+*/
      case  SCAT:
        if (cd_ptr != NULL)
 	 {

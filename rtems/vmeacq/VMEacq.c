@@ -23,7 +23,7 @@
 *
 ******************************************************************************
 *
-*    Environment:  VME based Data Acquisition System
+*    Environment:      based Data Acquisition System
 *
 *    File:         /tera/mcsq/Drtems/Dvmeacq/VMEacq.c
 *
@@ -479,6 +479,7 @@
 #include "../include/fcam.h"
 #include "../include/caen.h"
 #include "../include/sis3820.h"
+#include "../include/myriad.h"
 
 /**********   External data  ************/
 
@@ -596,6 +597,11 @@ static struct CAEN *CAEN792_LIST[12] = {       /* V792 QDC             */
   (struct CAEN *)CAEN792_10,
   (struct CAEN *)CAEN792_11,
   (struct CAEN *)CAEN792_12};
+
+static struct SIS3820 *SIS3820_LIST[2] = {       /* SIS3820             */
+  (struct SIS3820 *)SIS3820_1,
+  (struct SIS3820 *)SIS3820_2};
+
 /*
 *   Structures of the internal tables
 */
@@ -676,12 +682,12 @@ struct caen_readout {
 
 struct sis_readout {
  struct SIS3820 *hwd;        /* Pointer to hardware module                  */
-  unsigned short *id;        /* Pointer to ID for first channel in module   */
+  unsigned short *id;        /* Pointer to IDs for first channel in module   */
 };
 
 struct myr_readout {
   struct MyRIAD_Registers *hwd;/* Pointer to hardware module                  */
-  unsigned short *id;        /* Pointer to ID for first channel in module   */
+  unsigned short *id;        /* Pointer to IDs for first channel in module   */
 };
 
 /*     Conditional readout for special CAMAC modules                        */
@@ -844,7 +850,8 @@ static unsigned short  Cam_id[8192];
 static unsigned short  Caen_adc_id[816];
 static unsigned short  Caen_tdc_id[408];
 static unsigned short  Caen_qdc_id[408];
-static unsigned short  Sis_scl_id[192];
+static unsigned short  SIS_scl_id[192];
+static unsigned short  Myriad_id[3]={0,0,0};
 
 static int vme_enable;
 static int vme_delay;
@@ -918,11 +925,16 @@ static struct caen_readout caen_qdcs[12];
 /*
  *    Pointer to SIS 3820 module
  */
-static struct sis_readout sis_scl[2];
+static struct sis_readout sis_ro[2];
+
+/*
+ *    Pointer to MYRIAD module
+ */
+static struct myr_readout myriad_ro;
+
 /*
 *    VME 100Hz clock
 */
-
        unsigned short clk100[2] = {0,0};
 static            int clk100_flg;
 static unsigned short clk_id_hi;
@@ -1473,11 +1485,17 @@ static int acq_start(void)
 
 /*
 *   Enable counting for the SIS3820 module.
+*   1 - nonclearing mode
+*   10 - select scaler 1 to load next event
+*   000 - select LNE front panel signal source
+*   0000 - FIFO mode
+*   30000 - select ctl in 1 for LNE, 4 to inhibit counting
+*   200000 - select ctl out 5 is LNE pulse; 6,7 10MHz; 8 - user LED state
 */
    if (devtbl->sis3820_1) {
       sis->Key_enable = 0; 
 //     sis->op_mode = 1;
-      sis->op_mode = 0x00230011;
+      sis->op_mode = 0x00230011; 
       eieio();
    }
 
@@ -1550,7 +1568,7 @@ struct raw_gate_spec *gspec1,*gspec2;
 *    reasonable ranges.
 */
    tblptr = (struct tbl_index *)ACQ_RAM;
-   for(i=0; i < 36; ++i)
+   for(i=0; i < 37; ++i)
     {
       status = 0;
       if ((tblptr->offset < 0) || (tblptr->length < 0)) status = 1;
@@ -1747,13 +1765,13 @@ struct raw_gate_spec *gspec1,*gspec2;
    for(i=0; i < 8192; ++i) *uptr++ = *iptr++;
 
 /*
-*   Move CAEN ADC and TDC ID tables
+*   Move CAEN ADC, TDC and QDC ID tables
 */
 
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_ADC_ID;
    iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
    uptr = Caen_adc_id;
-   for(i=0; i < 408; ++i) *uptr++ = *iptr++;
+   for(i=0; i < 816; ++i) *uptr++ = *iptr++;
 
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_TDC_ID;
    iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
@@ -1764,6 +1782,21 @@ struct raw_gate_spec *gspec1,*gspec2;
    iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
    uptr = Caen_qdc_id;
    for(i=0; i < 408; ++i) *uptr++ = *iptr++;
+
+   /*
+    *  Copy the SIS scaler id table
+    */
+   tblptr = (struct tbl_index *)ACQ_RAM + INDEX_SIS_ID;
+   iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
+   uptr = SIS_scl_id;
+   for(i=0; i < 192; ++i) *uptr++ = *iptr++;
+   /*
+    *  Copy the Myriad clock ids
+    */
+   tblptr = (struct tbl_index *)ACQ_RAM + INDEX_MYR_ID;
+   iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
+   uptr = Myriad_id;
+   for(i=0; i < 3; ++i) *uptr++ = *iptr++;
 
 /*
 *   Setup the VME 100Hz clock
@@ -4143,22 +4176,34 @@ static int init_vme_modules(void)
                 int err = 0;
                 int *iptr;
                char *bptr;
-  struct cond_vme_pgm *prog;
+   struct cond_vme_pgm *prog;
    struct vme_readout *vme;
 
    vme_enable = 0;
+   /* count the number of modules */
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_ADC_HARD;
    count = tblptr->length;
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_TDC_HARD;
    count += tblptr->length;
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_QDC_HARD;
    count += tblptr->length;
+   /* Include SIS Scaler and Myriad */
+   tblptr = (struct tbl_index *)ACQ_RAM + INDEX_SIS_HARD;
+   count += tblptr->length;
+   tblptr = (struct tbl_index *)ACQ_RAM + INDEX_MYR_HARD;
+   count += tblptr->length;
+
    if (count == 0) return(0);
 
-/* fix for additional modules */
+   /* initialize all possible modules to NULL */
    for (i=0; i < 24; i++) caen_adcs[i].hwd = NULL;
    for (i=0; i < 12; i++) caen_tdcs[i].hwd = NULL;
    for (i=0; i < 12; i++) caen_qdcs[i].hwd = NULL;
+   for (i=0; i < 2; i++) sis_ro[i].hwd = NULL;
+   myriad_ro.hwd = NULL; /* MYRIAD module - one clock */
+
+
+   /* Setup pointers for hardware and parameter IDs */
 
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_ADC_HARD;
    iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
@@ -4241,6 +4286,72 @@ static int init_vme_modules(void)
       if (err) return(err);
      }
 
+   tblptr = (struct tbl_index *)ACQ_RAM + INDEX_SIS_HARD;
+   iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
+   bptr = &devtbl->sis3820_1;
+   if (tblptr->length) {
+     j=0;
+     for (i=0; i < 2; i++)
+       {
+	 if (iptr[i] != 0)
+           {
+             if (*(bptr+i))
+               { 
+                 sis_ro[j].hwd = SIS3820_LIST[i];
+                 sis_ro[j++].id = &SIS_scl_id[i*96];
+                 vme_enable = 1;
+               }
+             else
+               {
+                 err = ACQ_NO_SIS_SCL;
+                 sprintf(error_msg,"SIS Scaler %i not in VME crate",i+1);
+                 host_message(PANIC,error_msg,"VMEacq  ");
+               }
+           }
+       }
+     if (err) return(err);
+   }
+   tblptr = (struct tbl_index *)ACQ_RAM + INDEX_MYR_HARD;
+   iptr = (int *)( ACQ_RAM + tblptr->offset * 4);
+   bptr = &devtbl->myriad_1;
+   if (tblptr->length) {
+     if (iptr != 0) {
+       if (*(bptr)) {
+	 myriad_ro.hwd = (struct MyRIAD_Registers *)MYRIAD_1;
+	 myriad_ro.id = &Myriad_id[0];
+	 vme_enable = 1;
+       } else {
+	 err = ACQ_NO_MYRIAD;
+	 sprintf(error_msg,"MYRIAD not in VME crate");
+	 host_message(PANIC,error_msg,"VMEacq  ");
+       }
+     }
+   if (err) return(err);
+   }
+   
+/* Actually setup the hardware for readout */
+/* CAEN 785 ADC */
+   i = 0;
+   while(caen_adcs[i].hwd != NULL)
+     {
+       int tmp;
+       
+       caen_adcs[i].hwd->bit_set2 = 0x04;    /* clear data */
+       caen_adcs[i].hwd->event_counter_reset = 0;
+       eieio();
+       for (j=0; j < 32; j++)
+        {
+          tmp = caen_adcs[i].hwd->thresholds[j];
+          eieio();
+          tmp = tmp & 0xff;
+          if (caen_adcs[i].id[j] == 0) tmp = tmp + 0x100;
+          caen_adcs[i].hwd->thresholds[j] = tmp;
+        }
+       caen_adcs[i].hwd->bit_clear2 = 0x04;    /* remove clear data */
+       i++;
+     }
+
+/* CAEN 775 TDC */
    i = 0;
    while(caen_tdcs[i].hwd != NULL)
      {
@@ -4261,26 +4372,7 @@ static int init_vme_modules(void)
        i++;
      }
 
-   i = 0;
-   while(caen_adcs[i].hwd != NULL)
-     {
-       int tmp;
-
-       caen_adcs[i].hwd->bit_set2 = 0x04;    /* clear data */
-       caen_adcs[i].hwd->event_counter_reset = 0;
-       eieio();
-       for (j=0; j < 32; j++)
-        {
-          tmp = caen_adcs[i].hwd->thresholds[j];
-          eieio();
-          tmp = tmp & 0xff;
-          if (caen_adcs[i].id[j] == 0) tmp = tmp + 0x100;
-          caen_adcs[i].hwd->thresholds[j] = tmp;
-        }
-       caen_adcs[i].hwd->bit_clear2 = 0x04;    /* remove clear data */
-       i++;
-     }
-
+/* CAEN 792 QDC (also works for V965) */
    i = 0;
    while(caen_qdcs[i].hwd != NULL)
      {
@@ -4301,6 +4393,91 @@ static int init_vme_modules(void)
        i++;
      }
 
+/* SIS 3820 scaler modules */
+   i = 0;
+   while(sis_ro[i].hwd!=NULL) {
+     
+     sis_ro[i].hwd->Key_cnt_clear = 0; //Just touch this to clear the scaler
+     sis_ro[i].hwd->op_mode =  0x00230011; //Setup for clock loading by trigger
+     eieio();  //Force the io to complete
+     i++;
+   }
+   
+   /* MyRIAD module */
+   if (myriad_ro.hwd!=NULL) {
+     
+     // These steps come from a note by John Anderson to Steve Pain on 
+     // May 7, 2015.
+     //Test the hardware_status bit 10 to see if a master clock lock 
+     //is in place.  If not then send a message and stop here.  
+     //The bit should be zero if locked.
+#ifdef DEBUG
+     sprintf(error_msg,"MYRIAD hardware status (1) is %hx\n",
+	     myriad_ro.hwd->hardware_status);
+     host_message(INFORM,error_msg,"VMEacq  ");
+#endif
+     
+     if ((myriad_ro.hwd->hardware_status & 0x0400)) {
+       sprintf(error_msg,"MYRIAD is not synchronized - fix and reinitialize\n");
+       host_message(INFORM,error_msg,"VMEacq  ");
+       return(ACQ_MYRIAD_SETUP_ERROR);
+     }
+     if (!(myriad_ro.hwd->hardware_status & 0x8000)) {
+       sprintf(error_msg,"MYRIAD is not locked - fix and reinitialize\n");
+       host_message(INFORM,error_msg,"VMEacq  ");
+       return(ACQ_MYRIAD_SETUP_ERROR);
+     }
+#ifdef DEBUG
+     sprintf(error_msg,"MYRIAD SERDES Config is %hx\n", 
+	     myriad_ro.hwd->serdes_config);
+     host_message(INFORM,error_msg,"VMEacq  ");
+#endif
+     
+     // We must be synchronized - use the master clock
+     //Remove bit 15, enable the master clock rather than local
+     myriad_ro.hwd->serdes_config = 0x0063;  
+     myriad_ro.hwd->pulsed_control = 0x8000;  //Reset the FPGA control logic
+     myriad_ro.hwd->pulsed_control = 0x0024;  //Reset the FIFO and SERDES State machine
+     eieio();   //Force the MVME5500 to flush the writes, in sequence
+     
+     volatile unsigned long tmp = myriad_ro.hwd->hardware_status;
+     
+#ifdef DEBUG
+     sprintf(error_msg,"MYRIAD hardware status (2) is %hx\n",
+	     tmp);
+     host_message(INFORM,error_msg,"VMEacq  ");
+#endif
+     
+     //Now check for success
+     if (!(tmp & 0x8000)) {   //SERDES State machine lock
+       sprintf(error_msg,"MYRIAD SERDES State machine lock fail\n");
+       host_message(INFORM,error_msg,"VMEacq  ");
+       return(1);
+     }
+     
+     if ((tmp & 0x0400)) {   //SERDES physical lock
+       sprintf(error_msg,"MYRIAD SERDES physical lock fail\n");
+       host_message(INFORM,error_msg,"VMEacq  ");
+       return(ACQ_MYRIAD_SETUP_ERROR);
+     }
+     
+     if ((tmp & 0x0004)) {  //SERDES state machine lost lock
+       sprintf(error_msg,"MYRIAD SERDES state machine lost lock\n");
+       host_message(INFORM,error_msg,"VMEacq  ");
+       return(ACQ_MYRIAD_SETUP_ERROR); //Quit before enabling triggers
+     }
+     // Now that all is well, enable triggers to latch the timestamps 
+     //into the FIFO
+     myriad_ro.hwd->gating_register = 0x0001;  //Uses NIM input to latch
+     eieio();
+     
+     //End of the scary MyRIAD setup
+   }
+   
+   /* This code appears to setup a readout list.  
+    * Is it just for conditional readout?
+    */
+   
    tblptr = (struct tbl_index *)ACQ_RAM + INDEX_CAEN_RO;
    prog = (struct cond_vme_pgm *)( ACQ_RAM + tblptr->offset * 4);
    count = tblptr->length;
@@ -6463,7 +6640,7 @@ static int read_list_seq(void)
 
    ksc->cma = Seq_cma;
    ksc->maclo = (unsigned short)seq_buf;
-   ksc->machi = (unsigned)seq_buf >> 16;
+   ksc->machi = (unsigned short)seq_buf >> 16;
    ksc->mtc = (unsigned short)seq_transfers+1;
    ksc->cse = KSC_CSE_COC | KSC_CSE_ABT | KSC_CSE_ERR;
    ksc->doc = KSC_DOC_CAM_RD;
@@ -7932,52 +8109,52 @@ static int vme_format(void)
    if (caen_785.lat != NULL) rdout = *caen_785.lat & caen_785.mask;
    if (rdout && caen_785.enable)
      {
-      i = 0;
-      while(caen_adcs[i].hwd != NULL)
-       {
-         id = caen_adcs[i].id;
-         caen = caen_adcs[i].hwd;
-         while(1)
-          {
-
-            val = caen->buf[0];
-            htype = val & HDR_MASK;
-            if (htype == HEADER)
-              {
-                int count;
-
-                count = (val & CNT) >> 8;
-                while(count--)
-                {
-                 val = caen->buf[0];
-                 ch = (val & CHAN) >> 16;
-                 val = val & 0xfff;
-                 if ((val < 0xf00) && (id[ch] != 0))
-                  {
-                    *evt++ = id[ch];
-                    *evt++ = val;
-                  }
-                }
-              }
-            else if (htype == EOB)
-              {
-                if (id[32] && id[33])
-                  {
-                    *evt++ = id[32];
-                    *evt++ = (val >> 16) & 0xff;
-                    *evt++ = id[33];
-                    *evt++ = val;
-                  }
-              }
-            else if (htype == NOT_VALID) break;
-          }
-         i++;
-       }
+       i = 0;
+       while(caen_adcs[i].hwd != NULL)
+	 {
+	   id = caen_adcs[i].id;
+	   caen = caen_adcs[i].hwd;
+	   while(1)
+	     {
+	       
+	       val = caen->buf[0];
+	       htype = val & HDR_MASK;
+	       if (htype == HEADER)
+		 {
+		   int count;
+		   
+		   count = (val & CNT) >> 8;
+		   while(count--)
+		     {
+		       val = caen->buf[0];
+		       ch = (val & CHAN) >> 16;
+		       val = val & 0xfff;
+		       if ((val < 0xf00) && (id[ch] != 0))
+			 {
+			   *evt++ = id[ch];
+			   *evt++ = val;
+			 }
+		     }
+		 }
+	       else if (htype == EOB)
+		 {
+		   if (id[32] && id[33])
+		     {
+		       *evt++ = id[32];
+		       *evt++ = (val >> 16) & 0xff;
+		       *evt++ = id[33];
+		       *evt++ = val;
+		     }
+		 }
+	       else if (htype == NOT_VALID) break;
+	     }
+	   i++;
+	 }
      }
-
-/*
-*   Read CAEN 775 TDCs
-*/
+   
+   /*
+    *   Read CAEN 775 TDCs
+    */
    rdout = 1;
    if (caen_775.lat != NULL) rdout = *caen_775.lat & caen_775.mask;
    if (rdout && caen_775.enable)
@@ -8026,9 +8203,9 @@ static int vme_format(void)
 	   i++;
 	 }
      }
-/*
-*   Read CAEN 792 QDCs
-*/
+   /*
+    *   Read CAEN 792 QDCs
+    */
    rdout = 1;
    if (caen_792.lat != NULL) rdout = *caen_792.lat & caen_792.mask;
    if (rdout && caen_792.enable) {
@@ -8042,7 +8219,7 @@ static int vme_format(void)
 	 if (htype == HEADER) {
 	   int count;
 	   count = (val & CNT) >> 8;
-
+	   
 	   if (count < 0 || count > 31) count = 0;
 	   while(count--) {
 	     val = caen->buf[0];
@@ -8068,7 +8245,102 @@ static int vme_format(void)
        i++;
      }
    }
+   
+   /*
+    *   Read SIS Scaler
+    */
+   struct SIS3820 *sis;  //Just to make code easier to read
+   
+   //Hack for decoding the scalers
+   union scalervalue {
+     unsigned long fval;
+     unsigned short  hval[2];
+   } sval={0};
+   
+   union scalervalue extregister={0};
+   
+   rdout = 1;
+   if (sis_3820.lat != NULL) rdout = *sis_3820.lat & sis_3820.mask;
+   if (rdout && sis_3820.enable) {
+     i = 0;
+     while(sis_ro[i].hwd != NULL) {
+       id = sis_ro[i].id;
+       sis = sis_ro[i].hwd;
+       
+       //Read the extended precision register in any case
+       extregister.fval = sis->ch_1_17_highbits;
+       
+       // Loop over all the channels in the scaler, check first if requested
+       // The scaler is 32 bits, so the values have to be split over two words.
+       // Channels 0 and 16 are 48 bits, with the extra bits coming from a 
+       // different register in the scaler.
+       
+       int cidx;
+       for (cidx=0; cidx<32; cidx++) {
+	 
+	 // For all scaler channels, check that PAC requested them
+	 if (id[cidx*3] != 0) {
+
+	   // For the extended range channels, insert the data
+	   *evt++ = id[cidx*3];
+	   if (cidx == 0) {
+	     *evt++ = extregister.hval[1];
+	   } else if (cidx == 16) {
+	     *evt++ = extregister.hval[0];
+	   } else {     // insert zero for others
+	     *evt++ = 0;  
+	   } 
+	     //Read the values from the latched shadow registers, 
+             //not the actively counting ones
+	   sval.fval = sis->shadow[cidx];
+	     
+	   // The save order is 0 - MSB, 1 - middle, 3 - LSB.  
+           //PPC is big-endian, need word swap
+	   *evt++ = id[cidx*3+1];
+	   *evt++ = sval.hval[1];
+	   *evt++ = id[cidx*3+2];
+	   *evt++ = sval.hval[0];
+	   
+	 }
+       }
+       i++;
+     }
+   }
+   /*
+    *   Read MyRIAD clock - This uses runes that worked in 2015 at ANL 
+    *                       with a real MyRIAD
+    */
+   struct MyRIAD_Registers *myr;  //Just to make code easier to read
+   volatile static unsigned short tmp_myr[3];
+   
+   rdout = 1;
+   if (myriad.lat != NULL) rdout = *myriad.lat & myriad.mask;
+   if (rdout && myriad.enable) {
+     
+     if (myriad_ro.hwd != NULL) {
+       id = myriad_ro.id;
+       myr = myriad_ro.hwd;
+       
+       // This is a fake set of reads, to setup the MyRIAD fifo.  
+       // Any less is optimized away.
+       tmp_myr[0] = myriad_ro.hwd->fifo_access;
+       tmp_myr[1] = myr->fifo_access;
+       tmp_myr[2] = myr->fifo_access;
+       
+       // Now we really read and transfer the clock.  
+       // Notice the adjustment for Big-endian.
+       *evt++ = *id+2;   //MSB
+       *evt++ = myr->fifo_access;
+       *evt++ = *id+1;
+       *evt++ = myr->fifo_access;
+       *evt++ = *id;     //LSB
+       *evt++ = myr->fifo_access;
+     }
+   }      
+   
+   // End of the VME readout
    Event = evt;
+   
    return(1);
 }
 /******************************************************************************

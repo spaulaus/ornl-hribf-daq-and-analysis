@@ -103,7 +103,7 @@ C     ------------------------------------------------------------------
 C
       INTEGER*4 MOLIST(20)
 C
-      INTEGER*4 DIR(3,36)
+      INTEGER*4 DIR(3,37)
 C
       BYTE BITE(4)
 C
@@ -157,17 +157,18 @@ C     DIR(I,32) - LOCATES CAEN QDC ID-TABLE
 C     DIR(I,33) - LOCATES 100HZ clock IDs (2 required)
 C     DIR(I,34) - LOCATES SIS3820 Hardware Map
 C     DIR(I,35) - LOCATES SIS3820 ID-TABLE
-C     DIR(I,36) - LOCATES MYRIAD  ID-TABLE (3 required)
+C     DIR(I,36) - LOCATES MYRIAD  Hardware Map
+C     DIR(I,37) - LOCATES MYRIAD  ID-TABLE (3 entries required)
 C     *************************************************************
 C
-      DO 20 J=1,36
+      DO 20 J=1,37
       DO 10 I=1,3
       DIR(I,J)=0
    10 CONTINUE
    20 CONTINUE
 C
 C     This is the offset to the first word after the directory.
-      IOF=109
+      IOF=112
 C
 C     01-***************************(01-03)**!PAC FILENAME*********
 C
@@ -785,7 +786,7 @@ C
 C
 C     33-***************************(97-99)**!100HZ CLOCK  ID-TABLE*****
 C
- 3300 IF(KLOCID(1).EQ.0) GO TO 2950
+ 3300 IF(KLOCID(1).EQ.0) GO TO 3400
       N=0
       DO 3310 I=1,2
       N=N+1
@@ -800,13 +801,13 @@ C
 C
 C     34-***************************(100-102)**!SIS3820 HARDWARE MAP*****
 C
- 2950 N=0
+ 3400 N=0
       NSIS=0
-      DO 2960 I=1,2
+      DO 3450 I=1,2
       N=N+1
       POB(IOF+N)=VSISMAP(I)
       IF(VSISMAP(I).GT.0) NSIS=NSIS+1
- 2960 CONTINUE
+ 3450 CONTINUE
       IF(NSIS.LE.0) GO TO 3500
 C
       JD=34
@@ -817,12 +818,12 @@ C
 C
 C     35-***************************(103-105)**!SIS3820 scaler  ID-TABLE*****
 C
- 3400 IF(NSIS.EQ.0) GO TO 3500
+ 3500 IF(NSIS.EQ.0) GO TO 3600
       N=0
-      DO 3410 I=1,192
+      DO 3510 I=1,192
          N=N+1
          POB(IOF+N)=VSISID(I)
- 3410 CONTINUE
+ 3510 CONTINUE
 C
       JD=35
       DIR(1,JD)=IOF                          !POB OFFSET
@@ -830,16 +831,34 @@ C
       DIR(3,JD)=0                            !DELAY
       IOF=IOF+N
 C
-C     36-***************************(106-108)**!MYRIAD module  ID-TABLE*****
+C     36-***************************(106-108)**!Myriad HARDWARE MAP*****
 C
- 3500 IF(VMYRID(1).EQ.0) GO TO 5000
+ 3600 N=0
+      NMYR=0
+
+      I=1
+      N=N+1
+      POB(IOF+N)=VMYRMAP(I)
+      IF(VMYRMAP(I).GT.0) NMYR=NMYR+1
+
+      IF(NMYR.LE.0) GO TO 3700
+C
+      JD=36
+      DIR(1,JD)=IOF                          !POB OFFSET
+      DIR(2,JD)=N                            !#ENTRIES
+      DIR(3,JD)=0                            !DELAY
+      IOF=IOF+N
+C
+C     37-***************************(106-108)**!MYRIAD module  ID-TABLE*****
+C
+ 3700 IF(VMYRID(1).EQ.0) GO TO 5000
       N=0
-      DO 3510 I=1,3
+      DO 3710 I=1,3
          N=N+1
          POB(IOF+N)=VMYRID(I)
- 3510 CONTINUE
+ 3710 CONTINUE
 C
-      JD=35
+      JD=37
       DIR(1,JD)=IOF                          !POB OFFSET
       DIR(2,JD)=3                            !#ENTRIES
       DIR(3,JD)=0                            !DELAY

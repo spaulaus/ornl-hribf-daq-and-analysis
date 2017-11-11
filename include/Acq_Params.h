@@ -334,7 +334,8 @@ struct tbl_index  RUN_CNAF_LIST;	!* Start acquisition CNAF list      *!
 #define INDEX_CLK_ID          32
 #define INDEX_SIS_HARD        33
 #define INDEX_SIS_ID          34
-#define INDEX_MYR_ID          35
+#define INDEX_MYR_HARD        35
+#define INDEX_MYR_ID          36
 
 
 /*

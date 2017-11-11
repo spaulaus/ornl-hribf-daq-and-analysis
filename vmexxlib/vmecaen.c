@@ -110,7 +110,7 @@ void caen_adc_read_(int *adcnum,int *dat,int *ierr)
    bufout.func = CAEN785;
    bufout.cvt_num = *adcnum - 1;
    bufout.rw = 0;
-   if (*adcnum < 1 || *adcnum > 12)
+   if (*adcnum < 1 || *adcnum > 24)
      {
        *ierr = CAEN_ADC_ILLEGAL;
        return;
@@ -145,7 +145,7 @@ void caen_adc_write_(int *adcnum,int *dat,int *ierr)
    bufout.func = CAEN785;
    bufout.cvt_num = *adcnum - 1;
    bufout.rw = 1;
-   if (*adcnum < 1 || *adcnum > 12)
+   if (*adcnum < 1 || *adcnum > 24)
      {
        *ierr = CAEN_ADC_ILLEGAL;
        return;

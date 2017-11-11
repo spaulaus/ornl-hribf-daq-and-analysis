@@ -263,7 +263,7 @@ C     There is only ever one myriad module
       CALL CKVMEID(ID+1)
       MYRID(2,MODNUM)=ID+1
       CALL CKVMEID(ID+2)
-      MYRID(2,MODNUM)=ID+2
+      MYRID(3,MODNUM)=ID+2
       VMYRMAP(MODNUM)=1
       CALL VMESAV(MYRNAM,MOCODE)
       RETURN

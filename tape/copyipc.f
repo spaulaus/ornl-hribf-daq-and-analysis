@@ -64,7 +64,7 @@
 
 *     Beam status, read from TRUN BON or TRUN BOFF
 *     Get status from the argument to TRUN
-      integer beamstat
+*     integer beamstat
 *
 *       The protocol can lose data, so we count events and compare
 *       with the total sent by the front end.
@@ -166,13 +166,13 @@
         if(ierr .ne. 0)      go to 1000       !File error return
 
 *     Save the beam status, bon or boff, which came from the command line
-        if (ckmx .eq. "BON ") then
-           beamstat = 1
-        else if (ckmx .eq. "BOFF") then
-           beamstat = 0
-        else
-           beamstat = 2
-        endif
+c        if (ckmx .eq. "BON ") then
+c           beamstat = 1
+c        else if (ckmx .eq. "BOFF") then
+c           beamstat = 0
+c        else
+c           beamstat = 2
+c        endif
            
 
       endif
