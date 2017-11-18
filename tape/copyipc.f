@@ -62,9 +62,6 @@
       character*128 deadtime
       equivalence (dt,deadtime)
 
-*     Beam status, read from TRUN BON or TRUN BOFF
-*     Get status from the argument to TRUN
-*     integer beamstat
 *
 *       The protocol can lose data, so we count events and compare
 *       with the total sent by the front end.
@@ -165,16 +162,6 @@
         call hedman('HOUT', ierr)
         if(ierr .ne. 0)      go to 1000       !File error return
 
-*     Save the beam status, bon or boff, which came from the command line
-c        if (ckmx .eq. "BON ") then
-c           beamstat = 1
-c        else if (ckmx .eq. "BOFF") then
-c           beamstat = 0
-c        else
-c           beamstat = 2
-c        endif
-           
-
       endif
 *
       nfile=1
@@ -183,7 +170,7 @@ c        endif
       nrcop=0
       nrtf=0
 *
-*  We should start the acquisition here, incase we stopped it
+*  We should start the acquisition here, in case we stopped it
 *
   495 continue
 *

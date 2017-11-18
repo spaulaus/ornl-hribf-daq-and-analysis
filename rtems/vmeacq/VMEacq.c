@@ -1299,6 +1299,20 @@ void VMEacq(void)
           clk100[0] = clk100[1] = 0;
           len = 1;
           break;
+         case  ZERO_SIS:
+          *outbuf = ACQ_OK;
+          if (devtbl->sis3820_1) {
+             SIS3820_LIST[0]->Key_cnt_clear = 1;
+             SIS3820_LIST[0]->Key_lne_shadow = 1;
+             eieio();
+          }
+          if (devtbl->sis3820_2) {
+             SIS3820_LIST[1]->Key_cnt_clear = 1;
+             SIS3820_LIST[1]->Key_lne_shadow = 1;
+             eieio();
+          }
+          len = 1;
+          break;
          default:
           *outbuf = ACQ_UNKNOWN_COMMAND;
           break;
@@ -1344,7 +1358,8 @@ static int acq_stop(void)
    int   size;
    struct trig *trigger = (struct trig *)TRIGGER;
    struct FCAM *fcam = (struct FCAM *)ORNLAUX;
-   struct SIS3820 *sis = (struct SIS3820 *)SIS3820_1;
+   struct SIS3820 *sis[2] = {(struct SIS3820 *)SIS3820_1,
+                             (struct SIS3820 *)SIS3820_2};
    rtems_status_code sc;
 
    if (!devtbl->trigger) return(ACQ_STP_HALT);
@@ -1358,11 +1373,26 @@ static int acq_stop(void)
 /*
 *   Set INHIBIT in all CAMAC crates to prevent scalers from counting
 */
+       /* Set the STOPPED line before the buffer management */
+       trigger->gpip = ORNL_STOPPED; //rlv moved here 17Nov2017
+       eieio();
+
        set_CAMAC_inhibit();
 /*
 *   Disable counting for the SIS3820 module.
 */
-       if (devtbl->sis3820_1) {sis->Key_disable = 0; sis->op_mode = 1;}
+       printf("devtbl->sis3820_1=%i\n",devtbl->sis3820_1);
+       if (devtbl->sis3820_1) {
+           sis[0]->Key_disable = 0; 
+           sis[0]->op_mode = 1;
+           eieio();
+       }
+       printf("devtbl->sis3820_2=%i\n",devtbl->sis3820_2);
+       if (devtbl->sis3820_2) {
+           sis[1]->Key_disable = 0; 
+           sis[1]->op_mode = 1;
+           eieio();
+       }
 /*
 *    Reset FIFO in ORNL CAMAC interface
 */
@@ -1424,10 +1454,11 @@ static int acq_stop(void)
        sprintf(error_msg,"Stop VME acquisition.  Event Number = %u",
                                                            share->event_number);
        host_message(INFORM,error_msg,"VMEacq  ");
-
        trigger->iera = 0;
        trigger->imra = 0;
+/* move this to the top, to make it much faster
        trigger->gpip = ORNL_STOPPED;
+*/
        eieio();
        return(ACQ_OK);
      }
@@ -1458,7 +1489,8 @@ static int acq_start(void)
    struct FCAM *fcam = (struct FCAM *)ORNLAUX;
    struct LRS1190 **lrs_mod;
    struct hsm *hsm_ptr = (struct hsm *)CES1;
-   struct SIS3820 *sis = (struct SIS3820 *)SIS3820_1;
+   struct SIS3820 *sis[2] = {(struct SIS3820 *)SIS3820_1,
+                             (struct SIS3820 *)SIS3820_2};
    int  status;
    int  err;
 
@@ -1466,7 +1498,6 @@ static int acq_start(void)
 /*
 *    We can start only if a PAC has been initialized.
 */
-   printf("In acq_start\n");
    if (ACQ_initialized != -1) return(ACQ_STR_NOINIT);
 
    status = trigger->iera;
@@ -1493,9 +1524,14 @@ static int acq_start(void)
 *   200000 - select ctl out 5 is LNE pulse; 6,7 10MHz; 8 - user LED state
 */
    if (devtbl->sis3820_1) {
-      sis->Key_enable = 0; 
-//     sis->op_mode = 1;
-      sis->op_mode = 0x00230011; 
+      sis[0]->Key_enable = 0; 
+      sis[0]->op_mode = 0x00230011; 
+      eieio();
+   }
+// SIS_2 should be the standard, unlatched scaler?
+   if (devtbl->sis3820_2) {
+      sis[1]->Key_enable = 0; 
+      sis[1]->op_mode = 1;
       eieio();
    }
 
@@ -4398,6 +4434,7 @@ static int init_vme_modules(void)
    while(sis_ro[i].hwd!=NULL) {
      
      sis_ro[i].hwd->Key_cnt_clear = 0; //Just touch this to clear the scaler
+     sis_ro[i].hwd->Key_lne_shadow = 1; //Update the shadow registers, too
      sis_ro[i].hwd->op_mode =  0x00230011; //Setup for clock loading by trigger
      eieio();  //Force the io to complete
      i++;
@@ -8297,9 +8334,9 @@ static int vme_format(void)
 	   // The save order is 0 - MSB, 1 - middle, 3 - LSB.  
            //PPC is big-endian, need word swap
 	   *evt++ = id[cidx*3+1];
-	   *evt++ = sval.hval[1];
-	   *evt++ = id[cidx*3+2];
 	   *evt++ = sval.hval[0];
+	   *evt++ = id[cidx*3+2];
+	   *evt++ = sval.hval[1];
 	   
 	 }
        }

@@ -89,13 +89,15 @@ int main (int argc, char *argv[])
    //signal (SIGINT, INTsignal);
    
    ssize_t rdsize=0;
+   ssize_t requestSize=sizeof(buffer);
    /* Loop until forced to stop */
    for (;;) {
 
      printf("-----------------\n");
      /* Get a buffer from the connection */
-     rdsize = read(sockfd, (void *)&buffer, sizeof(buffer));
+     rdsize = read(sockfd, (void *)&buffer, requestSize);
      printf("We read %li bytes from the socket\n", rdsize);
+     printf("Buffer size is %i\n", buffer.size);
      if (rdsize == -1) { //error checking
        perror("buffertcpclient - error reading");
        close(sockfd);
@@ -106,12 +108,18 @@ int main (int argc, char *argv[])
        return (1);
      } else if (rdsize < buffer.size+16) {
        //read until the entire buffer arrives
-       while (rdsize != buffer.size+16) {
-	 ssize_t trdsize = read(sockfd, (void *) (&buffer)+rdsize, sizeof(buffer)-rdsize);
+       requestSize = buffer.size+16;
+       while (rdsize < requestSize) {
+	 ssize_t trdsize = read(sockfd, (void *) (&buffer)+rdsize, requestSize-rdsize);
 	 rdsize = rdsize + trdsize;
-	 printf("We read %li bytes from the socket\n", rdsize);
+	 printf("We read %li bytes from the socket for a total of %li\n", trdsize, rdsize);
        }
-     }	 
+     } else if (rdsize > requestSize) {
+     }
+
+     /* Set the size of future requests, based on what the sender thinks */
+     requestSize = buffer.size + 16;
+     
      /* what is in the buffer? */
      printf("Event Number of first event: %i\n", buffer.event_num);
      printf("Number of buffer events: %i\n", buffer.events);

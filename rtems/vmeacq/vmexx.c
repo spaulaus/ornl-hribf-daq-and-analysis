@@ -140,14 +140,15 @@ struct CAEN *CAEN792_LIST[12] = {       /* V792 QDC             */
   (struct CAEN *)CAEN792_11,
   (struct CAEN *)CAEN792_12};
 
-struct SIS3820 * SIS3820_LIST[1] = {(struct SIS3820 *)SIS3820_1};
+struct SIS3820 * SIS3820_LIST[2] = {(struct SIS3820 *)SIS3820_1,
+                                    (struct SIS3820 *)SIS3820_2};
 
 struct MyRIAD_Registers *MYRIAD_LIST = (struct MyRIAD_Registers *) MYRIAD_1;
 
 char *dev785;
 char *dev775;
 char *dev792;
-char *dev3820;
+char *dev3820[2];
 char *devmyriad;
 
 
@@ -168,7 +169,8 @@ void vmexx(void)
   dev785 = &DEVTBL.caen785_1;
   dev775 = &DEVTBL.caen775_1;
   dev792 = &DEVTBL.caen792_1;
-  dev3820 = &DEVTBL.sis3820_1;
+  dev3820[0] = &DEVTBL.sis3820_1;
+  dev3820[1] = &DEVTBL.sis3820_2;
   devmyriad = &DEVTBL.myriad;
 
   sockfd = socket(AF_INET,SOCK_DGRAM,0);
@@ -256,7 +258,7 @@ static char caen775_ctl(struct caen_ctl *cmd)
    struct CAEN *caen;
 
    cvtnum = cmd->cvt_num;
-   if (cvtnum < 0 || cvtnum >11) return(CAEN_ERR_NONEXIST);
+   if (cvtnum < 0 || cvtnum >12) return(CAEN_ERR_NONEXIST);
    if (!dev775[cvtnum]) return(CAEN_ERR_NONEXIST);
    caen =  CAEN775_LIST[cvtnum];
    byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
@@ -302,7 +304,7 @@ static char caen785_ctl(struct caen_ctl *cmd)
    struct CAEN *caen;
 
    cvtnum = cmd->cvt_num;
-   if (cvtnum < 0 || cvtnum > 23) return(CAEN_ERR_NONEXIST);
+   if (cvtnum < 1 || cvtnum > 24) return(CAEN_ERR_NONEXIST);
    if (!dev785[cvtnum]) return(CAEN_ERR_NONEXIST);
    caen =  CAEN785_LIST[cvtnum];
    byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
@@ -330,7 +332,7 @@ char caen792_ctl(struct caen_ctl *cmd)
    /* Note that in caen_ctl, range is the same as iped. */
 
   cvtnum = cmd->cvt_num;
-  if (cvtnum < 0 || cvtnum > 11) return(CAEN_ERR_NONEXIST);
+  if (cvtnum < 0 || cvtnum > 12) return(CAEN_ERR_NONEXIST);
   if (!dev792[cvtnum]) return(CAEN_ERR_NONEXIST);
   caen =  CAEN792_LIST[cvtnum];
   byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
@@ -360,7 +362,7 @@ char sis3820_ctl(struct sis_ctl *cmd)
 
 
    scanum = cmd->sca_num;
-   if (scanum < 0 || scanum > 0) return(SCA_ERR_NONEXIST);
+   if (scanum < 0 || scanum > 1) return(SCA_ERR_NONEXIST);
    if (!dev3820[scanum]) return(SCA_ERR_NONEXIST);
    sis =  SIS3820_LIST[scanum];
 
@@ -377,6 +379,7 @@ char sis3820_ctl(struct sis_ctl *cmd)
    else if (cmd->code == 1)   /* Clear counters                              */
      {
        sis->Key_cnt_clear = 0;
+       sis->Key_lne_shadow = 0;
        eieio();
      }
    else if (cmd->code == 2)    /* enable counting                            */

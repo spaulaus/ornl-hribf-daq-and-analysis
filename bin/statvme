@@ -1,3 +1,0 @@
-#!/bin/csh -f
-set ACQ_DIR = `dirname $0` 
-$ACQ_DIR/acq_run status

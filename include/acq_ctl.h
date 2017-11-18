@@ -71,6 +71,7 @@
 *
 *    1/21/04    MCSQ        Add command to zero the VME acquisition clock.
 *    03Aug2009  RLV         Add Error code for no CAEN QDC
+*    14 Nov 2017 rlv        Add Zero SIS scaler 
 *****************************************************************************/
 #ifndef  ACQ_CTL_H_
 #define  ACQ_CTL_H_
@@ -85,6 +86,7 @@
 #define PAC_FILE   0x55    /* Get PAC file name                          */
 #define HOST       0x66    /* Get host Ethernet address                  */
 #define ZERO_CLK   0x77    /* Zero the acquisition VME clock             */
+#define ZERO_SIS   0x88    /* Zero the SIS latching scaler               */
 
 
 /*

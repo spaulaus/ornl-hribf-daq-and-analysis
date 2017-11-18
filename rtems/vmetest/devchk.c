@@ -134,7 +134,7 @@ static struct acromag *avme = (struct acromag *)ACROMAG;
 /****  static struct hsm *ces_ptr = (struct hsm *)CES1;  ****/
 static struct trig *trigger = (struct trig *)TRIGGER;
 
-static struct MyRIAD_Registers *myriad = (struct trig *)MYRIAD;
+static struct MyRIAD_Registers *myriad = (struct MyRIAD_Registers *)MYRIAD_1;
 
 static struct vmic_ch *vmic6015a = (struct vmic_ch *)VMIC6015A;
 static struct vmic_ch *vmic6015b = (struct vmic_ch *)VMIC6015B;
@@ -166,6 +166,18 @@ static struct CAEN *caen785_9 = (struct CAEN *)CAEN785_9;
 static struct CAEN *caen785_10 = (struct CAEN *)CAEN785_10;
 static struct CAEN *caen785_11 = (struct CAEN *)CAEN785_11;
 static struct CAEN *caen785_12 = (struct CAEN *)CAEN785_12;
+static struct CAEN *caen785_13 = (struct CAEN *)CAEN785_13;
+static struct CAEN *caen785_14 = (struct CAEN *)CAEN785_14;
+static struct CAEN *caen785_15 = (struct CAEN *)CAEN785_15;
+static struct CAEN *caen785_16 = (struct CAEN *)CAEN785_16;
+static struct CAEN *caen785_17 = (struct CAEN *)CAEN785_17;
+static struct CAEN *caen785_18 = (struct CAEN *)CAEN785_18;
+static struct CAEN *caen785_19 = (struct CAEN *)CAEN785_19;
+static struct CAEN *caen785_20 = (struct CAEN *)CAEN785_20;
+static struct CAEN *caen785_21 = (struct CAEN *)CAEN785_21;
+static struct CAEN *caen785_22 = (struct CAEN *)CAEN785_22;
+static struct CAEN *caen785_23 = (struct CAEN *)CAEN785_23;
+static struct CAEN *caen785_24 = (struct CAEN *)CAEN785_24;
 
 static struct CAEN *caen775_1 = (struct CAEN *)CAEN775_1;
 static struct CAEN *caen775_2 = (struct CAEN *)CAEN775_2;
@@ -194,6 +206,11 @@ static struct CAEN *caen792_11 = (struct CAEN *)CAEN792_11;
 static struct CAEN *caen792_12 = (struct CAEN *)CAEN792_12;
 
 static struct SIS3820 *sis3820_1 = (struct SIS3820 *)SIS3820_1;
+static struct SIS3820 *sis3820_2 = (struct SIS3820 *)SIS3820_2;
+
+static struct MYRIAD *myriad_1 = (struct MYRIAD *)MYRIAD_1;
+
+
 
 /*
 *   Function prototype
@@ -256,6 +273,19 @@ void devchk(void)
   devtbl->caen785_10 = 0;
   devtbl->caen785_11 = 0;
   devtbl->caen785_12 = 0;
+  devtbl->caen785_13 = 0;
+  devtbl->caen785_14 = 0;
+  devtbl->caen785_15 = 0;
+  devtbl->caen785_16 = 0;
+  devtbl->caen785_17 = 0;
+  devtbl->caen785_18 = 0;
+  devtbl->caen785_19 = 0;
+  devtbl->caen785_20 = 0;
+  devtbl->caen785_21 = 0;
+  devtbl->caen785_22 = 0;
+  devtbl->caen785_23 = 0;
+  devtbl->caen785_24 = 0;
+
 
   devtbl->caen775_1 = 0;
   devtbl->caen775_2 = 0;
@@ -284,6 +314,7 @@ void devchk(void)
   devtbl->caen792_12 = 0;
 
   devtbl->sis3820_1 = 0;
+  devtbl->sis3820_2 = 0;
 
   devtbl->ksc2917a = device_test_(2,&ksc1_ptr->csr);
   devtbl->ksc2917b = device_test_(2,&ksc2_ptr->csr);
@@ -368,6 +399,18 @@ eieio();
   devtbl->caen785_10 = device_test_(2,&caen785_10->firmware);
   devtbl->caen785_11 = device_test_(2,&caen785_11->firmware);
   devtbl->caen785_12 = device_test_(2,&caen785_12->firmware);
+  devtbl->caen785_13 = device_test_(2,&caen785_13->firmware);
+  devtbl->caen785_14 = device_test_(2,&caen785_14->firmware);
+  devtbl->caen785_15 = device_test_(2,&caen785_15->firmware);
+  devtbl->caen785_16 = device_test_(2,&caen785_16->firmware);
+  devtbl->caen785_17 = device_test_(2,&caen785_17->firmware);
+  devtbl->caen785_18 = device_test_(2,&caen785_18->firmware);
+  devtbl->caen785_19 = device_test_(2,&caen785_19->firmware);
+  devtbl->caen785_20 = device_test_(2,&caen785_20->firmware);
+  devtbl->caen785_21 = device_test_(2,&caen785_21->firmware);
+  devtbl->caen785_22 = device_test_(2,&caen785_22->firmware);
+  devtbl->caen785_23 = device_test_(2,&caen785_23->firmware);
+  devtbl->caen785_24 = device_test_(2,&caen785_24->firmware);
 
   devtbl->caen775_1 = device_test_(2,&caen775_1->firmware);
   devtbl->caen775_2 = device_test_(2,&caen775_2->firmware);
@@ -396,6 +439,7 @@ eieio();
   devtbl->caen792_12 = device_test_(2,&caen792_12->firmware);
 
   devtbl->sis3820_1 = device_test_(4,&sis3820_1->modid);
+  devtbl->sis3820_2 = device_test_(4,&sis3820_2->modid);
 
   devtbl->trigger = device_test_(1,&trigger->iera);
   devtbl->myriad = device_test_(2,&myriad->board_id);
@@ -405,7 +449,7 @@ eieio();
   devtbl->vmic3113a = device_test_(2,&vmic3113a->id);
   devtbl->vmic3124 = device_test_(1,&vmic3124->id);
 
-     printf("Available Interface Modules are:\n\n");
+  printf("Available Interface Modules are:\n\n");
      if (devtbl->ksc2917a != 0)
                              printf("KSC 2917A -  CAMAC Interface Module\n");
      if (devtbl->ksc2917b != 0)
@@ -493,6 +537,30 @@ eieio();
        printf("CAEN785_11 -  32 Chan, 12-bit ADC Module\n");
      if (devtbl->caen785_12 != 0)
        printf("CAEN785_12 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_13 != 0)
+       printf("CAEN785_13 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_14 != 0)
+       printf("CAEN785_14 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_15 != 0)
+       printf("CAEN785_15 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_16 != 0)
+       printf("CAEN785_16 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_17 != 0)
+       printf("CAEN785_17 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_18 != 0)
+       printf("CAEN785_18 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_19 != 0)
+       printf("CAEN785_19 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_20 != 0)
+       printf("CAEN785_20 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_21 != 0)
+       printf("CAEN785_21 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_22 != 0)
+       printf("CAEN785_22 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_23 != 0)
+       printf("CAEN785_23 -  32 Chan, 12-bit ADC Module\n");
+     if (devtbl->caen785_24 != 0)
+       printf("CAEN785_24 -  32 Chan, 12-bit ADC Module\n");
 
      if (devtbl->caen775_1 != 0)
        printf("CAEN775_1 -  32 Chan, 12-bit TDC Module\n");
@@ -546,6 +614,8 @@ eieio();
 
      if (devtbl->sis3820_1 != 0)
        printf("SIS3820_1  -  32 Chan, VME Scaler Module\n");
+     if (devtbl->sis3820_2 != 0)
+       printf("SIS3820_2  -  32 Chan, VME Scaler Module\n");
 rtems_task_delete(RTEMS_SELF);
 getchar ();
 exit(0);

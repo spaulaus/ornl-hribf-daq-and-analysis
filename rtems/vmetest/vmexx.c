@@ -127,9 +127,11 @@ struct CAEN *CAEN792_LIST[12] = {       /* V792 QDC             */
   (struct CAEN *)CAEN792_11,
   (struct CAEN *)CAEN792_12};
 
-struct SIS3820 * SIS3820_LIST[1] = {(struct SIS3820 *)SIS3820_1};
+struct SIS3820 * SIS3820_LIST[2] = {
+  (struct SIS3820 *)SIS3820_1,
+  (struct SIS3820 *)SIS3820_2};
 
-struct MyRIAD_Registers *MYRIAD_LIST = (struct MyRIAD_Registers *) MYRIAD;
+struct MyRIAD_Registers *MYRIAD_LIST = (struct MyRIAD_Registers *) MYRIAD_1;
 
 char *dev785;
 char *dev775;

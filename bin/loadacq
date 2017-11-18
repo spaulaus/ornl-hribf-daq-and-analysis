@@ -1,2 +1,0 @@
-#!/bin/csh -f
-echo "LoadACQ is uneeded for the powerpc VME cpus"

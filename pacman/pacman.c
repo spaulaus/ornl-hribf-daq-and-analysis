@@ -271,7 +271,7 @@
 /* New acquisition -  define macros for many commands*/
 #define  HRIBF
 
-#ifdef  HRIBF
+#ifdef   HRIBF
 
 #define  BASE      "/usr/acq2"
 
@@ -280,6 +280,7 @@
 #define  XTAPE     BASE"/bin/tape"
 #define  FEMSG     BASE"/bin/femsg"
 #define  UDPTOIPC  BASE"/bin/udptoipc"
+#define  IPCTOTCP  BASE"/bin/ipctotcp"
 //#define  LT        BASE"/bin/lt"
 #define  BOOTVME   BASE"/bin/bootvme"
 #define  LOADACQ   BASE"/bin/loadacq"
@@ -293,6 +294,7 @@
 #define  INITVME   BASE"/bin/initvme"
 #define  SETUP     BASE"/bin/setup"
 #define  ZEROCLK   BASE"/bin/zeroclk"
+#define  ZEROSIS   BASE"/bin/zerosis"
 #define  VMEHARDWARE BASE"/bin/vmehardware"
 #define  VMEHOST   BASE"/bin/vmehost"
 #define  VMECPUS   BASE"/bin/vmecpus"
@@ -339,6 +341,10 @@
 */
 char udptoipcfile[128] = UDPTOIPC;
 /*
+*   Name of process which moves shared memory buffers to TCP/IP client
+*/
+char ipctotcpfile[128] = IPCTOTCP;
+/*
 *    VME processor name
 */
 char server[12];
@@ -371,14 +377,18 @@ char *udptoipc[] = { udptoipcfile,
                    "-d",
                    server,
                     NULL };
+char *ipctotcp[] = { ipctotcpfile,
+                   "-d",
+                   server,
+                    NULL };
 /*
 *     Default startup banner
 */
 char *banner = {"\
 ****************************************************************************\n\
-*                                ORPHAS                                    *\n\
+*                                ORPAS                                     *\n\
 *                                                                          *\n\
-*                               pacman II                                  *\n\
+*                               pacman IIa                                 *\n\
 *                      Physics Acquisition Manager                         *\n\
 *                                                                          *\n\
 ****************************************************************************\n\
@@ -473,6 +483,7 @@ struct cmdlst kcmd[100] = {
        "pacfile",   EXEC, NOLOG, PACFILE,
        "setup",     EXECARG, LOG, SETUP,
        "zeroclk",   EXEC, LOG, ZEROCLK,
+       "zerosis",   EXEC, LOG, ZEROSIS,
        "vmehardware", EXEC, NOLOG, VMEHARDWARE,
        "vmehost",     EXEC, NOLOG, VMEHOST,
        "vmecpus",     EXEC, NOLOG, VMECPUS,
@@ -602,7 +613,7 @@ char lastpac[256],lastinit[256];
 int  pacloaded = 0,initvme = 0;
 
 char pacpidfile[80];
-volatile pid_t  tapepid,loggerpid,femsgpid,udptoipcpid;
+volatile pid_t  tapepid,loggerpid,femsgpid,udptoipcpid,ipctotcppid;
 volatile pid_t  unixpid;
 volatile   int  unixstat,kill_flag = 0,sigintflg,tape_busy = 0;
 
@@ -720,21 +731,6 @@ int cmd_exec(char *cmdstr)
        for(i=0;i<5;i++)            // Lowercase for tests 
 	 args[i]=tolower(args[i]);
        
-/*       if (uxptr == NULL)
-	 {
-	   printf(
-		  "\n\7TRUN needs argument: BON (beam on) or BOFF (beam off) - %s -\n",line);
-	   log = NOLOG;
-	   break;
-	 }
-       else if (strcmp(args,"bon") && strcmp(args,"boff"))
-	 {
-	   printf(
-		  "\n\7Syntax: TRUN BON (beam on) or TRUN BOFF (beam off) - %s -\n",line);
-	   log = NOLOG;
-	   break;
-	 }
-*/
        if (pacloaded != 0 && initvme != 0)
 	 {
 	   strcpy(lastinit,lastpac);
@@ -754,22 +750,7 @@ int cmd_exec(char *cmdstr)
        uxptr = getfield(args,cptr,5);
        for(i=0;i<5;i++)            /* Lowercase for tests */
 	 args[i]=tolower(args[i]);
-       
-/*       if (uxptr == NULL)
-          {
-            printf(
-		   "\n\7TON needs argument: BON (beam on) or BOFF (beam off) - %s -\n",line);
-            log = NOLOG;
-            break;
-          }
-       else if (strcmp(args,"bon") && strcmp(args,"boff"))
-	 {
-	   printf(
-		  "\n\7Syntax: TON BON (beam on) or TON BOFF (beam off) - %s -\n",line);
-	   log = NOLOG;
-	   break;
-	 }
-*/
+//       break;
      case  SCAT:
        if (cd_ptr != NULL)
 	 {
@@ -781,8 +762,9 @@ int cmd_exec(char *cmdstr)
 	   break;
           }
        cmd_exec("stopvme");
-       wait_(&Itime,&Iunit,&Ierror);
+       wait_(&Itime,&Iunit,&Ierror); //ORPHLIB wait one second
        zbuf_shm();
+//       break;
      case  TAPE:
        tape_cmd(line,0,cmdfile!=NULL);
        break;
@@ -856,7 +838,7 @@ int cmd_exec(char *cmdstr)
         if (subptr == (char *)1)       /* send a CTRL/C to  TAPEOU */
           {
             cmd_exec("stopvme");
-            wait_(&Itime,&Iunit,&Ierror);
+            wait_(&Itime,&Iunit,&Ierror);  //ORPHLIB wait one second 
             status = kill(tapepid,SIGINT);
             if (status == -1)
               {
@@ -1033,7 +1015,7 @@ int cmd_exec(char *cmdstr)
         fclose(cmdfile);
         cmdfile = NULL;
         break;
-      case  HUP:
+      case HUP:
 /*
 *   Histogram update.
 */
@@ -1397,6 +1379,14 @@ void loadchk(void)
               printf("%s",in_line);
             }
         }
+      else if (strstr(in_line,*ipctotcp)  != NULL)
+        {
+          if (keysearch(in_line,server) != NULL)
+            {
+              ipctotcppid = pid;
+              printf("%s",in_line);
+            }
+        }
       else if (strstr(in_line,*femsg)  != NULL)
         {
           if (keysearch(in_line,server) != NULL)
@@ -1446,7 +1436,7 @@ printf("femsg = %i, tape = %i, log = %i\n",femsgpid,tapepid,loggerpid);
 printf("udptoipc = %i, scan = %i\n",udptoipcpid,scanpid);
 ***********/
 
-  pid = tapepid + udptoipcpid + loggerpid + femsgpid;
+  pid = tapepid + udptoipcpid + ipctotcppid + loggerpid + femsgpid;
   if (pid)
     {
       printf("\7\nOne or more of pacman's processes are already running\n");
@@ -1489,6 +1479,7 @@ void init(void)
     char *cwd;
     static char pid[10];
     static char pri_udptoipc[] = "-15";
+    static char pri_ipctotcp[] = "-10";
     static char pri_tape[] = "-10";
     static char mess[78];
     FILE *pidfile;
@@ -1553,10 +1544,14 @@ void init(void)
    strcpy(args,"**** UDPtoipc Process: ");
    strcat(args,udptoipcfile);
    cmdlog();
+   strcpy(args,"**** ipctoTCP Process: ");
+   strcat(args,ipctotcpfile);
+   cmdlog();
 /*
-*  Start the udptoipc process and the tape process
+*  Start the udptoipc, tape and ipctotcp processes
 */
    udptoipcpid = spawn(udptoipc);
+   ipctotcppid = spawn(ipctotcp);
    tapepid = spawn(tape);
 /*
 *  Check for Display for this process
@@ -1595,6 +1590,9 @@ void init(void)
    uxargs[2] = pri_tape;
    sprintf(pid,"%i",tapepid);
    exec_wait(uxargs);
+   uxargs[2] = pri_ipctotcp;
+   sprintf(pid,"%i",ipctotcppid);
+   exec_wait(uxargs);
 /*
 *   Start any user defined windows provided there is a Display
 */
@@ -1623,6 +1621,7 @@ void init(void)
    fprintf(pidfile,"Tape_Message_ID  %d\n",Ids.tape_msg);
    fprintf(pidfile,"Log_Message_ID  %d\n",Ids.log_msg);
    fprintf(pidfile,"UDPtoipc_PID  %d\n",udptoipcpid);
+   fprintf(pidfile,"ipctoTCP_PID  %d\n",ipctotcppid);
    fclose(pidfile);
 }
 /***************************************************************************
@@ -1639,7 +1638,8 @@ void kill_all(void)
 
    if (femsgpid != 0) kill(femsgpid,SIGTERM);
    if (udptoipcpid != 0) kill(udptoipcpid,SIGTERM);
-   while(femsgpid+tapepid+udptoipcpid)
+   if (ipctotcppid != 0) kill(ipctotcppid,SIGTERM);
+   while(femsgpid+tapepid+udptoipcpid+ipctotcppid)
     {
       if ((pid = wait(&status)) == -1 && errno != EINTR) break;
       if (pid == femsgpid)
@@ -1656,6 +1656,11 @@ void kill_all(void)
         {
           udptoipcpid = 0;
           printf("%s process Terminated\n",udptoipcfile);
+        }
+      else if (pid == ipctotcppid)
+        {
+          ipctotcppid = 0;
+          printf("%s process Terminated\n",ipctotcpfile);
         }
     }
    remove_acq_ipc_(server,&status,sizeof(server));
@@ -1747,6 +1752,11 @@ void  CLDsignal(int sig)
         {
           process = udptoipcfile;
           udptoipcpid = 0;
+        }
+      else if (pid == ipctotcppid)
+        {
+          process = ipctotcpfile;
+          ipctotcppid = 0;
         }
       else
         {
@@ -1998,7 +2008,7 @@ void config(void)
    char tmpfilename[L_tmpnam],tmpstr[80];
    static char *keys[] = {"$BANNER","$WINDOW","$USER_CMD","$ALIAS",
                           "$BUFFER_SIZE","$LOG_INTERVAL","$HELP_FILE",
-                          "$USER_PFTOIPC",NULL};
+                          "$USER_PFTOIPC","$USER_IPCTOTCP",NULL};
 
 /*
 *   First choice is file specified on the command line
@@ -2171,6 +2181,20 @@ void config(void)
                 ierr = 1;
               }
            break;
+
+          case 8:
+/*
+*   User specified "ipctotcp" process
+*/
+            cptr = getfield(args,cptr,sizeof(ipctotcpfile));
+            if (cptr != NULL) strcpy(ipctotcpfile,args);
+            else
+              {
+                printf("FIG ERROR: missing filename\n***%s",args);
+                ierr = 1;
+              }
+           break;
+
           default:
            printf ("FIG ERROR: Unknown command!\n***%s",args);
            ierr = 1;

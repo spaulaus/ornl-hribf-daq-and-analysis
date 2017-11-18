@@ -18,4 +18,6 @@ install: acq_run
 	install statvme $(INSTALLDIR)
 	install initvme $(INSTALLDIR)
 	install pacfile $(INSTALLDIR)
+	install zeroclk $(INSTALLDIR)
+	install zerosis $(INSTALLDIR)
 

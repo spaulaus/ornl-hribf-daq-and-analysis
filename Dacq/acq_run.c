@@ -88,6 +88,7 @@
 *    3/19/03    MCSQ        Changed for new pkt_io.c
 *
 *    1/21/04    MCSQ        Add command to zero the acquisition VME clock
+*    17 November 2017 RLV   Add command to zero the sis scaler
 *****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -114,9 +115,17 @@ char *prog;
 char line[81];
 struct UDP_Packet xbuf,rbuf;
 
-char *cmd[] = {"init","start","stop","status","pacfile","host","zero",NULL};
-char cmd_code[] = {INIT_ACQ,START_ACQ,STOP_ACQ,STATUS_ACQ,PAC_FILE,HOST,
-                   ZERO_CLK,0};
+char *cmd[] = {"init","start","stop","status",
+               "pacfile","host","zero","zsis",NULL};
+char cmd_code[] = {INIT_ACQ, 
+                   START_ACQ, 
+                   STOP_ACQ, 
+                   STATUS_ACQ,
+                   PAC_FILE, 
+                   HOST, 
+                   ZERO_CLK, 
+                   ZERO_SIS,
+                   0};
 
 /*
 *  Host name and ethernet address table
@@ -142,14 +151,14 @@ int main(int argc, char *argv[])
   
   while(1) {
     if (argc < 2) {
-      printf("Command ? : ");
       if (fgets(line,80,stdin) == NULL) break;
       if (!strncmp(line,"end",3)) return(0);
       if (!strncmp(line,"exit",4)) return(0);
     }
-    else   strcpy(line,argv[1]);
+    else   
+      strcpy(line,argv[1]);
 
-    for(i=0; i < 7; i++) {
+    for(i=0; i < 8; i++) {
       if(!strncmp(line,cmd[i],4)) break;
     }
     *outbuf = cmd_code[i];

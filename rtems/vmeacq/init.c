@@ -447,7 +447,7 @@ Init (rtems_task_argument ignored)
     printf("debugdata init: %lx\n", debugdata[i]);
 
 /*   Print an initial help message  */
-      printf("This is vmeacq.ralf - Version of 06 August 2009.  \n");
+      printf("This is vmeacq.ralf - Version of 16 November 2017.  \n");
       printf("Syntax:\n");
       printf("q - reboot the processor\n");
       printf("s - show network statistics \n");

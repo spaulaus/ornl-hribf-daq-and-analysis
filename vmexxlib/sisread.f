@@ -52,7 +52,8 @@
 1010  format(i2)
 
 *    Help for the helpless
-      write(6,1004) "0 - read", "1 - clear", "2 - enable", 
+      write(6,1004) "-1 - quit",
+     .              "0 - read", "1 - clear", "2 - enable", 
      .              "3 - disable counting", "4 - enable 25MHz test",
      .              "5 - disable 25MHz test", "6 - read CSR",
      .              "7 - read module ID and firmware",
@@ -70,6 +71,9 @@
       write(6,1005)
 1005  format('Func code ? ',$)
       read(5,1010) func
+      if (func .eq. -1) then
+        stop
+      endif
 
 *     Execute the function
       call sis_sca_ctl(scanum,func,dat,ierr)
@@ -85,9 +89,11 @@
 *     Display the channel readout
       if (func .eq. 0) then
 *       Hex
+        write(6,"('Hexadecimal representation')")
         write(6,9020) dat
 9020    format(4z12)
 *       Decimal
+        write(6,"('Decimal representation')")
         write(6,90201) dat
 90201   format(4i12)
 
