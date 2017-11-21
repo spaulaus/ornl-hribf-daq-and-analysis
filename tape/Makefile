@@ -1,11 +1,13 @@
-DIRHHIRF=/usr/hhirf
+#DIRHHIRF=/usr/hhirf
+DIRHHIRF=/Users/rxv/acquisition/hhirf
 BASE=..
 INCDIR=$(BASE)/include
 LIBDIR=$(BASE)/lib
 INSTALLDIR=$(BASE)/bin
 
-FORT=/usr/bin/gfortran
-FFLAGS= -O2 -fno-automatic -fsecond-underscore -fno-range-check -I$(INCDIR)
+#FORT=/usr/bin/gfortran
+FORT=/sw/bin/gfortran
+FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check -I$(INCDIR)
 #FORT=/usr/bin/f77
 #FFLAGS= -O2 -fno-automatic -fsecond-underscore -I$(INCDIR)
 CFLAGS= -O2 -I$(INCDIR) -Wall
@@ -22,13 +24,14 @@ OBJS= tape.o\
       copyipc.o\
       readum1.o
 #
-LIBS= /usr/hhirf/lemorlib.a\
+LIBS= $(DIRHHIRF)/lemorlib.a\
       scatlib/scatlibr.a\
       $(LIBDIR)/vmelib.a\
       $(LIBDIR)/acqlib.a\
       $(LIBDIR)/ipclib.a\
-      /usr/hhirf/milibb.a\
-      /usr/hhirf/orphlib.a
+      $(LIBDIR)/vmexxlib.a\
+      $(DIRHHIRF)/milibb.a\
+      $(DIRHHIRF)/orphlib.a
 #
 #
 tape: $(OBJS) $(LIBS)

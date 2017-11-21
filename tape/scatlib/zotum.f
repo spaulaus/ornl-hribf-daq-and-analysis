@@ -25,6 +25,10 @@ C     ------------------------------------------------------------------
 C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
 C     ------------------------------------------------------------------
+      common/scat2a/ modty(NSC),vmemod(20),vmesn(20),vmeidx(20),nvme
+      character*8   modty,     vmemod
+      integer*4                           vmesn,    vmeidx,    nvme
+C     ------------------------------------------------------------------
       COMMON/SCATB/ READERR,ZEROERR,LOGERR,NDUMPS
       CHARACTER*4                   LOGERR
       INTEGER*4     READERR,ZEROERR,       NDUMPS
@@ -48,6 +52,11 @@ C
    10 CONTINUE
 C
       DO 50 I=1,NZOT
+      if ((cn(i).eq. 0) .and. 
+     &    (sn(i).eq. 0) .and. 
+     &    (a(i).eq.0)) then
+          goto 50
+      endif
       CALL CAMACIO(1,CNZ(I),SNZ(I),0,9,IDUM,0,STAT)
       IF(STAT.EQ.0.OR.STAT.EQ.1) GO TO 50
       ZEROERR=ZEROERR+1
@@ -60,7 +69,7 @@ C
       CALL MESSLOG(LOGUT,LOGUP)
    50 CONTINUE
 C
-      IF(NEC.LE.0) RETURN
+      IF ((NEC.LE.0) .and. (nvme .le. 0)) RETURN
 C
       DO 100 I=1,NEC
       CALL CAMACIO(1,ECN(I),ESN(I),0,16,'40'X,1,STAT)
@@ -74,5 +83,6 @@ C
    60 FORMAT('BAD-',A4,'ZEROING ECL SCALER - C,N =',2I4)
       CALL MESSLOG(LOGUT,LOGUP)
   100 CONTINUE
+      call vmeclr()
       RETURN
       END

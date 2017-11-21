@@ -2,6 +2,7 @@ C$PROG SCATREAD
 C
 C     ******************************************************************
 C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 10/24/2002
+C     Modified: RLVarner 21 Nov 2017 add VME scalers, based on SCAD
 C     ******************************************************************
 C
       SUBROUTINE SCATREAD
@@ -22,6 +23,10 @@ C     ------------------------------------------------------------------
       CHARACTER*4   TY,KI,LA
 C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
+C     ------------------------------------------------------------------
+      common/scat2a/ modty(NSC),vmemod(20),vmesn(20),vmeidx(20),nvme
+      character*8   modty,     vmemod
+      integer*4                           vmesn,    vmeidx,    nvme
 C     ------------------------------------------------------------------
       COMMON/SCAT3/ CC(NSC),NN(NSC),AA(NSC),FF(NSC),VBUF(NSC),NLIST
 C     ------------------------------------------------------------------
@@ -50,10 +55,12 @@ C
       IF(MODEGO.EQ.'TST ') GO TO 30     !TEST FOR TST-MODE
 C
       CALL CAMRED                       !READ NEW VALUES
-C
+      call vmered                       !read VME scalers
+C     
       N=0
       DO 15 I=1,NR                      !COPY NON-ECL TYPES
       IF(TY(I).EQ.'ECL ') GO TO 15      !SKIP IF ECL TYPE
+      IF(TY(I).EQ.'VME ') GO TO 15      !SKIP IF VME TYPE
       N=N+1
       VN(I)=VBUF(N)                     !SAVE IN VN
    15 CONTINUE

@@ -19,6 +19,10 @@ C     ------------------------------------------------------------------
 C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
 C     ------------------------------------------------------------------
+      common/scat2a/ modty(NSC),vmemod(20),vmesn(20),vmeidx(20),nvme
+      character*8   modty,     vmemod
+      integer*4                           vmesn,    vmeidx,    nvme
+C     ------------------------------------------------------------------
       COMMON/SCATC/ CNZ(100),SNZ(100),AZ(100),NZOT
       INTEGER*4     CNZ,     SNZ,     AZ,     NZOT
 C     ------------------------------------------------------------------
@@ -49,6 +53,7 @@ C
       NONEC=0
       DO 100 N=1,NR
       IF(TY(N).EQ.'ECL ') GO TO 100
+      if(ty(n) .eq. 'VME ') go to 100
       NONEC=NONEC+1
   100 CONTINUE
 C
@@ -73,5 +78,39 @@ C
   140 PV(N)=32*(NEI-1)+A(N)+1+NONEC+NEC
 C
   200 CONTINUE
+C
+      nvme=0
+      do 1100 n=1,nr
+C
+      if(ty(n).ne.'VME ') GO TO 1100
+C
+      nei=0
+      DO 1110 I=1,nvme
+      nei=nei+1
+      if(modty(n) .eq. vmemod(i) .and. vmesn(i) .eq. sn(n)) go to 1130
+ 1110 continue
+C
+      nvme=nvme+1
+      vmemod(nvme) = modty(n)
+      vmesn(nvme) = sn(n)
+      pv(n)=32*(nvme-1)+a(n)+nonec+33*nec+nvme
+      vmeidx(nvme) = pv(n) - a(n) 
+***      write(*,802) n,pv(n),nvme
+***802    format('N = ',i3,' pv(n) = ',i3,' NVME = ',i3)
+      GO TO 1100
+C
+ 1130 pv(n)=32*(nei-1)+a(n)+nonec+33*nec+nvme
+***       write(*,802) n,pv(n),nvme
+C
+ 1100 continue
+
+      do i=1,nr
+***        write(*,900) i,cn(i),sn(i),a(i),pv(i),ty(i)
+***  900   format(5i5,a4)
+      enddo
+      do i=1,nvme
+***        write(*,901) vmemod(i),vmesn(i),vmeidx(i)
+***  901   format(a8,2i5)
+      enddo
       RETURN
       END

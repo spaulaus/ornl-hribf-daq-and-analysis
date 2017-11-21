@@ -33,6 +33,10 @@ C     ------------------------------------------------------------------
 C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
 C     ------------------------------------------------------------------
+      common/scat2a/ modty(NSC),vmemod(20),vmesn(20),vmeidx(20),nvme
+      character*8   modty,     vmemod
+      integer*4                           vmesn,    vmeidx,    nvme
+CC     ------------------------------------------------------------------
       COMMON/SCAT3/ CC(NSC),NN(NSC),AA(NSC),FF(NSC),VBUF(NSC),NLIST
 C     ------------------------------------------------------------------
       INTEGER*4     IWD(20),LWD(2,40),ITYP(40),NF
@@ -80,6 +84,9 @@ C
 C     ECN(K)   = CRATE# FOR ECL SCALER-K
 C     ESN(K)   = SLOT#  FOR ECL SCALER-K
 C     NEC      = NUMBER OF  ECL SCALERS
+*
+*     modty(j) = VME module type (SIS3820 or CAEN820)
+*     nvme     = number of VME scalers
 C     ******************************************************************
 C
       ISET='NO  '
@@ -117,11 +124,55 @@ C
 C
       CALL LODUP(IWD,1,IA,LA(1,N),1)
 C
-      CALL GREAD(IWD,LWD,ITYP,NF,IA,80,NTER)
+      ib = ifind(iwd,'3b'x,1,80)
+      if (ib .le. 0) ib = 81
+      ib = ib - 1
+*      CALL GREAD(IWD,LWD,ITYP,NF,IA,80,NTER)
+      CALL GREAD(IWD,LWD,ITYP,NF,IA,ib,NTER)
       IF(NTER.NE.0) GO TO 300
 C
-      READ(CLWDL,60,ERR=300)CN(N),SN(N),A(N),F(N),TY(N)
-   60 FORMAT(4I8,A4)
+*      Setup VME scalers
+      read(clwdl,1000)modty(n)
+ 1000 format(a8)
+      if(modty(n) .eq. 'SIS3820') go to 1010
+      if(modty(n) .eq. 'CAEN820') go to 1010
+      modty(n) = ' '
+      go to 1030
+*
+ 1010 read(clwdl,1020)modty(n),sn(n),a(n)
+ 1020 format(a8,2i8)
+      if (sn(n) .le. 0) go to 340
+      cn(n) = -1
+      ty(n) = 'VME '
+      go to 1040
+*
+ 1030 continue
+**      write(*,9000) n,nf
+**9000  format('N = ',i3,' NF = ',i2)
+      if (nf .eq. 5) then
+        READ(CLWDL,60)CN(N),SN(N),A(N),F(N),TY(N)
+   60   FORMAT(4I8,A4)
+      elseif (nf .eq. 4 .and. ityp(4) .eq. 2) then
+        read(clwdl,60)cn(n),sn(n),a(n),f(n)
+        ty(n) = '    '
+      elseif (nf .eq. 4 .and. ityp(4) .eq. 1) then
+        read(clwdl,61)cn(n),sn(n),a(n),ty(n)
+   61   format(3i8,a4)
+        f(n) = 0
+      elseif (nf .eq. 3) then
+        read(clwdl,60)cn(n),sn(n),a(n)
+        f(n) = 0
+        ty(n) = '    '
+      elseif (nf .lt. 3) then
+        go to 300
+      endif
+**      write(*,9010) n,cn(n),sn(n),a(n),f(n),ty(n)
+**9010  format('N = ',i3,3x,4i5,a4)
+C
+ 1040 continue
+
+*     READ(CLWDL,60,ERR=300)CN(N),SN(N),A(N),F(N),TY(N)
+*  60 FORMAT(4I8,A4)
 C
       IA=IFIND(IWD,'3B'X,1,80)
 C
@@ -179,6 +230,11 @@ C
   310 WRITE(CMSSG,315)MAXT
   315 FORMAT('MORE THAN',I4,' RAW SCALERS REQUESTED - NOT ALLOWED')
       GO TO 400
+
+  340 write(6,345) lino
+  345 format(1h ,'VME scaler number must be greater than 0 on ',i3)
+      go to 400
+
 C
   400 CALL MESSLOG(LOGUT,LOGUP)
       RETURN

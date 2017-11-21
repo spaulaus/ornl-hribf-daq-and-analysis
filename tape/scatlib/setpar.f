@@ -19,6 +19,10 @@ C     ------------------------------------------------------------------
 C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
 C     ------------------------------------------------------------------
+      common/scat2a/ modty(NSC),vmemod(20),vmesn(20),vmeidx(20),nvme
+      character*8   modty,     vmemod
+      integer*4                           vmesn,    vmeidx,    nvme
+C     ------------------------------------------------------------------
       COMMON/SCAT3/ CC(NSC),NN(NSC),AA(NSC),FF(NSC),VBUF(NSC),NLIST
 C     ------------------------------------------------------------------
 C
@@ -39,7 +43,8 @@ C     ******************************************************************
 C
       DO 40 I=1,NR                      !LOOP ON # SCALERS TO READ
 C
-      IF(TY(I).EQ.'ECL ') GO TO 40      !SKIP IF ECL-TYPE
+      IF (TY(I) .EQ. 'ECL ') GO TO 40   !SKIP IF ECL-TYPE
+      if (ty(i) .eq. 'VME ') go to 40   !skip if VME-type
 C
       N=N+1                             !INC ARRAY INDEX
 C
