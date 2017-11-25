@@ -3,8 +3,8 @@ INCLDIR = $(BASE)/include
 LIBDIR = $(BASE)/lib
 BINDIR = $(BASE)/bin
 
-#FORT = /usr/bin/gfortran
-FORT = /sw/bin/gfortran
+FORT = /usr/bin/gfortran
+#FORT = /sw/bin/gfortran
 FFLAGS = -O0 -I./ -I$(INCLDIR) -Wall -fno-automatic -fsecond-underscore -fno-range-check
 #FORT = /usr/bin/f77
 #FFLAGS = -O0 -I./ -I$(INCLDIR) -fno-automatic -fsecond-underscore

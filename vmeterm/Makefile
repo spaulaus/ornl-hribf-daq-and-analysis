@@ -7,7 +7,7 @@ OBJECTS =
 vmeterm: vmeterm.c  $(OBJECTS) $(INCS) $(LIBS)
 	$(CC) $(CFLAGS) -o vmeterm vmeterm.c  $(OBJECTS) $(LIBS)
 
-install:
+install: vmeterm
 	install vmeterm $(ROOT)/bin
 
 clean:

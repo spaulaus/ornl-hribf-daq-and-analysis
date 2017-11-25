@@ -54,7 +54,7 @@
 *    Help for the helpless
       write(6,1004) "-1 - quit",
      .              "0 - read counters", "1 - clear", 
-     .              "2 - read shadow counters" 
+     .              "2 - read shadow counters", 
      .              "3 - enable", 
      .              "4 - disable counting", "5 - enable 25MHz test",
      .              "6 - disable 25MHz test", "7 - read CSR",

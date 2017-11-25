@@ -22,8 +22,8 @@ scatlibr.a(zotum.o)
 	ranlib scatlibr.a
 	@echo scatlibr is up-to-date
 #
-#FORT=/usr/bin/gfortran
-FORT=/sw/bin/gfortran
+FORT=/usr/bin/gfortran
+#FORT=/sw/bin/gfortran
 FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check
 #FORT=/usr/bin/f77
 #FFLAGS= -O0 -fno-automatic -fsecond-underscore 

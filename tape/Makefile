@@ -1,12 +1,12 @@
-#DIRHHIRF=/usr/hhirf
-DIRHHIRF=/Users/rxv/acquisition/hhirf
+DIRHHIRF=/usr/hhirf
+#DIRHHIRF=/Users/rxv/acquisition/hhirf
 BASE=..
 INCDIR=$(BASE)/include
 LIBDIR=$(BASE)/lib
 INSTALLDIR=$(BASE)/bin
 
-#FORT=/usr/bin/gfortran
-FORT=/sw/bin/gfortran
+FORT=/usr/bin/gfortran
+#FORT=/sw/bin/gfortran
 FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check -I$(INCDIR)
 #FORT=/usr/bin/f77
 #FFLAGS= -O2 -fno-automatic -fsecond-underscore -I$(INCDIR)
