@@ -8,3 +8,15 @@
 */*.c~
 lib/**
 bin/**
+**/*.dSYM/*
+**/*.dSYM
+Dacq/acq_run
+Dacq/femsg
+Dacq/ipcmon
+Dacq/logger
+Dacq/obsolete/
+Dacq/vmehardware
+ipctotcp/buffertcpclient
+ipctotcp/ipctotcp
+pacman/pacman
+tape/tape
