@@ -369,8 +369,7 @@ char sis3820_ctl(struct sis_ctl *cmd)
    if (cmd->code == 0)        /* Read counters                               */
      {
        for (i=0; i < 32; i++) {
-//          cmd->data[i] = sis->counter[i];
-          cmd->data[i] = sis->shadow[i];
+          cmd->data[i] = sis->counter[i];
        }
        cmd->data[32] = sis->ch_1_17_highbits; /* clock channels */
        byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
@@ -382,47 +381,56 @@ char sis3820_ctl(struct sis_ctl *cmd)
        sis->Key_lne_shadow = 0;
        eieio();
      }
-   else if (cmd->code == 2)    /* enable counting                            */
+   else if (cmd->code == 2)        /* Read counters                         */
+     {
+       for (i=0; i < 32; i++) {
+          cmd->data[i] = sis->shadow[i];
+       }
+       cmd->data[32] = sis->ch_1_17_highbits; /* clock channels */
+       byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
+       word_swap((unsigned short *)cmd->data,sizeof(cmd->data)/2);
+     }
+   else if (cmd->code == 3)    /* enable counting                            */
      {
 //       sis->op_mode = 1;
        sis->op_mode = 0x00230011;
        sis->Key_enable = 0;
        eieio();
      }
-   else if (cmd->code == 3)    /* disable counting                           */
+   else if (cmd->code == 4)    /* disable counting                           */
      {
        sis->Key_disable = 0;
        //sis->op_mode = 1;
        sis->op_mode = 0x00230011;
        eieio();
      }
-   else if (cmd->code == 4)    /* enable 25MHz test counts                   */
+   else if (cmd->code == 5)    /* enable 25MHz test counts                   */
      {
        sis->csr = csr_test_on;
        //sis->op_mode = 1;
        sis->op_mode = 0x00230011;
        eieio();
      }
-   else if (cmd->code == 5)    /* disable 25MHz test counts                  */
+   else if (cmd->code == 6)    /* disable 25MHz test counts                  */
      {
        sis->csr = csr_test_on<<16;
        //sis->op_mode = 1;
        sis->op_mode = 0x00230011;
        eieio();
      }
-   else if (cmd->code == 6)    /* Read and return the CSR                 */
+   else if (cmd->code == 7)    /* Read and return the CSR                 */
      {
        cmd->data[0] = sis->csr; 
        byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
        word_swap((unsigned short *)cmd->data,sizeof(cmd->data)/2);
      }
-   else if (cmd->code == 7)    /* Read and return the module version                 */
+   else if (cmd->code == 8)    /* Read and return the module version                 */
      {
        cmd->data[0] = sis->modid; 
        byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));
        word_swap((unsigned short *)cmd->data,sizeof(cmd->data)/2);
      }
-   else if (cmd->code == 8)    /* Read and return the op mode register  */
+   else if (cmd->code == 9)    /* Read and return the op mode register  */
      {
        cmd->data[0] = sis->op_mode; 
        byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));

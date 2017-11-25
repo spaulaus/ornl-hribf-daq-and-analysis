@@ -181,11 +181,11 @@
 *    8/10/96   MCSQ     Add commands to enable and disable automatic
 *                       file marks for tape.
 *
-*   12/ 4/96   MCSQ     The signal SIGCLD was being blocked almost
+*   12/ 4/96   MCSQ     The signal SIGCHLD was being blocked almost
 *                       all the time by code in routine exec_wait.
-*                       exec_wait needs to block SIGCLD until it
+*                       exec_wait needs to block SIGCHLD until it
 *                       is ready for the signal.  However, it was
-*                       leaving SIGCLD blocked on exit.  Fixed that.
+*                       leaving SIGCHLD blocked on exit.  Fixed that.
 *
 *                       pacman now makes a file, .pacpid.vmeXX where
 *                       vmeXX is the VME processor name, in the users
@@ -617,10 +617,13 @@ volatile pid_t  tapepid,loggerpid,femsgpid,udptoipcpid,ipctotcppid;
 volatile pid_t  unixpid;
 volatile   int  unixstat,kill_flag = 0,sigintflg,tape_busy = 0;
 
+void wait_(int *Itime, int *Iunit, int *Ierror); //ORPHLIB wait one second
+
+
 /***************************************************************************
 *
 ***************************************************************************/
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
    char  *cptr,line[81];
 
@@ -645,7 +648,7 @@ main(int argc,char *argv[])
        printf("\n\
  You MUST set the environment variable VME to the name of the processor\n\
  you are using.\n\n");
-       return;
+       return(0);
      }
 
 /*
@@ -1206,7 +1209,7 @@ void exec_wait(char *argstr[])
 {
    int   pid,mask;
 
-   mask = sigblock(sigmask(SIGCLD));
+   mask = sigblock(sigmask(SIGCHLD));
    if ((pid = fork()) == 0)
      {
        execvp(argstr[0],argstr);
@@ -1631,7 +1634,7 @@ void kill_all(void)
    int  pid,status;
 
    kill_flag = 1;
-   signal(SIGCLD, SIG_DFL);
+   signal(SIGCHLD, SIG_DFL);
    ALRMsignal(0);
    kill(tapepid,SIGINT);               /* send a CTRL/C to TAPEOU   */
    tape_cmd("end",1,0);                /* Also send it an 'end' cmd */
@@ -1710,7 +1713,7 @@ void  cmdlog(void)
      }
 }
 /***************************************************************************
-*   Routine to catch signal SIGCLD.  Most of these signals are from the
+*   Routine to catch signal SIGCHLD.  Most of these signals are from the
 *   death of temporary we forked to do user commands.  However, we
 *   also monitor our permanent processes.  If any of these die, warn
 *   the users that ACTION on his/her part is REQUIRED!
@@ -1791,7 +1794,7 @@ void  CLDsignal(int sig)
       unixpid = 0;
       unixstat = 0;
     }
-  signal(SIGCLD,CLDsignal);
+  signal(SIGCHLD,CLDsignal);
   return;   
 }
 /***************************************************************************
@@ -1906,7 +1909,7 @@ void helpman(char *item)
 void ALRMsignal(int sig)
 {
    int status;
-   static times = 0;
+   static int times = 0;
    static struct itimerval setval;          /* used to set realtime */
    static char exmsg[] = {
 "******************************* WARNING *********************************\n\

@@ -8,7 +8,6 @@ make -f femsg.make install
 make -f fifo.make install
 make -f ipcmon.make install
 make -f logger.make install
-#make -f modu_setup.make install
 make -f m_setup.make install
 cd pacor; make install
 cd ../

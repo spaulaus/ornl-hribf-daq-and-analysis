@@ -53,11 +53,13 @@
 
 *    Help for the helpless
       write(6,1004) "-1 - quit",
-     .              "0 - read", "1 - clear", "2 - enable", 
-     .              "3 - disable counting", "4 - enable 25MHz test",
-     .              "5 - disable 25MHz test", "6 - read CSR",
-     .              "7 - read module ID and firmware",
-     .              "8 - read Op mode register"
+     .              "0 - read counters", "1 - clear", 
+     .              "2 - read shadow counters" 
+     .              "3 - enable", 
+     .              "4 - disable counting", "5 - enable 25MHz test",
+     .              "6 - disable 25MHz test", "7 - read CSR",
+     .              "8 - read module ID and firmware",
+     .              "9 - read Op mode register"
 1004  format (1x, A, /)
 *     Loop until ^C
 10    continue
@@ -88,25 +90,35 @@
 
 *     Display the channel readout
       if (func .eq. 0) then
+        write(6,"('Instantaneous counters')")
 *       Hex
-        write(6,"('Hexadecimal representation')")
+        write(6,"('Hexadecimal')")
         write(6,9020) dat
 9020    format(4z12)
 *       Decimal
-        write(6,"('Decimal representation')")
+        write(6,"('Decimal')")
         write(6,90201) dat
 90201   format(4i12)
 
+      else if (func .eq. 2) then
+        write(6,"('Latched counters')")
+*       Hex
+        write(6,"('Hexadecimal')")
+        write(6,9020) dat
+*       Decimal
+        write(6,"('Decimal')")
+        write(6,90201) dat
+
 *     Display the CSR
-      else if (func .eq. 6) then
+      else if (func .eq. 7) then
         write(6,9021) dat(1)
 9021    format(1X, "CSR = ", z12)
 *     Display the module id and firmware revision
-      else if (func .eq. 7) then
+      else if (func .eq. 8) then
         write(6,9022) dat(1)
 9022    format(1X, "ModuleID = ", z12)
 *     Display the op mode register
-      else if (func .eq. 8) then
+      else if (func .eq. 9) then
         write(6,90221) dat(1)
 90221   format(1X, "OpMode = ", z12)
       endif
