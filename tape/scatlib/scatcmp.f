@@ -23,6 +23,7 @@ C     ------------------------------------------------------------------
 C
       DATA          NSCAT,SCATDMP,SCATCLR,SCATERR/0,'OFF ','CLR ',0/
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -360,8 +361,8 @@ C
  1015 FORMAT('SCAT - ILLEGAL DISPLAY INTERVAL - LEGAL RANGE = 1,20')
       GO TO 1500
 C
- 1020 WRITE(CMSSG,1025)
- 1025 FORMAT('SCAT - ILLEGAL LOG INTERVAL - LEGALs = 0 or 300 to 3600')
+ 1020 WRITE(CMSSG,1025) TMIN, TMAX
+ 1025 FORMAT('SCAT - ILLEGAL LOG INTERVAL - LEGALs = ',I4,'to ',I4)
       GO TO 1500
 C
  1050 WRITE(CMSSG,1055)

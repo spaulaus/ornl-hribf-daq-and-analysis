@@ -177,8 +177,7 @@
 *  Start the VME acquisition if it is stopped and not TON command
 *
       if (kmd .ne. 'TON ' .and. vstat .eq. ACQ_STOP) then
-* Special for ORRUBA at S800 - start must come from S800 control
-*        call acq_vme_ctrl(vstat,"start")
+         call acq_vme_ctrl(vstat,"start")
       endif
 *
 *   Initialize the scaler readout timer
@@ -361,7 +360,6 @@
           istop = 0
           go to 500
         endif
-
         if (istop .eq. 3) then
           call filmar(luouf,2,1,ierr)
           if (ierr .ne. 0) go to 1000              !File error return

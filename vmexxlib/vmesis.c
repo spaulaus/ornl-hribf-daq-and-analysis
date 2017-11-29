@@ -95,7 +95,7 @@ void sis_sca_ctl_(int *scanum,int *func,int *dat,int *ierr)
 
    bufout.func = SIS3820MOD;
    bufout.sca_num = *scanum - 1;
-   if (*func < 0 || *func > 8)
+   if (*func < 0 || *func > 9)
      {
        *ierr = SIS_SCA_CODE;
        return;
@@ -108,9 +108,9 @@ void sis_sca_ctl_(int *scanum,int *func,int *dat,int *ierr)
      }
    *ierr = vmeio((unsigned char *)&bufout,sizeof(struct sis_ctl),
                                              (unsigned char *)&eth,&rpylen);
-   if (*func == 0)
+   if (*func == 0 || *func == 2)
     {
-      for (i=0; i < 64; i++) 
+      for (i=0; i < 33; i++) 
        {
          *dat++ = eth.bufin.data[i];
        }

@@ -17,6 +17,7 @@ C     ------------------------------------------------------------------
       CHARACTER*112 CMSSG
       EQUIVALENCE (CMSSG,MSSG)
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -52,6 +53,7 @@ C
    10 CONTINUE
 C
       DO 50 I=1,NZOT
+      if (cn(i) .lt.0) goto 50  !RLV cn=-1 during vme scaler clear
       if ((cn(i).eq. 0) .and. 
      &    (sn(i).eq. 0) .and. 
      &    (a(i).eq.0)) then

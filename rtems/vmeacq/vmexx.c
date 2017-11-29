@@ -381,7 +381,7 @@ char sis3820_ctl(struct sis_ctl *cmd)
        sis->Key_lne_shadow = 0;
        eieio();
      }
-   else if (cmd->code == 2)        /* Read counters                         */
+   else if (cmd->code == 2)        /* Read shadow counters                   */
      {
        for (i=0; i < 32; i++) {
           cmd->data[i] = sis->shadow[i];

@@ -11,6 +11,7 @@ C
       PARAMETER (NSC=1024)
 C
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -93,24 +94,25 @@ C
       nvme=nvme+1
       vmemod(nvme) = modty(n)
       vmesn(nvme) = sn(n)
-      pv(n)=32*(nvme-1)+a(n)+nonec+33*nec+nvme
+*      pv(n)=32*(nvme-1)+a(n)+nonec+33*nec+nvme
+      pv(n)=33*(nvme-1)+a(n)+nonec+33*nec 
       vmeidx(nvme) = pv(n) - a(n) 
-***      write(*,802) n,pv(n),nvme
-***802    format('N = ',i3,' pv(n) = ',i3,' NVME = ',i3)
+      write(*,802) n,a(n),pv(n),nvme
+802   format('N = ',i3,' a(n) = ', i3,' pv(n) = ',i3,' NVME = ',i3)
       GO TO 1100
 C
  1130 pv(n)=32*(nei-1)+a(n)+nonec+33*nec+nvme
-***       write(*,802) n,pv(n),nvme
+       write(*,802) n,a(n),pv(n),nvme
 C
  1100 continue
 
       do i=1,nr
-***        write(*,900) i,cn(i),sn(i),a(i),pv(i),ty(i)
-***  900   format(5i5,a4)
+        write(*,900) i,cn(i),sn(i),a(i),pv(i),ty(i)
+  900   format(5i5,a4)
       enddo
       do i=1,nvme
-***        write(*,901) vmemod(i),vmesn(i),vmeidx(i)
-***  901   format(a8,2i5)
+        write(*,901) vmemod(i),vmesn(i),vmeidx(i)
+  901   format(a8,2i5)
       enddo
       RETURN
       END

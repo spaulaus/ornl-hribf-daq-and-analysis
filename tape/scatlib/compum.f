@@ -11,6 +11,7 @@ C
       PARAMETER (NSC=1024)
 C
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -19,7 +20,7 @@ C     ------------------------------------------------------------------
 C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
 C     ------------------------------------------------------------------
-      REAL*4 VNF(NSC),VDF(NSC)
+      REAL*8 VNF(NSC),VDF(NSC)
 C
       REAL*4 CVAL,DVAL,CV,DV,CVX,DVX
 C

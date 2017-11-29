@@ -19,6 +19,7 @@ C     ------------------------------------------------------------------
       CHARACTER*4                         SCATDMP,SCATCLR
       INTEGER*4     SCATBUF,        NSCAT,                SCATERR
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -38,7 +39,7 @@ C
       CHARACTER*40  CBUF
       EQUIVALENCE  (CBUF,JBUF)
 C
-      REAL*4        VNF(NSC),VDF(NSC)
+      REAL*8        VNF(NSC),VDF(NSC)
       EQUIVALENCE  (VNF,VN),(VDF,VD)
 C
       INTEGER*4 JDATE(3),JTIME(2)
@@ -74,12 +75,16 @@ C
 C
       IF(KI(N).EQ.'FLOT') GO TO 120
 C
+      WRITE(6,115) VN(N),VDF(N)
       WRITE(CBUF,115,ERR=160)VN(N),VDF(N)
-  115 FORMAT(I12,1PE12.3)
+C 115 FORMAT(I12,1P,D12.3)
+  115 FORMAT(1P,D12.5,1P,D12.5)
       GO TO 130
 C
-  120 WRITE(CBUF,125,ERR=160)VNF(N),VDF(N)
-  125 FORMAT(1P2E12.3)
+  120 continue
+      WRITE(6,125) VNF(N),VDF(N)
+      WRITE(CBUF,125,ERR=160)VNF(N),VDF(N)
+  125 FORMAT(1P,2D12.3)
 C
   130 DO 140 I=1,6
       IBUF(I+3,N+2)=JBUF(I)
@@ -87,7 +92,8 @@ C
 C
   150 CONTINUE
 C
-  160 IF(SCATCLR.EQ.'YES ') CALL ZOTUM
+  160 CONTINUE
+      IF(SCATCLR.EQ.'YES ') CALL ZOTUM
       NSCAT=1
       RETURN
 C

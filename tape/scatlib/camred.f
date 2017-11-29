@@ -20,6 +20,7 @@ C     ------------------------------------------------------------------
       CHARACTER*4                   LOGERR
       INTEGER*4     READERR,ZEROERR,       NDUMPS
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -29,7 +30,9 @@ C     ------------------------------------------------------------------
       COMMON/SCAT2/ POL(NSC),GOL(NSC),ECN(20),ESN(20),NPO,NEC
 C     ------------------------------------------------------------------
       COMMON/SCAT3/ CC(NSC),NN(NSC),AA(NSC),FF(NSC),VBUF(NSC),NLIST
+      INTEGER*4    CC,     NN,     AA,     FF,     VBUF,     NLIST
 C     ------------------------------------------------------------------
+*
       INTEGER*4 STAT(NSC)
 C
       DATA MODE/1/

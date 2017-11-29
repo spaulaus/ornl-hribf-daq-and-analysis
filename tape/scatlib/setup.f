@@ -25,6 +25,7 @@ C     ------------------------------------------------------------------
       INTEGER*4     NORISAV
       REAL*4        NORFSAV
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF
@@ -36,9 +37,11 @@ C     ------------------------------------------------------------------
       common/scat2a/ modty(NSC),vmemod(20),vmesn(20),vmeidx(20),nvme
       character*8   modty,     vmemod
       integer*4                           vmesn,    vmeidx,    nvme
-CC     ------------------------------------------------------------------
-      COMMON/SCAT3/ CC(NSC),NN(NSC),AA(NSC),FF(NSC),VBUF(NSC),NLIST
 C     ------------------------------------------------------------------
+      COMMON/SCAT3/ CC(NSC),NN(NSC),AA(NSC),FF(NSC),VBUF(NSC),NLIST
+      INTEGER*4    CC,     NN,     AA,     FF,     VBUF,     NLIST
+C     ------------------------------------------------------------------
+*
       INTEGER*4     IWD(20),LWD(2,40),ITYP(40),NF
 C
       CHARACTER*320 CLWDL

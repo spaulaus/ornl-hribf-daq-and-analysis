@@ -25,6 +25,7 @@ C     ------------------------------------------------------------------
       CHARACTER*4                         SCATDMP,SCATCLR
       INTEGER*4     SCATBUF,        NSCAT,                SCATERR
 C     ------------------------------------------------------------------
+      real*8 vn, vo, vd
       COMMON/SCAT1/ LA(3,NSC),CN(NSC),SN(NSC), A(NSC), F(NSC),TY(NSC),
      &                        KI(NSC),VN(NSC),VO(NSC),VD(NSC),PV(NSC),
      &                        LO(NSC),HI(NSC),NR,NT,NORI,NORF

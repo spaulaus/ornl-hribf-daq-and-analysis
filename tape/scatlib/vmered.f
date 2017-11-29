@@ -16,6 +16,7 @@ C     ------------------------------------------------------------------
       INTEGER*4    CC,     NN,     AA,     FF,     VBUF,     NLIST
 C     ------------------------------------------------------------------
 *
+*
       integer*4  i,j,k,ierr
       character*40  msg
 
@@ -28,10 +29,13 @@ C     ------------------------------------------------------------------
             return
           endif
           k = vmeidx(i) - 1
-          do j=1,32
-             vbuf(k+j) = iand(vbuf(k+j),'7fffffff'x)
-*            vbuf(k+j) = vbuf(k+j)
-          enddo
+*    Do not supress the sign bit, it is part of the data.
+         write(6,*) "Raw Scalers:"
+         do j=1,33
+            write(6,*) i, k, j, k+j, vbuf(k+j)
+*           vbuf(k+j) = iand(vbuf(k+j),'7fffffff'x)
+*           vbuf(k+j) = vbuf(k+j)
+         enddo
 
         endif
       enddo
