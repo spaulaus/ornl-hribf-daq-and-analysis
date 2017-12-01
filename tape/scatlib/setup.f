@@ -100,11 +100,11 @@ C
       NLN=0
 C
       DO 20 J=1,NSC
-      DO 10 I=1,3
-      LA(I,J)='    '
-   10 CONTINUE
-      KI(J)='    '
-      TY(J)='    '
+         DO 10 I=1,3
+            LA(I,J)='    '
+   10    CONTINUE
+         KI(J)='    '
+         TY(J)='    '
    20 CONTINUE
 C
    50 READ(1,55,END=210)IWD

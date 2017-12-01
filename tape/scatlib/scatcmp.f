@@ -50,7 +50,7 @@ C
       DATA          NSECI/1000/
 C     ------------------------------------------------------------------
 C
-      INTEGER*4     BUF(10,800)
+      INTEGER*4     BUF(20,400)
       EQUIVALENCE  (BUF,SCATBUF)
 C
       INTEGER*4     IWD(20),LWD(2,40),ITYP(40),NF
@@ -338,13 +338,19 @@ C
       IF(ISET.NE.'YES ') GO TO 1050
 C
       DO 310 I=1,8000
-      SCATBUF(I,1)=BLANK
+         SCATBUF(I,1)=BLANK
   310 CONTINUE
+
       DO 330 N=1,NT
-      DO 320 I=1,3
-      BUF(I,N+2)=LA(I,N)
-  320 CONTINUE
+         DO 320 I=1,3
+            BUF(I,N+1)=LA(I,N)
+  320    CONTINUE
   330 CONTINUE
+*     write(6,*) "NT=", nt
+*     do n=1,nt
+*        write(6,"(i3,A,1x,':',3A4,':')") n,"LA=",(LA(i,n),i=1,3)
+*        write(6,"(i3,A,1x,':',20A4,':')") n,"BUF=",(BUF(i,n+2),i=1,20)
+*     enddo
 C
       CALL TIMEKEEP('INIT',NSEC)
       RETURN

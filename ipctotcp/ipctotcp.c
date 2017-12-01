@@ -186,8 +186,13 @@ int main (int argc, char *argv[])
    unsigned int nbuffers=0;
 
    /* Catch SIGINT to detect that we should stop?*/
-   //signal (SIGINT, INTsignal);
+   signal (SIGINT, INTsignal);
    signal (SIGPIPE, SIG_IGN);
+   signal(SIGTSTP, SIG_IGN);
+   signal(SIGCONT, SIG_IGN);
+   signal(SIGUSR1, SIG_IGN);
+   signal(SIGUSR2, SIG_IGN);
+   signal(SIGQUIT, SIG_IGN);
 
     /* Loop forever to accept connections */
    len = sizeof(cliaddr);
@@ -321,6 +326,7 @@ void INTsignal (int sig)
 {
    msgf = 0;
 }
+
 void PrintBufferStat(int nbuffers, struct shm_buf *ibuf)
 {
   printf("Buffers since starting: %i\n", nbuffers++);

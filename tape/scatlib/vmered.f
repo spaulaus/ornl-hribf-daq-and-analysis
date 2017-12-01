@@ -30,12 +30,10 @@ C     ------------------------------------------------------------------
           endif
           k = vmeidx(i) - 1
 *    Do not supress the sign bit, it is part of the data.
-         write(6,*) "Raw Scalers:"
-         do j=1,33
-            write(6,*) i, k, j, k+j, vbuf(k+j)
+*        do j=1,33
 *           vbuf(k+j) = iand(vbuf(k+j),'7fffffff'x)
 *           vbuf(k+j) = vbuf(k+j)
-         enddo
+*        enddo
 
         endif
       enddo

@@ -32,11 +32,13 @@ C
       CHARACTER*80  CSCAT
       EQUIVALENCE  (CSCAT,SCATBUF)
 C
-      INTEGER*4     IBUF(10,800)
+*     INTEGER*4     IBUF(10,800)
+      INTEGER*4     IBUF(20,400)
       EQUIVALENCE  (IBUF,SCATBUF)
 C
-      INTEGER*4     JBUF(10)
-      CHARACTER*40  CBUF
+*     INTEGER*4     JBUF(10)
+      INTEGER*4     JBUF(20)
+      CHARACTER*80  CBUF
       EQUIVALENCE  (CBUF,JBUF)
 C
       REAL*8        VNF(NSC),VDF(NSC)
@@ -73,22 +75,29 @@ C
 C
       DO 150 N=1,NT
 C
-      IF(KI(N).EQ.'FLOT') GO TO 120
+         IF(KI(N).EQ.'FLOT') GO TO 120
 C
-      WRITE(6,115) VN(N),VDF(N)
-      WRITE(CBUF,115,ERR=160)VN(N),VDF(N)
-C 115 FORMAT(I12,1P,D12.3)
-  115 FORMAT(1P,D12.5,1P,D12.5)
-      GO TO 130
+*           WRITE(6,115) VN(N),VDF(N)
+            WRITE(CBUF,115,ERR=160)VN(N),VDF(N)
+C 115       FORMAT(I12,1P,D12.3)
+  115       FORMAT(1P,D21.14,4x,1P,D21.14)
+            GO TO 130
 C
-  120 continue
-      WRITE(6,125) VNF(N),VDF(N)
-      WRITE(CBUF,125,ERR=160)VNF(N),VDF(N)
-  125 FORMAT(1P,2D12.3)
+  120    continue
+*        WRITE(6,125) VNF(N),VDF(N)
+         WRITE(CBUF,125,ERR=160)VNF(N),VDF(N)
+  125    FORMAT(1P,D21.14,4x,D21.14)
+*C
+*  130 DO 140 I=1,6
+*         IBUF(I+3,N+2)=JBUF(I)
+*  140 CONTINUE
 C
-  130 DO 140 I=1,6
-      IBUF(I+3,N+2)=JBUF(I)
-  140 CONTINUE
+*        write(6,"(3A4)") (IBUF(j,n+2),j=1,3)
+  130    DO 140 I=1,17
+*           IBUF(I+3,N+2)=JBUF(I)
+            IBUF(I+3,N+1)=JBUF(I)
+  140    CONTINUE
+*        write(6,"(20A4)") (ibuf(j,n+1),j=1,20)
 C
   150 CONTINUE
 C

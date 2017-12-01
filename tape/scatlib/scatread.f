@@ -74,24 +74,25 @@ C
       IF(PV(I).EQ.0) GO TO 20           !TST FOR ECL-TYPE
       NDX=PV(I)                         !GET INDEX IN VBUF
       if (ty(i) .eq. "VME ") then
-         write(6,*) "For a(i)=", a(i), " and index", ndx
+*        write(6,*) "For a(i)=", a(i), " and index", ndx
          tmpvbuf = iand(vbuf(ndx),'7fffffff'x) !Get the unsigned bits
          tmpvbuf = tmpvbuf + iand(vbuf(ndx), '80000000'x) ! get the sign bit
-         write(6,*) "32bit value = ", tmpvbuf
+*        write(6,"(A,Z20)") "32bit value = ", tmpvbuf
          if (a(i) .eq. 0) then
-            write(6,*) "extended precision words=", vbuf(ndx-a(i)+32)
-            write(6,*) "bits=", ibits(vbuf(ndx-a(i)+32),0,16)
-            write(6,*) "located at ", ndx-a(i)+32
+*           write(6,*) "extended precision words=", vbuf(ndx-a(i)+32)
+*           write(6,*) "bits=", ibits(vbuf(ndx-a(i)+32),0,16)
+*           write(6,*) "located at ", ndx-a(i)+32
             tmpvbuf = tmpvbuf +
      .              ibits(vbuf(ndx-a(i)+32),0,16) *
-     .              '80000000'x
+     .              '100000000'x
+*        write(6,"(A,Z20)") "48bit value = ", tmpvbuf
          elseif (a(i) .eq.16) then
-            write(6,*) "extended precision words=", vbuf(ndx-a(i)+32)
-            write(6,*) "bits=", ibits(vbuf(ndx-a(i)+32),16,16)
-            write(6,*) "located at ", ndx-a(i)+32
+*           write(6,*) "extended precision words=", vbuf(ndx-a(i)+32)
+*           write(6,*) "bits=", ibits(vbuf(ndx-a(i)+32),16,16)
+*           write(6,*) "located at ", ndx-a(i)+32
             tmpvbuf = tmpvbuf +
      .              ibits(vbuf(ndx-a(i)+32),16,16) *
-     .              '80000000'x
+     .              '100000000'x
          endif  
          vn(i) = tmpvbuf
       else

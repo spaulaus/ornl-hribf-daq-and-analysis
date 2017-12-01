@@ -88,6 +88,7 @@ C
       nei=0
       DO 1110 I=1,nvme
       nei=nei+1
+*     write(6,*) modty(n), vmemod(i), vmesn(i), sn(n)
       if(modty(n) .eq. vmemod(i) .and. vmesn(i) .eq. sn(n)) go to 1130
  1110 continue
 C
@@ -95,24 +96,27 @@ C
       vmemod(nvme) = modty(n)
       vmesn(nvme) = sn(n)
 *      pv(n)=32*(nvme-1)+a(n)+nonec+33*nec+nvme
-      pv(n)=33*(nvme-1)+a(n)+nonec+33*nec 
+      pv(n)=33*(nvme-1)+a(n)+nonec+33*nec
+*     write(6,*) pv(n), nvme, a(n), nonec, nec
       vmeidx(nvme) = pv(n) - a(n) 
-      write(*,802) n,a(n),pv(n),nvme
-802   format('N = ',i3,' a(n) = ', i3,' pv(n) = ',i3,' NVME = ',i3)
+*     write(6,802) n,a(n),pv(n), vmeidx(nvme), nvme
+*802   format('N = ',i3,' a(n) = ', i3,' pv(n) = ',i3,
+*     .       'vmeidx(nvme) = ', i3, ' NVME = ',i3)
       GO TO 1100
 C
- 1130 pv(n)=32*(nei-1)+a(n)+nonec+33*nec+nvme
-       write(*,802) n,a(n),pv(n),nvme
+*1130 pv(n)=32*(nei-1)+a(n)+nonec+33*nec+nvme
+ 1130 pv(n)=33*(nei-1)+a(n)+nonec+33*nec
+*       write(6,802) n,a(n),pv(n),vmeidx(nvme),nvme
 C
  1100 continue
 
       do i=1,nr
-        write(*,900) i,cn(i),sn(i),a(i),pv(i),ty(i)
-  900   format(5i5,a4)
+*       write(*,900) i,cn(i),sn(i),a(i),pv(i),ty(i)
+*  900   format(5i5,a4)
       enddo
       do i=1,nvme
-        write(*,901) vmemod(i),vmesn(i),vmeidx(i)
-  901   format(a8,2i5)
+*       write(*,901) vmemod(i),vmesn(i),vmeidx(i)
+*  901   format(a8,2i5)
       enddo
       RETURN
       END
