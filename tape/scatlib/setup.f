@@ -127,10 +127,9 @@ C
 C
       CALL LODUP(IWD,1,IA,LA(1,N),1)
 C
-      ib = ifind(iwd,'3b'x,1,80)
+      ib = ifind(iwd,'3b'x,1,80)      !Look for semicolons
       if (ib .le. 0) ib = 81
-      ib = ib - 1
-*      CALL GREAD(IWD,LWD,ITYP,NF,IA,80,NTER)
+      ib = ib - 1 ! Stop reading input at the semicolon
       CALL GREAD(IWD,LWD,ITYP,NF,IA,ib,NTER)
       IF(NTER.NE.0) GO TO 300
 C
@@ -150,8 +149,6 @@ C
       go to 1040
 *
  1030 continue
-**      write(*,9000) n,nf
-**9000  format('N = ',i3,' NF = ',i2)
       if (nf .eq. 5) then
         READ(CLWDL,60)CN(N),SN(N),A(N),F(N),TY(N)
    60   FORMAT(4I8,A4)
@@ -169,13 +166,9 @@ C
       elseif (nf .lt. 3) then
         go to 300
       endif
-**      write(*,9010) n,cn(n),sn(n),a(n),f(n),ty(n)
-**9010  format('N = ',i3,3x,4i5,a4)
 C
  1040 continue
 
-*     READ(CLWDL,60,ERR=300)CN(N),SN(N),A(N),F(N),TY(N)
-*  60 FORMAT(4I8,A4)
 C
       IA=IFIND(IWD,'3B'X,1,80)
 C

@@ -77,27 +77,20 @@ C
 C
          IF(KI(N).EQ.'FLOT') GO TO 120
 C
-*           WRITE(6,115) VN(N),VDF(N)
+C        Change the output format to accommodate the much longer words
             WRITE(CBUF,115,ERR=160)VN(N),VDF(N)
-C 115       FORMAT(I12,1P,D12.3)
   115       FORMAT(1P,D21.14,4x,1P,D21.14)
             GO TO 130
 C
   120    continue
-*        WRITE(6,125) VNF(N),VDF(N)
+
+C        Handle formatting errors with a message
          WRITE(CBUF,125,ERR=160)VNF(N),VDF(N)
   125    FORMAT(1P,D21.14,4x,D21.14)
-*C
-*  130 DO 140 I=1,6
-*         IBUF(I+3,N+2)=JBUF(I)
-*  140 CONTINUE
 C
-*        write(6,"(3A4)") (IBUF(j,n+2),j=1,3)
   130    DO 140 I=1,17
-*           IBUF(I+3,N+2)=JBUF(I)
             IBUF(I+3,N+1)=JBUF(I)
   140    CONTINUE
-*        write(6,"(20A4)") (ibuf(j,n+1),j=1,20)
 C
   150 CONTINUE
 C

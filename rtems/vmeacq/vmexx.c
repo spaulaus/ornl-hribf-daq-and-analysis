@@ -304,7 +304,7 @@ static char caen785_ctl(struct caen_ctl *cmd)
    struct CAEN *caen;
 
    cvtnum = cmd->cvt_num;
-   if (cvtnum < 1 || cvtnum > 24) return(CAEN_ERR_NONEXIST);
+   if (cvtnum < 0 || cvtnum > 23) return(CAEN_ERR_NONEXIST);
    if (!dev785[cvtnum]) return(CAEN_ERR_NONEXIST);
    caen =  CAEN785_LIST[cvtnum];
    byte_swap((unsigned char *)cmd->data,sizeof(cmd->data));

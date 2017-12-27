@@ -73,28 +73,28 @@ C
       DO 20 I=1,NR                      !COPY ANY ECL-TYPES
       IF(PV(I).EQ.0) GO TO 20           !TST FOR ECL-TYPE
       NDX=PV(I)                         !GET INDEX IN VBUF
+
+*     VME SIS 3820 scaler
       if (ty(i) .eq. "VME ") then
-*        write(6,*) "For a(i)=", a(i), " and index", ndx
          tmpvbuf = iand(vbuf(ndx),'7fffffff'x) !Get the unsigned bits
          tmpvbuf = tmpvbuf + iand(vbuf(ndx), '80000000'x) ! get the sign bit
-*        write(6,"(A,Z20)") "32bit value = ", tmpvbuf
+*        If the 3820 scaler is 1, insert the lower 16 bits from the
+*        additional precision word, at the end of the data dump, as bits
+*        48 - 32 of the scaler for 48 bits. 
          if (a(i) .eq. 0) then
-*           write(6,*) "extended precision words=", vbuf(ndx-a(i)+32)
-*           write(6,*) "bits=", ibits(vbuf(ndx-a(i)+32),0,16)
-*           write(6,*) "located at ", ndx-a(i)+32
             tmpvbuf = tmpvbuf +
      .              ibits(vbuf(ndx-a(i)+32),0,16) *
      .              '100000000'x
-*        write(6,"(A,Z20)") "48bit value = ", tmpvbuf
+*        If the scaler input is 17, get the upper 16 bits as bits 48-32
+*        of the scaler.
          elseif (a(i) .eq.16) then
-*           write(6,*) "extended precision words=", vbuf(ndx-a(i)+32)
-*           write(6,*) "bits=", ibits(vbuf(ndx-a(i)+32),16,16)
-*           write(6,*) "located at ", ndx-a(i)+32
             tmpvbuf = tmpvbuf +
      .              ibits(vbuf(ndx-a(i)+32),16,16) *
      .              '100000000'x
          endif  
          vn(i) = tmpvbuf
+
+*     Must be ECL scalers, just copy
       else
          VN(I)=VBUF(NDX)                !SAVE IN NEW-VALUE ARRAY
       endif

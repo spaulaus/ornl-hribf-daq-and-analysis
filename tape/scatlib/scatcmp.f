@@ -336,21 +336,18 @@ C
 C
       CALL SETUP(LSNIT)
       IF(ISET.NE.'YES ') GO TO 1050
-C
+
+C     Initialize the entire buffer to blanks
       DO 310 I=1,8000
          SCATBUF(I,1)=BLANK
   310 CONTINUE
 
+C     Saving labels for the scaler record
       DO 330 N=1,NT
          DO 320 I=1,3
             BUF(I,N+1)=LA(I,N)
   320    CONTINUE
   330 CONTINUE
-*     write(6,*) "NT=", nt
-*     do n=1,nt
-*        write(6,"(i3,A,1x,':',3A4,':')") n,"LA=",(LA(i,n),i=1,3)
-*        write(6,"(i3,A,1x,':',20A4,':')") n,"BUF=",(BUF(i,n+2),i=1,20)
-*     enddo
 C
       CALL TIMEKEEP('INIT',NSEC)
       RETURN
