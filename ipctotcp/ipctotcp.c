@@ -197,12 +197,15 @@ int main (int argc, char *argv[])
     /* Loop forever to accept connections */
    len = sizeof(cliaddr);
    for (;;) {
+   /* If running under pacman, send messages back and forth */
+
 #ifdef PACMAN
    sprintf(&msg_ipctotcp.text[9],"ipctotcp - Listening for a new connection\n");
    msgsnd(Ids.log_msg, &msg_ipctotcp, sizeof(struct orphmsg), IPC_NOWAIT);
 #else
      printf("ipctotcp - Listening for a new connection\n");
 #endif
+
       connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
       if (connfd == -1) {
         if (errno == EINTR) {

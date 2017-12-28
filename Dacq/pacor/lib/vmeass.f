@@ -231,7 +231,8 @@ C
       RETURN
 C
 C     This code forces IDINC to be a multiple of 3.  
-C     The scaler puts out 2 or 3 ints per channel
+C     The SIS3820 scaler puts out 2 or 3 ints per channel because
+C     channels 1 and 17 have extended precision
   700 ID=IDNUM+X8000
 C     If IDINC is not a multiple of 3, bailout
       if ((idinc/3)*3 .ne. idinc) then

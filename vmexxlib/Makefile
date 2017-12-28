@@ -1,40 +1,48 @@
-BASE=..
-DIRA= /usr/hhirf
-INCDIR=$(BASE)/include
-LIBDIR=$(BASE)/lib
+hhirflib= /usr/hhirf
 OBJS = vmecaen.o vmeio.o vmesis.o
-CFLAGS = -O -I $(INCDIR) -Wall
-FFLAGS = -O2 -I$(INCDIR) -Wall
 
-LIBCAEN= $(DIRA)/orphlib.a $(LIBDIR)/vmexxlib.a $(LIBDIR)/vmelib.a
+CFLAGS = $(OPT) $(CARGS)
+FFLAGS = $(OPT) $(FARGS)
+
+CAENLIB= $(hhirflib)/orphlib.a $(libdir)/vmexxlib.a $(libdir)/vmelib.a
+
+all: install
+
+install: install-vmexxlib.a install-bins
 
 vmexxlib.a: vmexxlib.a($(OBJS))
-
 	ranlib vmexxlib.a
 
-vmecaen.o: $(INCDIR)/vmexx.h $(INCDIR)/orph_udp.h
-vmesis.o: $(INCDIR)/vmexx.h $(INCDIR)/orph_udp.h
-vmeio.o: $(INCDIR)/vmexx.h $(INCDIR)/orph_udp.h $(INCDIR)/pkt_io_udp.h
+vmecaen.o: $(includedir)/vmexx.h $(includedir)/orph_udp.h
+vmesis.o: $(includedir)/vmexx.h $(includedir)/orph_udp.h
+vmeio.o: $(includedir)/vmexx.h $(includedir)/orph_udp.h $(includedir)/pkt_io_udp.h
 
-install: vmexxlib.a
-	install vmexxlib.a $(LIBDIR)
+#
+#
+caenr: caenr.f $(CAENLIB) $(includedir)
+	$(FORT) $(FFLAGS) caenr.f $(CAENLIB) -o caenr
+#
+#
+caenw: caenw.f $(CAENLIB) $(includedir)
+	$(FORT) $(FFLAGS) caenw.f $(CAENLIB) -o caenw
+#
+sisread: sisread.f $(CAENLIB) $(includedir)
+	$(FORT) $(FFLAGS) $< $(CAENLIB) -o $@
+#
+#
+install-vmexxlib.a: vmexxlib.a
+	install vmexxlib.a $(libdir)
+
+install-bins: caenr caenw sisread
+	install caenr $(bindir)
+	install caenw $(bindir)
+	install sisread $(bindir)
 
 .PHONY: cleanobjs cleanall ran
 
-cleanobjs:
-	rm -f $(OBJS)
-
 clean:
-	rm -f vmexxlib.a $(OBJS)
+	rm -f *.o vmexxlib.a caenr caenw sisread 
 
 ran:
 	ranlib vmexxlib.a
 
-#
-#
-caenr: caenr.f $(LIBCAEN) $(INCS)
-	$(FORT) $(FFLAGS) caenr.f $(LIBCAEN) -o caenr
-#
-#
-caenw: caenw.f $(LIBCAEN) $(INCS)
-	$(FORT) $(FFLAGS) caenw.f $(LIBCAEN) -o caenw

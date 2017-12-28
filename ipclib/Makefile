@@ -1,5 +1,4 @@
-CFLAGS = -O2 -Wall
-BASE=..
+CFLAGS = $(OPT) $(CARGS)
 
 ipclib.a: ipclib.a(create_shm.o)\
  ipclib.a(attach_shm.o)\
@@ -13,12 +12,11 @@ ipclib.a: ipclib.a(create_shm.o)\
 	ranlib ipclib.a
 .c.o:
 	cc -c $(CFLAGS) $<
-#	ar rv ipclib.a $*.o
-#	rm -f $*.o
+
 install: ipclib.a
-	install ipclib.a $(BASE)/lib
-	install ipcdefs.h $(BASE)/include
-	install ipckeys.h $(BASE)/include
+	install ipclib.a $(libdir)
+	install ipcdefs.h $(includedir)
+	install ipckeys.h $(includedir)
 
 clean:
-	rm ipclib.a *.o
+	rm -f ipclib.a *.o

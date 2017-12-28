@@ -1,17 +1,10 @@
-ROOT=../
-INC=$(ROOT)/include
-LIB=$(ROOT)/lib
-INSTALLDIR=$(ROOT)/bin
+#Makefile
+#
+CFLAGS = $(OPTS) $(CARGS)
 
-
-LIBS=$(LIB)/vmelib.a
-INCS=$(INC)/pkt_io_udp.h $(INC)/orph_udp.h
-CFLAGS = -O2 -I $(INC)
-OBJECTS = 
-
-vmereset: vmereset.c $(OBJECTS) $(INCS) $(LIBS)
-	$(CC) $(CFLAGS) -o vmereset vmereset.c $(OBJECTS) $(LIBS)
+vmereset: vmereset.c
+	$(CC) $(CFLAGS) -o vmereset vmereset.c $(libdir)/vmelib.a
 install: vmereset
-	install -p vmereset $(INSTALLDIR)
+	install -p vmereset $(bindir)
 clean:
-	rm *.o vmereset
+	rm -f *.o vmereset

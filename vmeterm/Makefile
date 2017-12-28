@@ -1,14 +1,12 @@
-ROOT=..
-LIBS=
-INCS=$(ROOT)/include
-CFLAGS = -O2
-OBJECTS = 
+#
+#
+CFLAGS = $(OPTS) $(CARGS)
 
-vmeterm: vmeterm.c  $(OBJECTS) $(INCS) $(LIBS)
-	$(CC) $(CFLAGS) -o vmeterm vmeterm.c  $(OBJECTS) $(LIBS)
+vmeterm: vmeterm.c 
+	$(CC) $(CFLAGS) -o vmeterm vmeterm.c 
 
 install: vmeterm
-	install vmeterm $(ROOT)/bin
+	install vmeterm $(bindir)
 
 clean:
-	rm vmeterm
+	rm -f *.o vmeterm

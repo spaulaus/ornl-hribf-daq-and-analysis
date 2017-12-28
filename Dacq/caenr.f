@@ -49,23 +49,20 @@
        dat(i) = -1
       enddo
       write(6,1000)
-1000  format('QDC number ? ',$)
-***1000  format('TDC number ? ',$)
+1000  format('TDC number ? ',$)
 ***1000  format('ADC number ? ',$)
       read(5,1010) adcnum
 1010  format(i2)
 ***      call caen_adc_read(adcnum,dat,ierr)
-***      call caen_tdc_read(adcnum,dat,range,mode,ierr)
-      call caen_qdc_read(adcnum,dat,range,ierr)
+      call caen_tdc_read(adcnum,dat,range,mode,ierr)
       if (ierr .ne. 0) then
          call caen_error(ierr,errmsg)
          write(6,9010)errmsg(1:strlen(errmsg))
 9010     format('*** ',a,' ***')
          call exit(1)
       endif
-      write(6,*) 'QDC Iped value: ', range
-***      write(6,9020) mode
-      write(6,*) 'QDC threshold values:'
+      write(6,9020) range
+      write(6,9020) mode
       write(6,9020) dat
 9020  format(8i8)
 *

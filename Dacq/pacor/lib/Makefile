@@ -87,13 +87,8 @@ pacorlib.a(xiandx.o)
 	ranlib pacorlib.a
 	@echo pacorlib.a is up-to-date
 #
-#FORT=/sw/bin/gfortran-fsf-4.9
 FORT=/usr/bin/gfortran
-FFLAGS= -g -O0 -DGFORTRAN -fno-automatic -fsecond-underscore -fno-range-check
-#FORT=/usr/bin/f77
-#FFLAGS= -g -O0 -fno-automatic
+FFLAGS= -g -O0 $(FARGS)
 #
 .f.o:
-	$(FORT) $(FFLAGS) -c  $<
-#
-	ar rv pacorlib.a $*.o
+	$(FORT) $(FFLAGS) -c $<

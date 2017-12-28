@@ -1,16 +1,8 @@
-DIRHHIRF=/usr/hhirf
-#DIRHHIRF=/Users/rxv/acquisition/hhirf
-BASE=..
-INCDIR=$(BASE)/include
-LIBDIR=$(BASE)/lib
-INSTALLDIR=$(BASE)/bin
-
-FORT=/usr/bin/gfortran
-#FORT=/sw/bin/gfortran
-FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check -I$(INCDIR)
-#FORT=/usr/bin/f77
-#FFLAGS= -O2 -fno-automatic -fsecond-underscore -I$(INCDIR)
-CFLAGS= -O2 -I$(INCDIR) -Wall
+#Makefile
+# depends on Make one level up
+#
+FFLAGS= $(OPTS) $(FARGS)
+CFLAGS= $(OPTS) $(CARGS)
 #
 OBJS= tape.o\
       fortinput.o\
@@ -24,27 +16,28 @@ OBJS= tape.o\
       copyipc.o\
       readum1.o
 #
-LIBS= $(DIRHHIRF)/lemorlib.a\
+LIBS= $(hhirfdir)/lemorlib.a\
       scatlib/scatlibr.a\
-      $(LIBDIR)/vmelib.a\
-      $(LIBDIR)/acqlib.a\
-      $(LIBDIR)/ipclib.a\
-      $(LIBDIR)/vmexxlib.a\
-      $(DIRHHIRF)/milibb.a\
-      $(DIRHHIRF)/orphlib.a
+      $(libdir)/vmelib.a\
+      $(libdir)/acqlib.a\
+      $(libdir)/ipclib.a\
+      $(libdir)/vmexxlib.a\
+      $(hhirfdir)/milibb.a\
+      $(hhirfdir)/orphlib.a
 #
 #
 tape: $(OBJS) $(LIBS)
 	$(FORT) $(FFLAGS) $(OBJS) $(LIBS) -o tape
 
 install: tape
-	install tape $(INSTALLDIR)
+	install tape $(bindir)
 
 clean:
-	rm *.o tape
+	rm -f *.o tape
+	$(MAKE) -C scatlib clean
 
 .c.o:
-	gcc $(CFLAGS) -c  $<
+	$(CC) $(CFLAGS) -c  $<
 
 .f.o:
 	$(FORT) $(FFLAGS) -c  $<

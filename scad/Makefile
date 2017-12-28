@@ -1,29 +1,32 @@
 #
-FORTRAN=/usr/bin/gfortran
-FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check
-#FORTRAN=/usr/bin/f77
-#FFLAGS= -O0 -fno-automatic -fsecond-underscore 
+#
+FFLAGS= $(OPTS) $(CARGS)
 #
 OBJS= scad.o\
       scadmsg.o
 #
 LIBS= ./lib/scadlib.a\
-      /usr/hhirf/dammlib.a\
-      /usr/hhirf/xglib.a\
-      /usr/hhirf/dammlib.a\
-      /usr/hhirf/xglib.a\
-      /usr/hhirf/orphlib.a\
-      ../lib/vmelib.a\
-      ../lib/vmexxlib.a
+      $(hhirfdir)/dammlib.a\
+      $(hhirfdir)/xglib.a\
+      $(hhirfdir)/dammlib.a\
+      $(hhirfdir)/xglib.a\
+      $(hhirfdir)/orphlib.a\
+      $(libdir)/vmelib.a\
+      $(libdir)/vmexxlib.a
 #
-scad: $(OBJS) $(LIBS)
-#
-	$(FORTRAN) $(FFLAGS) -o scad $(OBJS) $(LIBS) -L/usr/X11R6/lib -lX11 -lpthread
+scad: $(OBJS) lib/scadlib.a
+	$(FORT) $(FFLAGS) -o scad $(OBJS) $(LIBS) -L/usr/X11R6/lib -lX11 -lpthread
+
+lib/scadlib.a:
+	$(MAKE) -C lib 
+
+
+# Make has a broken implicit .f.o rule.
 .f.o:
-	$(FORTRAN) $(FFLAGS) -c $<
+	$(FORT) $(FFLAGS) -c $<
 
 install: scad
-	install scad ../bin
+	install scad $(bindir)
 
 clean:
-	rm scad *.o
+	rm -f scad *.o

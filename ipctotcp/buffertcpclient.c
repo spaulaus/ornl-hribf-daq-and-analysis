@@ -1,3 +1,9 @@
+/* Buffertcpclient - debugging tool for ipctotcp.
+ * This program just receives data from ipctotcp and either displays it or 
+ * dumps it, keeping statistics.
+ *
+ * RL Varner Nov, 2017 at NSCL
+ * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -86,6 +92,8 @@ int main (int argc, char *argv[])
      exit(1);
    }
    
+   //Catching this signal seems to cause troubles, because the handler is
+   //not reposting the signals.  This needs looking into.
    //signal (SIGINT, INTsignal);
    
    ssize_t rdsize=0;

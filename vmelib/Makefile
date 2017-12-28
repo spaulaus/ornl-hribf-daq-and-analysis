@@ -1,9 +1,4 @@
-ROOT=../
-INC=$(ROOT)/include
-LIB=$(ROOT)/lib
-BIN=$(ROOT)/bin
-
-CFLAGS = -g -I$(INC) -Wall
+CFLAGS = $(OPT) $(CARGS)
 
 OBJS = pecamio.o\
        libipberr.o\
@@ -18,17 +13,17 @@ OBJS = pecamio.o\
 vmelib.a: vmelib.a($(OBJS))
 	ranlib vmelib.a
 
-pecamio.o: $(INC)/cnaf.h $(INC)/pkt_io_udp.h $(INC)/orph_udp.h
-acq_vme_ctrl.o: $(INC)/acq_ctl.h $(INC)/pkt_io_udp.h $(INC)/orph_udp.h
-pkt_io_udp.o: $(INC)/pkt_io_udp.h
-spkt_io_udp.o: $(INC)/spkt_io_udp.h
-load_acq_params.o: $(INC)/pkt_io_udp.h $(INC)/orph_udp.h\
-                    $(INC)/mem_mgr.h
+pecamio.o: $(includedir)/cnaf.h $(includedir)/pkt_io_udp.h $(includedir)/orph_udp.h
+acq_vme_ctrl.o: $(includedir)/acq_ctl.h $(includedir)/pkt_io_udp.h $(includedir)/orph_udp.h
+pkt_io_udp.o: $(includedir)/pkt_io_udp.h
+spkt_io_udp.o: $(includedir)/spkt_io_udp.h
+load_acq_params.o: $(includedir)/pkt_io_udp.h $(includedir)/orph_udp.h\
+                    $(includedir)/mem_mgr.h
 
 install: vmelib.a pkt_io_udp.h spkt_io_udp.h
-	install vmelib.a $(LIB)
-	install pkt_io_udp.h $(INC)
-	install spkt_io_udp.h $(INC)
+	install vmelib.a $(libdir)
+	install pkt_io_udp.h $(includedir)
+	install spkt_io_udp.h $(includedir)
 
 .PHONY: cleanobjs cleanall ran
 

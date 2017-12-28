@@ -1,25 +1,21 @@
-BASE=..
-LIBDIR= $(BASE)/lib
-INCDIR=$(BASE)/include
-INCS = $(INCDIR)/orpas_data.h $(INCDIR)/orph_udp.h $(INCDIR)/orphmsg.h $(INCDIR)/acqshm.h $(INCDIR)/acqlib.h
+#Makefile
+# ipctotcp sender and test program, buffertcpclient
+#
+LIBS=$(libdir)/acqlib.a $(libdir)/ipclib.a $(libdir)/vmelib.a
 
-LIBS=$(LIBDIR)/acqlib.a $(LIBDIR)/ipclib.a $(LIBDIR)/vmelib.a
-
-CFLAGS= -g -O0 -I$(INCDIR)
-
-OBJECTS =
+CFLAGS= $(OPTS) $(CARGS)
 
 all: ipctotcp buffertcpclient
 
-ipctotcp: ipctotcp.o $(INCS) $(OBJECTS) $(LIBS)
-	cc $(CFLAGS) -o ipctotcp ipctotcp.c $(OBJECTS) $(LIBS)
+ipctotcp: ipctotcp.o 
+	$(CC) $(CFLAGS) -o ipctotcp ipctotcp.c $(LIBS)
 
 buffertcpclient: buffertcpclient.o
-	cc $(CFLAGS) -o buffertcpclient buffertcpclient.c $(OBJECTS) $(LIB)
+	$(CC) $(CFLAGS) -o buffertcpclient buffertcpclient.c $(LIB)
 
 install: ipctotcp buffertcpclient
-	install ipctotcp $(BASE)/bin
-	install buffertcpclient $(BASE)/bin
+	install ipctotcp $(bindir)
+	install buffertcpclient $(bindir)
 
 clean:
-	rm *.o ipctotcp buffertcpclient
+	rm -f *.o ipctotcp buffertcpclient

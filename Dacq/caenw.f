@@ -46,7 +46,7 @@
       character*80 errmsg
 
       do i=1,32
-       dat(i) = 3
+       dat(i) = 55
       enddo
       write(6,1000)
 1000  format('TDC number ? ',$)

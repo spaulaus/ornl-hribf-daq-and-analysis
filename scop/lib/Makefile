@@ -22,12 +22,7 @@ scoplib.a(winrat.o)
 	ranlib scoplib.a
 	@echo scoplib.a  is up-to-date
 #
-#FORT = /usr/bin/gfortran
-#FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check
-FORT = /usr/bin/f77
-FFLAGS= -O0 -fno-automatic -fsecond-underscore
+FFLAGS= -O0 $(FARGS)
 #
 .f.o:
 	$(FORT) -c $(FFLAGS) $<
-#
-	ar rv scoplib.a $*.o

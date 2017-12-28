@@ -9,6 +9,7 @@
 */*.c~
 lib/*
 bin/*
+include/*
 **/*.dSYM/*
 **/*.dSYM
 Dacq/acq_run
@@ -25,6 +26,8 @@ Dacq/caenr
 Dacq/caenw
 Dacq/cnaf
 Dacq/docnaf
+Dacq/femsg
+Dacq/femsg-stdout
 Dacq/fifo
 Dacq/m_setup
 Dacq/pacor/lib/pacorlib.a
@@ -37,4 +40,6 @@ udptoipc/udptoipc
 vmereset/vmereset
 vmeterm/vmeterm
 vmexxlib/sisread
+vmexxlib/caenr
+vmexxlib/caenw
 

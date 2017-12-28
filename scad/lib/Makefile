@@ -62,15 +62,11 @@ scadlib.a(gvmered.o)
 	ranlib scadlib.a
 	@echo scadlib.a is up-to-date
 #
-FORTRAN=/usr/bin/gfortran
-FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check
-#FORTRAN=/usr/bin/f77
-#FFLAGS= -O0 -fno-automatic  -fsecond-underscore
+FFLAGS= -O0 $(FARGS)
 #
+# Broken .f.o implicit rule
 .f.o:
-#
-	$(FORTRAN) $(FFLAGS) -c $<
-	ar rv scadlib.a $*.o
+	$(FORT) $(FFLAGS) -c $<
 
 clean:
 	rm scadlib.a *.o

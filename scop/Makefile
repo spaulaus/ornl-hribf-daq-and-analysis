@@ -1,30 +1,28 @@
 #
-#FORT = /usr/bin/gfortran
-#FFLAGS= -O0 -fno-automatic -fsecond-underscore -fno-range-check
-FORT = /usr/bin/f77
-FFLAGS= -O0 -fno-automatic -fsecond-underscore
+FFLAGS= $(OPT) $(FARGS)
 #
 OBJS= scop.o\
       epics/fepics.o\
       epics/dslib.o
 #
 LIBS= lib/scoplib.a\
-      /usr/hhirf/dammlib.a\
-      /usr/hhirf/xglib.a\
-      /usr/hhirf/dammlib.a\
-      /usr/hhirf/xglib.a\
-      /usr/hhirf/orphlib.a\
-      ../lib/vmelib.a
+      $(hhirfdir)/dammlib.a\
+      $(hhirfdir)/xglib.a\
+      $(hhirfdir)/orphlib.a\
+      $(libdir)/vmelib.a
 #
-scop: $(OBJS) $(LIBS)
+scop: $(OBJS) lib/scoplib.a
 #
 	$(FORT) $(FFLAGS) -o scop $(OBJS) $(LIBS) -L/usr/X11R6/lib -lX11 -lpthread -lm
 
+lib/scoplib.a:
+	$(MAKE) -C lib 
+
 install: scop
-	install scop ../bin
+	install scop $(bindir)
 
 clean:
-	rm scop *.o
+	rm -f scop *.o
 #
 .f.o:
 	$(FORT) $(FFLAGS) -c $<

@@ -1,21 +1,17 @@
-BASE=..
-LIBDIR= $(BASE)/lib
-INCDIR=$(BASE)/include
-INCS = $(INCDIR)/orpas_data.h $(INCDIR)/orph_udp.h $(INCDIR)/orphmsg.h $(INCDIR)/acqshm.h $(INCDIR)/acqlib.h
+# Makefile
+# udptoipc
+#
+LIBS=$(libdir)/acqlib.a $(libdir)/ipclib.a $(libdir)/vmelib.a
 
-LIBS=$(LIBDIR)/acqlib.a $(LIBDIR)/ipclib.a $(LIBDIR)/vmelib.a
-
-CFLAGS= -g -O0 -I$(INCDIR)
+CFLAGS= $(OPTS) $(CARGS)
 
 OBJECTS = pktproc.o
 
-udptoipc: udptoipc.o $(INCS) $(OBJECTS) $(LIBS)
-	cc $(CFLAGS) -o udptoipc udptoipc.c $(OBJECTS) $(LIBS)
-
-pktproc.o: $(INCS)
+udptoipc: udptoipc.o pktproc.o 
+	$(CC) $(CFLAGS) -o udptoipc udptoipc.c pktproc.o $(LIBS)
 
 install: udptoipc
-	install udptoipc $(BASE)/bin
+	install udptoipc $(bindir)
 
 clean:
-	rm *.o udptoipc
+	rm -f *.o udptoipc
