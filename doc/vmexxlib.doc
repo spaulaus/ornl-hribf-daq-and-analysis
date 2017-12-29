@@ -111,8 +111,17 @@ CY1$
 
    call:
           SCANUM - INT*4   SCA number to write (1 thru 2)
-            FUNC - INT*4   Function code. 0 = read, 1= clear,
-                           2 = enable counting, 3= disable counting
+            FUNC - INT*4   Function code. 
+                           0 = read the live counters, 
+                           1= clear both sets of counters,
+                           2 = read the shadow counters 
+                           3 = enable counting, 
+                           4 = disable counting,
+                           5 = enable 25MHz counting mode
+                           6 = disable 25MHz counting mode
+                           7 = read CSR
+                           8 = read the module version
+                           9 = read the operation mode register
 
  return:
           DAT(32)- INT*4   Array.  Modified only for FUNC = 0

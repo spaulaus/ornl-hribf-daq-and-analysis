@@ -1,0 +1,34 @@
+$BANNER {
+****************************************************************************
+*                                ORPHAS                                    *
+*                                                                          *
+*                               pacman II                                  *
+*                      Physics Acquisition Manager                         *
+*                                                                          *
+****************************************************************************}
+$BUFFER_SIZE 32768
+$LOG_INTERVAL 300
+$HELP_FILE  /usr/acq/wks/pacman.hep
+
+$USER_CMD {emacs = /usr/local/bin/emacs}
+
+$USER_CMD {
+dmon = {
+       /usr/bin/X11/xterm
+       -geometry
+       80x50+10+10
+       -sb
+       -e
+       /usr/acq/wks/dmon };
+}
+
+#if   decstation  or unknown type displays
+
+$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32+345+10 #+955+722 -sb -ls
+-font 8x13bold -iconic }
+
+$WINDOW {
+damm = { /usr/bin/X11/xterm -geometry 80x32+10+320 #+950+744 -sb -ls
+-font 8x13bold -iconic } }
+
+#endif

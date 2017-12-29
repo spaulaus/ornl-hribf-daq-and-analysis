@@ -849,7 +849,7 @@ C
       DIR(3,JD)=0                            !DELAY
       IOF=IOF+N
 C
-C     37-***************************(106-108)**!MYRIAD module  ID-TABLE*****
+C     37-***************************(109-111)**!MYRIAD module  ID-TABLE*****
 C
  3700 IF(VMYRID(1).EQ.0) GO TO 5000
       N=0

@@ -1,4 +1,4 @@
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   1
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   1
  
  
  
@@ -57,7 +57,7 @@
    Type: /usr/hhirf/pacc prog L  ;To compile prog.pac and
                                  ;download to VME front-end.
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   2
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   2
  
    U210.020  Hardware Description & Compiler Directives - Syntax
  
@@ -90,6 +90,8 @@
  
    $vme  tdc0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
  
+   $vme  sis0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=SIS_3820
+ 
    $did  FASI,FERI,CAMI         ;IDs for illegal Fastbus, Fera, CAMAC  readout
  
    $cid  idhi idlo              ;ID#s for hi- & lo-order parts of 100HZ clock
@@ -120,7 +122,7 @@
                                               Fastbus, XIA & VME  modules
    ---------------------------------------------------------------------------
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   3
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   3
  
                    IMPORTANT COMMENTS RELATED TO GATES
  
@@ -154,9 +156,11 @@
  
    g     ;Labels the group number (optional)     - denoted by 0G - $xia only
  
-   tdc   ;Labels CAEN TDC number                 - denoted by 0N - $vme only
+   tdc   ;Labels CAEN TDC 775 number             - denoted by 0N - $vme only
  
-   adc   ;Labels CAEN ADC number                 - denoted by 0N - $vme only
+   adc   ;Labels CAEN ADC 785, 791 number        - denoted by 0N - $vme only
+ 
+   sis   ;Labels SIS 3820 number                 - denoted by 0N - $vme only
  
    mt    ;Labels Fera or Fastbus module-type     - denoted by MOTYP
          ;(Required for all Fera & Fastbus modules - optional for CAMAC)
@@ -180,7 +184,7 @@
    Crate# 0-7 and 10-17 are supported for writing (i.e. via $ini, $dun & $run)
    ---------------------------------------------------------------------------
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   4
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   4
  
  
    U210.035  Module Type Table (MOTYP) - Definitions
@@ -216,6 +220,11 @@
  
    MOTYP = CAEN-775     for CAEN-775 TDC                - Code-41
    MOTYP = CAEN-785     for CAEN-785 ADC                - Code-42
+   MOTYP = CAEN-792     for CAEN-792 ADC                - Code-43
+ 
+   MOTYP = SIS-3820     for SIS-3820 scaler             - Code-44
+ 
+   MOTYP = MYRIAD       for Myriad trigger, clock       - Code-45
    ---------------------------------------------------------------------------
  
    *** Data readout by the BAKLASH module types:
@@ -240,10 +249,12 @@
       12  side channel              BAKLASH, BAKLASH2
       13  side channel              BAKLASH, BAKLASH2
       14  side channel              BAKLASH, BAKLASH2
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   5
       15  BGO                       BAKLASH
       16  BGO                       BAKLASH
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   5
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   6
  
  
    U210.040  Hardware Description & Compiler Directives - Discussion
@@ -301,7 +312,7 @@
    $vme...defines  the  adc#  (or  tdc#),  sub-addresses, associated parameter
           NAMEs and IDs to be read. The module type must also be given.
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   6
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   7
  
  
  
@@ -364,7 +375,7 @@
           compiler to ABORT!
  
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   7
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   8
  
  
  
@@ -413,7 +424,7 @@
    (5)....Any   non-printing   characters  (including  TABs)  will  cause  the
           compiler to ABORT!
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   8
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   9
  
  
  
@@ -473,7 +484,7 @@
          READ CADC(I)
    L1    ENDL
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   9
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  10
  
  
    U210.080  PAC Output Tables - POB Structure
@@ -505,14 +516,20 @@
    IOF  #ENT  DELAY - 67-69 ;IOF locates WINDUP  CNAF LIST
    IOF  #ENT  DELAY - 70-72 ;IOF locates RUN     CNAF LIST
    IOF  #ENT  DELAY - 73-75 ;IOF locates XIA MODULE TABLE
-   IOF  #ENT  DELAY - 76-78 ;IOF locates CAEN COND MODULE-TYPE READOUT
+   IOF  #ENT  DELAY - 76-78 ;IOF locates VME COND MODULE-TYPE READOUT
    IOF  #ENT  DELAY - 79-81 ;IOF locates CAEN ADC HARDWARE MAP
    IOF  #ENT  DELAY - 82-84 ;IOF locates CAEN TDC HARDWARE MAP
-   IOF  #ENT  DELAY - 85-87 ;IOF locates CAEN ADC ID-TABLE
-   IOF  #ENT  DELAY - 88-90 ;IOF locates CAEN TDC ID-TABLE
-   IOF  #ENT  DELAY - 91-93 ;IOF locates 100HZ CLOCK-ID TABLE
+   IOF  #ENT  DELAY - 85-87 ;IOF locates CAEN QDC HARDWARE MAP
+   IOF  #ENT  DELAY - 88-90 ;IOF locates CAEN ADC ID-TABLE
+   IOF  #ENT  DELAY - 91-93 ;IOF locates CAEN TDC ID-TABLE
+   IOF  #ENT  DELAY - 94-96 ;IOF locates CAEN QDC ID-TABLE
+   IOF  #ENT  DELAY - 97-99 ;IOF locates 100HZ CLOCK-ID TABLE
+   IOF  #ENT  DELAY -100-102;IOF locates SIS3820 Hardware Map
+   IOF  #ENT  DELAY -103-105;IOF locates SIS3820 Table
+   IOF  #ENT  DELAY -106-108;IOF locates MYRIAD Hardware Map
+   IOF  #ENT  DELAY -109-111;IOF locates MYRIAD Table
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  10
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  11
  
    U210.080  PAC Output Tables - POB Structure (continued)
  
@@ -569,23 +586,35 @@
    *************************************************CAEN    MOTY READ..(76-78)
    PATNDX MSK MOTY
    *************************************************CAEN ADC HWD MAP...(79-81)
-   ADC (10)
+   ADC (24)
    *************************************************CAEN TDC HWD MAP...(82-84)
-   TDC (10)
-   *************************************************CAEN ADC ID-TABLE..(85-87)
-   ID (34,10) = 340
-   *************************************************CAEN TDC ID-TABLE..(88-90)
-   ID (34,10) = 340
+   TDC (12)
+   *************************************************CAEN QDC HWD MAP...(85-87)
+   QDC (12)
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  11
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  12
  
  
  
    U210.080  PAC Output Tables - POB Structure (continued)
  
  
-   *************************************************CLOCK ID-TABLE.....(91-93)
+   *************************************************CAEN ADC ID-TABLE..(88-90)
+   ID (34,24) = 816
+   *************************************************CAEN TDC ID-TABLE..(91-93)
+   ID (34,12) = 408
+   *************************************************CAEN QDC ID-TABLE..(94-96)
+   ID (34,12) = 408
+   *************************************************CLOCK ID-TABLE.....(97-99)
    CLOCID(2)
+   *************************************************SIS 3820 HWD MAP...(100-102)
+   SIS3820 (192)
+   *************************************************SIS 3820 ID-Table.(101-103)
+   ID (32,6) = 192
+   *************************************************MYRIAD HWD MAP....(107-109)
+   MYRIAD (3)
+   *************************************************MYRIAD ID-Table...(110-112)
+   ID (1,3) = 3
    ===========================================================================
  
  
@@ -606,7 +635,7 @@
    F-NXT  = next COND-PROG index      if test FALSE
  
     
-   28-May-08 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  12
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  13
  
  
    U210.080  PAC Output Tables - POB Structure (continued)

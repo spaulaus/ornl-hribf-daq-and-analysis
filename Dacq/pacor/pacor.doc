@@ -89,6 +89,8 @@ $vme  adc0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
 
 $vme  tdc0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
  
+$vme  sis0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=SIS_3820
+ 
 $did  FASI,FERI,CAMI         ;IDs for illegal Fastbus, Fera, CAMAC  readout
 
 $cid  idhi idlo              ;ID#s for hi- & lo-order parts of 100HZ clock
@@ -151,9 +153,11 @@ CY1$
 
 \b\g \\    ;Labels the group number (optional)     - denoted by 0G - $xia only
 
-\b\tdc\\   ;Labels CAEN TDC number                 - denoted by 0N - $vme only
+\b\tdc\\   ;Labels CAEN TDC 775 number             - denoted by 0N - $vme only
 
-\b\adc\\   ;Labels CAEN ADC number                 - denoted by 0N - $vme only
+\b\adc\\   ;Labels CAEN ADC 785, 791 number        - denoted by 0N - $vme only
+
+\b\sis\\   ;Labels SIS 3820 number                 - denoted by 0N - $vme only
 
 \b\mt\\    ;Labels Fera or Fastbus module-type     - denoted by MOTYP
       ;\b\(Required for all Fera & Fastbus modules - optional for CAMAC)\\
@@ -211,6 +215,11 @@ CY1$
 
 \b\MOTYP = CAEN-775\\     for CAEN-775 TDC                - Code-41
 \b\MOTYP = CAEN-785\\     for CAEN-785 ADC                - Code-42
+\b\MOTYP = CAEN-792\\     for CAEN-792 ADC                - Code-43
+
+\b\MOTYP = SIS-3820\\     for SIS-3820 scaler             - Code-44
+
+\b\MOTYP = MYRIAD  \\     for Myriad trigger, clock       - Code-45
 ---------------------------------------------------------------------------
 CYB$
 *** Data readout by the BAKLASH module types:
@@ -490,12 +499,18 @@ IOF  #ENT  DELAY - 64-66 ;IOF locates FERA      ID-TABLE
 IOF  #ENT  DELAY - 67-69 ;IOF locates WINDUP  CNAF LIST
 IOF  #ENT  DELAY - 70-72 ;IOF locates RUN     CNAF LIST
 IOF  #ENT  DELAY - 73-75 ;IOF locates XIA MODULE TABLE
-IOF  #ENT  DELAY - 76-78 ;IOF locates CAEN COND MODULE-TYPE READOUT
+IOF  #ENT  DELAY - 76-78 ;IOF locates VME COND MODULE-TYPE READOUT
 IOF  #ENT  DELAY - 79-81 ;IOF locates CAEN ADC HARDWARE MAP
 IOF  #ENT  DELAY - 82-84 ;IOF locates CAEN TDC HARDWARE MAP
-IOF  #ENT  DELAY - 85-87 ;IOF locates CAEN ADC ID-TABLE
-IOF  #ENT  DELAY - 88-90 ;IOF locates CAEN TDC ID-TABLE
-IOF  #ENT  DELAY - 91-93 ;IOF locates 100HZ CLOCK-ID TABLE
+IOF  #ENT  DELAY - 85-87 ;IOF locates CAEN QDC HARDWARE MAP
+IOF  #ENT  DELAY - 88-90 ;IOF locates CAEN ADC ID-TABLE
+IOF  #ENT  DELAY - 91-93 ;IOF locates CAEN TDC ID-TABLE
+IOF  #ENT  DELAY - 94-96 ;IOF locates CAEN QDC ID-TABLE
+IOF  #ENT  DELAY - 97-99 ;IOF locates 100HZ CLOCK-ID TABLE
+IOF  #ENT  DELAY -100-102;IOF locates SIS3820 Hardware Map
+IOF  #ENT  DELAY -103-105;IOF locates SIS3820 Table
+IOF  #ENT  DELAY -106-108;IOF locates MYRIAD Hardware Map
+IOF  #ENT  DELAY -109-111;IOF locates MYRIAD Table
 TPF$
 SEC$.080  PAC Output Tables - POB Structure (continued)
 CY1$
@@ -552,20 +567,32 @@ CNVG           (Packed C,N,VSN,GR)
 *************************************************CAEN    MOTY READ..(76-78)
 PATNDX MSK MOTY
 *************************************************CAEN ADC HWD MAP...(79-81)
-ADC (10)
+ADC (24)
 *************************************************CAEN TDC HWD MAP...(82-84)
-TDC (10)
-*************************************************CAEN ADC ID-TABLE..(85-87)
-ID (34,10) = 340
-*************************************************CAEN TDC ID-TABLE..(88-90)
-ID (34,10) = 340
+TDC (12)
+*************************************************CAEN QDC HWD MAP...(85-87)
+QDC (12)
 TPF$
 SP2$
 SEC$.080  PAC Output Tables - POB Structure (continued)
 CY1$
 
-*************************************************CLOCK ID-TABLE.....(91-93)
+*************************************************CAEN ADC ID-TABLE..(88-90)
+ID (34,24) = 816
+*************************************************CAEN TDC ID-TABLE..(91-93)
+ID (34,12) = 408
+*************************************************CAEN QDC ID-TABLE..(94-96)
+ID (34,12) = 408
+*************************************************CLOCK ID-TABLE.....(97-99)
 CLOCID(2)
+*************************************************SIS 3820 HWD MAP...(100-102)
+SIS3820 (192)
+*************************************************SIS 3820 ID-Table.(101-103)
+ID (32,6) = 192
+*************************************************MYRIAD HWD MAP....(107-109)
+MYRIAD (3)
+*************************************************MYRIAD ID-Table...(110-112)
+ID (1,3) = 3
 ===========================================================================
 
 DBL$

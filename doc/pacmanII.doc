@@ -267,39 +267,10 @@ $BANNER {
 *                               pacman II                                  *
 *                      Physics Acquisition Manager                         *
 *                                                                          *
-*     Welcome to DOE land - land of safety and efficiency!                 *
-* New command requirements - courtesy of DOE and the OMB                   *
-* Before starting -                                                        *
-*   setenv EXPT RIBxxx - where xxx is your experiment number               *
-* In pacman:                                                               *
-*   TRUN [bon, boff]  for "beam on" (bon) or "beam off" (boff)             *
-*   TON  [bon, boff]  for "beam on" (bon) or "beam off" (boff)             *
 ****************************************************************************}
 $BUFFER_SIZE 32768
 $LOG_INTERVAL 300
 $HELP_FILE  /usr/acq/wks/pacman.hep
-
-#if   tektronix  display
-
-$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32-0+10 #-52-46
--sb -ls -iconic }
-
-$WINDOW {
-damm = { /usr/bin/X11/xterm -geometry 80x32+10+400 #-57-24 -sb -ls
--iconic } }
-
-#endif
-
-#if   alpha  display
-
-$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32-0+10 #-52-46
--font 8x13 -sb -ls -iconic }
-
-$WINDOW {
-damm = { /usr/bin/X11/xterm -geometry 80x32+10+432 #-57-24 -sb -ls
--font 8x13 -iconic } }
-
-#endif
 
 $USER_CMD {emacs = /usr/local/bin/emacs}
 
@@ -313,7 +284,7 @@ dmon = {
        /usr/acq/wks/dmon };
 }
 
-#if   decstation  or unknown type displays
+#if   unknown displays
 
 $WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32+345+10 #+955+722 -sb -ls
 -font 8x13bold -iconic }
@@ -383,16 +354,8 @@ Using configuration file: /usr/acq/wks/pacman.fig
 *                               pacman II                                  *
 *                      Physics Acquisition Manager                         *
 *                                                                          *
-*     Welcome to DOE land - land of safety and efficiency!                 *
-* New command requirements - courtesy of DOE and the OMB                   *
-* Before starting -                                                        *
-*   setenv EXPT RIBxxx - where xxx is your experiment number               *
-* In pacman:                                                               *
-*   TRUN [bon, boff]  for "beam on" (bon) or "beam off" (boff)             *
-*   TON  [bon, boff]  for "beam on" (bon) or "beam off" (boff)             *
 **************************************************************************** 
-  --------DOE Logging Started---------                                          
- Expt: TEST, VME vme3, Beam OFF, Events            0, Records 0
+ VME vme3, Beam OFF, Events            0, Records 0
                 
 FILEOU->PID = 28428, Old Priority = 0, New Priority = -15
 PID = 28429, Old Priority = 0, New Priority = -10

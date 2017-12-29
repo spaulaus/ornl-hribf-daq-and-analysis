@@ -1,4 +1,5 @@
 */*.o
+*/*/*.o
 */*.lst
 */*.pob
 */*.exe
@@ -9,7 +10,6 @@
 */*.c~
 lib/*
 bin/*
-include/*
 **/*.dSYM/*
 **/*.dSYM
 Dacq/acq_run
@@ -36,6 +36,7 @@ Dacq/pacor/pacor.o
 Dacq/udpmon
 rtems/vmeacq/o-optimize/
 scad/scad
+scop/scop
 udptoipc/udptoipc
 vmereset/vmereset
 vmeterm/vmeterm
