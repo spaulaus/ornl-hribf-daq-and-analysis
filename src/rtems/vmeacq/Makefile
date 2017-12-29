@@ -5,6 +5,13 @@
 #
 #  RTEMS_MAKEFILE_PATH is typically set in an environment variable
 #
+ifndef prefix
+  prefix=/usr/acq2
+endif
+
+ifndef includedir
+  includedir=$(prefix)/include
+endif
 
 EXEC=vmeacq.exe
 PGM=${ARCH}/$(EXEC)
@@ -42,7 +49,7 @@ OBJS= $(COBJS) $(CXXOBJS) $(ASOBJS)
 
 DEFINES  +=
 CPPFLAGS +=
-CFLAGS   += -I../../include -fno-strict-aliasing
+CFLAGS   += -I$(includedir) -fno-strict-aliasing
 CFLAGS_LD += -Wl,--defsym -Wl,HeapSize=0xF0000 
 CFLAGS_OPTIMIZE_V   +=
 CFLAGS_DEBUG_V   += -v -qrtems_debug

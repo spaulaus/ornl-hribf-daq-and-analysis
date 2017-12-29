@@ -1,0 +1,7 @@
+# useful abbreviations
+ld    = cexpModuleLoad
+unld  = cexpModuleUnload
+lsmod = cexpModuleInfo
+ld("telnetd.obj") && startTelnetd()
+ld("test.obj")
+do_test()

@@ -57,14 +57,14 @@ TARGETS= ipclib acqlib vmelib vmexxlib \
 .PHONY: clean all
 .PHONY: $(TARGETS)
 
-all: $(TARGETS) rtems/vmeacq
+all: $(TARGETS) rtems/vmeacq/o-optimize/vmeacq.ralf
 
 $(TARGETS):
 	$(MAKE) -C $@ install
 
-rtems/vmeacq:
-	$(MAKE) -C $@
-	$(MAKE) -C $@ install
+rtems/vmeacq/o-optimize/vmeacq.ralf:
+	$(MAKE) -C rtems/vmeacq
+	$(MAKE) -C rtems/vmeacq install
 
 clean: 
 	rm -f $(bindir)/* $(libdir)/*
