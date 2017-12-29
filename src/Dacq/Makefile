@@ -125,7 +125,7 @@ install-logger: logger
 m_setup: m_setup.c 
 	gcc $(CFLAGS) m_setup.c -o m_setup $(hhirfdir)/orphlib.a $(libdir)/vmelib.a $(libdir)/vmexxlib.a
 install-m_setup: m_setup
-	install m_setup ../bin
+	install m_setup $(bindir)
 
 #
 #
