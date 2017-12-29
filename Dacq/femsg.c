@@ -42,7 +42,7 @@ void TermHandle(int);   /* Signal handler prototype  */
 char server[12] = "vme";
 struct UDP_Packet rbuf;
 
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
   int status;                        /* function status return */
   int  dum,len;

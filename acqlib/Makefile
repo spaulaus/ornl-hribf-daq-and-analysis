@@ -12,13 +12,22 @@ OBJS = acqipc.o\
 acqlib.a: acqlib.a($(OBJS))
 	ranlib acqlib.a
 
-acqipc.o: $(includedir)/ipcdefs.h orphmsg.h acqshm.h acqlib.h
+acqipc.o: $(includedir)/ipcdefs.h $(includedir)/orphmsg.h $(includedir)/acqshm.h $(includedir)/acqlib.h
 get_acq_key.o:  $(includedir)/ipckeys.h
-fortipc.o:  $(includedir)/ipcdefs.h acqshm.h acqlib.h
-acq_tape_ctrl.o: orphmsg.h
-acq_log.o: orphmsg.h
+fortipc.o:  $(includedir)/ipcdefs.h $(includedir)/acqshm.h $(includedir)/acqlib.h
+acq_tape_ctrl.o: $(includedir)/orphmsg.h
+acq_log.o: $(includedir)/orphmsg.h
 acqlog.o:
 messlog.o:
+
+$(includedir)/acqlib.h:
+	install acqlib.h $(includedir)
+
+$(includedir)/acqshm.h:
+	install acqshm.h $(includedir)
+
+$(includedir)/orphmsg.h:
+	install orphmsg.h $(includedir)
 
 install: acqlib.a
 	echo $(libdir)

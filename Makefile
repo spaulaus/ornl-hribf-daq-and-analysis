@@ -36,7 +36,7 @@ export hhirfdir=/usr/local/hhirf
 export FORT= gfortran
 export CC=gcc
 export OPT= -O
-export FARGS= $(FENDIAN) -DGFORTRAN -Wall -fno-automatic -fsecond-underscore -fno-range-check
+export FARGS= $(FENDIAN) -DGFORTRAN -Wall -fno-automatic -fsecond-underscore -fno-range-check -I $(includedir)
 export CARGS= $(FENDIAN) -Wall -I $(includedir)
 export FLIBS= -lgfortran -lgcc
 #
@@ -48,9 +48,8 @@ export FLIBS= -lgfortran -lgcc
 #export CARGS= $(FENDIAN)
 #export FLIBS=
 
-TARGETS= acqlib ipclib vmelib vmexxlib \
+TARGETS= ipclib acqlib vmelib vmexxlib \
          Dacq ipctotcp pacman \
-         rtems/vmeacq \
          scad scop \
          tape udptoipc \
          vmereset vmeterm
@@ -58,19 +57,23 @@ TARGETS= acqlib ipclib vmelib vmexxlib \
 .PHONY: clean all
 .PHONY: $(TARGETS)
 
-all: $(TARGETS)
+all: $(TARGETS) rtems/vmeacq
 
 $(TARGETS):
 	$(MAKE) -C $@ install
 
+rtems/vmeacq:
+	$(MAKE) -C $@
+	$(MAKE) -C $@ install
+
 clean: 
-	rm $(bindir)/* $(includedir)/* $(libdir)/*
+	rm -f $(bindir)/* $(libdir)/*
 	$(MAKE) -C acqlib clean
 	$(MAKE) -C ipclib clean
 	$(MAKE) -C vmelib clean
 	$(MAKE) -C vmexxlib clean
 	$(MAKE) -C Dacq clean
-	$(MAKE) -C ictotcp clean
+	$(MAKE) -C ipctotcp clean
 	$(MAKE) -C pacman clean
 	$(MAKE) -C scad clean
 	$(MAKE) -C scop clean

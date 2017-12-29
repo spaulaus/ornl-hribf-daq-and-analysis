@@ -74,7 +74,7 @@ struct UDP_Packet rbuf,xbuf;
 /***************************************************************************
 *
 ***************************************************************************/
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
    int status;
 
@@ -84,14 +84,14 @@ main(int argc, char *argv[])
    xbuf.DataSize = 10;
    rbuf.DataSize = 100;
    status = pkt_io(&xbuf,&rbuf,FORCE_BOOT,11);
-/************
    if (status != 0)
      {
+/************
        if (status == ETHER_OPEN) printf("vmereset: Ethernet open failure\n");
        else if (status == ETHER_RECEIVE)
                                  printf("vmereset: Ethernet receive timeout\n");
        exit(99);
-     }
 ************/
+     }
    return(0);
 }

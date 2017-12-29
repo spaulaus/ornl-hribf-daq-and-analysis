@@ -5,7 +5,7 @@
 #include <errno.h>
 
 extern int errno;
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   int pid,new_prio,old_prio,status;
 

@@ -29,6 +29,9 @@ LIBS= $(hhirfdir)/lemorlib.a\
 tape: $(OBJS) $(LIBS)
 	$(FORT) $(FFLAGS) $(OBJS) $(LIBS) -o tape
 
+scatlib/scatlibr.a:
+	$(MAKE) -C scatlib 
+
 install: tape
 	install tape $(bindir)
 

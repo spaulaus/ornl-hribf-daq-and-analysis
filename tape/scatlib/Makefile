@@ -26,5 +26,6 @@ FFLAGS= -O0 $(FARGS)
 #
 clean:
 	rm -f  *.o scatlibr.a
+
 .f.o:
-	$(FORT) -c $(FFLAGS) $<
+	$(FORT) $(FFLAGS) -c $<

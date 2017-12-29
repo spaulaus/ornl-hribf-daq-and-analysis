@@ -47,7 +47,7 @@ static unsigned char wksaddr[HW_ADDR_LEN];
 
 
 /*------------------------------------------------------------------*/
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
   char ifname[8] = "eth1";
   char iproto[8];
@@ -60,7 +60,7 @@ main (int argc, char *argv[])
   if (pfd == FAILURE)
     {
       printf ("Error opening Ethernet interface\n");
-      return FAILURE;
+      return(FAILURE);
     }
   setuid(getuid());
 
@@ -198,7 +198,7 @@ int read_ether (void)
 
      status  = recvfrom(pfd,(unsigned char *)&rbuf,sizeof(rbuf),MSG_TRUNC,
                                              (struct sockaddr *)&sll,&fromlen);
-     if (status  < 0) {perror("read err"); return FAILURE;}
+     if (status  < 0) {perror("read err"); return(FAILURE);}
 
      len = *sizeptr;
      sptr = lan_buf;
@@ -213,7 +213,7 @@ int read_ether (void)
      fflush(stdout);
 
     }
-  return SUCCESS;
+  return(SUCCESS);
 }
 /****************************************************************************
 *

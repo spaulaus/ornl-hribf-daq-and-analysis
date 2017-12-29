@@ -169,7 +169,6 @@ clean:
 	rm -f ipcmon 
 	rm -f logger 
 	rm -f m_setup 
-	rm -f pacor 
 	rm -f udpmon 
 	rm -f vmehardware
 

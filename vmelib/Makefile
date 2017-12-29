@@ -20,10 +20,23 @@ spkt_io_udp.o: $(includedir)/spkt_io_udp.h
 load_acq_params.o: $(includedir)/pkt_io_udp.h $(includedir)/orph_udp.h\
                     $(includedir)/mem_mgr.h
 
+$(includedir)/cnaf.h:
+	install cnaf.h $(includedir)
+
+$(includedir)/mem_mgr.h:
+	 install mem_mgr.h $(includedir)
+
+$(includedir)/fastbus.h:
+	 install fastbus.h $(includedir)
+
+$(includedir)/pkt_io_udp.h:
+	install pkt_io_udp.h $(includedir)
+
+$(includedir)/spkt_io_udp.h:
+	install spkt_io_udp.h $(includedir)
+
 install: vmelib.a pkt_io_udp.h spkt_io_udp.h
 	install vmelib.a $(libdir)
-	install pkt_io_udp.h $(includedir)
-	install spkt_io_udp.h $(includedir)
 
 .PHONY: cleanobjs cleanall ran
 

@@ -67,13 +67,14 @@ static void helpmesg(void);
 
 /****************************************************************************
 ****************************************************************************/
-main()
+int main()
 {
   char *cptr;
   char loadname[80],cmd[16];
   FILE *loadfile;
-  int  i,status,len;
-  fd_set readfds;
+  //int  i,status,len;
+  int  status,len;
+  //fd_set readfds;
   char bpstr[] = "bp $b01,1\r";
   char lostr[] = "lo <1 ,,\r";
   char initvme[] = "\r";
@@ -126,7 +127,7 @@ main()
 
    write(termio,initvme,strlen(initvme));
 
-   if (pid = fork())
+   if ((pid = fork()))
     {
 /*
 *   Parent process

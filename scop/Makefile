@@ -8,6 +8,8 @@ OBJS= scop.o\
 LIBS= lib/scoplib.a\
       $(hhirfdir)/dammlib.a\
       $(hhirfdir)/xglib.a\
+      $(hhirfdir)/dammlib.a\
+      $(hhirfdir)/xglib.a\
       $(hhirfdir)/orphlib.a\
       $(libdir)/vmelib.a
 #
@@ -22,7 +24,7 @@ install: scop
 	install scop $(bindir)
 
 clean:
-	rm -f scop *.o
+	rm -f scop *.o lib/scoplib.a epics/*.o
 #
 .f.o:
 	$(FORT) $(FFLAGS) -c $<

@@ -1,4 +1,5 @@
 CCFLAGS = -Wall -O
+FFLAGS = $(OPTS) $(FARGS)
 
 all: dslib.o fepics.o
 
@@ -20,3 +21,6 @@ client.o : client.c dataServer.h
 
 dslib.o : dslib.c dataServerPriv.h dataServer.h dataServer.version
 	cc ${CCFLAGS} -o dslib.o -c dslib.c
+
+clean:
+	rm -f *.o

@@ -1,6 +1,11 @@
 CFLAGS = $(OPT) $(CARGS)
 
-ipclib.a: ipclib.a(create_shm.o)\
+$(includedir)/ipcdefs.h:
+	install ipcdefs.h $(includedir)
+	install ipckeys.h $(includedir)
+	
+ipclib.a: $(includedir)/ipcdefs.h \
+ ipclib.a(create_shm.o)\
  ipclib.a(attach_shm.o)\
  ipclib.a(map_shm.o)\
  ipclib.a(create_msg.o)\
@@ -15,8 +20,6 @@ ipclib.a: ipclib.a(create_shm.o)\
 
 install: ipclib.a
 	install ipclib.a $(libdir)
-	install ipcdefs.h $(includedir)
-	install ipckeys.h $(includedir)
 
 clean:
 	rm -f ipclib.a *.o

@@ -55,7 +55,7 @@ void help(void);
 
 /******************************************************************************
 ******************************************************************************/
-main()
+int main()
 {
     char cmd[80],tmp[16],tmp2[16];
     char *cptr;
@@ -74,7 +74,7 @@ main()
        printf("cnaf> ");
        while (fgets(cmd,sizeof(cmd),stdin) == (char *)NULL)
         {
-          if (feof(stdin) != 0) return;
+          if (feof(stdin) != 0) return(0);
           printf("\ncnaf> ");
         }
 /*

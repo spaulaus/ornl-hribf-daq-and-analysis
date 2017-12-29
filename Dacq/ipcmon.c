@@ -23,7 +23,7 @@ void INTsignal (int);
 
 /****************************************************************************
 ****************************************************************************/
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
    int   i, len, size, tmp, ierr, ipass, lu;
    unsigned short *sptr;

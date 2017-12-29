@@ -15,5 +15,9 @@ pacor: pacor.o lib/pacorlib.a
 lib/pacorlib.a:
 	$(MAKE) -C lib 
 #
+#
+.f.o:
+	$(FORT) $(FFLAGS) -c pacor.f
+#
 install: pacor
 	install pacor $(bindir)
