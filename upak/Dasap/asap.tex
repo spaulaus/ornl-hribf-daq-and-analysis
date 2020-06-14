@@ -1,0 +1,387 @@
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   1
+ 
+ 
+ 
+ 
+                       Automatic Spectrum Analysis Program
+ 
+ 
+   SEC PAGE CONTENTS
+ 
+   010   1  HOW TO GET STARTED
+ 
+   020   2  GENERAL FEATURES
+ 
+   030   2  PROGRAM OPERATION
+ 
+   040   2  LOOP EXECUTION AND SYMBOL DEFINITION
+ 
+   045   3  SYMBOLS IN FILENAMES
+ 
+   050   3  FIT SPECIFICATIONS - COMMAND LIST
+ 
+   060   4  INPUT QUANTITIES - DEFINITIONS
+ 
+   070   4  BACKGROUND COMPUTATION
+ 
+   080   5  PEAK FINDING
+ 
+   090   5  SUM AREA (SAREA) CALCULATION
+ 
+   100   5  CENTROID CALCULATION
+ 
+   110   5  GAUSSIAN AREA (GAREA) CALCULATION
+ 
+   120   6  NON-LINEAR SEARCH FOR PEAK POSITIONS AND WIDTHS
+ 
+   130   6  LISTING OF RESULTS - DEFINITIONS & FORMATS
+ 
+   140   7  COMMENTS
+ 
+ 
+   U510.010  HOW TO GET STARTED
+ 
+ 
+   Type:  asap               ;if asap is defined in your .login or .cshrc
+                             ;files, otherwise:
+ 
+   Type:  /usr/hhirf/asap    ;For HHIRF DECstation and Alpha users
+   or
+   Type:  /home/upak/asap    ;For SPARCstation users
+ 
+    
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   2
+ 
+ 
+   U510.020  GENERAL FEATURES
+ 
+   (1)....ASAP  is  intended  to  be  used for the QUICK, EASY and maybe DIRTY
+          analysis of high-resolution gamma-ray spectra.
+ 
+   (2)....Processes data from his- or spk-files.
+ 
+   (3)....Finds peaks, estimates the background, and calculates AREAS  by  two
+          methods (a SUMMING method and GAUSSIAN fitting)
+ 
+   (4)....Produces  a  table  of  PEAK  locations,  ENERGIES, AREAS, estimated
+          ERRORS, and PEAK-WIDTHS.
+ 
+   (5)....Spectra are analyzed in "sections" chosen by the program.
+ 
+   (6)....Sections may be up to 256 channels in length and contain  up  to  16
+          peaks.
+ 
+   (7)....Up to 250 peaks may be processed in one FIT request.
+ 
+   (8)....Spectra with up to 16384 channels may be processed.
+ 
+   U510.030  PROGRAM OPERATION
+ 
+   The  user  specifies  how  the  fitting is to be carried out by supplying a
+   number of FIT specifications which are entered free-form  (i.e.  a  command
+   NAME  followed  by  zero  or  more  data  items  -  numbers or alphanumeric
+   specifiers).  Command  and  data  item  delimiters  are  space  and  comma.
+   Commands  may be given in any order. Most of data items have DEFAULT values
+   (see SEC# U510.050). SEC#  U510.050  gives  a  complete  list  of  the  FIT
+   specifications  available,  some  of  which are described in more detail in
+   SEC# U510.060.
+ 
+   After the fitting conditions are specified, one or more  FIT  requests  are
+   entered.  Subsequently,  some  or  all  of  the  fitting  conditions may be
+   changed and more FIT requests entered etc., etc.
+ 
+   U510.040  LOOP EXECUTION AND SYMBOL DEFINITION
+ 
+   Commands related to LOOP execution and SYMBOL definition.
+ 
+   SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                    - symbols M, N, O, P, Q, R, S are reserved
+                    - expression syntax is same as in CHIL
+                    - no imbedded blanks are allowed in expressions
+                    - symbols may contain up to 4 characters (5-8 ignored)
+ 
+   DSYM             - Displays list of currently defined sumbols & values
+ 
+   LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+   CMD  ....        - Nesting supported
+   CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+   ENDL             - Defines end-of-loop
+                    - KILL (entered before ENDL) kills LOOP
+                    - Ctrl/C - aborts loop-in-progress
+                    - opening of CMD-file within a LOOP not allowed
+    
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   3
+ 
+ 
+ 
+   U510.045  SYMBOLS IN FILENAMES
+ 
+   One   symbol   (integer   variable)   may  be  incorporated  in  a  filname
+   specification as the following examples illustrate:
+ 
+   Example-1
+ 
+   syn=3
+   OU fil"sym".spk,new  ;Creates and opens fil3.spk
+ 
+   Example-2
+ 
+   I=0
+   LOOP 3
+   I=I+1
+   IN fil"I".spk        ;Opens (in succession)  fil1.spk, fil2.spk, fil3.spk
+   .
+   .
+   ENDLOOP
+ 
+   U510.050  FIT SPECIFICATIONS - COMMAND LIST
+ 
+   A list (with definitions) of all ASAP commands is given below.  Note:  that
+   commands may be entered in either upper or lower case.
+ 
+   CMD   DATA-------Definition (general commands) ------------
+ 
+   IN    fil.ext    Open data file (ext = .spk or .his)
+                    (on VAX, his-file names must include Disk name)
+   CMD   fil        Open and process commands from fil.cmd
+   CMD   fil.ext    Open and process commands from fil.ext
+   TIT   Title      Enter a Title for log-file
+   END              Ends program
+ 
+   CMD   DATA-------Definition (associated with fitting) -----
+ 
+   KWD   KWD        See text (usually KWD=2*FWHM)     (DFLT KWD=8)
+   WCAL  FWA,FWB    Peak-width=FWA+FWB*SQRT(chan#)    (DFLT FWA,FWB=4,0)
+   BIAS  BIAS       Peak-detect threshold             (DFLT BIAS=3.0)
+   DEL   DX,WDNC    Step size for pos & width         (DFLT 0.0,0.05)
+   KFIT  KIND       Kind of FIT (GAUS OR SUMA)        (DFLT KIND=GAUS)
+   KBAK  KIND       Kind of BGD (FULL,FAST,ZERO)      (DFLT KIND=FULL)
+   BSTD  BSTD       See text (STD DEV for BGD)        (DFLT BSTD=2.0)
+   MPIS  N          Max # Peaks/section (MAX=16)      (DFLT MPIS=8)
+   VW    KIND       Width variation (NONE,LOCK,FREE)  (DFLT KIND=LOCK)
+   FIT   ID,LO,HI   FIT spect# ID   (chans LO thru HI)
+   FIT   ID         FIT spect# ID   (using previous    LO,HI specs)
+   FIT              FIT             (using previous ID,LO,HI specs)
+ 
+   Ctrl/C           Interrupts FIT in progress
+    
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   4
+ 
+ 
+ 
+   U510.060  INPUT QUANTITIES - DEFINITIONS
+ 
+   KWD....KWD  is  a  basic  width  such  that  2*KWD  will include all of the
+          stronger peaks (see the following sections for  other  ways  KWD  is
+          used)
+ 
+   WCAL...FWA,FWB:    ASAP     computes     FWHM     from     the     relation
+          FWHM=FWA+FWB*SQRT(CHAN#).  IF  FWA  =  FWB = 0.0, ASAP estimates FWA
+          and FWB by fitting  the  widths  calculated  from  SAREAS  and  PEAK
+          HEIGHTS.  If  ASAP computes FWA and FWB and if KWD was initially set
+          to 0, ASAP sets KWD = 2*FWHM at mid-range of the FIT request.
+ 
+   BIAS...BIAS: BIAS is  a  PEAK  HEIGHT  selector  (the  number  of  standard
+          deviations  above   BACKGROUND that a count must be to be considered
+          part of a PEAK) Depending on the statistics, BIAS  may  need  to  be
+          set to values ranging from 2.5 to 10.0
+ 
+   DEL....DX,WDNC:  DX  is  the fraction of a channel that PEAKS will be moved
+          at each step in the non-linear-search for best  PEAK  position  (DX=
+          0.0  says do no non-linear search on PEAK position). A maximum of 10
+          attempts is made to find the best position. WDNC is  the  step  size
+          (fraction  of  the  initial  value  of  FWHM) used in the non-linear
+          search for best peak width/s. Adjustment of FWHM is limited  to  0.3
+          to  3.0  times  the  starting value. If WDNC = 0.0  FWHM will not be
+          changed.
+ 
+   Peak positioning is not usually required - start with DX = 0.0
+ 
+   ECAL...A,B: A is the spectrum intercept and  B  is  the  spectrum  GAIN  in
+          Kev/channel  (or  whatever).  (A   and   B   are   only   used   for
+          identification purposes).
+ 
+   BSTD...A  BACKGROUND  computation parameter which effects SAREA only and is
+          probably best left alone.
+ 
+   U510.070  BACKGROUND COMPUTATION (FOR SAREA ONLY)
+ 
+   The BACKGROUND is calculated by least squares fitting  the  spectrum  in  a
+   number  of  overlapping  sections.  10*KWD  or  256  (whichever is smaller)
+   channels are considered in each FIT. Each section is  fitted  three  times-
+   the  first  time  to the form BGD(I)=A+B*X(I) and the last two times to the
+   form BGD(I)=A+B*X(I)+C*X(I)*X(I). after each fit any channel  containing  a
+   count    Y(I)    is    thrown    out     of     the     next     fit     if
+   (Y(I)-BGD(I)).GT.BSTD*SQRTF(BGD(I)).  (see  the  list  of definitions) This
+   essentially throws away the PEAKS (at least that is what it is supposed  to
+   do).  Only  the center 1/2 of each section is retained except for the first
+   and last sections. I.E. the first 1/2 of the second  section  overlaps  the
+   last  1/2  of  the first section etc. You should probably use BSTD=2.0 (the
+   DEFAULT value).
+    
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   5
+ 
+ 
+   U510.080  PEAK FINDING
+ 
+   Peak finding is accomplished using a routine due  to  J.  D.  Larson.  This
+   routine  (used  by RIP and STP) computes a "spectrum derivative", looks for
+   inflection points, locates the largest count  near  this  inflection  point
+   and  tests  against  the  peak  detect  threshold  specified  (BIAS in this
+   program). The differentation process uses  KWD/2  as  an  estimate  of  the
+   basic  peak  FWHM and is sensitive (but not extremely so) to this value. It
+   does what it does and does it rather well, I think.
+ 
+   U510.090  SUM AREA (SAREA) CALCULATION
+ 
+   The SUM AREAS (SAREA'S) are calculated by summing Y(I)-BGD(I)  from  I1  to
+   I2  where  I1=(IP-KWD+1)  and I2=(IP+KWD). (see the list of definitions) IP
+   is the rough position of the peak. I.E. Y(IP) is the  maximum  peak  count.
+   If  peaks  are  closer  together than 2*KWD, the difference is split to get
+   the summing range. If IDIFLO is the separation  between  IP  and  the  next
+   peak  below  it  and  IDIFHI is the separation between IP and the next peak
+   above, the sum is done from I1 to I2 where,
+ 
+   I1=(IP-MINF(KWD,IDIFLO/2)+1)
+ 
+   and
+ 
+   I2=(IP+MINF(KWD,IDIFHI/2)).
+ 
+   Where MINF(A,B) means the smaller of A and B. The quoted ERROR is given by,
+ 
+   ERR=100*SQRTF(SUM(Y(I))+SUM(BGD(I)))/AREA
+ 
+   U510.100  CENTROID CALCULATION
+ 
+   The CENTROID or best peak position may be  gotten  by  summing  as  follows
+   from I1 to I2.
+ 
+   CENTROID=SUM(I*(Y(I)-BGD(I))**2)/SUM((Y(I)-BGD(I))**2   I=I1,I2
+ 
+   Notice  that  this  is not really the CENTROID, since the square of the net
+   count is used rather than the net count, but this method seems  to  give  a
+   better peak position under adverse conditions.
+ 
+   U510.110  GAUSSIAN AREA (GAREA) CALCULATION
+ 
+   Peaks  which  are  well  separated  are  fitted by the linear least squares
+   method to a single gaussian plus a linear background over the range  J1  to
+   J2  where,  J1=IP-2*KWD  and J2=IP+2*KWD. If peaks are closer together than
+   2*KWD the range is extended to include up to 16 peaks, however the  DEFAULT
+   maximum  number  is  8. If peaks are still in the way, the range is reduced
+   somewhat to exclude them. The errors in the peak areas  are  calculated  in
+   the  conventional  way  for  this  type  of  fitting but is too involved to
+   discuss here.
+    
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   6
+ 
+ 
+ 
+   U510.120  NON-LINEAR SEARCH FOR PEAK POSITIONS AND WIDTHS
+ 
+   If DX is entered (greater than 0), an attempt is  made  to  find  the  best
+   positions  for  all  peaks  in  the section being fitted by positioning the
+   peaks one at a time, starting with the largest  and  working  down  to  the
+   smallest,  in  steps of DX (see the list of definitions) channels per step.
+   If DX=0.0, no positioning will be done. If no best position  is  found  the
+   attempts  will  be terminated after 10 trys. After positioning is completed
+   an attempt may be made to find the best peak widths.  Peak  widths  may  be
+   held  fixed  (VW=NONE), varied together in a given FIT section (VW=LOCK) or
+   allowed to vary freely (VW=FREE). Adjustment of peak widths is  limited  to
+   0.3  to  3.0  times  initial  values. If WDNC = 0.0 no width search will be
+   done.
+ 
+   U510.130  LISTING OF RESULTS - DEFINITIONS & FORMATS
+ 
+   Most of the output is self explanatory, with a few exceptions:
+ 
+   (1)....XG of the table denotes the best position found in  the  positioning
+          operation.
+ 
+   (2)....AFWHM denotes the adjusted FWHM.
+ 
+   (3)....The  output  col  labeled  100(S-G)..../G  compares  GAUSSIAN  AREAS
+          (GAREA) and SUM AREAS (SAREA) and flags (with ***) if the  agreement
+          is worse than the estimated ERRORS predict.
+ 
+   (4)....If  you  don't  use GAUSSIAN analysis the GAREA col will contain the
+          approximate PEAK HEIGHT. (this is just an accident).
+ 
+   In order to facilitate the reading of asap.log by a another  program,  each
+   type  of  output  data  line  is specifically flagged for identification. A
+   listing of output data, associated flags,  and  record  formats  are  given
+   below.
+ 
+   Definition of output quantities flagged with FIL$
+ 
+   MO/DA/YR HR:MN:SC - Month, day, year, hour, minute, second of run
+ 
+   filename          - Name of file from whence spectrum was read
+ 
+   Format is:  (1H ,4X,2(I2,1H/),I2,2X,2(I2,1H:)I2,4X,20A4,9X,'FIL$')
+               If line is read on FORMAT(30A4), FIL$ flag is in word-30
+ 
+   Definition of output quantities flagged with TIT$
+ 
+   Title       Entered by user at ASAP run time
+ 
+   Format is:  (1H ,4X,19A4,35X,'TIT$')
+               If line is read on FORMAT(30A4), TIT$ flag is in word-30
+    
+   02-Feb-02 ........... U510  ASAP (UNIX version) - WTM ............ PAGE   7
+ 
+ 
+   U510.130  LISTING OF RESULTS (continued)
+ 
+   Definition of output quantities flagged with DAT$
+ 
+   ID          Spetrum or histogram ID number
+   ILO         First channel # of peak search range (LO from FIT cmd)
+   IHI         Last  channel # of peak search range (HI from FIT cmd)
+   KWD         A "width parameter" (see HANDBOOK)
+   BIAS        Peak-detect threshold (in standard deviation units)
+   KEV/CH      Energy calibration (the B from ECAL command)
+   E0          Energy calibration (the A from ECAL command)
+   FW          Initial width parameter (the A from WCAL command)
+   FWB         Initial width parameter (the B from WCAL command)
+   WDNC        Peak width    step size (in fractional units)
+   DX          Peak position step size (in channel   units)
+   VW          Width variation flag (NONE, LOCK, FREE)
+   BSTD        Background control parameter for Sum-Area (see HANDBOOK)
+   Format is:  (1H ,4I6,7F8.4,4X,A4,F8.4,I8,11X,'DAT$')
+               If line is read on FORMAT(30A4), DAT$ flag is in word-30
+ 
+   Definition of output quantities flagged with SAP$
+ 
+   SAREA       Sum-area (see SEC# U510.090 for computation details)
+   ERR         Estimated error (via counting statistics with BGD subtraction)
+   GAREA       Gaussian-area from fitting process
+   ERR         Estimated error from quality-of-fit, etc.
+   AFWHM       Adjusted full-width at half-maximum from non-linear search
+   XG          Gaussian peak position from non-linear search (found in fit)
+   CENTROID    Peak centroid (see SEC# U510.100)
+   EGAM        Peak energy from CENTROID, E0 and KEV/CH
+   100(S-G)/S  100*(SAREA-GAREA)/SAREA
+   **          Says SAREA & GAREA differ by more than "uncertainties predict"
+   ID          Spectrum or histogram ID
+   Format is:  (1H ,9F10,1X,A2,3X,I8,11X,'SAP$')
+               If line is read on FORMAT(30A4), SAP$ flag is in word-30
+ 
+   U510.140  COMMENTS
+ 
+   (1)....I  don't  know  how  well this program will work for your data. Only
+          you can determine that. It's not going to  work  very  well  if  the
+          whole region of interest is just one mass of overlapping peaks.
+ 
+   (2)....Performance  will depend on the fitting conditions that you specify,
+          of course. The DEFAULTS  are  set  to  "reasonable"  values  for  an
+          "average"  Ge(Li)  spectrum - whatever that is. If it is possible to
+          supply good width coefficients (FWA & FWB) and keep  the  widths  of
+          all  peaks in a section locked together (VW LOCK), results should be
+          more satisfactory.
+ 
+   (3)....In most cases it is best not to set the maximum number of peaks  per
+          section  to  too  large a value. It makes the program slow and gives
+          poor results for the smaller peaks in the  section.  You  will  just
+          have to find out what works (or doesn't work) for your data.

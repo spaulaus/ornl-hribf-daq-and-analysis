@@ -1,0 +1,2200 @@
+%!PS-Adobe-3.0
+%%Pages: (atend)
+%%Creator: txx to ps converter
+%%EndComments
+%%BeginProlog
+/S/show load def
+/bd { bind def } bind def
+/B{3 1 roll moveto S} bd
+/F{$fd exch get setfont} def
+/StartPage{/svpg save def .05 dup scale} bd
+/EndPage{svpg restore showpage} bd
+/SetUpFonts
+ {dup/$fd exch array def{findfont exch scalefont $fd 3 1 roll put}repeat}def
+1 220.000 /Courier-Bold
+0 220.000 /Courier
+2 SetUpFonts
+%%EndProlog
+%%Page: 1 1
+0 F
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   1)B
+0 F
+975 14315(   Sec Page Contents)B
+975 13875(   010   2  GENERAL      - Introduction and General Features)B
+975 13655(   020   3  GENERAL      - Getting Started)B
+975 13435(   030   4  GENERAL      - Assigning Input/Output Files)B
+975 13215(   040   4  GENERAL      - Loop-Execution & Symbol-Definition)B
+975 12995(   050   5  GENERAL      - Log File -  damm.log)B
+975 12775(   060   5  GENERAL      - Comments on Hard Copy)B
+975 12555(   070   5  GENERAL      - File ID-directories and Count-Sums)B
+975 12335(   090   6  GENERAL      - Cursor Tracking Problems With Xterminals)B
+975 12115(   100   6  GENERAL      - Changes in Cursor-Mode Commands)B
+975 11895(   110   6  GENERAL      - Mouse Button Customizing)B
+975 11675(   120   7  GENERAL      - Screen Setup and Color Mapping)B
+975 11455(   130   8  GENERAL      - Display Delays \(hangup problems\))B
+975 11235(   135   8  GENERAL      - Commands Which Suspend or Abort Operations)B
+975 11015(   140   8  GENERAL      - Zeroing Histograms in Shared Memory)B
+975 10575(   150   9  DISPLAY      - 1-D Display)B
+975 10355(   155  11  DISPLAY      - 1-D Display \(Peak Finding/Logging\))B
+975 10135(   160  12  DISPLAY      - 2-D Display)B
+975 9915(   170  14  DISPLAY      - Special XY-Line Display)B
+975 9695(   175  16  DISPLAY      - Label Generation and Annotation)B
+975 9255(   200  18  MANIPULATION - Syntax Definitions)B
+975 9035(   210  18  MANIPULATION - Setup)B
+975 8815(   220  19  MANIPULATION - I/O     1-D Histograms)B
+975 8595(   230  19  MANIPULATION - Gating  2-D Histograms)B
+975 8375(   240  19  MANIPULATION - General 2-D Projections)B
+975 8155(   250  20  MANIPULATION - Operations on Buffers-1 & -2)B
+975 7935(   260  20  MANIPULATION - Show Data, Count-Sums etc \(from Bufs-1 & -2\))B
+975 7715(   270  20  MANIPULATION - Modify Buffer Contents)B
+975 7495(   280  21  MANIPULATION - Printer Plots)B
+975 7275(   290  21  MANIPULATION - Gain-Shifts & Compressions)B
+975 6835(   300  22  MANIPULATION - HIS-file \(Create, Expand, Copy, Add, Gain-Shift...\))B
+975 6615(   310  25  MANIPULATION - HIS-file \(Adding & Subtracting Complete HIS-files\))B
+975 6175(   350  26  BANANAS      - Definition, Rules, Construction & Display)B
+975 5955(   360  27  BANANAS      - Projections)B
+975 5515(   400  28  FITTING      - Introduction & General Features)B
+975 5295(   410  29  FITTING      - 1-Key \(Cursor Mode\) Commands)B
+975 5075(   420  30  FITTING      - Setup Commands)B
+975 4855(   430  31  FITTING      - Display of Data, Fits & Printer-Plots)B
+975 4635(   440  32  FITTING      - FIT Execution Commands)B
+975 4415(   450  32  FITTING      - FIT Parameters - Saving, Setting, Default)B
+975 4195(   460  33  FITTING      - Commands to Control Relative Peak-intensities)B
+975 3975(   470  34  FITTING      - FIT Specification Details)B
+975 3755(   480  35  FITTING      - Peak Shapes)B
+975 3535(   490  35  FITTING      - Gradient-Search Method \(FIT  request\))B
+975 3315(   500  36  FITTING      - Gaussian Method        \(GFIT request\))B
+975 3095(   510  37  FITTING      - Estimated Uncertainties in Peak Areas)B
+975 2875(   520  37  FITTING      - Reading Fit Results from damm.log)B
+975 2655(   530  37  FITTING      - Common Problems)B
+975 2435(   540  38  FITTING      - Peak Shape vs Asymmetry \(Log Plot\))B
+975 1995(   550  39  CUSTOMIZING  - Screen Configuration)B
+975 1775(   560  41  CUSTOMIZING  - Graphic Screen Color Mapping)B
+975 1555(   570  42  CUSTOMIZING  - Graphic Screen Black & White Mapping)B
+EndPage
+%%Page: 2 2
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   2)B
+975 14315(   U300.010  Introduction and General Features)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   DAMM  is a Display, Analysis and Manipulation Module which is configured to)B
+975 13655(   be used on Alpha workstations running Digital  Unix.  Older  versions  were)B
+975 13435(   configured  for  DECstations,  SPARCstations and VAXstations. DAMM provides)B
+975 13215(   all of the features to be found in VAXPAK programs DAM, SAM,  TDX  and  XAM)B
+975 12995(   as  well  as  a  number  of  additional features. Some general features are)B
+975 12775(   listed below.)B
+1 F
+975 12335(   Display features ..........................................................)B
+0 F
+975 11895(   \(1\)....Works with Alphas, DECstations, SPARCstations & VAXstations.)B
+975 11455(   \(2\)....Displays 1-D data from HIS- or SPK-files.)B
+975 11015(   \(3\)....Displays 2-D data from HIS-files.)B
+975 10575(   \(4\)....Hardcopy available via screen-copy to networked Laser printers.)B
+975 10135(   \(5\)....A dialog record may be saved on a Log-file.)B
+975 9695(   \(6\)....Supports Free-Form \(Banana\) gate construction.)B
+975 9255(   \(7\)....Provides for total number of counts within a Banana.)B
+975 8815(   \(8\)....Supports X- & Y-projections of Bananas \(saved on DAMQ8Q.SPK\).)B
+975 8375(   \(9\)....Provides for peak sum, centroid and fwhm.)B
+975 7935(   \(10\)...Provides for spectrum analysis \(fitting - see SEC# U300.400\).)B
+1 F
+975 7275(   General features ..........................................................)B
+0 F
+975 6835(   \(1\)....Reads 1-D histograms from either HIS-, SPK-files.)B
+975 6395(   \(2\)....Extracts GATES \(on parameters 1 or 2\) from 2-D histograms.)B
+975 5955(   \(3\)....Supports general projections of Bananas on arbitrary axis.)B
+975 5515(   \(4\)....Forms linear combinations, gain-shifts etc. of 1-D histograms.)B
+975 5075(   \(5\)....Forms linear combinations, gain-shifts etc. of 2-D histograms.)B
+975 4635(   \(6\)....Does linear gain and intercept transformations by rebinning.)B
+975 4195(   \(7\)....Does crunches \(sums a specified number of channels together\).)B
+975 3755(   \(8\)....Lists and plots 1-D histograms on the line printer.)B
+975 3315(   \(9\)....Shows directory \(ID'S\) contained in HIS-, SPK- & BAN-files.)B
+975 2875(   \(10\)...Shows count-sums for all ID's in SPK- or HIS-files.)B
+975 2215(                            \(continued on next page\))B
+EndPage
+%%Page: 3 3
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   3)B
+975 14315(   Program operation .........................................................)B
+0 F
+975 13875(   The program is controlled by a set of commands \(alphabetic directives\)  and)B
+975 13655(   associated  data-lists  \(numbers\):  I  call  these  command-lists. Input is)B
+975 13435(   free-form. Command and list-element delimiters are BLANK , \( \) /)B
+1 F
+975 12995(   U300.020  GETTING STARTED)B
+975 12995(   ___________________________________________________________________________)B
+0 F
+975 12555(   The steps given below outline how I would do it. Of course, you can  do  it)B
+975 12335(   any way that you choose or not at all.)B
+975 11895(   \(1\)....Log onto the workstayion, Xterminal, etc. in the usual manner.)B
+975 11455(   \(2\)....Open a window and move it to the lower left corner of screen.)B
+975 10795(   \(3\)....Type:  damm                ;to start program on any host)B
+975 10575(                                     ;where the path to the executable)B
+975 10355(                                     ;has been defined in your)B
+975 10135(                                     ;.cshrc, .login or login.com files)B
+975 9915(                                     ;otherwise,)B
+975 9475(          Type:  /usr/hhirf/damm     ;to start on a HHIRF DECstation)B
+975 9035(          Type   /home/upak/damm     ;to start on a HHIRF SPARCstation)B
+975 8595(   \(4\)....Type:  H                   ;for HELP directory)B
+975 8375(   \(5\)....Type:  H  ITEM             ;for help on directory ITEM)B
+975 8155(   \(6\)....Type:  H  FIG              ;for screen configurations)B
+975 7715(   \(7\)....Try a few FIG commands to get a feel for how they work.)B
+975 7275(   \(8\)....Note  the  fact  that  the  display  required  for  entering fitting)B
+975 7055(          information \(like peak positions, etc\) is via the DS & DSX  commands)B
+975 6835(          rather than the general display commands D & DX.)B
+975 6395(   \(9\)....Learn  to  use  the  HELP  facility.  That  will  usually  be   more)B
+975 6175(          up-to-date than this document.)B
+975 5735(   \(10\)...Filenames  have been made case-sensitive for the UNIX version. Where)B
+975 5515(          default extensions apply, upper case is assumed for  VMS  and  lower)B
+975 5295(          case  is  assumed  for  UNIX.  Acceptable  standard  extensions  now)B
+975 5075(          include .spk, .SPK, .his, .HIS, .ban, .BAN, .cmd &  .CMD.  Note:  If)B
+975 4855(          the  his-file  extension  is  lower/upper  case  then  the  drr-file)B
+975 4635(          extension must be lower/upper case. Also note:)B
+1 F
+975 4195(   /usr/users/directory/subdirectory/filename   ;is an acceptable form but)B
+975 3755(           ../directory/subdirectory/filename   ;is NOT! \(at least for now\))B
+EndPage
+%%Page: 4 4
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   4)B
+975 14315(   U300.030  Commands for Assigning Input/Output Files)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   IN   FIL.EXT    - Open N-file \(EXT = SPK or HIS\))B
+975 13655(   OU   FIL.EXT    - Open O-file \(EXT = SPK or HIS\) - OUTPUT for SPK only)B
+975 13435(   OU   FIL.SPK,NEW- Create and open O-file \(SPK-file for output\))B
+975 13215(   QF   FIL.EXT    - Open Q-file \(EXT = SPK or HIS\) - for display only)B
+975 12995(   RF   FIL.EXT    - Open R-file \(EXT = SPK or HIS\) - for display only)B
+975 12775(   SF   FIL.EXT    - Open S-file \(EXT = SPK or HIS\) - for display only)B
+975 12555(   BAN  FIL        - Open FIL.BAN for store, recall, proj, etc)B
+975 12335(   BAN  FIL,NEW    - Create & open FIL.BAN for store, recall, etc)B
+975 12115(                   - \(See below for how to specify variable FILENAMES\))B
+975 11895(   CLO  F          - Closes F-file \(where F = N, O, P, Q, R, S or BAN\))B
+975 11675(   DFIL            - Displays data files currently open)B
+975 11235(   CMD  FIL        - Open and process commands from FIL.CMD)B
+975 11015(   CMD  FIL.EXT    - Open and process commands from FIL.EXT)B
+975 10575(   LON/LOF         - Turn Log-output \(to LU7\) ON/OFF \(default = OFF\))B
+1 F
+975 10135(   Explanation of variables in FILENAMES .....................................)B
+0 F
+975 9695(   One   symbol   \(integer   variable\)  may  be  incorporated  in  a  FILENAME)B
+975 9475(   specification as the following examples illustrate:)B
+975 9035(   Example-1 .................................................................)B
+975 8815(   SYM=3)B
+975 8595(   OU FIL"SYM".SPK  ;Opens FIL3.SPK)B
+975 8155(   Example-2 .................................................................)B
+975 7935(   I=0)B
+975 7715(   LOOP 3)B
+975 7495(   I=I+1)B
+975 7275(   IN FIL"I".SPK    ;Opens \(in succession\) FIL1.SPK, FIL2.SPK, FIL3.SPK)B
+975 7055(   .)B
+975 6835(   ENDLOOP)B
+1 F
+975 6395(   U300.040  Commands Related to Loop-Execution & Symbol-Definition)B
+975 6395(   ___________________________________________________________________________)B
+0 F
+975 5955(   SYM = EXPRESSION - Define symbol \(SYM\) up to 100 symbols supported)B
+975 5735(                    - symbols: UIND CIND ULOC CLOC FIX NONE FITS ALL and)B
+975 5515(                    - COLR GREY DOTS LIVE BAN  M N O P Q R S X are reserved)B
+975 5295(                    - expression syntax is same as in CHIL)B
+975 5075(                    - no imbedded blanks are allowed in expressions)B
+975 4855(                    - symbols may contain up to 8 characters)B
+975 4415(   DSYM             - Displays currently defined sumbols & values)B
+975 4195(   LSYM             - Logs currently defined symbols & values on damm.log)B
+975 3975(   ZSYM             - Resets symbol table \(deletes all symbols\))B
+975 3535(   LOOP N           - Starts LOOP \(executed N-times\) N=SYM or CONST)B
+975 3315(   CMD  ....        - Nesting supported)B
+975 3095(   CMD  ....        - # lines between 1st LOOP & matching ENDL = 100)B
+975 2875(   ENDL             - Defines end-of-loop)B
+975 2655(                    - KILL \(entered before END\) kills LOOP)B
+975 2435(                    - Ctrl/C    - aborts loop-in-progress)B
+975 2215(                    - opening of CMD-file within a LOOP not allowed)B
+975 1775(                            \(continued on next page\))B
+EndPage
+%%Page: 5 5
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   5)B
+975 14315(   LOOP suspension - the WO command ------------------------------------------)B
+0 F
+975 13875(   A command WO [means the same thing as WOA or WHOA -  i.e  the  opposite  of)B
+975 13655(   GIDDUP \(my preferred spellings\)] has been implemented to work within LOOPs.)B
+975 13435(   Whenever the WO command is encountered, the message:)B
+975 12995(   Type [RETURN] to CONTINUE--->)B
+975 12555(   will  appear  on  the  screen. This gives you an opportunity to look at the)B
+975 12335(   display etc. before it gets wiped  out.  When  you  are  finished  looking,)B
+975 12115(   press the [RETURN] key and it will continue.)B
+1 F
+975 11675(   U300.050  Log File - damm.log)B
+975 11675(   ___________________________________________________________________________)B
+0 F
+975 11235(   The  VMS version of DAMM always creates a new version of DAMM.LOG while the)B
+975 11015(   UNIX version creates a new  damm.log  or  appends  to  an  old  version  of)B
+975 10795(   damm.log  if  it exists. If you enter the command LON, almost all dialog to)B
+975 10575(   and from the host will be logged, otherwise, only certain "print  commands")B
+975 10355(   will  produce output to the log-file or device. You may turn the log ON/OFF)B
+975 10135(   by entering LON/LOF.)B
+1 F
+975 9695(   U300.060  Comments on Hard Copy)B
+975 9695(   ___________________________________________________________________________)B
+0 F
+975 9255(   As I have defined the default the color mapping, it is best to set  up  the)B
+975 9035(   Workstation to Print Screen in the negative image mode. If you are printing)B
+975 8815(   on  something  like  a LN03 ScriptPrinter, anything you chose to print will)B
+975 8595(   be scaled to fit on one page. If you are using an LN03, it may come out  on)B
+975 8375(   multiple  pages  \(and  you  may  miss some\) unless you choose a "Portion of)B
+975 8155(   Screen" that it likes.)B
+1 F
+975 7715(   U300.070  File ID-directories and Count-Sums)B
+975 7715(   ___________________________________________________________________________)B
+0 F
+975 7275(   DIR  KF   Displays a list of all ID's in file-KF, where)B
+975 7055(             KF   left blank says input-file)B
+975 6835(             KF = N     denotes   input-file)B
+975 6615(             KF = O     denotes  output-file)B
+975 6395(             KF = Q     denotes       Q-file)B
+975 6175(             KF = R     denotes       R-file)B
+975 5955(             KF = S     denotes       S-file)B
+975 5735(             KF = BAN   denotes     BAN-file)B
+975 5295(   LDIR KF   Logs a list of all ID's in file-KF on DAMM.LOG)B
+975 4855(   DDIR KF   Displays ID's & # of non-zero channels for SPK-files)B
+975 4635(   DDIR KF   Displays ID-directory in detail        for HIS-files)B
+975 4415(             Also logs on DAMM.LOG if LON)B
+975 3975(   DSUM KF   Displays count-sums of all ID's on file-KF)B
+975 3755(             Also logs on DAMM.LOG if LON)B
+EndPage
+%%Page: 6 6
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   6)B
+975 14315(   U300.090  Cursor Tracking Problems With Xterminals)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   The software-generated full-window cursor displayed by  DAMM  when  in  the)B
+975 13655(   "1-key  cursor  mode"  requires  a  lot of real-time response from the host)B
+975 13435(   computer for live tracking of the mouse. This works fine when the  host  is)B
+975 13215(   a  local workstation but does not work well for Xterminals hosted by a busy)B
+975 12995(   VAX. The following commands are intended to alleviate this problem. Type:)B
+1 F
+975 12555(   CURT LIVE  ;for full-window cursor which tracks mouse "live" \(default\))B
+975 12115(   CURT X     ;for new cursor display only for mouse-click or key-press)B
+975 11895(              ;\(works better for Xterminals hosted by busy VAX, etc.\))B
+0 F
+975 11455(   Execute the desired CURT command and then FIG to make it take effect.)B
+1 F
+975 11015(   U300.100  Changes in Cursor-Mode Commands)B
+975 11015(   ___________________________________________________________________________)B
+0 F
+975 10575(   I have eliminated the destinction between  upper  and  lower  case  in  all)B
+975 10355(   cursor-mode  commands.  The  Shift-  and  Caps-lock keys have no effect. In)B
+975 10135(   order to do this and retain meaningful command names, it was neccessary  to)B
+975 9915(   use  two keys for certain commands. These commands \(UP, UX, UW, UL, UH, UO,)B
+975 9695(   and UB\) are defined below:)B
+975 9255(   P/UP   Add/Delete peak to Library \(pos specified by cursor\))B
+975 9035(   X/UX   Fix/Free  peak position \(for displayed peak nearest to cursor\))B
+975 8815(   W/UW   Fix/Free  peak width    \(for displayed peak nearest to cursor\))B
+975 8595(   L/UL   Fix/Free  Lo-Side ASYM  \(for displayed peak nearest to cursor\))B
+975 8375(   H/UH   Fix/Free  Hi-Side ASYM  \(for displayed peak nearest to cursor\))B
+975 8155(   O/UO   Turn peak  ON/OFF       \(for displayed peak nearest to cursor\))B
+975 7935(   B/UB   Add/Delete background point at cursor position)B
+975 7495(   Read UP as Unset Peak, for example. As usual, no carriage return  is  used.)B
+975 7275(   There are also a few other changes in commands. These are listed below:)B
+975 6835(   LF-ARROW    Set expand-region lo-limit)B
+975 6615(   RT-ARROW    Set expand-region hi-limit)B
+975 6395(   DN-ARROW    Pan DOWN - move picture so cursor-chan at right-screen)B
+975 6175(   UP-ARROW    Pan UP   - move picture so cursor-chan at  left-screen)B
+975 5955(   /           Display XCUR, YCUR, channel# & energy)B
+1 F
+975 5515(   U300.110  Mouse Button Customizing)B
+975 5515(   ___________________________________________________________________________)B
+0 F
+975 5075(   The  Mouse  Buttons  can  be used in place of some key-strokes while in the)B
+975 4855(   1-key cursor-mode. Different button definitions are provided for the  three)B
+975 4635(   different  types  of  displays  \(namely:  the  displays  resulting from the)B
+975 4415(   commands  D, DD & DS\). The following customizing commands are supported:)B
+975 3975(   BUD  L,M,R  ;Defines Left,Middle,Right buttons for cursor in  D-window)B
+975 3755(   BUDD L,M,R  ;Defines Left,Middle,Right buttons for cursor in DD-window)B
+975 3535(   BUDS L,M,R  ;defines Left,Middle,Right buttons for cursor in DS-window)B
+975 3315(   BUD  L,H,S  ;Example \(cursor in 1-D\)   L-butt sets sum-reg lo-limit,)B
+975 3095(               ;M-butt sets sum-reg hi-limit,  R-butt requests S-sum)B
+975 2875(   BUDD A,T,Z  ;Example \(cursor in 2-D\)   L-butt adds banana points,)B
+975 2655(               ;M-butt totalizes enclosed counts,  R-butt zots banana)B
+1 F
+975 2215(   Buttons can't be set to  / or ;  -  set to  ? or :  instead)B
+EndPage
+%%Page: 7 7
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - GENERAL - WTM ............... PAGE   7)B
+975 14315(   U300.120  Screen Setup and Color Mapping)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   Screen configuration \(placement of graphics  windows  on  the  screen\)  and)B
+975 13655(   color  \(or  black  &  white\)  mapping  is  discussed in more detail in SEC#)B
+975 13435(   U300.550, U300.560 and U300.570 \(if  you  have  a  B&W  monitor,  you  will)B
+975 13215(   probably  want to change the color mapping\). Here we give the usual list of)B
+975 12995(   commands and a brief description of each.)B
+1 F
+975 12555(   COMMANDS RELATED TO SCREEN SETUP & COLOR MAPPING ...........................)B
+0 F
+975 12115(   FIGI           ;Set  screen configuration library to default)B
+975 11895(   FIGF FILNAM    ;Read screen configuration library from FILNAM)B
+975 11675(   FIG  N         ;Set current screen configuration to type-N)B
+975 11235(   WIN  ID        ;Set subsequent displays to be in window-ID \(dflt=1\))B
+975 10795(   AXON ID        ;Enable  the drawing of axis for  window-ID \(dflt\))B
+975 10575(   AXOF ID        ;Disable the drawing of axis for  window-ID)B
+975 10135(   CMAP           ;Set color map to default  \("takes" after next FIG\))B
+975 9915(   CMAP FILNAM    ;Set color map from FILNAM \("takes" after next FIG\))B
+975 9695(   REVV           ;Reverse all color specs   \("takes" after next FIG\))B
+975 9255(   DLNS N         ;Set # disp-lines = N - for HELP, DDIR & DSUM)B
+975 8815(   CURT LIVE      ;Set full-wind cursor to track mouse LIVE \(default\))B
+975 8595(   CURT X         ;New full-wind cursor generated via mouse-click or key)B
+975 8375(                  ;The CURT command takes effect only after next FIG)B
+975 7935(   SSI            ;Set screen to initial - erase all graphic windows)B
+975 7495(   Program        has,  by  default,  16  pre-defined  screen  connfigurations)B
+1 F
+975 7495(            damm)B
+0 F
+975 7275(   available.  Each  is  referenced  \(via  the FIG command\) by an ID-number. A)B
+975 7055(   list of the ID-numbers along with the  associated  configuration  is  given)B
+975 6835(   below.  Try a few      and observe the results or if you really want to get)B
+1 F
+975 6835(                     FIGs)B
+0 F
+975 6615(   serious, see SEC# U300.550. In particular, if you have  an  Xterminal  with)B
+975 6395(   less  than  1024  x  860  pixels,  you  will  probably  need  to modify the)B
+975 6175(   configuration table as described in SEC# U300.550.)B
+975 5735(    1-[]     2-[][]   3-[][]   4-[][]   5-[][]   6-[][]   7-[][]   8-[][])B
+975 5515(                        []       [][]     []       [][]     []       [][])B
+975 5295(                                          []       [][]     []       [][])B
+975 5075(                                                            []       [][])B
+975 4635(    9-[][]  10-[][]  11-[--]  12-[--]  13-[--]  14-[--]  15-[][][])B
+975 4415(      []       [][]              [--]     [--]     [--]     [][][])B
+975 4195(      []       [][]                       [--]     [--]     [][][])B
+975 3975(      []       [][]                                [--]     [][][])B
+975 3755(      []       [][]                                         [][][])B
+975 3315(   16-[2D]  17-[2D]  18-[2D]  19-[2D]  20-[][][][])B
+975 3095(                                          [][][][])B
+975 2875(                                          [][][][])B
+975 2655(                                          [][][][])B
+975 2435(                                          [][][][])B
+EndPage
+%%Page: 8 8
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE   8)B
+975 14095(   U300.130  Display Delay \(hangup problems\))B
+975 14095(   ___________________________________________________________________________)B
+0 F
+975 13655(   Some display devices \(X-terminals for example\) may require a delay  between)B
+975 13435(   successive  displays.  If  your  device  "hangs up" or produces "incomplete)B
+975 13215(   displays" when executing LOOPS, you might try  increasing  the  appropriate)B
+975 12995(   delay. A range of 10 to 20000 miliseconds is accepted.)B
+975 12555(   DLAF MS        ;Set FIG-delay     to MS   milliseconds \(default=1000\))B
+975 12335(   DLAF           ;Set FIG-delay     to 1000 milliseconds)B
+975 12115(   DLAD MS        ;Set Display-delay to MS   milliseconds \(default=500\))B
+975 11895(   DLAD           ;Set Display-delay to 500  milliseconds)B
+1 F
+975 11235(   U300.135  Commands Which Suspend or Abort Operations)B
+975 11235(   ___________________________________________________________________________)B
+0 F
+975 10795(   WAIT  MS             ;Suspends execution for MS milliseconds)B
+975 10575(                        ;\(60,000 Milliseconds is the maximum allowed\))B
+975 10135(   WO                   ;Suspends execution until you  type [RETURN])B
+975 9915(                        ;\(it prompts you to: Type [RETURN] to continue)B
+975 9475(   Ctrl/C               ;Interrupts \(aborts\) a FIT-in-progress)B
+975 9255(                        ;Interrupts \(aborts\) a loop-in-progress)B
+975 9035(                        ;Interrupts \(aborts\) a command-file being executed)B
+975 8595(   Note:  If  you interrupt a fit-in-progress \(being executed within a command)B
+975 8375(   file\), this does not  abort  the  command  file  execution.  An  additional)B
+975 8155(   Ctrl/C will be required to abort the command file.)B
+1 F
+975 7495(   U300.140  Zeroing Histograms in Shared Memory)B
+975 7495(   ___________________________________________________________________________)B
+0 F
+975 7055(   The  following  commands  are provided for use when      is used to monitor)B
+1 F
+975 7055(                                                       damm)B
+0 F
+975 6835(   histogram generation during data acquisition or tape scanning.)B
+975 6395(   Z  ON                ;Enable  Z-command)B
+975 6175(   Z  OFF               ;Disable Z command \(default\))B
+975 5735(   Z  IDA IDB IDC ..    ;Says zero explicit histogram ID-list)B
+975 5515(   Z  IDA to IDB        ;Says zero IDA thru IDB \(in steps of 1\))B
+975 5295(   Z  IDA to IDB INC    ;Says zero IDA thru IDB \(in steps of INC\))B
+975 4855(   For these commands to work, the following conditions are required:)B
+1 F
+975 4415(   \(A\)....The his-file must be opened by DAMM via the IN cmd.)B
+975 3975(   \(B\)....The his-file must be attached to a scan or monitor process)B
+975 3755(          \(i.e. the his-file must be in a shared memory segment\))B
+975 3315(                          The disk-file is NOT zeroed!)B
+EndPage
+%%Page: 9 9
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE   9)B
+975 14095(   U300.150  Commands Related to 1-D Display)B
+975 14095(   ___________________________________________________________________________)B
+0 F
+975 13655(   FIG  NF        ;Choose screen config-NF. See SEC# U300.120 & U300.550)B
+975 13435(                  ;for screen configuration and color mapping commands)B
+975 13215(   WIN  NW        ;Set subsequent displays to be in window-NW)B
+975 12775(   LIN/LOG        ;Set display to linear/log  \(default is linear\))B
+975 12335(   PLON/PLOF      ;Turn peak logging ON/OFF \(dflt OFF\) see SEC# U300.155)B
+975 11895(   ST /OV         ;Set to disp mult hist stacked/overlayed \(dflt = OV\))B
+975 11455(   CAL  A,B,C     ;Define energy calibration \(E=A+B*Chan+C*Chan**2\))B
+975 11015(   COL  I,J,K...  ;Defines color sequence for display)B
+975 10795(                  ;For I,J.. = 1     2   3     4    5    6       7)B
+975 10575(                  ;       COL= white,red,green,blue,yellow,magenta,cyan)B
+975 10355(   GWID WID       ;Define cursor-mode sum-region width \(channels\))B
+975 9915(   DNOR LO,HI     ;Normalize displayed data to count-sum of chans LO,HI)B
+975 9475(   DL   LO,HI     ;Set display limits \(min,max chan#\))B
+975 9035(   DMM  LO,HI     ;Set display limits \(min,max counts\))B
+975 8815(                  ;LO or HI = X  says use MIN or MAX data value)B
+975 8375(   D    IDLST     ;Display histogram ID's contained in IDLST)B
+975 7935(   DX   IDLST     ;Display IDLST \(range defined by expand-region\))B
+975 7495(                  ;-----------------------------------------------------------)B
+975 7275(                  ;IDLST is of the form:)B
+975 7055(                  ;KF C ID, C ID.. KF C ID, C ID..)B
+975 6835(                  ;or)B
+975 6615(                  ;KF C IDA to IDB,<INC> KF C ID ID ID ... KF C IDA to IDB ...)B
+975 6395(                  ;-----------------------------------------------------------)B
+975 6175(                  ;ID, IDA & IDB denote ID-numbers)B
+975 5955(                  ;INC \(optional\) denotes an ID-number increment \(DFLT=1\))B
+975 5735(                  ;C is an OPTIONAL floating-point norm-coeff \(DFLT=1.0\))B
+975 5515(                  ;KF = M,N,O,P,Q,R,S \(default is N\) and denotes:)B
+975 5295(                  ;MEM-BUF, IN-FIL, OU-FIL, PROJ-FIL, Q-FIL, R-FIL, S-FIL)B
+975 5075(                  ;If IDLST omitted, uses previously defined IDLST)B
+975 4855(                  ;-----------------------------------------------------------)B
+975 4415(   SUML LO,HI     ;Define sum region for SUM command below)B
+975 4195(   SUM  IDLST     ;Sum counts \(LO,HI\) \(IDLST same as D except C illegal\))B
+975 3755(   C              ;Enter cursor-mode)B
+975 3315(   SSI            ;Set screen to initial - erase graphic windows)B
+975 2875(                            \(continued on next page\))B
+EndPage
+%%Page: 10 10
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  10)B
+975 14095(   U300.150  Commands Related to 1-D Display \(continued\))B
+975 14095(   ___________________________________________________________________________)B
+975 13435(   1-KEY CURSOR COMMANDS FOR 1-D DISPLAY .....................................)B
+0 F
+975 12995(   <-- \(LF-ARROW\) ;Set expand-region lo-limit)B
+975 12775(   --> \(RT-ARROW\) ;Set expand-region hi-limit)B
+975 12335(   E              ;Expand display)B
+975 11895(   UP-ARROW       ;Pan up   - move picture so cursor-chan at  left-screen)B
+975 11675(   DN-ARROW       ;Pan down - move picture so cursor-chan at right-screen)B
+975 11455(                  ;\(you must be expanded to execute pan\))B
+975 11015(   L              ;Set sum-region lo-limit)B
+975 10795(   H              ;Set sum-region hi-limit)B
+975 10575(   G              ;Set sum-region limits \(LO=XCUR, HI=XCUR+WID-1\))B
+975 10135(   V              ;Make expand-/sum-region markers visible/invisible \(toggles\))B
+975 9915(   M              ;Turn expand-/sum-region markers ON)B
+975 9695(   J              ;Junk \(delete\) all expand-/sum-region markers)B
+975 9255(   S              ;Display sum, centroid, fwhm \(2.354*sigma\) of sum region)B
+975 9035(                  ;DATA\(LO\),DATA\(HI\) defines BGD for NETS)B
+975 8595(   A              ;Display sum, centroid, fwhm \(2.354*sigma\) of sum region)B
+975 8375(                  ;YCUR\(LO\),YCUR\(HI\) defines BGD for NETS)B
+975 7935(   C              ;Draw peak-marker and display chan#  at cursor pos)B
+975 7715(   P              ;Draw peak-marker and display energy at cursor pos)B
+975 7275(   / or ?         ;Display XCUR, YCUR, channel# & energy)B
+975 7055(   '              ;Same as ? except forces logging \(see SEC# U300.155\))B
+975 6615(   Q              ;Quit cursor-mode \(return to normal-mode\))B
+975 6175(   See SEC# U300.110 or Type:        for use of Mouse Buttons.)B
+1 F
+975 6175(                              h mous)B
+EndPage
+%%Page: 11 11
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  11)B
+975 14315(   U300.155  Peak Finding/Logging)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   The following commands control peak finding.)B
+975 13435(   FIND BIAS,IFWHM     ;Turn peak-find ON  \(see definitions below\))B
+975 13215(   FIND                ;Turn peak-find ON  \(with defaults - see below\))B
+975 12995(   NOFI                ;Turn peak-find OFF \(default is OFF\))B
+975 12555(   BIAS...is the number of standard deviations above background  that  a  peak)B
+975 12335(          channel  must be in order to be considered as part of a peak. Useful)B
+975 12115(          values of BIAS are in the range 3 to 10. The default value is 5.0.)B
+975 11675(   IFWHM..is the approximate full-width at half-max \(in channels\) of peaks  in)B
+975 11455(          the  region  of interest. This value is not very critical but should)B
+975 11235(          be within a factor of 2 or so of  the  correct  value.  The  default)B
+975 11015(          value is 5.)B
+975 10575(   All  peaks  found  within  the display region will be marked & labeled with)B
+975 10355(   the associated energy-calibration value \(default is  the  same  as  channel)B
+975 10135(   number\).  Peak  labels are integers \(no decimals - to minimize screen space)B
+975 9915(   used\) so if you want labels to be in units of keV, for  example,  you  must)B
+975 9695(   enter CAL such that E\(keV\) is a whole number.)B
+975 9255(   See SEC# U300.430 for how peak-finding is used in fitting operations.)B
+1 F
+975 8815(   Logging "found" and "marked" peaks on damm.log)B
+975 8815(   ______________________________________________)B
+0 F
+975 8375(   Peaks  which  either         via  the  FIND command above or        via the)B
+1 F
+975 8375(                         found                                  marked)B
+0 F
+975 8155(   1-key command \(/ or ? or ;\)  may  be  logged  on  damm.log.  The  following)B
+975 7935(   commands \(independent of LON/LOF\) turns said logging ON and OFF.)B
+975 7495(   PLON           ;Turns peak logging \(to damm.log\) ON)B
+975 7275(   PLOF           ;Turns peak logging \(to damm.log\) OFF \(default\))B
+975 6835(   For            , damm.log may be read \(skipping prog, date & time\) as:)B
+1 F
+975 6835(       found peaks)B
+0 F
+975 6395(          READ\(LU,10\)IFLG,ID,CH,HEFT,\(FILNAM\(I\),I=1,16\))B
+975 6175(       10 \(29X,A4,I10,2F10.0,2X,16A4\))B
+975 5735(   Where: IFLG   = 'PEAK' for found peak log entry)B
+975 5515(          ID     = Spectrum ID number)B
+975 5295(          CH     = Peak location in channels)B
+975 5075(          HEFT   = Peak heftiness)B
+975 4855(          FILNAM = First 64 characters of spk- or his-filename)B
+975 4415(   For             , damm.log may be read \(skipping prog, date & time\) as:)B
+1 F
+975 4415(       marked peaks)B
+0 F
+975 3975(          READ\(LU,10\)IFLG,ID,CH,ENER,\(FILNAM\(I\),I=1,16\))B
+975 3755(       10 \(29X,A4,I10,2F10.0,2X,16A4\))B
+975 3315(   Where: IFLG   = 'MARK' for marked peak log entry)B
+975 3095(          ID     = Spectrum ID number)B
+975 2875(          CH     = Peak location in channels)B
+975 2655(          ENER   = Peak "energy" from calibration constants)B
+975 2435(          FILNAM = First 64 characters of spk- or his-filename)B
+EndPage
+%%Page: 12 12
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  12)B
+975 14315(   U300.160  Commands Related to 2-D Display)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   FIG   NF       ;Choose screen config-NF. See SEC# U300.120 & U300.550)B
+975 13655(                  ;for screen configuration and color mapping commands)B
+975 13215(   WIN   NW       ;Set subsequent displays to be in window-NW)B
+975 12775(   ZLEV  N        ;Set # of color/grey-scale intensity levels to N)B
+975 12555(   ZLEV           ;Set # of color/grey-scale intensity levels to 10 \(dflt\))B
+975 12115(   GRAS  I,J,K..  ;Set grey-scale values \(range 0-100\) & ZLEV \(# entries\))B
+975 11895(                  ;Must do after first FIG  \("takes" after next FIG\))B
+975 11455(   ZINT  COLR     ;Set 2-D intensity mapping to Color \(default\))B
+975 11235(   ZINT  GREY     ;Set 2-D intensity mapping to Grey-scale)B
+975 11015(   ZINT  DOTS     ;Set 2-D intensity mapping to Dot-matrix \(3x3 or 5x5\))B
+975 10575(   ZSON/ZSOF      ;Z-scale ON/OFF - displays cnts vs colors legend \(dflt\))B
+975 10135(   ZLIN/ZLOG      ;Set 2-D display to linear/log \(default is log\))B
+975 9695(   XC    LO,HI    ;Set min & max X-channel numbers for display)B
+975 9475(   YC    LO,HI    ;Set min & max Y-channel numbers for display)B
+975 9035(   ZMM   LO,HI    ;Set min & max counts/channel    for display & count-sum)B
+975 8815(   ZMM   LO       ;Sets min & searches for max \(semi-autoscale\))B
+975 8595(   ZMM            ;Searches for min & max      \(full-autoscale\))B
+975 8155(   DD       ID    ;Display 2-D histogram ID from IN-file)B
+975 7935(   DD    KF,ID    ;Display 2-D histogram ID from KF-file)B
+975 7495(   DDX      ID    ;Display 2-D histogram ID from IN-file \(expand region\))B
+975 7275(   DDX   KF,ID    ;Display 2-D histogram ID from KF-file \(expand region\))B
+975 7055(                  ;Where KF = N,O,Q,R,S \(default is N\) and denotes:)B
+975 6835(                  ;IN-FIL, OU-FIL, Q-FIL, R-FIL, S-FIL)B
+975 6615(                  ;ID \(and KF\) omitted says use previously defined spec)B
+975 6175(   DDID           ;Shows ID-number & Filename for current 2-D display)B
+975 5735(   ZBL            ;Zero in-core BAN-library)B
+975 5295(   LBL            ;List in-core BAN-ID numbers)B
+975 4855(   C              ;Enter cursor-mode)B
+975 4415(   SSI            ;Set screen to initial - erase graphic windows)B
+975 3975(                            \(continued on next page\))B
+EndPage
+%%Page: 13 13
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  13)B
+975 14095(   U300.160  Commands Related to 2-D Display \(continued\))B
+975 14095(   ___________________________________________________________________________)B
+975 13435(   1-KEY CURSOR COMMANDS FOR 2-D DISPLAY .....................................)B
+0 F
+975 12995(   <-- \(LF-ARROW\) ;Set expand-region lo-left- limit)B
+975 12775(   --> \(RT-ARROW\) ;Set expand-region hi-right-limit)B
+975 12335(   V      ;Make expand-region markers visible/invisible \(toggles\))B
+975 12115(   J      ;Junk \(delete\) expand-region markers)B
+975 11675(   E      ;Expand)B
+975 11235(   1      ;Move display such that cursor is at lo-left)B
+975 11015(   2      ;Move display such that cursor is at hi-left)B
+975 10795(   3      ;Move display such that cursor is at hi-right)B
+975 10575(   4      ;Move display such that cursor is at lo-right)B
+975 10135(   Z      ;Zero  \(open\) active X,Y-list)B
+975 9915(   A      ;Add point to active X,Y-list)B
+975 9695(   D      ;Dele nearest point in active X,Y-list)B
+975 9475(   M      ;Move nearest point in active X,Y-list to cursor pos)B
+975 9255(   I      ;Insert a point in active X,Y-list at cursor position)B
+975 8815(   L      ;List active X,Y-list \(on VDT\))B
+975 8595(   B      ;Draw active BAN & BAN's in in-core library)B
+975 8375(   G      ;Prompt for ID & read into in-core BAN-library)B
+975 8155(   O      ;Open nearest in-core BAN for modification)B
+975 7935(   S      ;Prompt for ID & store in in-core library & on disk)B
+975 7715(   R      ;Store  nearest BAN with original ID)B
+975 7495(   F      ;Remove nearest BAN from in-core library & erase)B
+975 7275(   K      ;Delete nearest BAN from in-core library and disk)B
+975 7055(   T      ;Totalize counts in nearest BAN \(active or not\))B
+975 6835(   P      ;Totalize and & save X- & Y-projections on DAMQ8Q.SPK)B
+975 6395(   / or ? ;Display/\(log if PLON\)  X,Y-coordinates of cursor)B
+975 6175(   '      ;Like ? but forces log \(see                below\))B
+1 F
+975 6175(                                      X,Y-log format)B
+0 F
+975 5735(   Q      ;Quit cursor-mode \(return to normal-mode\))B
+975 5295(   See SEC# U300.110 or Type:        for use of Mouse Buttons.)B
+1 F
+975 5295(                              h mous)B
+0 F
+975 4855(   ---------------------------------------------------------------------------)B
+975 4635(                   damm.log may be read \(skipping prog, date & time\) as:)B
+1 F
+975 4635(   X,Y-log format-)B
+0 F
+975 4415(          READ\(LU,10\)IFLG,ID,X,Y,\(FILNAM\(I\),I=1,16\))B
+975 4195(       10 \(29X,A4,I10,2F10.0,2X,16A4\))B
+975 3755(   Where: IFLG   = 'MAR2' for 2-D position mark entry)B
+975 3535(          ID     = Histogram ID number)B
+975 3315(          X      = X-position in channels)B
+975 3095(          Y      = Y-position in channels)B
+975 2875(          FILNAM = First 64 characters of spk- or his-filename)B
+975 2655(   ---------------------------------------------------------------------------)B
+EndPage
+%%Page: 14 14
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  14)B
+975 13875(   U300.170  Special XY-Line Display)B
+975 13875(   ___________________________________________________________________________)B
+0 F
+975 13435(   DECstation        provides  for  the  display  of  one  or  more  lists  of)B
+1 F
+975 13435(               damm)B
+0 F
+975 13215(   concatenated vectors \(lines\) onto any of the FIGed  windows.  In  order  to)B
+975 12995(   use this feature, a ASCII file must be created of the following form:)B
+975 12335(   XYDATA  ID  XLEN  YLEN)B
+975 12115(   X Y)B
+975 11895(   X Y)B
+975 11675(   . .)B
+975 11455(   . .)B
+975 11235(   XYDATA  ID  XLEN  YLEN)B
+975 11015(   X Y)B
+975 10795(   X Y)B
+975 10575(   . .)B
+975 10355(   END-OF-FILE     Where:)B
+975 9695(   XYDATA  is  the  ASCII  string  "xydata"  in  upper  or lower case \(XYDA is)B
+975 9475(          enough\).)B
+975 9035(   ID.....is an integer ID-number by which the  X,Y  data  set  which  follows)B
+975 8815(          will be referenced.)B
+975 8375(   XLEN...is the X-length basis for the following X-values \(optional\).)B
+975 7935(   YLEN...is the Y-length basis for the following y-values \(optional\).)B
+975 7495(   X......is a floating# \(used as chan# for 1D & 2D displays\).)B
+975 7275(          \(X is decoded via E-format & can contain up to 12 characters\))B
+975 6835(   Y......is a floating# \(used as chan# for 2D and count for 1D displays\).)B
+975 6615(          \(Y is decoded via E-format & can contain up to 12 characters\))B
+975 5955(   If  XLEN  and  YLEN are entered and "histogram lengths" are provided by the)B
+975 5735(   displayed histograms, the X,Y data will be appropriately  scaled  to  match)B
+975 5515(   the  histogram  data  contained  in  the  window  in  which  it  is  drawn.)B
+975 5295(   "Histogram lengths"  are  provided  by  all  his-file  directories  and  by)B
+975 5075(   spk-file  entries  which  are  copied  from  his-files.  If either of these)B
+975 4855(   "length entries" are missing, no scaling will be done. For 1D displays,  no)B
+975 4635(   attempt is made to scale Y.)B
+975 3755(                            \(continued on next page\))B
+EndPage
+%%Page: 15 15
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  15)B
+975 14095(   U300.170  Special XY-Line Display \(continued\))B
+975 14095(   ___________________________________________________________________________)B
+975 13655(   List of commands)B
+975 13655(   ________________)B
+0 F
+975 13215(   XYF  filename     ;Opens XY-file and reads in all data)B
+975 12775(   XYI               ;Displays XY IDs which have been read in)B
+975 12335(   XYD  I J K L ...  ;Displays XY data for IDs \(I J K L ..\) into active)B
+975 12115(                     ;window \(default = window 1 or set by WIN command\))B
+975 11675(   XYP  I J K L ...  ;Same as XYD except that XY-points are shown in)B
+975 11455(                     ;addition to the connecting vectors)B
+975 11015(                     ;XYD or XYP with no ID-list uses previous ID-list)B
+975 10575(   XYC  KOL          ;Specifies the "color" for subsequent XY displays)B
+975 10355(                     ;Legal values of KOL are:)B
+975 9915(                     ;WHIT - white      - CMAP entry 34)B
+975 9695(                     ;RED  - red        - CMAP entry 35)B
+975 9475(                     ;GREE - green      - CMAP entry 36)B
+975 9255(                     ;BLUE - blue       - CMAP entry 37)B
+975 9035(                     ;RG   - red-green  - CMAP entry 38)B
+975 8815(                     ;RB   - red-blue   - CMAP entry 39)B
+975 8595(                     ;GB   - green-blue - CMAP entry 40)B
+975 8155(   Note:  Displays  are  done in "complement mode" so that displaying the same)B
+975 7935(   ID a second time will erase it, displaying a third time will show it, etc.)B
+1 F
+975 7495(   Current Limits)B
+975 7495(   ______________)B
+0 F
+975 7055(   Maximum number of IDs        in a file = 2048)B
+975 6835(   Maximum number of XY entries in a file = 256,000)B
+975 6615(   Maximum number of XY points  in a set  = 500)B
+975 6175(   These limits are rather arbitrary, and can easily be changed.)B
+1 F
+975 5735(   Comments)B
+975 5735(   ________)B
+0 F
+975 5295(   \(1\)....The XY display feature is for             . The XY data file is)B
+1 F
+975 5295(                                        display only                       not)B
+975 5295(                                                                           ___)B
+0 F
+975 5075(          another  data  type  on  a  par  with  HIS-file or SPK-file data. It)B
+975 4855(          cannot be analysed, summed, or combined with other data, etc.)B
+975 4415(   \(2\)....If the XY data extend  beyond  the  range  of  the  display,  it  is)B
+975 4195(          allowed  to  spill  over  into the "scale label" regions. It is easy)B
+975 3975(          enough to prevent this but I  am  not  sure  if  it  would  be  more)B
+975 3755(          desirable.)B
+975 3315(   \(3\)....An  ID label is drawn near to the XY-point which is "nearest" to the)B
+975 3095(          center of the window. If multiple XY-lines are displayed, there  may)B
+975 2875(          be  some  confusion  in identification. I will think about trying to)B
+975 2655(          minimize this.)B
+975 2215(   \(4\)....All commands and specifications are case insensitive.)B
+EndPage
+%%Page: 16 16
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  16)B
+975 14095(   U300.175  Label Generation and Annotation)B
+975 14095(   ___________________________________________________________________________)B
+0 F
+975 13655(        provides  a  simple  method  for  labeling  and  annotating  graphical)B
+1 F
+975 13655(   damm)B
+0 F
+975 13435(   displays. The following features are provided:)B
+975 12995(   \(1\)....Normal  text  labels may be generated either interactively or by the)B
+975 12775(          usual processing of command files.)B
+975 12335(   \(2\)....The                           \(LA7, LA8, LA9\)  described  below  are)B
+1 F
+975 12335(              Label Generating Commands)B
+0 F
+975 12115(          used to generate up to three blocks of "label text".)B
+975 11675(   \(3\)....Each  of the three "label blocks" can contain up to 10 lines of text)B
+975 11455(          with each line containing up  to  76  characters  \(80  -  4  command)B
+975 11235(          characters\).)B
+975 10795(   \(4\)....Each       window supports up to 3 independent, active \(relocatable\))B
+1 F
+975 10795(                damm)B
+0 F
+975 10575(          label blocks.)B
+975 10135(   \(5\)....By "locking" labels already displayed and re-defining label  blocks,)B
+975 9915(          you can display as many labels as you like.)B
+975 9475(   \(6\)....Labels  are positioned within graphics windows using the 1-key)B
+1 F
+975 9475(                                                                         Label)B
+0 F
+975 9255(                           described below.)B
+1 F
+975 9255(          Display Commands)B
+0 F
+975 8815(   \(7\)....                      , defined below, may be  used  to  make  close)B
+1 F
+975 8815(          Label Pointer Commands)B
+0 F
+975 8595(          associations between labels and specific graphic features.)B
+975 8155(                           label  specifiers  are  used  in  order to make the)B
+1 F
+975 8155(   Note:  LA7,  LA8,  LA9)B
+0 F
+975 7935(   association with the label display keys         easier.)B
+1 F
+975 7935(                                           \(7,8,9\))B
+975 7495(   Label Generating Commands -------------------------------------------------)B
+0 F
+975 7055(   LA7  text   ;Adds line of "text" to LA7 label)B
+975 6835(   LA8  text   ;Adds line of "text" to LA8 label)B
+975 6615(   LA9  text   ;Adds line of "text" to LA9 label)B
+975 6175(   LAZ7        ;Deletes all lines of   LA7 label)B
+975 5955(   LAZ8        ;Deletes all lines of   LA8 label)B
+975 5735(   LAZ9        ;Deleted all lines of   LA9 label)B
+975 5295(   LAL         ;Displays current labels - LA7, LA8, LA9)B
+975 4855(   LAC  KOL    ;Specifies label color for subsequent displays)B
+975 4635(               ;Legal values of KOL are:)B
+975 4195(               ;WHIT - white      - CMAP entry 34)B
+975 3975(               ;RED  - red        - CMAP entry 35)B
+975 3755(               ;GREE - green      - CMAP entry 36)B
+975 3535(               ;BLUE - blue       - CMAP entry 37)B
+975 3315(               ;RG   - red-green  - CMAP entry 38)B
+975 3095(               ;RB   - red-blue   - CMAP entry 39)B
+975 2875(               ;GB   - green-blue - CMAP entry 40)B
+1 F
+975 2215(                   \(see next page for label display commands\))B
+EndPage
+%%Page: 17 17
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  17)B
+975 13875(   U300.175  Label Generation and Annotation \(continued\))B
+975 13875(   ___________________________________________________________________________)B
+975 13435(   Label Display Commands \(1-key cursor-mode\) --------------------------------)B
+975 12995(   Key      Action)B
+975 12995(   ___      ______)B
+0 F
+975 12555(   7        Displays LA7 at cursor location \(complement mode\))B
+975 12335(   8        Displays LA8 at cursor location \(complement mode\))B
+975 12115(   9        Displays LA9 at cursor location \(complement mode\))B
+975 11675(   0        Locks previously displayed labels against subsequent change)B
+975 11455(            \(i.e. all labels displayed in a given window will be fixed\))B
+975 11235(            \(enables the drawing of additional labels\))B
+975 10795(   It goes like this:)B
+975 10355(   \(1\)....The first strike of say  key-7  displays  LA7  with  the  upper-left)B
+975 10135(          corner of an unclosed box at the cursor location.)B
+975 9695(   \(2\)....The next strike of key-7 will erase the LA7 label and the box.)B
+975 9255(   \(3\)....The  next  strike  of  key-7  will  display  LA7  in  any new cursor)B
+975 9035(          location. Etc, etc. and the same for key-8 and -9.)B
+975 8595(   \(4\)....Finally, key-0 will close any open boxes and  lock  in  all  current)B
+975 8375(          labels within a given window. Additional labels are now enabled.)B
+1 F
+975 7935(   Label Pointer Commands \(1-key cursor-mode\) --------------------------------)B
+0 F
+975 7495(   The  following  1-key  commands  provide  for  the  interactive  drawing of)B
+975 7275(   concatenated straight-line segments. The idea is to  provide  a  method  of)B
+975 7055(   associating  a  block of text with a very specific region in a display. The)B
+975 6835(   following 1-key commands are used to draw and modify such lines.)B
+1 F
+975 6395(   Key      Action)B
+975 6395(   ___      ______)B
+0 F
+975 5955(   =        Adds a vector point to current list and draws point or line)B
+975 5515(   -        Deletes last vector point in current list and erases line)B
+975 5075(   ;        Locks current vector list against subsequent change and)B
+975 4855(            enables new list)B
+1 F
+975 4415(   Comments:)B
+0 F
+975 3975(   \(1\)....Each window supports an independent active vector list.)B
+975 3535(   \(2\)....The active vector-list associated with  any  window  can  contain  a)B
+975 3315(          maximum of 20 points.)B
+EndPage
+%%Page: 18 18
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  18)B
+975 14315(   U300.200  Command Syntax - General Definitions)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   B1   - Memory Buffer-1)B
+975 13655(   B2   - Memory Buffer-2)B
+975 13435(   ID   - The  ID-number of histogram to be read)B
+975 13215(   NUID - Next ID-number to be assigned to output histogram)B
+975 12995(   LO   - A first-channel-number \(usually of a Gate\))B
+975 12775(   HI   - A last- channel-number \(usually of a Gate\))B
+975 12555(   FAC  - A multiplication factor)B
+975 12115(   Meaning of the individual command-characters ..............................)B
+975 11675(   I    - Input  or read)B
+975 11455(   O    - Output or write)B
+975 11235(   A    - Add or accumulate)B
+975 11015(   S    - Shift \(gain shift\))B
+975 10795(   GX   - Gate on X-parameter \(i.e. parameter # 1\))B
+975 10575(   GY   - Gate on Y-parameter \(i.e. parameter # 2\))B
+975 10355(   1    - Buffer-1)B
+975 10135(   2    - Buffer-2)B
+975 9915(   M    - Multiply)B
+975 9695(   C    - Crunch)B
+975 9475(   D    - Divide)B
+1 F
+975 9035(   U300.210  Commands for Setup \(no immediate action\))B
+975 9035(   ___________________________________________________________________________)B
+0 F
+975 8595(   NUID IV    - Set next ID to be used to IV)B
+975 8155(   IDST N     - Set ID-step to be used in implied I/O loops)B
+975 7935(                \(remains active until changed - default=1\))B
+975 7495(   CRUN IVAL  - Sets standard crunch value to IVAL)B
+975 7055(   GASP XI1,XI2,XF1,XF2,NCF - Standard gain shift specification)B
+975 6615(   SIDA       - Says treat 16-bit HIS-file data as signed)B
+975 6395(   USDA       - Says treat 16-bit HIS-file data as un-signed \(default\))B
+EndPage
+%%Page: 19 19
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  19)B
+975 14315(   U300.220  Commands for Input/Output of 1-D Histograms)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   I    kf ID            Input to B1)B
+975 13655(   IS   kf ID            Input to B1, gain shift B1)B
+975 13435(   IA   kf ID,FAC        Input to B1, B2=B2+FAC*B1)B
+975 13215(   ISA  kf ID,FAC        Input to B1, shift  B1, B2=B2+FAC*B1)B
+975 12995(   IO   kf ID            Input to B1, output B1)B
+975 12775(   ISO  kf ID            Input to B1, shift  B1, output B1)B
+975 12555(   IO   kf IDA,IDB       Input to B1, output B1     \(for ID=IDA,IDB\))B
+975 12335(   ISO  kf IDA,IDB       Input to B1, shift, output \(for ID=IDA,IDB\))B
+975 12115(   O1                    Output B1)B
+975 11895(   O2                    Output B2)B
+1 F
+975 11455(   U300.230  Commands for Gating 2-D Histograms)B
+975 11455(   ___________________________________________________________________________)B
+0 F
+975 11015(   GY   kf ID,LO,HI      Y-gate to B1)B
+975 10795(   GYS  kf ID,LO,HI      Y-gate to B1, shift  B1)B
+975 10575(   GYO  kf ID,LO,HI      Y-gate to B1, output B1)B
+975 10355(   GYO  kf IDA,IDB,LO,HI Y-gate to B1,         output B1 \(for ID=IDA,IDB\))B
+975 10135(   GYSO kf ID,LO,HI      Y-gate to B1, shift & output B1)B
+975 9915(   GYSO kf IDA,IDB,LO,HI Y-gate to B1, shift & output B1 \(for ID=IDA,IDB\))B
+975 9695(   GYA  kf ID,LO,HI,FAC  Y-gate to B1, B2=B2+FAC*B1)B
+975 9475(   GYSA kf ID,LO,HI,FAC  Y-gate to B1, shift B1, B2=B2+FAC*B1)B
+975 9035(   GX   kf ID,LO,HI      X-gate to B1)B
+975 8815(   GXS  kf ID,LO,HI      X-gate to B1, shift  B1)B
+975 8595(   GXO  kf ID,LO,HI      X-gate to B1, output B1)B
+975 8375(   GXO  kf IDA,IDB,LO,HI X-gate to B1,         output B1 \(for ID=IDA,IDB\))B
+975 8155(   GXSO kf ID,LO,HI      X-gate to B1, shift & output B1)B
+975 7935(   GXSO kf IDA,IDB,LO,HI X-gate to B1, shift & output B1 \(for ID=IDA,IDB\))B
+975 7715(   GXA  kf ID,LO,HI,FAC  X-gate to B1, B2=B2+FAC*B1)B
+975 7495(   GXSA kf ID,LO,HI,FAC  X-gate to B1, shift B1, B2=B2+FAC*B1)B
+975 7275(   O1                    Output B1)B
+975 7055(   O2                    Output B2)B
+1 F
+975 6615(   U300.240  Commands for General 2-D Projections)B
+975 6615(   ___________________________________________________________________________)B
+0 F
+975 6175(   PJ   kf ID,BID,DEGR               PROJ TO B1)B
+975 5955(   PJS  kf ID,BID,DEGR               Proj to B1, shift  B1)B
+975 5735(   PJO  kf ID,BID,DEGR               Proj to B1, output B1)B
+975 5515(   PJO  kf IDA,IDB,BIDA,BIDB,DEGR -  Proj to B1, output B1)B
+975 5295(                                     \(outer loop on BID, inner loop on ID\))B
+975 5075(   PJSO kf ID,BID,DEGR               Proj to B1, shift & output B1)B
+975 4855(   PJSO kf IDA,IDB,BIDA,BIDB,DEGR -  Proj, shift, output)B
+975 4635(                                     \(outer loop on BID, inner loop on ID\))B
+975 4415(   PJA  kf ID,BID,DEGR,FAC           Proj to B1, B2=B2+FAC*B1)B
+975 4195(   PJSA kf ID,BID,DEGR,FAC           Proj to B1, shift B1, B2=B2+FAC*B1)B
+975 3755(   PJAL                              Project all bananas in currently open)B
+975 3535(                                     BAN-file for HIS-files, ID's & DEGR'S)B
+975 3315(                                     contained therin)B
+975 3095(   O1                                Output B1)B
+975 2875(   O2                                Output B2)B
+975 2435(      denotes histogram ID,     denotes Banana ID)B
+1 F
+975 2435(   ID                       BID)B
+0 F
+975 2215(   \(DEGR = Projection-axis angle in degrees\))B
+1 F
+975 1995(   kf is an optional file-code = N,O,P,Q,R,S \(default = N\))B
+EndPage
+%%Page: 20 20
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  20)B
+975 14315(   U300.250  Commands for Operations on Buffer-1 & Buffer-2)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   M1  XM             Multiply B1 by XM)B
+975 13655(   M2  XM             Multiply B2 by XM)B
+975 13435(   C1  ICRUN          Crunch B1  by ICRUN \(standard crunch unchanged\))B
+975 13215(   C2  ICRUN          Crunch B2  by ICRUN \(standard crunch unchanged\))B
+975 12995(   S1                 Shift  B1  by standard GASP)B
+975 12775(   S2                 Shift  B2  by standard GASP)B
+975 12555(   S1  XI1,XI2,XF1,XF2,NCF - Shift B1 as specified \(standard GASP unchanged\))B
+975 12335(   S2  XI1,XI2,XF1,XF2,NCF - Shift B2 as specified \(standard GASP unchanged\))B
+975 12115(   Z1                 Zero B1)B
+975 11895(   Z2                 Zero B2)B
+975 11675(   A12  FAC           B2=B2+FAC*B1)B
+975 11455(   A21  FAC           B1=B1+FAC*B2)B
+975 11235(   SWAP               Swap B1 & B2)B
+975 11015(   M2D1 FAC           B2=\(FAC*B2\)/B1)B
+975 10575(   MX12               B2=MAX\(B1,B2\) channel-by-channel)B
+975 10355(   MX21               B1=MAX\(B1,B2\) channel-by-channel)B
+975 10135(   MN12               B2=MIN\(B1,B2\) channel-by-channel)B
+975 9915(   MN21               B1=MIN\(B1,b2\) channel-by-channel)B
+975 9475(   O1                 Output B1)B
+975 9255(   O2                 Output B2)B
+1 F
+975 8815(   U300.260  Commands which Show Data, Count-Sums etc \(from Bufs-1 & -2\))B
+975 8815(   ___________________________________________________________________________)B
+0 F
+975 8375(   PR1                Print   Buffer-1)B
+975 8155(   PR2                Print   Buffer-2)B
+975 7715(   D1   LO,HI         Display Buffer-1 \(channels LO thru HI\))B
+975 7495(   D2   LO,HI         Display Buffer-2 \(channels LO thru HI\))B
+975 7055(   SUM1 LO,HI         Display sum of counts LO-thru-HI of B1)B
+975 6835(   SUM2 LO,HI         Display sum of counts LO-thru-HI of B2)B
+975 6395(   COMP NCH           Compare first NCH-channels of B1 & B2)B
+975 6175(                      \(gives # counts and # mis-matches\))B
+975 5955(   GEN  ID,KO,KX,NCH  Generate test spectrum in B1 \(NCH channels\))B
+975 5735(                      Channel contents = KO+KX*\(channel#+1\))B
+1 F
+975 5295(   U300.270  Commands which Modify Buffer Contents)B
+975 5295(   ___________________________________________________________________________)B
+0 F
+975 4855(   SET1 ICN,YV        Set channel ICN of B1 to YV)B
+975 4635(   SET2 ICN,YV        Set channel ICN of B2 to YV)B
+975 4415(   SET1 LO,HI,YV      Set channels LO-thru-HI of B1 to YV)B
+975 4195(   SET2 LO,HI,YV      Set channels LO-thru-HI of B2 to YV)B
+975 3975(   SET1 LO,HI,YA,YB   Set channels LO-thru-HI of B1 to YA-thru-YB)B
+975 3755(   SET2 LO,HI,YA,YB   Set channels LO-thru-HI of B2 to YA-thru-YB)B
+975 3535(   ADD1 ICN,YV        Add YV to channel ICN of B1)B
+975 3315(   ADD2 ICN,YV        Add YV to channel ICN of B2)B
+975 3095(   ADD1 LO,HI,YV      Add YV to channels LO-thru-HI of B1)B
+975 2875(   ADD2 LO,HI,YV      Add YV to channels LO-thru-HI of B2)B
+975 2655(   ADD1 LO,HI,YA,YB   Add YA-thru-YB to channels LO-thru-HI of B1)B
+975 2435(   ADD2 LO,HI,YA,YB   Add YA-thru-YB to channels LO-thru-HI of B2)B
+975 2215(                      \(i.e. a strait line\))B
+975 1995(   MSK1 LO,HI,MSK     Mask \(with MSK\)   channels LO-thru-HI of B1)B
+975 1775(   MSK2 LO,HI,MSK     Mask \(with MSK\)   channels LO-thru-HI of B2)B
+975 1555(                      \(MSK is entered in hexadecimal\))B
+EndPage
+%%Page: 21 21
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  21)B
+975 14315(   U300.280  Commands Related to Printer Plots)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   SKRZ               Set to skip repeated-zeros for printer plots)B
+975 13655(   PLRZ               Set to plot repeated-zeros for printer plots)B
+975 13215(   PLG  ID,LO,HI,NCYC      - Input to B1 & LOG plot)B
+975 12995(   PLN  ID,LO,HI,NCFS      - Input to B1 & LIN plot)B
+975 12775(   PLG  IDA,IDB,LO,HI,NCYC - Input to B1 & LOG plot \(for ID=IDA,IDB\))B
+975 12555(   PLN  IDA,IDB,LO,HI,NCFS - Input to B1 & LIN plot \(for ID=IDA,IBD\))B
+975 12115(   PLG1 LO,HI,NCYC    Log    Printer-plot of Buffer-1)B
+975 11895(   PLG2 LO,HI,NCYC    Log    Printer-plot of Buffer-2)B
+975 11675(   PLN1 LO,HI,NCFS    Linear Printer-plot of Buffer-1)B
+975 11455(   PLN2 LO,HI,NCYC    Linear Printer-plot of Buffer-2)B
+975 11015(   \(NCFS = # of counts full-scale for LIN plots\))B
+975 10795(   \(NCYC = # of cycles            for LOG plots\))B
+1 F
+975 10355(   U300.290  Discussion of Gain-Shifts and Compressions)B
+975 10355(   ___________________________________________________________________________)B
+0 F
+975 9915(   Gain  shifts are specified by five parameters - XI1, XI2, XF1, XF2 and NCF.)B
+975 9695(   XI1 and XI2 represent two locations \(in channel-#  units\)  in  the  initial)B
+975 9475(   1-D  histogram  and  XF1  and  XF2 represent corresponding locations in the)B
+975 9255(   final histogram \(i.e. after the transformation\). That is:)B
+975 8815(         XF=A+B*XI)B
+975 8595(   where,)B
+975 8375(         B=\(XF2-XF1\)/\(XI2-XI1\))B
+975 8155(   and)B
+975 7935(         A=XF1-B*XI1)B
+975 7495(   NCF gives the number of channels in the histogram after the transformation.)B
+975 7275(   If   NCF=0,   the   final   #-of-channels  is  determined  by  the  initial)B
+975 7055(   #-of-channels NCI and the transformation specified.  If  NCF=-1  the  final)B
+975 6835(   #-of-channels  is set equal to NCI. Counts are redistributed into the final)B
+975 6615(   set of channels \(bins\) by assuming a uniform distribution of counts in  the)B
+975 6395(   initial  bins. Data shifted below channel-#-0 and above channel-#-NCF-1 are)B
+975 6175(   lost and gone forever.)B
+975 5735(   Gain-shifts are always "in place")B
+975 5515(   CRUN IVAL \(i.e. standard crunch\) does it at "input time")B
+975 5295(   Data is kept internally as floating - is converted to fixed on output)B
+975 5075(   All output from DAMM is 32 bits/channel)B
+EndPage
+%%Page: 22 22
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  22)B
+975 14095(   U300.300  HIS-file \(Create, Expand, Copy, Add, Gain-Shift, etc\))B
+975 14095(   ___________________________________________________________________________)B
+0 F
+975 13655(   The commands given below may be used to        a new HIS-file or to)B
+1 F
+975 13655(                                           Create                       Expand)B
+0 F
+975 13435(   an  existing HIS-file \(by specifying additional entries\) for support of the)B
+975 13215(   operations described on the following pages of this section.)B
+975 12775(   HOU  fil.his     - Opens fil.his for histogram Output)B
+975 12555(                    - If non-existant, Prompts for permission to create it)B
+975 12115(   HDIM N           - HIS dimension \(N = 1 or 2\) \(required\))B
+975 11675(   HWPC N           - half-wds/chan \(N = 1 or 2\) \(required\))B
+975 11235(   HPAR PX PY       - Parameter IDs              \(reference only\))B
+975 10795(   LRAW LX LY       - Raw    parm lengths        \(reference only\))B
+975 10355(   LSCL LX LY       - Scaled parm lengths        \(reference only\))B
+975 9915(   MINC MNX MNY     - Min chan#s for X & Y       \(required\))B
+975 9475(   MAXC MXX MXY     - Max chan#s for X & Y       \(required\))B
+975 9035(   XLAB labl-x      - X-label \(ASCII\)            \(reference only\))B
+975 8595(   YLAB labl-y      - Y-label \(ASCII\)            \(reference only\))B
+975 8155(   HTIT title       - Title   \(ASCII\)            \(reference only\))B
+975 7715(   HEDD             - Displays current data to be used for next his generation)B
+975 7275(   HGEN HID         - Generates histogram HID using current data)B
+975 6615(   When the      command is entered, the data associated  with)B
+1 F
+975 6615(            HGEN                                                HDIM,  MINC  &)B
+0 F
+975 6395(         will  be  checked  for  legallity and    , given in the      command,)B
+1 F
+975 6395(   MAXC                                        HID               HGEN)B
+0 F
+975 6175(   will be checked for multiple definition.)B
+1 F
+975 5735(   Note for Input HIS-file)B
+975 5735(   _______________________)B
+0 F
+975 5295(   o......If HIS-file is shorter than implied by DRR-file,  the  open  request)B
+975 5075(          is rejected.)B
+1 F
+975 4635(   Notes for Output HIS-file)B
+975 4635(   _________________________)B
+0 F
+975 4195(   o......If  HIS  &  DRR files do not exist, you will be asked for permission)B
+975 3975(          to create them.)B
+975 3535(   o......If DRR-file  exists  but  HIS-file  does  not,  you  are  asked  for)B
+975 3315(          permission to create the HIS-file and then extend it.)B
+975 2875(   o......If  HIS-file  exists  but  DRR-file  does  not,  the open request is)B
+975 2655(          rejected.)B
+975 2215(                            \(continued on next page\))B
+EndPage
+%%Page: 23 23
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  23)B
+975 14095(   U300.300  HIS-file \(Create, Expand, Copy, Add, Gain-Shift, etc\) \(continued\))B
+975 14095(   ___________________________________________________________________________)B
+0 F
+975 13655(   DAMM can copy, add \(or subtract\) and gain-shift 1-D or 2-D histograms  from)B
+975 13435(   an input HIS-file to an output HIS-file.)B
+975 12995(   \(1\)....All  operations  are  from  an  INPUT-file  and INPUT-ID \(IDI\) to an)B
+975 12775(          OUTPUT-file and OUTPUT-ID \(IDO\).)B
+975 12335(   \(2\)....For HCOP and HADD operations, the output  histogram  must  have  the)B
+975 12115(          same dimensions and ranges as the input histogram.)B
+975 11675(   \(3\)....For  SHIF  \(gain-shift\)  and SHAD \(gain-shift & add\) operations, the)B
+975 11455(          dimensions of the output histogram need not match the input.)B
+975 11015(   \(4\)....The number of bits-per-channel \(16 or 32\) need not be the  same  for)B
+975 10795(          input and output.)B
+975 10355(   \(5\)....Gain-shifts  are  accomplished  by  converting  the data to floating)B
+975 10135(          point, rebinning \(with count fractionation\) and  finally  converting)B
+975 9915(          back to integer.)B
+975 9475(   \(6\)....Fractional copies and adds are also done in floating point.)B
+975 9035(   \(7\)....Final  conversion  from  floating  point  to  integer  involves  the)B
+975 8815(          addition of a  random  number  whose  range  is  0.0  to  1.0.  This)B
+975 8595(          procedure  results  in  slight  differences  in  the total number of)B
+975 8375(          counts for the input and output histograms.)B
+1 F
+975 7935(   ==========================================================================)B
+975 7715(   The commands given on the preceeding page may be used to create and/or)B
+975 7495(   expand the output HIS- and DRR-files as needed.)B
+975 7275(   ==========================================================================)B
+0 F
+975 6835(   HOU  FIL.HIS               - Opens HIS-file for output)B
+975 6395(   SNEG OFF                   - Turn OFF reset of neg 16bit out data \(default\))B
+975 6175(   SNEG IV                    - Says set negative 16-bit output data to IV)B
+975 5955(                              - \(you MUST use SIDA mode for this to work!!\))B
+975 5515(   GSX  XI1,XI2 XF1,XF2       - Defines   X-gain-shift \(described below\))B
+975 5295(   GSY  YI1,YI2 YF1,YF2       - Defines   Y-gain-shift \(described below\))B
+975 4855(   GSXOF                      - Turns X-gain-shift OFF \(GSX turns it ON\))B
+975 4635(   GSYOF                      - Turns Y-gain-shift OFF \(GSY turns it ON\))B
+975 4195(   HSTA                       - Shows files open & gain-shift data)B
+975 3755(   HCOP kf IDI,IDO <,F>       - Copies F*IDI \(input\) to IDO \(output\))B
+975 3535(                                \(If F is not entered, F=1\))B
+1 F
+975 3095(   Where kf is an optional file-code field = N,O,P,Q,R,S \(default = N\))B
+0 F
+975 2655(   ===========================================================================)B
+975 2435(   For     : If     does not exist, it will be created with the same)B
+1 F
+975 2435(       HCOP     IDO)B
+0 F
+975 2215(   attributes \(same header data\) as    .)B
+1 F
+975 2215(                                    IDI)B
+0 F
+975 1995(   ===========================================================================)B
+975 1555(                            \(continued on next page\))B
+EndPage
+%%Page: 24 24
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  24)B
+975 13875(   U300.300  HIS-file \(Create, Expand, Copy, Add, Gain-Shift, etc\) \(continued\))B
+975 13875(   ___________________________________________________________________________)B
+0 F
+975 13435(   HADD kf IDI,IDO <,FI><,FO> - Adds FI*IDI to FO*IDO)B
+975 13215(                                \(If FI is not entered, FI=1\))B
+975 12995(                                \(If FO is not entered, FO=1\))B
+975 12775(                                \(If FO is entered, FI must be entered\))B
+975 12335(   HDIV kf IDI,IDO <,FI>      - Divides FI*IDI by IDO & saves in IDO)B
+975 11895(   SHIF kf IDI,IDO <,FI>      - Gain-shifts IDI & stores in IDO)B
+975 11675(   SHAD kf IDI,IDO <,FI><,FO> - Gain-shifts IDI & adds   to IDO)B
+1 F
+975 11235(   Where kf is an optional file-code field = N,O,P,Q,R,S \(default = N\))B
+0 F
+975 10795(   HSET IDO,IV                - Sets IDO on output to IV)B
+975 10575(   HRAN IDO,IV                - Sets IDO on output to IV \(counting statistics\))B
+975 10355(   HZOT IDO                   - Sets IDO on output to 0)B
+1 F
+975 9915(                              X- and Y-Gain-shifts)B
+0 F
+975 9475(   X-gain-shifts are specified by the parameters - XI1, XI2, XF1 & XF2.)B
+975 9255(   Y-gain-shifts are specified by the parameters - YI1, YI2, YF1 & YF2.)B
+975 8815(   For an X-gain-shift, XI1 and XI2 represent  two  locations  \(in  channel  #)B
+975 8595(   units\)  in  the  initial  spectrum  and XF1 and XF2 represent corresponding)B
+975 8375(   locations in the final spectrum \(i.e. after transformation\). that is:)B
+975 7935(            XF=A+B*XI)B
+975 7715(   where:   B=\(XF2-XF1\)/\(XI2-XI1\))B
+975 7495(   and      A=XF1-B*XI1)B
+975 7055(   The "final" # of channels is determined by the "initial" # of channels  and)B
+975 6835(   the  transformation  specified. Counts are redistributed into the final set)B
+975 6615(   of channels \(bins\) by assuming a uniform  distribution  of  counts  in  the)B
+975 6395(   initial  bins.  Data  shifted  out  of the range of the final histogram are)B
+975 6175(   lost and gone forever!)B
+975 5735(   The rules and procedures are identical for Y-gain-shifts.)B
+1 F
+975 5295(                                    COMMENTS)B
+0 F
+975 4855(   \(1\)....If   gain-shift  specifications  are  not  given  \(or  turned  off\),)B
+975 4635(          bin-widths will be the same for output and input.)B
+975 4195(   \(2\)....Any data which does  not  fall  within  the  ranges  of  the  output)B
+975 3975(          histogram will be lost \(without comment\).)B
+975 3535(   \(3\)....Data  will  be  properly  positioned in the output histogram even if)B
+975 3315(          the ranges of the input and output  are  different.  That  is,  data)B
+975 3095(          will  appear  in  that region of the output histogram which overlaps)B
+975 2875(          the gain-shifted input histogram.)B
+EndPage
+%%Page: 25 25
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  25)B
+975 14095(   U300.310  HIS-file \(Adding Subtracting Complete HIS-files\))B
+975 14095(   ___________________________________________________________________________)B
+975 13655(   Commands which add & subtract identically structured  his-files .............)B
+0 F
+975 13215(   The following commands support the addition  and  subtraction  of  complete)B
+975 12995(   his-files.  The  associated  drr-files  must have identical structures. The)B
+975 12775(   files may  contain  any  combination  of  1D,  2D,  INTEGER*2  &  INTEGER*4)B
+975 12555(   histograms)B
+975 12115(   -----------------------------------------------------------------------------)B
+975 11895(   FADI   inpfile.his  ;Opens input  his-file - .his & .drr must already exist)B
+975 11675(                       ;cannot be same as output)B
+975 11235(   FADO   outfile.his  ;Opens output his-file - .his & .drr must already exist)B
+975 11015(                       ;cannot be same as input but must have same structure)B
+975 10575(   FADN   outfile.his  ;Creates & initializes   outfile.his & outfile.drr)B
+975 10355(                       ;with same attributes as inpfile.his & inpfile.drr)B
+975 10135(                       ;outfiles .his & .drr must NOT already exist)B
+975 9695(   FADZ                ;Zeros outfile.his)B
+975 9255(   FADF                ;Displays FAD files which are open)B
+975 8815(   FADD                ;Adds      inpfile.his to   outfile.his)B
+975 8375(   FSUB                ;Subtracts inpfile.his from outfile.his)B
+975 7935(   CLIF                ;Closes input  FAD-file if open)B
+975 7495(   CLOF                ;Closes output FAD-file if open)B
+975 7055(   Ctrl/C              ;Interrupts \(aborts\) an ADD-in-progress)B
+975 6835(                       ;Interrupts \(aborts\) a ZERO-in progress)B
+975 6615(   -----------------------------------------------------------------------------)B
+975 6395(   NOTE: The input & output file assignments here are NOT the same as those)B
+975 6175(         assigned by the damm commands IN, OU & HOU. However, you may open these)B
+975 5955(         files for display by commands such as IN, QF, etc.)B
+975 5735(         For example, you may do the following:)B
+975 5295(   fadi infile.his  !Open infile.his for add/subtract input)B
+975 5075(   fado oufile.his  !Open oufile.his for add/subtract output)B
+975 4855(   in   infile.his  !Open infile.his for normal display etc.)B
+975 4635(   qf   oufile.his  !Open oufile.his for normal display etc.)B
+975 4415(   -----------------------------------------------------------------------------)B
+EndPage
+%%Page: 26 26
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - BANANAS - WTM ............... PAGE  26)B
+975 14315(   U300.350  Bananas - Definition, Rules, Construction & Display)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   Free-form-gates  \(or  Banana-gates  - Bananas for short\) are 2-D regions of)B
+975 13655(   arbitrary shape which are specified by  a  list  of  X,Y-points  \(channel-#)B
+975 13435(   coordinates\).  Each  Banana  on  a given BAN-file is stored and recalled by)B
+975 13215(   means of an identification number \(ID #\). Attempts  to  store  two  Bananas)B
+975 12995(   with the same ID will be rejected. The rules for Bananas are listed below:)B
+975 12555(   \(1\) Banana coordinates nust be given in CLOCKWISE order.)B
+975 12335(   \(2\) The Banana is formed by connecting X,Y-points with strait lines.)B
+975 12115(   \(3\) The last point is connected to the first by the program.)B
+975 11895(   \(4\) No line segment of the Banana should intersect another.)B
+975 11675(   \(5\) A maximum of 63 points may be specified for any one Banana.)B
+975 11455(   \(6\) A maximim of 880 Bananas may be stored on a given BAN-file.)B
+1 F
+975 11015(   Bananas may be displayed in two different forms \(OPEN and CLOSED\).)B
+0 F
+975 10575(   A  CLOSED  Banana  is  one which has just been recalled from or stored on a)B
+975 10355(   BAN-file \(i.e. there is an exact image on disk\). There  may  be  up  to  20)B
+975 10135(   CLOSED  Bananas  displayed  at once. You can do the following things with a)B
+975 9915(   CLOSED Banana:)B
+975 9475(   GET      -  recall from disk \(prompted for ID\)     by typing  G)B
+975 9255(   OPEN     -  for modification \(change to OPEN\)      by typing  O)B
+975 9035(   FORGET   -  delete from display                    by typing  F)B
+975 8815(   KILL     -  delete from display and BAN-file       by typing  K)B
+975 8595(   TOTALIZE -  counts contained within Banana         by typing  T)B
+975 8375(   PROJECT  -  \(X & Y\) and save on DAMQ8Q.SPK         by typing  P)B
+975 7935(   An OPEN Banana is one which is open for creation or  modification.  If  the)B
+975 7715(   Banana  is  being  newly  created  there  will be no corresponding image or)B
+975 7495(   partial image on a BAN-file. Only one such Banana  can  exist  at  a  given)B
+975 7275(   time. You can do the following things with a OPEN Banana:)B
+975 6835(   ADD      -  X,Y-point at cursor position           by typing  A)B
+975 6615(   INSERT   -  X,Y-point at cursor position           by typing  I)B
+975 6395(   MOVE     -  nearest X,Y-point to cursor position   by typing  M)B
+975 6175(   SAVE     -  on BAN-file \(prompted for ID\)          by typing  S)B
+975 5955(   REPLACE  -  on BAN-file \(with old ID\)              by typing  R)B
+975 5735(   ZERO     -  all X,Y-points                         by typing  Z)B
+975 5515(   TOTALIZE -  counts contained within Banana         by typing  T)B
+975 5295(   PROJECT  -  \(X & Y\) and save on DAMQ8Q.SPK         by typing  P)B
+975 4855(   All  Banana  references  are  made in cursor mode. ADD, INSERT, MOVE, SAVE,)B
+975 4635(   REPLACE and ZERO refer only to the OPEN Banana.  Other  references  \(except)B
+975 4415(   for  GET\)  are  made  by  moving  the cursor such that it is closer to some)B
+975 4195(   point on the Banana of interest than it  is  to  any  point  on  any  other)B
+975 3975(   Banana.)B
+1 F
+975 3535(               ALL BANANAS MUST BE CONSTRUCTED IN CLOCKWISE ORDER)B
+EndPage
+%%Page: 27 27
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - BANANAS - WTM ............... PAGE  27)B
+975 14315(   U300.360  Bananas - Projections)B
+975 14315(   ___________________________________________________________________________)B
+975 13875(   Projections via the PJ-command)B
+0 F
+975 13435(   Data  which fall within and on the boundries of a Banana are projected onto)B
+975 13215(   the X-axis of a coordinate system which is rotated through  an  angle  DEGR)B
+975 12995(   with  respect  to  the  systen  in  which data channel-# \(0,0\) falls at the)B
+975 12775(   origin and the first and second indices of the histogram array  define  the)B
+975 12555(   X-  and  Y-axis,  respectively.  Channel-# XP in the projected histogram is)B
+975 12335(   calculated from channel-# X,Y in the 2-D histogram by an expression of  the)B
+975 12115(   following form:)B
+975 11675(         XP=A+COS\(DEGR\)*X+SIN\(DEGR\)*Y)B
+975 11235(         where,)B
+975 10795(         A=0.0                               For DEGR =   0 -  90)B
+975 10355(         A=-COS\(DEGR\)*XMAX                   For DEGR =  90 - 180)B
+975 9915(         A=-COS\(DEGR\)*XMAX-SIN\(DEGR\)*YMAX    For DEGR = 180 - 270)B
+975 9475(         A=-SIN\(DEGR\)*YMAX                   For DEGR = 270 - 360)B
+975 8815(   XMAX  and  YMAX  are  the  "dimensions" of the 2-D histogram. The effect of)B
+975 8595(   this transformation is  to  make  all  channel  numbers  in  the  projected)B
+975 8375(   histogram positive.)B
+975 7935(   NOTE:  The  "length"  of  the  projected  histogram  may  be  as  large  as)B
+975 7715(          SQRT\(XMAX**2+YMAX**2\).)B
+1 F
+975 7275(   Projections via the P-command)B
+0 F
+975 6835(   Each time DAMM is executed it  will  create  a  new  version  of  the  file)B
+975 6615(   DAMQ8Q.SPK  for  the  storage  of  projections. The file is only created if)B
+975 6395(   projrctions are actually made.)B
+975 5955(   When you project  a  Banana,  both  X-  and  Y-projections  are  stored  on)B
+975 5735(   DAMQ8Q.SPK  under  the  ID-numbers  displayed.  These 1-D histograms may be)B
+975 5515(   displayed \(or otherwise used\) in the normal manner for a SPK-file. Use  the)B
+975 5295(   P-qualifier  to  display  spectra  from  DAMQ8Q.SPK  without   explicitally)B
+975 5075(   opening it. For example, to display ID numbers 1,3,5 from DAMQ8Q.SPK, type:)B
+975 4635(   D P 1,3,5)B
+EndPage
+%%Page: 28 28
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  28)B
+975 14315(   U300.400  FITTING - Introduction & General Features)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   You  specify  how fitting is to be carried out by supplying a number of Fit)B
+975 13655(   Specification Data Sets which may be given in  any  order.  Many  of  these)B
+975 13435(   have  default  values  \(see  SEC#  U300.450\).  After the fitting process is)B
+975 13215(   specified, one or more Fit Requests are entered. Subsequently, some or  all)B
+975 12995(   of  the  Fit  Specifications  may  be changed and more Fit Requests entered)B
+975 12775(   etc. etc.)B
+975 12335(                                GENERAL FEATURES)B
+975 11895(   \(1\)....Fit specifications may be entered interactively or read from a  file)B
+975 11675(          or a combination of the two methods may be used.)B
+975 11235(   \(2\)....Peak  and background intensities are determined in a weighted linear)B
+975 11015(          least-squares  fit  while  peak  positions,  widths,  and  asymmetry)B
+975 10795(          parameters  are  determined  by  a  non-linear  least-squares search)B
+975 10575(          \(either Gradient search or Gauss method -  See  SEC#s  U300.490  and)B
+975 10355(          U300.500\).)B
+975 9915(   \(3\)....Peak  positions  may  be typed in or selected interactively or found)B
+975 9695(          automatically.)B
+975 9255(   \(4\)....Spectra are fitted one section at a time and can  be  no  more  than)B
+975 9035(          2048 channels in length.)B
+975 8595(   \(5\)....In  the gradient search mode \(FIT command\), each section may contain)B
+975 8375(          a total of 30 peaks and background terms. That  is,  the  number  of)B
+975 8155(          linear  coefficients  to  be  determined in the linear least squares)B
+975 7935(          fit \(# of peaks plus # of background terms\) may not  exceed  30.  In)B
+975 7715(          the  Gauss  mode,  only  5  peaks  are  allowed and asymmetry is not)B
+975 7495(          supported.)B
+975 7055(   \(6\)....Initial values of peak positions, widths  and  asymmetry  parameters)B
+975 6835(          must  be  specified  by  the  user.  Different  values  of width and)B
+975 6615(          asymmetry may be assigned to each peak or all peaks may be  assigned)B
+975 6395(          the same values.)B
+975 5955(   \(7\)....The  FWHM  for  peaks  in  a   section   may   vary   independently,)B
+975 5735(          conditionally,  or  be  held  fixed.  All  peaks in a section may be)B
+975 5515(          forced to have the same width or fixed relative widths.)B
+975 5075(   \(8\)....Peak positions may be adjusted or held fixed.)B
+975 4635(   \(9\)....Peaks may be gaussian or asymmetric \(see SEC# U300.480 & U300.540)B
+975 4195(   \(10\)...The background may be specified \(by  up  to  50  X,Y-points\)  or  be)B
+975 3975(          determined  in  the  fit.  If  determined in the fit, the background)B
+975 3755(          takes the form, Y = A + B*X + C*X*X + D*X*X*X + . .  .  .  with  the)B
+975 3535(          number of terms in the power series specified by the user.)B
+975 3095(   \(11\)...The  output  includes  the  Fit  Specification Data, peak positions,)B
+975 2875(          widths, energies, areas and uncertainties \(in percent\) as well as  a)B
+975 2655(          printer plot of the fit on a 0.5 to 5 cycle plot.)B
+EndPage
+%%Page: 29 29
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  29)B
+975 14315(   U300.410  Commands for 1-key \(cursor mode\))B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   One-Key cursor commands \(valid following a DS or DSX command\))B
+975 13435(   Type: C  - To enter cursor-mode)B
+975 12995(   P/UP   Add/Delete peak to Library \(pos specified by cursor\))B
+975 12555(   M/M    Move nearest displayed peak to cusor pos \(FW, ASYM unchanged\))B
+975 12115(   X/UX   Fix/Free  peak position \(for displayed peak nearest to cursor\))B
+975 11675(   W/UW   Fix/Free  peak width    \(for displayed peak nearest to cursor\))B
+975 11235(   L/UL   Fix/Free  Lo-Side ASYM  \(for displayed peak nearest to cursor\))B
+975 10795(   H/UH   Fix/Free  Hi-Side ASYM  \(for displayed peak nearest to cursor\))B
+975 10355(   O/UO   Turn peak  ON/OFF       \(for displayed peak nearest to cursor\))B
+975 9915(   B/UB   Add/Delete background point at cursor position)B
+975 9475(   <--    Set Expand Region   Lo-Limit)B
+975 9035(   -->    Set Expand Region   Hi-Limit)B
+975 8595(   [      Set Fit Region      Lo-Limit)B
+975 8155(   ]      Set Fit Region      Hi-Limit)B
+975 7715(   V      Make Expand- & Fit-region markers visible/invisible \(toggles\))B
+975 7275(   J      Junk \(delete\) all expand- & fit-region markers)B
+975 6835(   / or ? Display chan#, cursor Y-value, chan contents)B
+975 6395(   S      Disp sum, cent & fwhm of Fit-Reg - DAT\([\),DAT\(]\) defines BGD)B
+975 5955(   A      Disp sum, cent & fwhm of Fit-Reg - CUR\([\),CUR\(]\) defines BGD)B
+975 5515(   Q      Return from cursor control routine)B
+975 5075(   E      Expand display \(region defined by <--  -->\))B
+975 4195(   See SEC# U300.110 or Type:        for use of Mouse Buttons.)B
+1 F
+975 4195(                              h mous)B
+EndPage
+%%Page: 30 30
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  30)B
+975 14315(   U300.420  Setup Commands)B
+975 14315(   ___________________________________________________________________________)B
+975 13875(   Commands for entry of peak, background & skip-regions ---------------------)B
+0 F
+975 13435(   PZOT                   - Zero the Peak Library)B
+975 13215(   PK     X,W,ASLO,ASHI   - List of complete peak specifications)B
+975 12775(   BZOT                   - Delete Fixed Background array)B
+975 12555(   BACK   X1,Y1 X2,Y2 ..  - X,Y-points for fixed background)B
+975 12115(   SKIP                   - Without List turns SKIP OFF)B
+975 11895(   SKIP   I1,I2 J1,J2 ..  - Up to 4 regions to omit from Fit)B
+1 F
+975 11455(   Commands for defining FWHM, ASYM, WLIM, ALIM, NBC, WOOD, ECAL -------------)B
+0 F
+975 11015(   FW     FWA,FWB,FWC     - Coefficients for standard width function)B
+975 10795(   WLIM   FWLO,FWHI       - Variation limit factors for peak widths)B
+975 10355(   ASYM   ASLO,ASHI       - Standard Lo-Side and Hi-Side asymmetries)B
+975 10135(   ALIM   FALO,FAHI       - Variation limit factors for peak asymmetries)B
+975 9695(   NBC    NBC             - Number of power series terms in variable BGD)B
+975 9475(   WOOD   ON/OFF          - Turn Woods-Saxon BGD term ON/OFF \(default OFF\))B
+975 9255(                          - ON creates an additional background component)B
+975 9035(                          - with a Woods-Saxon "jog" under each peak which)B
+975 8815(                          - is porportional to the peak intensity.)B
+975 8375(   ECAL   ECO,ECA,ECB     - Coefficients for standard energy calibration)B
+1 F
+975 7935(   Commands for control of non-linear parameter variation --------------------)B
+0 F
+975 7495(   DPX    XSTEP,DXMAX     - Initial step size and limit for peak pos)B
+975 7275(   DEL    DEL,DELFAC,NDEL - Initial step size, step size multiplier and)B
+975 7055(                          - number of DEL-values to use)B
+975 6615(   VB                     - Use Variable Background \(the default\))B
+975 6395(   FB                     - Use Fixed Background if available)B
+975 5955(   VX     KVAR            - Kind of variation for peak positions)B
+975 5735(   VW     KVAR            - Kind of variation for peak widths)B
+975 5515(   VALO   KVAR            - Kind of variation for Lo-Side asymmetries)B
+975 5295(   VAHI   KVAR            - Kind of variation for Hi-Side asymmetries)B
+975 4855(          KVAR = UIND     - says vary Unconditionally, Independently)B
+975 4635(               = CIND     - says vary   Conditionally, Independently)B
+975 4415(               = ULOC     - says vary Unconditionally, Locked)B
+975 4195(               = CLOC     - says vary   Conditionally, Locked)B
+975 3975(               = FIX      - says keep Fixed - this the default assignmemt)B
+975 3535(               says hold Fixed if peak so specified.)B
+1 F
+975 3535(   Conditional)B
+0 F
+975 3095(                 says vary regardless of peak specifications.)B
+1 F
+975 3095(   Unconditional)B
+0 F
+975 2655(               says given parameter-types are varied independently.)B
+1 F
+975 2655(   Independent)B
+0 F
+975 2215(           says  given parameter-types \(width for example\) are varied together)B
+1 F
+975 2215(   Locked)B
+0 F
+975 1995(          \(multiplied by the same factor\) in the non-linear search.)B
+EndPage
+%%Page: 31 31
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  31)B
+975 14315(   U300.430  Display of Data, Fits and Printer-plots)B
+975 14315(   ___________________________________________________________________________)B
+975 13875(   Commands for general display control --------------------------------------)B
+0 F
+975 13435(   FIG    N           - Select screen configuration number-N)B
+975 13215(   WIN    N           - Select window-N for subsequent displays)B
+975 12995(   LIN/LOG            - Set graphic display to LIN \(default\) or LOG)B
+975 12775(   DMM    YMIN,YMAX   - Set display-range \(YMIN & YMAX\))B
+975 12555(   DL     ILO,IHI     - Set display-range \(channel# limits\))B
+975 12335(   DS     ID          - Display spectrum# ID \(range defined by DL\))B
+975 12115(   DS     ID,ILO,IHI  - Display spectrum# ID \(DL values replaced\))B
+975 11895(                        \(MAX value of IHI-ILO = 4095\))B
+975 11675(   DSX    ID          - Display Data defined by Expand Region)B
+975 11455(   C                  - Enters 1-key cursor-mode)B
+1 F
+975 11015(   Commands related to display of FITS ---------------------------------------)B
+0 F
+975 10575(   MON/MOF            - Peak Markers ON/OFF for DF \(default = ON\))B
+975 10355(   DFI                - Set to display \(DF \) DATA,FIT,BGD \(default\))B
+975 10135(   DPK                - Set to display \(DF \) DATA,FIT,PEAKS,BGD)B
+975 9915(   DPPB               - Set to display \(DF \) DATA,FIT,\(PEAKS+BGD\),BGD)B
+975 9695(   DF                 - Display Fit \(channel-limits given by Fit-range\))B
+975 9475(   DF     ILO,IHI     - Display Fit \(channel-limits given by ILO,IHI\))B
+975 9255(   DC     NPK         - Display Calculated peak #  NPK+ RESIDUAL)B
+975 8815(   PRP    XLO,XHI     - Display peaks from Library in range XLO thru XHI)B
+975 8595(   PRP                - Display all peaks from Library)B
+975 8375(   PRB                - Display all fixed Bgd-points)B
+975 8155(   FSTAT              - Display current fit-parameters)B
+975 7935(   DR                 - List results of last Fit on VDT \(terminal\))B
+1 F
+975 7495(   Commands related to printer-plots of results ------------------------------)B
+0 F
+975 7055(   KPPL   NONE        - Says do no printer plots)B
+975 6835(   KPPL   FITS        - Says plot FITS only \(the default\))B
+975 6615(   KPPL   ALL         - Says plot FITS, COMPONENTS and RESIDUALS)B
+975 6175(   PR                 - Print and Plot results of last Fit on printer)B
+1 F
+975 5735(   Commands related to peak-finding ------------------------------------------)B
+0 F
+975 5295(   FIND  BIAS,FWHM    - Enables  peak-finding \(see SEC# U300.155\))B
+975 5075(   FIND               - Enables  peak-finding with \(BIAS=5, FWHM=5\))B
+975 4855(   NOFI               - Disables peak-finding)B
+975 4415(   If FIND is enabled \(see SEC# U300.155 for general details\), DAMM will do  a)B
+975 4195(   peak  find  within  the  display  region each time a DS \(or DSX\) command is)B
+975 3975(   given. An attempt will then be made to add the newly  found  peaks  to  the)B
+975 3755(   internal  peak  library.  If  a  newly  found  peak is closer than 0.5*FWHM)B
+975 3535(   channels to an existing library peak, it will not be  added.  Finally,  all)B
+975 3315(   library  peaks  will  be  marked  on  the  display  in the usual manner. No)B
+975 3095(   distinction is made between "found peaks" and "manually entered peaks".)B
+EndPage
+%%Page: 32 32
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  32)B
+975 14315(   U300.440  FIT Execution Commands)B
+975 14315(   ___________________________________________________________________________)B
+975 13875(   Commands for FIT execution ------------------------------------------------)B
+0 F
+975 13435(   FIT    ID,ILO,IHI  - Fit Request - \(non-linear gradient search\))B
+975 13215(   GFIT   ID,ILO,IHI  - Fit request - \(gaussian method\))B
+975 12995(   RFIT   ID,ILO,IHI  - Resume FIT/GFIT start with Parms from last Fit)B
+975 12775(   LFIT   ID,ILO,IHI  - Linear Fit - no non-linear search)B
+975 12555(                      - \(Fit-range specified by ILO,IHI\))B
+975 12335(   FIT    ID X        - Fit Range specified by cursors \(Fit Region\))B
+975 12115(   GFIT   ID X        - Fit Range specified by cursors \(Fit Region\))B
+975 11895(   RFIT   ID X        - Fit Range specified by cursors \(Fit Region\))B
+975 11675(   LFIT   ID X        - Fit Range specified by cursors \(Fit Region\))B
+975 11235(   Ctrl/C             - Terminates Fit-in-prograss)B
+1 F
+975 10795(   U300.450  FIT Parameters - Saving, Setting, Default)B
+975 10795(   ___________________________________________________________________________)B
+975 10355(   Commands which save FIT parameters in memory library ----------------------)B
+0 F
+975 9915(   SAV    I,J  - Save all Parms from peaks I thru J of last Fit in PK-LIB)B
+975 9695(   SAX    I,J  - Save X-Parms   for  peaks I thru J of last Fit)B
+975 9475(   SAW    I,J  - Save W-Parms   for  peaks I thru J of last Fit)B
+975 9255(   SAL    I,J  - Save ASL-Parms for  peaks I thru J of last Fit)B
+975 9035(   SAH    I,J  - Save ASH-Parms for  peaks I thru J of last Fit)B
+975 8815(   \(If I,J ommitted, indicated Parms from ALL peaks are saved\))B
+1 F
+975 8375(   Commands which set FIT parameters -----------------------------------------)B
+0 F
+975 7935(   SET- X1,X2          - Set STD WIDTH and ASYM for peaks in range X1-X2)B
+975 7715(                         values \(defined by FWA, FWB, FWC, ASLO, ASHI\))B
+975 7275(   SETW X1,X2          - Set WIDTH for peaks in range X1-X2 to STD value)B
+975 7055(   SETW X1,X2,WA,WB,WC - Set WIDTH for peaks in range X1-X2 to value)B
+975 6835(                         defined by WA,WB,WC \(FWA,FWB,FWC unchanged\))B
+975 6395(   SETL X1,X2          - Set ASLO  for peaks in range X1-X2 to STD value)B
+975 6175(   SETL X1,X2,ASLOT    - Set ASLO=ASLOT for peaks in range X1-X2)B
+975 5735(   SETH X1,X2          - Set ASHI  for peaks in range X1-X2 to STD value)B
+975 5515(   SETH X1,X2,ASHIT    - Set ASHI=ASHIT for peaks in range X1-X2)B
+975 5075(   \(If X1,X2,.. omitted, indicated Parms for ALL peaks are set\))B
+1 F
+975 4635(   List of default FIT parameters --------------------------------------------)B
+0 F
+975 4195(   DEL   = 0.05    FWLO = 0.5      VX   = CIND    NBC  = 2)B
+975 3975(   DELFAC=0.25     FWHI = 2.0      VW   = CLOC    WOOD = OFF)B
+975 3755(   NDEL  = 3       FALO = 0.5      VALO = FIX     KPPL = FITS)B
+975 3535(   XSTEP = 0.2     FAHI = 2.0      VAHI = FIX)B
+975 3315(   DXMAX = 5.0     ASLO = 0.0)B
+975 3095(                   ASHI = 0.0)B
+EndPage
+%%Page: 33 33
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  33)B
+975 14315(   U300.460  Commands to Control Relative Peak-intensities)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   The following commands may be used to     the  intensity  of  two  or  more)B
+1 F
+975 13875(                                         fix)B
+0 F
+975 13655(   peaks relative to each other within a section being fitted:)B
+975 13215(   RELI  X,R   Sets relative intensity of library-peak nearest chan-X to be R)B
+975 12995(   RELI  ZOT   Deletes all relative intensity entries)B
+975 12775(   RELI  OFF   Disables relative intensity control but saves previous entries)B
+975 12555(   RELI  ON    Enables  relative intensity control \(default\))B
+975 12115(          RELI  specifications  must  be  entered         the  associated peak)B
+1 F
+975 12115(   NOTE:                                           AFTER)B
+0 F
+975 11895(   library entries are completed. RELI has no effect unless there two or  more)B
+975 11675(   peaks  with specified relative intensities within the region being fitting.)B
+975 11455(     may be in any units however there is an 8 character limit on  the  number)B
+1 F
+975 11455(   R)B
+0 F
+975 11235(   entered!  Peak-areas will be in the same ratios as the relative intensities)B
+975 11015(   specified ONLY if width & asymmetry parameters are the same for each peak.)B
+1 F
+975 10575(   U300.470  FIT Specification Details)B
+975 10575(   ___________________________________________________________________________)B
+975 10135(                   PK  Data Set - Complete Peak Specifications)B
+0 F
+975 9695(   The PK Data Set accomodates a full specification of the characteristics  of)B
+975 9475(   each  individual  peak.  Up  to 100 peaks may be included in the list. Each)B
+975 9255(   peak is specified by the following parameters.)B
+975 8815(   X......Gives the initial peak position in channels.)B
+975 8375(   W......Specifies the initial peak FWHM in channels. If  not  entered,  FWHM)B
+975 8155(          is set to the value specified by FWA, FWB & FWC.)B
+975 7715(   ASLO...Specifies the Lo-Side asymmetry parameter.)B
+975 7275(   ASHI...Specifies the Hi-Side asymmetry parameter.)B
+1 F
+975 6835(                              Other Specifications)B
+0 F
+975 6395(   ECO,ECA,ECB...Defines  the  spectrum  energy  calibration \(not required for)B
+975 6175(          fitting\) through the relation;)B
+975 5735(          E = ECO + ECA*\(CHAN #\) + ECB*\(CHAN #\)**2)B
+975 5295(   FWA,FWB,FWC...Defines the peak  WIDTH  as  a  function  of  channel  number)B
+975 5075(          through the relation;)B
+975 4635(          FWHM\(CHANNELS\)=FWA+FWB*SQRT\(CHAN #\)+FWC*\(CHAN #\))B
+975 4195(   ASLO,ASHI...Are  the  initial  values  of the Lo-Side and Hi-Side asymmetry)B
+975 3975(          parameters. If this specification is used, the initial  values  will)B
+975 3755(          be the same for all peaks.)B
+975 3315(   FWLO...Is  the  minimum  fraction of the initially specified value by which)B
+975 3095(          any peak width may be reduced.)B
+975 2655(   FWHI...Is the maximum fraction of the initially specified  value  by  which)B
+975 2435(          any peak width may be increased.)B
+975 1995(                            \(continued on next page\))B
+EndPage
+%%Page: 34 34
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  34)B
+975 14315(   U300.470  FIT Specification Details \(continued\))B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   FALO...Is  the  minimum  fraction of the initially specified value by which)B
+975 13655(          any peak asymmetry parameter may be reduced.)B
+975 13215(   FAHI...Is the maximum fraction of the initially specified  value  by  which)B
+975 12995(          any peak asymmetry parameter may be increased.)B
+975 12555(   DEL....Specifies  the  fraction  by  which  the  peak  width  and  the peak)B
+975 12335(          asymmetry parameters are to be changed in  each  step  of  the  non-)B
+975 12115(          linear search. For example,)B
+975 11675(                      \(NEW WIDTH\) = \(OLD WIDTH\)*\(1.0+-DEL\))B
+975 11235(   DELFAC-Is  a  factor  by  which  the  current value of DEL is multiplied in)B
+975 11015(          order to obtain a new \(smaller\) value. Typically one starts  with  a)B
+975 10795(          fairly  large value of DEL \(say 0.02 to 0.05\) and subsequently makes)B
+975 10575(          one or more reductions in order to  achieve  a  greater  convergence)B
+975 10355(          speed.)B
+975 9915(   NDEL...Is the number of DEL-values to be used)B
+975 9475(   XSTEP..Is  the maximum amount \(in channels\) that a peak may be moved in any)B
+975 9255(          one step in the  non-linear  search  for  the  best  fit.  XSTEP  is)B
+975 9035(          reduced  at  the  same time and by the same factor \(DELFAC\) that DEL)B
+975 8815(          is reduced.)B
+975 8375(   DXMAX..Is the maximum number of channels \(either + or -\) that any  peak  is)B
+975 8155(          allowed to be moved from its original position.)B
+975 7715(   SKIP...Defines  up  to  four  regions  within the Fit Range which are to be)B
+975 7495(          ignored in doing the fit.)B
+975 7055(   KPPL=..NONE says do no printer plots.)B
+975 6615(   KPPL=..FITS says plot the FIT \(experimental and calculated spectrum on  the)B
+975 6395(          same graph\).)B
+975 5955(   KPPL=..ALL  says  plot  the  FIT \(as in KPPL...=FITS\) and in addition, plot)B
+975 5735(          each component \(calculated peak\)  together  with  the  corresponding)B
+975 5515(          "residual  component".  What  do you mean by residual component, you)B
+975 5295(          ask. When plotting the  Ith  peak  we  calculate  the  Ith  residual)B
+975 5075(          component  by  subtracting  any background \(specified or calculated\))B
+975 4855(          as well as  all  calculated  peaks  other  than  the  Ith  from  the)B
+975 4635(          experimental spectrum.)B
+975 4195(   NBC....Denotes  the  number  of background components to be included in the)B
+975 3975(          power series. NBC=2 Says use the form Y=A+B*X  and  NBC=4  says  use)B
+975 3755(          Y=A  +  B*X + C*X*X + D*X*X*X. The number of peaks in a section plus)B
+975 3535(          NBC must not exceed 30.)B
+975 3095(                            \(continued on next page\))B
+EndPage
+%%Page: 35 35
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  35)B
+975 14315(   U300.470  FIT Specification Details \(continued\))B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   WOOD...ON/OFF says turn Woods-Saxon background term ON/OFF. The default  is)B
+975 13655(          OFF.  If  WOOD is ON, an additional background component is included)B
+975 13435(          which has  a  Woods-Saxon  type  "jog"  under  each  peak  which  is)B
+975 13215(          porportional to the peak intensity. The jog form is given by:)B
+975 12775(          Y    =  1.0/\(1.0+EXP\(ARG\)\)    ;where)B
+975 12555(          ARG  =  4.714*\(X0-X\)/FWHM     ;and)B
+975 12335(          X0=peak-position, X=channel-of-interest, and FWHM=peak-FWHM.)B
+975 11895(          The  use  of such a background form could be helpful in the analysis)B
+975 11675(          of weak peaks which are located on the  low-energy  side  of  strong)B
+975 11455(          peaks. You will have to be the judge.)B
+1 F
+975 11015(   U300.480  Discussion of Peak Shapes)B
+975 11015(   ___________________________________________________________________________)B
+0 F
+975 10575(   The most general peak shape allowed is given by)B
+975 10135(                    YL=EXP\(-\(X-XO\)**2/\(A**2*\(1+ASLO*\(XO-X\)/A\))B
+975 9915(                    YH=EXP\(-\(X-XO\)**2/\(A**2*\(1+ASHI*\(X-XO\)/A\))B
+975 9475(   Where  A  is  the gaussian Half-Width at 1/e max and YL and YH describe the)B
+975 9255(   curve on the Lo- and Hi-Sides, respectively. If  all  asymmetry  parameters)B
+975 9035(   are  held  to zero, the shape is gaussian. The ASLO/ASHI parameters broaden)B
+975 8815(   the Lo/Hi sides of the peak and result in  an  expodential  fall-off  \(like)B
+975 8595(   EXP\(-\(XO-X\)/\(A*ASLO\)\)  for  example\)  As  you  move  far away from the peak)B
+975 8375(   maximum \(i.e. channel  XO\).  To  get  some  idea  of  what  size  asymmetry)B
+975 8155(   parameters to use see Fig 1.)B
+1 F
+975 7715(   U300.490  Gradient-search Method \(FIT request\))B
+975 7715(   ___________________________________________________________________________)B
+0 F
+975 7275(   Each  time  the  program encounters a Fit Request, it searches the complete)B
+975 7055(   Library and includes in the Fit all peaks which are ON and whose  positions)B
+975 6835(   lie within the Range of Fit \(i.e. between ILO and IHI\).)B
+975 6395(                   GENERAL PROCEDURE FOR THE NON-LINEAR SEARCH)B
+975 5955(   \(1\)....The  initial  values  of  all  parameters  which  are  to  vary in a)B
+975 5735(          non-linear way are set to the initial values specified by the user.)B
+975 5295(   \(2\)....Each individual parameter is changed \(both increased and  decreased\))B
+975 5075(          by  an  amount  determined  by  DEL or XSTEP in order to establish a)B
+975 4855(          "direction" \(increase or decrease\) for each parameter.)B
+975 4415(   \(3\)....All parameters are changed in the direction determined in  step  \(2\))B
+975 4195(          and  in  step sizes determined by DEL and XSTEP until the Quality of)B
+975 3975(          Fit is no longer improved.)B
+975 3535(   \(4\)....Steps \(2\) and \(3\) are repeated until no improvment in  the  Fit  can)B
+975 3315(          be made)B
+975 2875(   \(5\)....DEL  and  XSTEP  are  multiplied by DELFAC and steps \(2\) and \(3\) are)B
+975 2655(          repeated until no improvment in the Fit can be made.)B
+975 2215(   \(6\)....Step \(5\) is repeated \(NDEL-1\) times.)B
+EndPage
+%%Page: 36 36
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  36)B
+975 14315(   U300.500  Gaussian Method \(GFIT request\))B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   The GFIT \(Gauss-method\)  fit  request  initiates  an  alternate  non-linear)B
+975 13655(   procedure. Commands are:)B
+975 13215(   GFIT ID,ILO,IHI)B
+975 12995(   or)B
+975 12775(   GFIT ID X)B
+975 12335(   This  command  initiates  a nonlinear least-squares search by Gauss' method)B
+975 12115(   as modified by Marquardt.  \(See, for example, P.R. Bevington's  book, "Data)B
+975 11895(   Reduction  and  Error  Analysis for the Physical Sciences", p. 235 ff.  The)B
+975 11675(   routines used in GFIT are not Bevington's, but are those of M.J.  Saltmarsh)B
+975 11455(   from the SEL 840-A program PKFT.\))B
+975 11015(   The  search  continues  until  chi-squared  per degree of freedom \(QFN\) has)B
+975 10795(   changed by less than 0.0001 or until  25  iterations  have  occurred.   The)B
+975 10575(   search  may  be  resumed by the RFIT command.  The iteration number and QFN)B
+975 10355(   appear on the right side of the screen.)B
+975 9915(   The printer output from GFIT includes  absolute  error  estimates  for  the)B
+975 9695(   peak  positions,  widths,  and areas which are derived from the correlation)B
+975 9475(   matrix of the fit.  The percentage error in  the  area  is  printed  in the)B
+975 9255(   column labeled PCE.)B
+975 8815(   The  DAMM  commands  VW ULOC or VW CLOC \(the default option\) ae interpreted)B
+975 8595(   to mean that the widths of the peaks are to be the same and vary  together.)B
+975 8375(   Widths  may  be  varied  independently  by  VW UIND or VW CIND.  Individual)B
+975 8155(   widths or positions may be  frozen  or  released  by  the  standard  cursor)B
+975 7935(   commands  of DAMM.  If one or more widths are to be kept fixed while others)B
+975 7715(   are varied, the command VW CIND or VW CLOC should be given; if UIND or ULOC)B
+975 7495(   is given, the instruction to fix is ignored.)B
+975 7055(   If GFIT is chosen, the program  attempts  to  estimate  the  width  of  the)B
+975 6835(   tallest  peak  for  its initial guess of width.  If unsuccessful it reverts)B
+975 6615(   to the standard DAMM procedure of using whatever was stored from  the  last)B
+975 6395(   previous FW, SETW commands \(or the default option, which is FW = 5\).)B
+975 5955(   At  present  The  GFIT  request  is  limited  to  fitting  a sum of up to 5)B
+975 5735(   Gaussian peaks with a linear background.  The parameters ASLO and  ASHI for)B
+975 5515(   asymmetric peaks are ignored.)B
+EndPage
+%%Page: 37 37
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  37)B
+975 14315(   U300.510  Estimated Uncertainties in Peak Areas)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   Estimated  uncertainties  should  always  be   viewed   with   considerable)B
+975 13655(   skepticism,  especially  when  non-linerar  as  well  as   linear   fitting)B
+975 13435(   processes  are involved, as it is here. The uncertainties in the peak areas)B
+975 13215(   estimated by both the FIT and GFIT procedures  are  rather  "standard"  and)B
+975 12995(   involve  CHISQ  \(of  the  overall  fit\) as well the diagonal element of the)B
+975 12775(   inverse matrix corresponding  to  the  peak  intensity  in  question.  This)B
+975 12555(   inverse  matrix  is  found  in  the  standard  linear least-squares fitting)B
+975 12335(   process. See a book like "Bevington" or Cziffra  et.  al.  UCRL-8523,  1958)B
+975 12115(   for a real discussion of this subject. I have used:)B
+975 11675(   D\(J\) = SQRT\(AINV\(J,J\)*QFN\)     where;)B
+975 11235(   D\(J\)      = the estimated uncertainty in the J-th fit parameter B\(J\))B
+975 11015(               \(there is a B\(J\) for each peak-area\(J\)\))B
+975 10575(   QFN       = CHISQ/\(#data-points  -  #adjustable-parameters\))B
+975 10135(   AINV\(J,J\) = the J-th diagonal element of the inverse matrix found in the)B
+975 9915(               linear least-squares fitting process.)B
+975 9475(   PCE\(J\)    = 100*D\(J\)/B\(J\)  =  percent uncertainty in J-th peak-area.)B
+1 F
+975 8815(   U300.520  Reading Fit Results from damm.log)B
+975 8815(   ___________________________________________________________________________)B
+0 F
+975 8375(   The  table  of  fit-results  recorded  on  damm.log,  as  a  result of a)B
+1 F
+975 8375(                                                                            PR)B
+0 F
+975 8155(   command, includes flags of the form      to facillitate  the  location  and)B
+1 F
+975 8155(                                       LAB$)B
+0 F
+975 7935(   decoding  of  relevant  data by other programs. Formats associated with the)B
+975 7715(   different line-labels are listed below.)B
+975 7275(   Label  Format)B
+975 7055(   TIT$   \(1X,15X,2I6,6X,20A4\))B
+975 6835(   DEL$   \(1X,2F10.0,I10,6F10.0\))B
+975 6615(   SKP$   \(1X,8I10\))B
+975 6395(   CAL$   \(1X,8F10.0,I10\))B
+975 6175(   VAR$   \(1X,6\(6X,A4\),I10\))B
+975 5955(   FIT$   \(1X,5F10.0,3F8.0,4F7.0,I5,I7\))B
+975 5735(   GFI$   \(1X,5F10.0,3F8.0,4F7.0,I5,I7\))B
+975 5515(   BGD$   \(1X,2F10.2\))B
+975 5295(   QFN    \(1X,6X,F10.0,11X,F10.0\))B
+975 4855(   Alternatively,   one  may  make  use  of  the  routines  contained  in  the)B
+975 4635(   internally documented demonstration program        .  The  source  of  this)B
+1 F
+975 4635(                                                samred)B
+0 F
+975 4415(   program is in                                 .)B
+1 F
+975 4415(                 /usr/users/milner/Ddamm/samred.f)B
+975 3975(   U300.530  Common Problems)B
+975 3975(   ___________________________________________________________________________)B
+0 F
+975 3535(   \(1\)....If  you  define  the  standard FWHM \(via command: FW FWA,FWB,FWC\) or)B
+975 3315(          standard asymmetry parameters \(via command:  ASYM  ASLO,ASHI\),  this)B
+975 3095(          does  not  re-define  such  parameters for previously defined peaks.)B
+975 2875(          You must use SETW to do this \(see SEC# U300.450\).)B
+EndPage
+%%Page: 38 38
+StartPage
+1 F
+975 14755(   05-Dec-13 ............. U300  DAMM - FITTING - WTM ............... PAGE  38)B
+975 14315(   U300.540  Peak Shape vs Asymmetry \(Log plot\))B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(            YL=EXP\(-\(X-XO\)**2/\(A**2*\(1+ASLO*\(XO-X\)/A\))B
+975 13655(            YH=EXP\(-\(X-XO\)**2/\(A**2\)\))B
+975 13435(   Y = 100  ------------------------------------------------------------------)B
+975 13215(            SYMBOL  ASLO                            0)B
+975 12995(                 0   0.0                          11 00)B
+975 12775(                 2   0.2                         1     0)B
+975 12555(                 4   0.4                        1)B
+975 12335(                 6   0.6                       10       0)B
+975 12115(                 8   0.8                      14)B
+975 11895(                 1   1.0                     140         0)B
+975 11675(                                            162)B
+975 11455(              FWHM = 12                    1640           0)B
+975 11235(                                          18 2)B
+975 11015(                                         1864)B
+975 10795(                                            20             0)B
+975 10575(                                        1864)B
+975 10355(                                       186)B
+975 10135(                                      1   420               0)B
+975 9915(                                     1 86)B
+975 9695(                                      8  4)B
+975 9475(                                    1  6  20                 0)B
+975 9255(                                   1 8  4)B
+975 9035(                                  1 8 6  2)B
+975 8595(                                 1 8 6 4  0                   0)B
+975 8375(                                1)B
+975 8155(                                  8 6 4 2)B
+975 7935(   Y = 10  ------------------- 1 8 -------------------------------------------)B
+975 7715(                              1    6     0                     0)B
+975 7495(                             1  8    4 2)B
+975 7275(                                  6)B
+975 7055(                            1  8    4)B
+975 6835(                           1  8  6    2)B
+975 6615(                                        0                       0)B
+975 6395(                          1  8  6  4)B
+975 6175(                         1)B
+975 5955(                        1   8  6     2)B
+975 5735(                           8      4)B
+975 5515(                       1               0                         0)B
+975 5295(                      1   8   6  4)B
+975 5075(                                    2)B
+975 4855(                     1   8   6)B
+975 4635(                    1           4)B
+975 4415(                   1    8   6)B
+975 4195(                       8           2  0                           0)B
+975 3975(                  1        6   4)B
+975 3755(                 1    8)B
+975 3535(                          6)B
+975 3315(                1    8        4   2)B
+975 3095(               1         6)B
+975 2875(                    8                0                             0)B
+975 2655(              1    8         4)B
+975 2435(   Y = 1   -------------------------------------------------------------------)B
+975 1995(                                    Figure 1)B
+EndPage
+%%Page: 39 39
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  39)B
+975 14315(   U300.550  Screen Configurations)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   The sizes and locations of display windows are controlled by  one  or  more)B
+975 13655(   of the commands - FIG, FIGF or FIGI.)B
+975 13215(   FIG ID - Sets the number and size of display windows to that specified)B
+975 12995(          by configuration number ID. A given configuration ID number)B
+975 12775(          may specify up to 20 display windows. The default configuration)B
+975 12555(          library contains ID-numbers 1 thru 16. Type: H FIG for a)B
+975 12335(          display indicating the default sceen configurations or just)B
+975 12115(          Type: FIG 1, FIG 2 ... FIG 16 and see what you get.)B
+975 11675(   FIGF FILENAME - Requests that a new configuration library be read from)B
+975 11455(          a file named FILENAME. The file                    \(or the file)B
+1 F
+975 11455(                                          /usr/hhirf/fig.dat)B
+0 F
+975 11235(                            \) which contains the default configuration is)B
+1 F
+975 11235(          /home/upak/fig.dat)B
+0 F
+975 11015(          listed on the next next two pages. The **** in col-1 of the table)B
+975 10795(          denote comment lines and are ignored in processing.)B
+975 10355(   ****DEFAULT SCREEN-CONFIGURATION TABLE)B
+975 10135(   ****--------------------------------------------------)B
+975 9915(   ****FIG-ID   X0\(PIX\)   Y0\(PIX\)    W\(PIX\)    H\(PIX\))B
+975 9695(            1        30        84       540       480)B
+975 9475(   ****)B
+975 9255(            2         0        39       480       480)B
+975 9035(            2       495        39       480       480)B
+975 8815(   ****)B
+975 8595(            3        30       369       540       300)B
+975 8375(            3        30        39       540       300)B
+975 8155(            3       585        39       390       390)B
+975 7935(   ****)B
+975 7715(            4         0       369       480       300)B
+975 7495(            4         0        39       480       300)B
+975 7275(            4       495       369       480       300)B
+975 7055(            4       495        39       480       300)B
+975 6835(   ****)B
+975 6615(            5        30       489       480       195)B
+975 6395(            5        30       264       480       195)B
+975 6175(            5        30        39       480       195)B
+975 5955(            5       525        39       435       435)B
+975 5735(   ****)B
+975 5515(            6         0       489       480       195)B
+975 5295(            6         0       264       480       195)B
+975 5075(            6         0        39       480       195)B
+975 4855(            6       495       489       480       195)B
+975 4635(            6       495       264       480       195)B
+975 4415(            6       495        39       480       195)B
+975 4195(   ****)B
+975 3975(            7        30       534       480       135)B
+975 3755(            7        30       369       480       135)B
+975 3535(            7        30       204       480       135)B
+975 3315(            7        30        39       480       135)B
+975 3095(            7       525        39       435       435)B
+975 2655(                    \(continued on next page\))B
+EndPage
+%%Page: 40 40
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  40)B
+0 F
+975 14315(   ****DEFAULT SCREEN-CONFIGURATION TABLE \(continued\))B
+975 14095(   ****--------------------------------------------------)B
+975 13875(   ****FIG-ID   X0\(PIX\)   Y0\(PIX\)    W\(PIX\)    H\(PIX\))B
+975 13655(            8         0       534       480       135)B
+975 13435(            8         0       369       480       135)B
+975 13215(            8         0       204       480       135)B
+975 12995(            8         0        39       480       135)B
+975 12775(            8       495       534       480       135)B
+975 12555(            8       495       369       480       135)B
+975 12335(            8       495       204       480       135)B
+975 12115(            8       495        39       480       135)B
+975 11895(   ****)B
+975 11675(            9        30       579       480       105)B
+975 11455(            9        30       444       480       105)B
+975 11235(            9        30       309       480       105)B
+975 11015(            9        30       174       480       105)B
+975 10795(            9        30        39       480       105)B
+975 10575(            9       525        39       435       435)B
+975 10355(   ****)B
+975 10135(           10         0       579       480       105)B
+975 9915(           10         0       444       480       105)B
+975 9695(           10         0       309       480       105)B
+975 9475(           10         0       174       480       105)B
+975 9255(           10         0        39       480       105)B
+975 9035(           10       495       579       480       105)B
+975 8815(           10       495       444       480       105)B
+975 8595(           10       495       309       480       105)B
+975 8375(           10       495       174       480       105)B
+975 8155(           10       495        39       480       105)B
+975 7935(   ****)B
+975 7715(           11         0        39       960       525)B
+975 7495(   ****)B
+975 7275(           12         0       354       960       270)B
+975 7055(           12         0        54       960       270)B
+975 6835(   ****)B
+975 6615(           13         0       489       960       195)B
+975 6395(           13         0       264       960       195)B
+975 6175(           13         0        39       960       195)B
+975 5955(   ****)B
+975 5735(           14         0       549       960       135)B
+975 5515(           14         0       384       960       135)B
+975 5295(           14         0       219       960       135)B
+975 5075(           14         0        54       960       135)B
+975 4855(   ****)B
+975 4635(           15       240        39       750       750)B
+975 4415(   ****)B
+975 4195(           16         0        39       645       645)B
+975 3975(   ---------------------------------------------------------------------------)B
+975 3755(   FIG-ID  = Configuration ID number to be associated with window.)B
+975 3535(   X0\(PIX\) = X-coordinate of upper left corner of window in pixels.)B
+975 3315(   Y0\(PIX\) = Y-coordinate of upper left corner of window in pixels.)B
+975 3095(   W\(PIX\)  = Width  of window in pixels.)B
+975 2875(   H\(PIX\)  = Height of window in pixels.)B
+975 2655(   ---------------------------------------------------------------------------)B
+975 2215(   FIGI   Restores the configuration library to the default state.)B
+EndPage
+%%Page: 41 41
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  41)B
+975 14315(   U300.560  Graphic Screen Color Mapping)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   The  colors \(or grey scale\) is controlled by means of a color map which has)B
+975 13655(   40 entries that  specify  \(red,  green,  blue\)  intensities  in  the  range)B
+975 13435(   0-65535.  The  default  table  contained  in                        or   in)B
+1 F
+975 13435(                                                 /usr/hhirf/cmap.dat)B
+0 F
+975 13215(                       is listed below:)B
+1 F
+975 13215(   /home/upak/cmap.dat)B
+0 F
+975 12775(       RED  GREEN   BLUE   ;ENTRY# - NORMAL USE ------------------------------)B
+975 12335(         0      0      0  ;01 - BLACK)B
+975 12115(     65535  65535  65535  ;02 - 1-D DISPLAY - COL\(1\) - FIT DATA)B
+975 11895(     65535      0      0  ;03 - 1-D DISPLAY - COL\(2\))B
+975 11675(         0  65535      0  ;04 - 1-D DISPLAY - COL\(3\) - FIT CALC)B
+975 11455(         0      0  65535  ;05 - 1-D DISPLAY - COL\(4\))B
+975 11235(     65535  65535      0  ;06 - 1-D DISPLAY - COL\(5\) - FIT BACK)B
+975 11015(     65535      0  65535  ;07 - 1-D DISPLAY - COL\(6\))B
+975 10795(         0  65535  65535  ;08 - 1-D DISPLAY - COL\(7\))B
+975 10575(     65535  65535      0  ;09 - 1-D DISPLAY - COL\(8\))B
+975 10355(     65535  65535      0  ;10 - NOT USED FOR NOW)B
+975 10135(         0      0  32767  ;11 - 2-D COLOR DISPLAY)B
+975 9915(         0      0  65535  ;12 - 2-D COLOR DISPLAY)B
+975 9695(     32767      0  32767  ;13 - 2-D COLOR DISPLAY)B
+975 9475(     65535      0  65535  ;14 - 2-D COLOR DISPLAY)B
+975 9255(     32767      0      0  ;15 - 2-D COLOR DISPLAY)B
+975 9035(     65535      0      0  ;16 - 2-D COLOR DISPLAY)B
+975 8815(     32767  32767      0  ;17 - 2-D COLOR DISPLAY)B
+975 8595(     65535  65535      0  ;18 - 2-D COLOR DISPLAY)B
+975 8375(     32767  32767  32757  ;19 - 2-D COLOR DISPLAY)B
+975 8155(     65535  65535  65535  ;20 - 2-D COLOR DISPLAY)B
+975 7935(     15000  15000  15000  ;21 - 2-D GREY-SCALE DISPLAY)B
+975 7715(     20600  20600  20600  ;22 - 2-D GREY-SCALE DISPLAY)B
+975 7495(     26200  26200  26200  ;23 - 2-D GREY-SCALE DISPLAY)B
+975 7275(     31800  31800  31800  ;24 - 2-D GREY-SCALE DISPLAY)B
+975 7055(     37400  37400  37400  ;25 - 2-D GREY-SCALE DISPLAY)B
+975 6835(     43000  43000  43000  ;26 - 2-D GREY-SCALE DISPLAY)B
+975 6615(     48600  48600  48600  ;27 - 2-D GREY-SCALE DISPLAY)B
+975 6395(     54200  54200  54200  ;28 - 2-D GREY-SCALE DISPLAY)B
+975 6175(     59800  59800  59800  ;29 - 2-D GREY-SCALE DISPLAY)B
+975 5955(     65535  65535  65535  ;30 - 2-D GREY-SCALE DISPLAY)B
+975 5735(     32767  32767  32767  ;31 - NOT USED FOR NOW)B
+975 5515(     32767  65535  65535  ;32 - NOT USED FOR NOW)B
+975 5295(     65535      0      0  ;33 - NOT USED FOR NOW)B
+975 5075(     65535  65535  65535  ;34 - GCOR\(1\))B
+975 4855(     65535      0      0  ;35 - GCOR\(2\), SAM PK MARK,  FIT VAR MARK)B
+975 4635(         0  65535      0  ;36 - GCOR\(3\), 1-D PK LAB, 2-D BAN & EX-MARK)B
+975 4415(         0      0  65535  ;37 - GCOR\(4\), 1-D REG MARK, FIT VAR MARK)B
+975 4195(     65535  65535      0  ;38 - GCOR\(5\), CURSOR)B
+975 3975(     65535      0  65535  ;39 - GCOR\(6\))B
+975 3755(         0  65535  65535  ;40 - GCOR\(7\))B
+975 3315(   Different color mapping is accomplished by the CMAP command as shown below:)B
+975 2875(   CMAP FILENAME  ;Processes a file FILENAME of the structure shown above)B
+975 2655(                  ;and maps as  specified  therein.  The new mapping only)B
+975 2435(                  ;takes place subsequent to the next FIG command.)B
+EndPage
+%%Page: 42 42
+StartPage
+1 F
+975 14755(   05-Dec-13 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  42)B
+975 14315(   U300.570  Graphic Screen Black & White Mapping)B
+975 14315(   ___________________________________________________________________________)B
+0 F
+975 13875(   When  using  black  &  white  monitors,  the table                    , \(or)B
+1 F
+975 13875(                                                      /usr/hhirf/bmap.dat)B
+0 F
+975 13655(                      \) listed below, may be more useful.  If  you  are  using)B
+1 F
+975 13655(   /home/upak/bmap.dat)B
+0 F
+975 13435(   the  REVV  mode,  then  table                                             ,)B
+1 F
+975 13435(                                 /usr/hhirf/bmapr.dat or /home/upak/bmapr.dat)B
+0 F
+975 13215(   not listed here, should be used as a template. You will  probably  need  to)B
+975 12995(   make  other  adjustments  in  order  to  achieve semi-satisfactory results.)B
+975 12775(   Note: that table entries are labeled with their uses.)B
+975 12335(       RED  GREEN   BLUE   ;ENTRY# - NORMAL USE ------------------------------)B
+975 11895(         0      0      0  ;01 - BLACK)B
+975 11675(     65535  65535  65535  ;02 - 1-D DISPLAY - COL\(1\) - FIT DATA)B
+975 11455(     65535  65535  65535  ;03 - 1-D DISPLAY - COL\(2\))B
+975 11235(     65535  65535  65535  ;04 - 1-D DISPLAY - COL\(3\) - FIT CALC)B
+975 11015(     65535  65535  65535  ;05 - 1-D DISPLAY - COL\(4\))B
+975 10795(     65535  65535  65535  ;06 - 1-D DISPLAY - COL\(5\) - FIT BACK)B
+975 10575(     65535  65535  65535  ;07 - 1-D DISPLAY - COL\(6\))B
+975 10355(     65535  65535  65535  ;08 - 1-D DISPLAY - COL\(7\))B
+975 10135(     65535  65535  65535  ;09 - 1-D DISPLAY - COL\(8\))B
+975 9915(     65535  65535  65535  ;10 - NOT USED FOR NOW)B
+975 9695(         0      0  32767  ;11 - 2-D COLOR DISPLAY)B
+975 9475(         0      0  65535  ;12 - 2-D COLOR DISPLAY)B
+975 9255(     32767      0  32767  ;13 - 2-D COLOR DISPLAY)B
+975 9035(     65535      0  65535  ;14 - 2-D COLOR DISPLAY)B
+975 8815(     32767      0      0  ;15 - 2-D COLOR DISPLAY)B
+975 8595(     65535      0      0  ;16 - 2-D COLOR DISPLAY)B
+975 8375(     32767  32767      0  ;17 - 2-D COLOR DISPLAY)B
+975 8155(     65535  65535      0  ;18 - 2-D COLOR DISPLAY)B
+975 7935(     32767  32767  32757  ;19 - 2-D COLOR DISPLAY)B
+975 7715(     65535  65535  65535  ;20 - 2-D COLOR DISPLAY)B
+975 7495(     15000  15000  15000  ;21 - 2-D GREY-SCALE DISPLAY)B
+975 7275(     20600  20600  20600  ;22 - 2-D GREY-SCALE DISPLAY)B
+975 7055(     26200  26200  26200  ;23 - 2-D GREY-SCALE DISPLAY)B
+975 6835(     31800  31800  31800  ;24 - 2-D GREY-SCALE DISPLAY)B
+975 6615(     37400  37400  37400  ;25 - 2-D GREY-SCALE DISPLAY)B
+975 6395(     43000  43000  43000  ;26 - 2-D GREY-SCALE DISPLAY)B
+975 6175(     48600  48600  48600  ;27 - 2-D GREY-SCALE DISPLAY)B
+975 5955(     54200  54200  54200  ;28 - 2-D GREY-SCALE DISPLAY)B
+975 5735(     59800  59800  59800  ;29 - 2-D GREY-SCALE DISPLAY)B
+975 5515(     65535  65535  65535  ;30 - 2-D GREY-SCALE DISPLAY)B
+975 5295(     32767  32767  32767  ;31 - NOT USED FOR NOW)B
+975 5075(     32767  65535  65535  ;32 - NOT USED FOR NOW)B
+975 4855(     65535      0      0  ;33 - NOT USED FOR NOW)B
+975 4635(     65535  65535  65535  ;34 - GCOR\(1\))B
+975 4415(     45000  45000  45000  ;35 - GCOR\(2\), FIT PK MARK,  FIT VAR MARK)B
+975 4195(     65535  65535  65535  ;36 - GCOR\(3\), 1-D PK LAB, 2-D BAN & EX-MARK)B
+975 3975(     65535  65535  65535  ;37 - GCOR\(4\), 1-D REG MARK, FIT VAR MARK)B
+975 3755(     65535  65535  65535  ;38 - GCOR\(5\), CURSOR)B
+975 3535(     65535  65535  65535  ;39 - GCOR\(6\))B
+975 3315(     65535  65535  65535  ;40 - GCOR\(7\))B
+EndPage
+%%Trailer
+%%Pages: 42
+%%EOF

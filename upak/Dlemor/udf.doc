@@ -1,0 +1,59 @@
+RPD$075066
+CHP$LEMOR - Processing of User Defined Files
+TPF$
+SP1$
+SEC$.310  Processing of User Defined Files - UDFs
+BLP$
+Support is provided for the processing of non-scandard event data files.
+Such files might be generated via simulations or from some other source.
+I will call such files User Defined Files or just \b\UDFs\\. 
+BLP$
+Please don't confuse this usage of \b\UDF\\ with that refered to in SEC#
+320.310 "Creation of DVDs & CDs". I chose the acronym to be similar to \b\LDF\\
+without being aware of it's other usage.
+CY1$
+The commands:
+CY1$
+\b\UDF filename\\      ;Opens the \b\UDF\\ for sequential access reading
+                  ;and sets flags for \b\UDF\\ processing
+
+\b\UDF filename RECL\\ ;Opens the \b\UDF\\ for direct access reading with
+                  ;record length = \b\RECL\\
+                  ;and sets flags for \b\UDF\\ processing
+BLP$
+A number of special routines are brought into play. These include:
+\b\UDFOPEN, UDFREAD, UDFEVENT & UDFHAN\\
+CYB$
+This is how it works:
+ODP$
+o......The \b\UDF\\ command calls \b\UDFOPEN\\ to open the file for input
+as indicated above.
+ODP$
+o......Subsequently, all input requests are executed by \b\UDFREAD\\.
+ODP$
+o......\b\UDFREAD\\ calls \b\UDFEVENT\\ which actually reads the file and
+returns one event per call in the form of INTEGER*4 ID and DATA arrays.
+ODP$
+o......\b\UDFREAD\\ then builds standard \b\L003\\ data buffers for the calling
+subprogram.
+ODP$
+o......\b\UDFHAN\\ processes the positioning commands \b\REW, FR, & BR\\
+which provides for REWIND, BACK-RECORD and FORWARD-RECORD operations.
+ODP$
+o......\b\UDFEVENT\\  will most certainly need to be customized,
+however, it is probably the only one which does.
+BLP$
+In order to use the \b\UDF\\ support, the user must understand the structure
+of the \b\UDF\\ and be able to:
+ODP$
+o......Modify \b\UDFOPEN\\ to be compatible with the reading requirements,
+ODP$
+o......Modify \b\UDFEVENT\\ so as to read the \b\UDF\\ and return one
+event per call.
+CY1$
+The source  for default routines are in \b\/tera/milner/DDgnu/Dscanorlib/\\
+BLP$
+The template (default) \b\UDFEVENT\\ routine is internally documented
+and listed on subsequent pages.
+QIT$
+

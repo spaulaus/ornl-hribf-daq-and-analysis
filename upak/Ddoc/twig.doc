@@ -1,0 +1,186 @@
+RPD$075066
+CHP$TWIG  A Target Wiggle Control Program - WTM
+TPF$
+SP2$
+CYB$
+Sec Page Contents
+
+010   2  General Description
+
+020   3  List of Commands
+
+030   4  Example TWIG Dialog
+
+SP2$
+CEN$
+\bu\HOW TO GET STARTED\\
+CYB$
+===========================================================================
+
+Log onto rmsacq2
+
+Type: setenv VME vme1
+
+Type: twig
+
+===========================================================================
+TPF$
+SP2$
+SEC$.010  General Description
+BLP$
+\b\TWIG\\ is intended to control the "stepping motor driven" target wiggle
+device designed and built by Jim Johnson. Several functions or features
+are provided, namely:
+ODP$
+\b\Speed-control\\ via the specification of \b\WPS\\ or wiggles per second.
+ODP$
+\b\Direction\\ of rotation via the specification of \b\CW or CCW\\, i.e.
+Clockwise or Counter-Clockwise rotation.
+ODP$
+\b\Status-information\\ via the \b\STAT\\ command which displays/logs the
+current settings and hardware status.
+BLP$
+There are generally two modes of action: The \b\GODO & RUN\\ modes.
+The \b\GODO\\ mode is for testing only while the \b\RUN\\ mode is for actual
+operation.
+BLP$
+The \b\GODO\\ command allows you to specify a number of steps to do and the
+speed (steps/second) with which to do it. I used this to try to determine
+if the motor and vacuum feedthrough device under test was loosing steps. 
+I determined that it was indeed! This means that it is not possible to
+predict where the motor will stop if the specified number of steps are
+completed. Now, I have been told that if the motor stops
+at one of two special orientations that it may not be possible to restart it.
+Therefore, one must try to keep it running even if the beam is off
+BLP$
+The \b\RUN\\ command sets \b\TWIG\\ in a mode in which it keeps the motor
+running by repeatedly testing the number of steps done and when the 
+requested number of steps is 90% completed, it re-issues the move command.
+Unless you specify a shorter run time via the \b\RUNT\\ command, it will
+set the maximum number of steps that the controller can support, i.e. about
+16,000,000 steps. This is about 444 minutes at 3 wiggles per second or
+600 steps per second. If you issue a \b\CTRL/C\\ command, the "test & restart"
+loop will be interrupted but before it returns to you it will issue a command
+to do the maximum number of steps so that you have plenty of time to start
+the \b\RUN\\ again before it stops. So, for example, it would be possible
+do a \b\CTRL/C\\ to interrupt the "test & restart" loop and specify a new
+"wiggles per second" and issue the \b\RUN\\ command again.
+BON$
+BLP$
+Again, since it is not possible to predict where the motor will stop, the idea
+is to keep it running until the experiment is over or the target breaks!
+BOF$
+TPF$
+SP2$
+SEC$.020  List of Commands
+CYB$
+Commands Related to Setup =================================================
+
+MOTN N        ;Specifies Motor number (N = 1 to 7)
+              ;(default is N = 4)
+
+CW            ;Specifies that rotation will be CLOCKWISE (default)
+
+CCW           ;Specifies that rotation will be COUNTER-CLOCKWISE
+
+WPS  NUM      ;Specifies NUM wiggles/sec   (0.1 to 3.0 allowed)
+              ;(Default is NUM = 3.0)
+
+Commands Related to Testing ===============================================
+
+GODO NS STPS  ;Says Go do NS steps at STPS steps/second
+
+STOP          ;Stops all the wigglin
+
+TOFF          ;Turns off motor power
+
+STAT          ;Displays current specified parameters & status information
+
+Commands Related to Operation =============================================
+
+MOTN N        ;Specifies Motor number (N = 1 to 7)
+              ;(default is N = 4)
+
+RUNT MIN      ;Specifies run-time in Minutes (0.0 to 1000.0 allowed)
+              ;(If 0.0 is specified, max-value of run-time will be used)
+              ;(RUNT.GT.0.0 is mainly for testing)
+              ;Default is RUNT 0.0, i.e. uses maximum run-time
+
+STAT          ;Displays current specified parameters & status information
+
+RUN           ;Says "start wigglin" or "keep on wigglin"
+              ;It goes into a test-and-restart loop
+              ;It checks "wiggle time" remaining and if it is within 10%
+              ;of stopping, it restarts with run-time specfied by RUNT.
+
+CTRL/C        ;Interrupts wait-and-test loop to allow kewboard input
+              ;Before it returns to you it sets MAXIMUM run-time
+
+STOP          ;Stops all the wigglin
+
+TOFF          ;Turns off motor power
+
+END           ;Does a STOP, TOFF and Ends program TWIG
+TPF$
+SP1$
+SEC$.030  Example TWIG Dialog
+CY1$
+rmsacq2> \b\setenv VME vme1                               !Must set vme1\\
+rmsacq2> \b\twig                                          !Start TWIG\\
+Type: h      - for list of HELP code-words & subjects  \b\!Usual Startup\\ 
+Type: h all  - for a more detailed help directory      \b\!HELP\\
+Type: h code - for command list for associated subject \b\!Messages\\
+TWIG->\b\stat all                                         !Display status\\
+---------------------------------------------------------------------------
+Selected motor is number          15                   \b\!This is what\\
+The current position is            0                   \b\!you get\\
+Nobody is at inner limit                               \b\!when the\\
+Selected motor is at outer limit                       \b\!stepping motor\\
+Selected motor is stopped                              \b\!power\\
+Selected motor not ramping                             \b\!has been\\
+Down-counter is zero                                   \b\!turned\\
+Direction is clockwise                                 \b\!OFF\\
+Selected motor stopped normally                        \b\!...\\
+---------------------------------------------------------------------------
+Mot#  TIME-SET  TIME-DID   STEPS-SET   STEPS-DID   WIGGLES/  STEPS/   STATE   
+----   minutes   minutes   ---------   ---------     second  second   -----   
+   4      0.00      0.00           0           0        3.0     600    STOP   
+TWIG->\b\runt 5                                           !Set 5 min loop time\\
+TWIG->\b\wps 1                                            !Set 1 wiggle/sec\\
+TWIG->\b\run                                              !Run for test only\\
+Mot#  TIME-SET  TIME-DID   STEPS-SET   STEPS-DID   WIGGLES/  STEPS/   STATE   
+----   minutes   minutes   ---------   ---------     second  second   -----   
+   4      5.00      0.25       60000        2999        1.0     200    RUN    
+   4      5.00      0.50       60000        5999        1.0     200    RUN    
+   4      5.00      0.75       60000        8999        1.0     200    RUN    
+   4      5.00      1.00       60000       11999        1.0     200    RUN    
+   4      5.00      1.25       60000       14999        1.0     200    RUN    
+   4      5.00      1.50       60000       17999        1.0     200    RUN    
+   4      5.00      1.75       60000       20999        1.0     200    RUN    
+   4      5.00      2.00       60000       23999        1.0     200    RUN    
+   4      5.00      2.25       60000       26999        1.0     200    RUN    
+   4      5.00      2.50       60000       29998        1.0     200    RUN    
+Mot#  TIME-SET  TIME-DID   STEPS-SET   STEPS-DID   WIGGLES/  STEPS/   STATE   
+----   minutes   minutes   ---------   ---------     second  second   -----   
+   4      5.00      2.75       60000       32998        1.0     200    RUN    
+   4      5.00      3.00       60000       35998        1.0     200    RUN    
+   4      5.00      3.25       60000       38998        1.0     200    RUN    
+   4      5.00      3.50       60000       41998        1.0     200    RUN    
+   4      5.00      3.75       60000       44998        1.0     200    RUN    
+   4      5.00      4.00       60000       47998        1.0     200    RUN    
+   4      5.00      4.25       60000       50998        1.0     200    RUN    
+   4      5.00      4.50       60000       53997        1.0     200    RUN    
+Mot#  TIME-SET  TIME-DID   STEPS-SET   STEPS-DID   WIGGLES/  STEPS/   STATE   
+----   minutes   minutes   ---------   ---------     second  second   -----   
+   4      5.00      0.25       60000        2999        1.0     200    RUN    
+   4      5.00      0.32       60000        3895        1.0     200    RUN    
+\b\CTRL/C                                                !Interrupt via CTRL/C\\
+TWIG->\b\stat                                            !Display short status\\
+Mot#  TIME-SET  TIME-DID   STEPS-SET   STEPS-DID   WIGGLES/  STEPS/   STATE   
+----   minutes   minutes   ---------   ---------     second  second   -----   
+   4   1333.33      0.34    16000000        4069        1.0     200    RUN    
+TWIG->\b\stop                                            !STOP motor\\
+Mot#  TIME-SET  TIME-DID   STEPS-SET   STEPS-DID   WIGGLES/  STEPS/   STATE   
+----   minutes   minutes   ---------   ---------     second  second   -----   
+   4   1333.33      0.00    16000000           0        1.0     200    STOP  
+QIT$

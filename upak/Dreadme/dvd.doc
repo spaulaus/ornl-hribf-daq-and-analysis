@@ -1,0 +1,239 @@
+RPD$075066
+CHP$U950  Creating and Using DVDs & CDs
+TPF$
+SP1$
+CYB$
+Sec Page Contents
+
+010   1  Creation & Use of DVDs & CDs for Data Processing - Outline
+
+020   2  Creation       of DVDs & CDs for Data Processing - Details
+
+030   4  Use            of DVDs & CDs for Data Processing - Details
+
+SEC$.010  Creation & Use of DVDs & CDs for Data Processing - Outline
+
+CY1$
+\bu\To Create a DVD or CD\\
+
+Insert a DVD or CD into the DVD drive (bottom - labeled)
+
+Follow steps 1 through 5 of the \b\next section\\
+
+
+\bu\To use the DVD or CD in program scanor\\
+
+Insert the DVD or CD in the DVD drive (bottom - labeled)
+or
+Insert the CD in the CD drive         (top  - unlabeled)
+and Type: 
+
+\b\mount /dev/cdrom0\\              ;If using CD  drive (unlabeled - top)
+
+\b\mount /dev/cdrom1\\              ;If using DVD drive (labeled - bottom)
+
+
+\bu\To open a file in  program scanor, Type:\\
+
+\b\file /mnt/cdrom0/filename.ldf\\  ;if using CD  drive (top)
+
+\b\file /mnt/cdrom1/filename.ldf\\  ;if using DVD drive (bottom)
+
+===========================================================================
+\b\Note:\\ You cannot "punch out" a disk without dismounting it.
+\b\Note:\\ A mounted DVD or CD is readable by all.
+===========================================================================
+    \b\WARNING - FOUR WAYS YOU CAN SCREW THINGS OP WITHOUT REALLY TRYING!!\\
+BLP$
+(1) Execute a creation process using the \b\Gnome\\ window manager 
+without disabling the \b\magicdev\\ tool. It will hang the system at the
+end of writing the DVD and you will need to get a \b\root person\\ to fix it.
+BLP$
+(2) Kill the creation process before it is finished and you will need a
+\b\root person\\ to un-hang the DVD writing system.
+BLP$
+(3) Log off without dismounting the DVD or CD and nobody else but you or a
+\b\root person\\ can dismount it.
+BLP$
+(4) Tell the system that you are going to create a DVD but insert CD media
+into the drive. It may run out of space and hang the system.
+CY1$
+===========================================================================
+CEB$
+See also:   http://www.phy.ornl.gov/local/computer   and it's links
+CEB$
+It has PICTURES!
+TPF$
+SP1$
+SEC$.020  Creation of DVDs & CDs for Data Processing - Details
+BLP$
+We presume that you have written your data to an \b\LDF\\ format event file
+on disk, and now you need to preserve it in a permanent form. We use
+DVD for long-term storage of event data.
+CY1$
+\bu\A recording process consists of the following steps in order:\\
+  
+\bu\(1) Start the application\\
+BLP$
+The application is started by calling: \b\/usr/local/bin/DvdIoHandler\\ which
+brings up the graphical user interface to the DVD recording software.
+CY1$
+\bu\(2) Create a container file system to temporally hold files to be stored\\
+BLP$
+A screen will present itself.  You can select to create a CD or a DVD,
+either will be written with the UDF file format. The choice here
+determines the size of the container file system created and thus how
+much data you can write to the CD or DVD. Once you made you selection,
+press the \b\Create\\ button to create the container file system. The
+programm cannot be terminated during the time the container file
+system is created, hence the \b\Exit\\ button will become unavailable.
+BLP$
+While the container file system is created, you can monitor the
+process in the progress bar in the bottom of the window. Once the
+container file system is created, a new window will appear that allows
+you to select files.
+CY1$
+\bu\(3) Add files - create a list of files to be copied to container file\\ 
+BLP$
+You may select files that you want to record on DVD or CD. In this
+step the files are not actually copied, they are just collected. You
+may add files or directories using the \b\Add\\ button in the screen
+presented.  The files and directories will be displayed in tree
+form.  The available space will be listed in the progress bar at the
+bottom of the screen. You may also delete previously selected files.
+BLP$
+In order to add new files or directories press the \b\Add\\ button, which
+will present you with a screen to select.  Select the radio button
+labeled \b\Directory\\ if you want to add an entire directory. Press \b\OK\\
+when you have made your selection from this window.
+CY1$
+\bu\(4) Copy files to the container file\\
+BLP$
+Once you selected all the files you want to record on the DVD or the
+CD, you may press either the \b\Copy, Copy&Record\\ or the 
+\b\Copy&Record&Exit\\
+button. This will start the copying process.  Depending on where your
+orignal files reside and how much data you are copying, this may take
+a while. The progress bar at the bottom of the screen let's you know
+how many data have been copied.
+CY1$
+\bu\(5) Record files to DVD or CD - copy from container file to DVD or CD\\
+BLP$
+Once all files are copied, the recording process can be started by
+pressing the \b\Record\\ button. However, after the \b\Record\\ button is 
+pressed, the
+\b\Exit\\ button will become unavailable since terminating the program at
+the recording stage will make the recorded DVD useless. \b\Please to not
+kill the program during the recording stage!\\
+TPF$
+SP1$
+SEC$.020  Creation of DVDs & CDs for Data Processing - Details (continued)
+BLP$
+If a recording error occurs, you are informed by a pop-up window.  The
+error may be due to missing recording media or other problems with the
+DVD Writer itself. Please make sure that the DVD Writer contains a
+writable DVD or CD disk and try to record again.
+BLP$
+If you selected the \b\Copy&Record\\ or the \b\Copy&Record&Exit\\ button and
+a record error occurs, you will be given the opportunity to press the
+\b\Record\\ button after the DVD Writer problem was resolved. The program
+will NOT exit. 
+CYB$
+Recording will take about 30min. 
+BLP$
+It is easiest to use the GUI \b\/usr/local/bin/DvdIoHandler\\ to write the
+DVD.  Several steps may be combined, once the container file system
+has been created and the desired data has been selected. After these
+tasks are completed you have to option to copy and record in one
+step. These two tasks are the most time intensive, since it may take
+to actually copy the data from their current location into the
+container file system. In addition, recording a DVD or CD will take
+about 30min. If you plan to leave, select the \b\Copy&Record&Exit\\
+button, which will copy the data, record them and exit the program.
+BLP$
+Please make sure to exit the program after you finish recording the
+DVD or CD. This will clean up resources you use while copying and
+recording.
+BLP$
+Once you started the DVD recording process, you are the only person
+that can record data to the DVD Writer. You may have up to three
+processes simulataneously, however, only one process can record
+data. If you use the \b\Copy&Record&Exit\\ or the 
+\b\Copy&Record\\ you will be
+automatically limited to one concurrent process.
+CYB$
+Limitations and problems we have noted
+RND$05
+ODP$
+(1)..The software we are using to make the UDF file system seems to crash
+the system under Linux kernels greater than \b\2.4.20-18.9.\\  The
+problem occurs while copying the data to the container filesystem.
+ODP$
+(2)..We have observed that if you use the \b\Gnome\\ window manager, it will
+hang the system at the end of writing the DVD.  The solutions are:  
+RND$07
+CY1$  
+     (a) Switch to \b\KDE\\ or a lightweight window manager (e.g. \b\TWM\\)
+
+     (b) Disable the \b\magicdev\\ tool which runs under \b\Gnome\\. 
+CHP$U950  Using the DVDs and CDs
+TPF$
+SP1$
+SEC$.030  Use of DVDs & CDs for Data Processing - Details
+BLP$
+The files stored on the disk have the same format and encodings as on
+the original disk.  Please note that the data are BINARY, and that the
+Intel machines on which we take data are \b\little-endian\\.  If you read
+the disks on a \b\big-endian\\ machine, it may be necessary to swap the
+bytes, especially in histogram files.  Event files  will be swapped
+automatically by \b\SCANOR\\, at some loss of efficiency.  If you  need to
+byte-swap use the program \b\/usr/hhirf/swapo\\. 
+SEC$.032  Macintosh and Windows computers
+BLP$
+Using the DVD is as easy as inserting it into your DVD drive and
+waiting for the system to mount it. You can then copy the files about as
+you wish. 
+SEC$.034  Linux computers
+BLP$
+On Linux, ordinary users  logged in at the console can arrange to mount
+CD and DVD devices. Some window managers, e.g. \b\Gnome\\ and \b\KDE\\, under
+Linux will try to mount the  DVD for you, then popup a file manager
+window.  Then you can manipulate the files as you wish. 
+BLP$
+Failing that, your system should be setup to permit you to mount the
+DVD. If your \b\/etc/fstab\\ file has a line like: 
+CYB$
+/dev/cdrom1     /mnt/cdrom1      udf,iso9660 noauto,owner,kudzu,r o 0 0  
+CY1$
+Then you can mount the DVD by using a command like:
+
+\b\mount /dev/cdrom1\\ 
+BLP$
+It seems that the default will be to mount the DVD as  \b\/mnt/cdrom1\\ 
+which can be treated like an ordinary disk. 
+To dismount the disk, use one of the following commands:
+CY1$
+\b\umount /dev/cdrom1\\, or   
+
+\b\eject /dev/cdrom1\\ 
+
+SEC$.036  Other UNIX computers
+BLP$
+Our experience with other UNIX systems, especially older ones, 
+is that  only the \b\root\\
+user can mount DVD's.  
+Thus you would have to arrange with the sys admin to get root access,
+or copy all your data at once to local storage.
+The commands for mounting a CD or DVD vary substantially from UNIX
+version to UNIX version, so please consult a local expert.
+CYB$
+==========================================================================
+The website for this documentation will be found at:
+
+http://www.phy.ornl.gov/local/computer
+
+and the links to be found there.
+
+The website has PICTURES as well as text!
+===========================================================================
+QIT$

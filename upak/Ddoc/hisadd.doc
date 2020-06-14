@@ -1,0 +1,194 @@
+RPD$075066
+CHP$U325 - hisadd - Multiple-CPU Processing Aid - WTM
+TPF$
+SP1$
+CYB$
+Sec Page Contents
+
+010   1  Introduction and General Features
+
+020   2  List of Commands
+
+030   3  Example
+
+SEC$.010  Inproduction and General Features
+CYB$
+Using Multiple CPUs to Process List Data into Standard ORPH Histigrams
+BLP$
+Program \b\hisadd\\ is written to support the use of multiple CPUs in
+processing list data into standard ORPH histogram files. The following
+method is assumed.
+ODP$
+o......The user prepares a scanning program in the usual way.
+ODP$
+o......Let the list-data input be from \b\listdata.ldf\\.
+ODP$
+o......Then run a number of identical scan processes from different
+CPUs (\b\alphalnx0, alphalnx1, ... alphalnx9\\ for example).
+ODP$
+o......All scan processes input from different regions (specified files or
+specified records within specified files, etc.)
+of \b\listdata.ldf\\.
+ODP$
+o......All scan processes generate output to histogram files with different
+names or at least different paths.
+ODP$
+o......Use \b\damm\\ to examine the different output histograms for 
+gain match problems or whatever.
+ODP$
+o......Finally, use \b\hisadd\\ to add all of the scan-generated his-files
+to a final his-file \b\"total.his"\\.
+CEB$
+General Features
+ODP$
+o......Any scan process which produces the scandard .his & .drr structures
+will work.
+ODP$
+o......The ability to look at different regions of the \b\LDF-file\\ is
+automatically provided.
+ODP$
+o......The user is not required to modify his scan program in any way.
+ODP$
+o......The user is required to learn very little which is new.
+CEB$
+
+(see next page for a list of hisadd commands)
+TPF$
+SP2$
+SEC$.020  List of hisadd commands
+CYB$
+lon/lof            - Turn Log-output (to LU7) ON/OFF (default = ON)
+
+cmd  filnam        - Processes commands from filnam.cmd
+
+in   inpfile.his   - Opens input  his-file - .his & .drr must already exist
+                   - cannot be same as output
+
+ou   outfile.his   - Opens output his-file - .his & .drr must already exist
+                   - cannot be same as input but must have same structure
+
+init outfile.his   - Creates & initializes   outfile.his & outfile.drr
+                   - with same attributes as inpfile.his & inpfile.drr
+                   - outfiles .his & .drr must NOT already exist
+
+stat               - Displays files which are open
+
+cli                - close input files
+
+clo                - close output files
+
+zero               - Zeros outfile.his
+
+add                - Adds inpfile.his to outfile.his
+                   - 1-D, 2-D, I*2 and I*4 supported
+
+Ctrl/C             - Interrupts (aborts) an ADD-in-progress
+                   - Interrupts (aborts) a ZERO-in progress
+                   - Interrupts (aborts) execution of a command-file
+
+WAIT  MS           - Suspends execution for MS milliseconds
+                     (60,000 Milliseconds is the maximum allowed)
+
+WO                 - Suspends execution until you  type [RETURN]
+                     (it prompts you to: Type [RETURN] to continue
+
+end                - Ends program hisadd
+
+CEB$
+(see next page for an example)
+TPF$
+SP1$
+SEC$.030  Example
+BLP$
+Lets take a simple example. Assume that you wish to use 10 processors
+(\b\alphalnx0 - alphalnx9\\) to process data from one \b\ldf-file\\.
+In this example, each processor will process the data from one header of
+the \b\ldf-file\\ and finally \b\hisadd\\ will be used to sum the results
+of all scan processes into a final \b\his-file\\.
+CY1$
+\bu\Assume the Following:\\
+ODP$
+o......The scan process is called \b\myscan\\
+ODP$
+o......The data file to be processed in \b\/tera/myname/Dmydata/listdata.ldf\\
+ODP$
+o......All scan processes are run in directory \b\/tera/myname/Dscans/\\
+ODP$
+o......Program \b\hisadd\\ is run in directory \b\tera/myname/Dhistot/\\
+ODP$
+o......Each scan process will process one file (each starting from a different
+header on the \b\ldf-file\\.
+CY1$
+\bu\Do the following:\\
+ODP$
+o......Prepare the scanning program \b\myscan\\ in the usual way.
+ODP$
+o......Open windows & login to \b\alphalnx0, alphalnx1, ... alphalnx9\\.
+CY1$
+On \b\alphalnx0\\ type:
+CY1$
+\b\cd /tera/myname/Dscans/\\
+\b\myscan scan0\\        
+\b\file /tera/myname/Dmydata/listdata.ldf\\
+\b\find 1\\
+\b\goen 1\\
+
+On \b\alphalnx1\\ type:
+CY1$
+\b\cd /tera/myname/Dscans/\\
+\b\myscan scan1\\        
+\b\file /tera/myname/Dmydata/listdata.ldf\\
+\b\find 2\\
+\b\goen 1\\
+.
+.
+.
+On \b\alphalnx9\\ type:
+CY1$
+\b\cd /tera/myname/Dscans/\\
+\b\myscan scan9\\        
+\b\file /tera/myname/Dmydata/listdata.ldf\\
+\b\find 10\\
+\b\goen 1\\
+CEB$
+
+(continued on next page)
+TPF$
+SEC$.030  Example (continued)
+SP1$
+BLP$
+Prepare a command file \b\addum.cmd\\ for \b\hisadd\\ which looks like the
+one shown below.
+(Actually, you probably should prepare this file before you start the
+scan processes to make sure that you get all of the paths & names
+defined correctly).
+CYB$
+in /tera/myname/Dscans/scan0.his
+init /tera/myname/Dhistot/scantot.his
+add
+in /tera/myname/Dscans/scan1.his
+add
+in /tera/myname/Dscans/scan2.his
+add
+in /tera/myname/Dscans/scan3.his
+add
+in /tera/myname/Dscans/scan4.his
+add
+in /tera/myname/Dscans/scan5.his
+add
+in /tera/myname/Dscans/scan6.his
+add
+in /tera/myname/Dscans/scan7.his
+add
+in /tera/myname/Dscans/scan8.his
+add
+in /tera/myname/Dscans/scan9.his
+add
+end
+
+\bu\To rum hisadd, type:\\
+
+\b\hisadd\\
+\b\cmd addum\\
+QIT$
+

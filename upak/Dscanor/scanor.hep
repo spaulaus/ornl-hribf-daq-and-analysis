@@ -1,0 +1,298 @@
+$$$$CON  - For Contents ..................................................
+--------------------------------------------------------------------------
+Contents
+--------------------------------------------------------------------------
+Type: h SET  - For Commands Related Setup and Initialization
+
+Type: h VMET - For Commands Related to Use of 100 Hertz VME Clock
+
+Type: h IN   - For Commands Related to Input Open and Close Operations
+
+Type: h REC  - For Commands Related to Record Location, REW, FIND, etc
+
+Type: h RUN  - For Commands Related to Running (actual processing)
+
+Type: h CMD  - For Commands Related Command File Operation
+
+Type: h DISP - For Commands which Display Data Records & Count Sums
+
+Type: h MISC - For Miscellaneous Commands
+
+Type: h NEW  - For New Features (text excerpted from scanor.doc)
+
+$$$$SET  - For Commands Related Setup and Initialization .................
+--------------------------------------------------------------------------
+Commands Related Setup and Initialization
+--------------------------------------------------------------------------
+UCOM TEXT        Send TEXT to USERCMP
+
+GATE ID LO HI    Interactively specify 1-D gate (ID = 1 to 1000)
+GAT  file.gat    Open and read 1-D gates from file.gat (which contains a
+                 number of GATE entries as defined above)
+GATZ             Reset all previously defined gates to "impossible"
+STAT GATE        Displays/logs currently defined gates
+
+BAN  file.ban    Open and read in bananas from file.ban
+BANZ             Zero (reset) in-memory banana list
+
+SWAB             Turn byte-swap ON
+SWOF             Turn byte-swap OFF (default)
+
+RECL N           Set tape data record length to N-bytes (dflt = auto-detect)
+                 (see Handbook SEC# 300.140 for discussion)
+
+L001 NSKIP,NPPE  Specify L001 input format (see Handbook SEC# 300.060)
+L002             Specify L002 input format 
+L003             Specify L003 input format (default)
+
+LON              Turns output to scanu.log ON  (default)
+LOF              Turns output to scanu.log OFF 
+
+WAIT NSEC        Waits NSEC seconds (allowed range NSEC = 1 to 300)
+
+STAT             Displays current status (options chosen, open files, etc
+
+$$$$VMET - For Commands Related to Use of 100 Hertz VME Clock ............
+--------------------------------------------------------------------------
+Commands Related to Use of 100 Hertz VME Clock
+--------------------------------------------------------------------------
+CLID IDHI IDLO  Specifies ID numbers (Hi & Lo parts) for 100 Hertz clock
+                (these are the IDs specified by $CID in the PAC-file)
+                RDI will now show VME clock for first event of data buffer
+
+CLID            Without IDs will remove ID specifications
+
+CLIM MIN  MAX   Specifies Min & Max value of 100 Hertz clock for which
+                processing is to be executed. (see \b\Note-1\\)
+
+CLIM            Without MIN, MAX data will remove specification
+
+CLBF            Enables  buffer-by-buffer limit testing by scanor
+                Disables event-by-event   limit testing by user
+
+CLEV            Enables  event-by-event   limit testing by user (default)
+                Disables buffer-by-buffer limit testing by scanor
+
+CLLO VMET       Locates the LDF record "containing" specified VME-time
+                (see \b\Note-1 & Note-2)
+
+                See Handbook SEC# 320.075 for a discussion of these
+                features.
+$$$$IN   - For Commands Related to Input Assignment ......................
+--------------------------------------------------------------------------
+Commands Related to Input Open and Close Operations
+--------------------------------------------------------------------------
+TAPE rxxx  Assign input to tape unit   - (rxxx = rmt0, rmt1, ..etc)
+
+FILE NAME  Assign input to file NAME   - (must be standard ldf-file)
+LDF  NAME  Assign input to file NAME   - (must be standard ldf-file)
+UDF  NAME  Assign input to file NAME   - (special user-data-file)
+
+FILE /mnt/cdrom0/NAME ;NAME of ldf-file from CD     on CD  drive (top)
+FILE /mnt/cdrom1/NAME ;NAME of ldf-file from CD/DVD on DVD drive
+
+SHM  VMEx  Assign input to SHM channel - VMEx = VME1, VME2, VME3, ....
+IPC  VMEx  Assign input to SHM channel - VMEx = VME1, VME2, VME3, ....
+ACQ  VMEx  Assign input to SHM channel - VMEx = VME1, VME2, VME3, ....
+
+CLOS       Close currently open input file/dev/segment whatever it is
+
+CLUN       Close and unload input tape
+
+
+STAT       Displays current status (options chosen, open files, etc
+
+$$$$REC  - For Commands Related to Record Location, REW, FIND, etc .......
+--------------------------------------------------------------------------
+Commands Related to Record Location, REW, FIND, etc
+--------------------------------------------------------------------------
+REW        Rewind input tape/file
+BR   N     Backspace N-records on input tape/file
+FR   N     Forward   N-records on input tape/file
+BF   N     Backspace N-files   on input tape/file
+FF   N     Forward   N-files   on input tape/file
+FIND ID    Find HEADER # ID
+
+$$$$RUN  - For Commands Related to Running (actual processing) ...........
+--------------------------------------------------------------------------
+Commands Related to Running (actual processing)
+--------------------------------------------------------------------------
+ZERO       Zero HIS-file & reset all POINTERS
+Z I,J...   Zero individual histogram IDs I,J...
+Z I to J   Zero histogram IDs I to J in steps of 1
+Z I to J,k Zero histogram IDs I to J in steps of K
+Z          Repeats last Z-list
+
+ZBUC       Zero BUFFER-counter (record counter)
+GO         START/CONT process (stops on EOF,EOM or ERROR)
+GO   N     Process N-files (skip bad records)
+GO   N,M   Process N-files or M-recs - 1st to occur
+GOEN       START/CONT process - unloads tape and ends
+GOEN N     START/CONT process - unloads tape and ends
+GOEN N,M   Process N-files or M-recs - 1st to occur
+HUP        Updates HIS-file but does not terminate
+CTRL/C     Interrupts tape processing and waits for next typed CMD
+END        END gracefully - update HIS-file & END
+KILL       Abort program  - no update!!
+
+$$$$CMD  - For Commands Related Command File Operation ...................
+--------------------------------------------------------------------------
+Commands Related Command File Operation
+--------------------------------------------------------------------------
+CMD  FIL   Assign FIL.CMD as CMD-file (not read yet)
+
+CCMD       Continue reading instructions from FIL.CMD
+
+CLCM       Cont with last CMD from FIL.CMD (backspaces)
+
+CCON       Continue (reading instructions from CON:)
+
+$$$$DISP - For commands which display Data-records and Count Sums ........
+--------------------------------------------------------------------------
+Commands Which Display Data-records and Count Sums
+--------------------------------------------------------------------------
+SUM         Displays all Histogram IDs & Associated Count Sums
+
+RDI  N      Read    N records from input tape or file
+
+PEV  IA,IB  Print   16-bit word IA thru IB in EVENT format (integer)
+DEV  IA,IB  Display 16-bit word IA thru IB in EVENT format (integer)
+
+PEVZ IA,IB  Print   16-bit word IA thru IB in EVENT format (hex)
+DEVZ IA,IB  Display 16-bit word IA thru IB in EVENT format (hex)
+
+PZ   IA,IB  Print   16-bit word IA thru IB in HEX   format
+DZ   IA,IB  Display 16-bit word IA thru IB in HEX   format
+
+PA   IA,IB  Print   16-bit word IA thru IB in ASCII format
+DA   IA,IB  Display 16-bit word IA thru IB in ASCII format
+
+PI   IA,IB  Print   16-bit word IA thru IB in INT*2 format
+DI   IA,IB  Display 16-bit word IA thru IB in INT*2 format
+
+PIF  IA,IB  Print   32-bit word IA thru IB in INT*4 format
+DIF  IA,IB  Display 32-bit word IA thru IB in INT*4 format
+
+$$$$MISC - For Miscellaneous Commands ....................................
+--------------------------------------------------------------------------
+Miscellaneous Commands
+--------------------------------------------------------------------------
+MSG  TEXT        - Display TEXT (44 bytes) on CON: (VDT)
+$$$$NEW  - For New Features (excerpted from scanor.doc)
+--------------------------------------------------------------------------
+Discription of new features (excerpted from scanor.doc)
+--------------------------------------------------------------------------
+U320.075  Commands Related to VME 100 Hertz Clock
+ 
+CLID IDHI IDLO  Specifies ID numbers (Hi & Lo parts) for 100 Hertz clock
+                (these are the IDs specified by $CID in the PAC-file)
+                RDI will now show VME clock for first event of data buffer
+ 
+CLID            Without IDs will remove ID specifications
+ 
+CLIM MIN  MAX   Specifies Min & Max value of 100 Hertz clock for which
+                processing is to be executed. (see Note-1)
+ 
+CLIM            Without MIN, MAX data will remove specification
+ 
+CLBF            Enables  buffer-by-buffer limit testing by scanor
+                Disables event-by-event   limit testing by user
+ 
+CLEV            Enables  event-by-event   limit testing by user (default)
+                Disables buffer-by-buffer limit testing by scanor
+ 
+CLLO VMET       Locates the LDF record "containing" specified VME-time
+                (see Note-1 & Note-2)
+===========================================================================
+ 
+Note-1 Since 9 or 10 digit numbers are hard to read (at least for me)
+I display the 100 Hertz clock values with commas. For example the number
+1234567890 is displayed as 1,234,567,890
+You are also allowed to enter the CLIM & CLLO parameters MIN, MAX & VMET
+in a similar manner using any non-numeric character as separators except
+DO NOT USE BLANKS or ! or ;.
+ 
+Note-2 the command CLLO VMET command attempts  to  locate  the  LDF  record
+containing  the  100  Hertz  clock time VMET. It only checks the first time
+found in each record and  unless  the  first  time  happens  to  match  the
+requested  time  it will find the record containing a greater time and back
+up one record.
+ 
+                      Comments Related to Processing
+ 
+If the commands CLID IDHI IDLO, CLIM MIN MAX &  CLEV  are  given  then  the
+user  may  scan  a  specified  time interval of an LDF-file. This is how it
+works. In routine HISSUB, call UNPACKL, UNPACKAA or UNPACKBB to  return  an
+event  list  in  (IDLST(*),  DALST(*), NPAR=# of parameters) or an expanded
+event in array EXPEV(*). (see SEC#150) Then:
+ 
+       CALL VMETCHEKA(IDLST,DALST,NPAR,ISTAT) or
+ 
+       CALL VMETCHEKB(EXPEV,ISTAT)
+ 
+       ISTAT=-1  says VME time of event is below lo-limit
+       ISTAT= 0  says VME time of event is within specified limits
+       ISTAT= 1  says VME time of event is above hi-lomit
+       ISTAT= 2  says VME time of event is not found
+       ISTAT= 3  says CLID or CLIM has not been entered
+ 
+To abort the scan (when hi-limit is exceeded for example):
+ 
+       CALL SCANSTOP
+ 
+If the commands CLID, CLIM & CLBF are all given, time checking  is  carried
+out  by  scanor  itself but only on a buffer-by-buffer basis. I.E. only the
+first event in the input buffer is time-checked.
+
+U320.330  Processing of User Defined Files - UDFs
+ 
+Support  is  provided  for the processing of non-scandard event data files.
+Such files might be generated via simulations or from some other source.  I
+will call such files User Defined Files or just UDFs.
+ 
+Please  don't  confuse  this  usage  of  UDF  with  that refered to in SEC#
+320.310 "Creation of DVDs & CDs". I chose the acronym to be similar to  LDF
+without  being  aware  of  it's  other usage. If its too confusing, I could
+change it.
+ 
+The commands:
+ 
+UDF filename      ;Opens the UDF for sequential access reading
+                  ;and sets flags for UDF processing
+ 
+UDF filename RECL ;Opens the UDF for direct access reading with
+                  ;record length = RECL
+                  ;and sets flags for UDF processing
+ 
+A number of special routines are brought into play. Depending  on  specific
+requirements, one or more of these routines must be customized by the user.
+There are three routines that may need to be customized. These are:
+ 
+UDFOPEN  which  opens  the  UDF for the type of access required for reading
+       (sequential, direct, etc). The default version opens the file  as  a
+       formatted (ASCII) file to be read sequentially.
+ 
+UDFHAN  processes the positioning commands REW, FR, & BR which provides for
+       REWIND, BACK-RECORD and FORWARD-RECORD operations.
+ 
+UDFEVENT reads the UDF and returns one  event  per  call  in  the  form  of
+       INTEGER*4  ID  and  DATA arrays. These event arrays are then used to
+       build standard L003 buffers. This routine will most  certainly  need
+       to be customized, however, it is probably the only one which does.
+ 
+The archive for default routines are in /usr/hhirf/scanorlib.a
+ 
+The source  for default routines are in /tera/milner/DDgnu/Dscanorlib/
+ 
+In  order to use the UDF support, the user must understand the structure of
+the UDF and be able to:
+ 
+o......Modify UDFOPEN to be compatible with the reading requirements,
+ 
+o......Modify UDFEVENT so as to read the UDF and return one event per call.
+ 
+ 
+The template (default) UDF support routines are internally  documented  and
+listed in SEC# 330 of scanor.doc.
+
+

@@ -1,0 +1,170 @@
+RPD$075066001
+CHP$U910  TXX - Text Formatting - WTM
+NPS$01
+TPF$
+CEB$
+A TEXT FORMATING PROGRAM FOR LINE PRINTER OR LN03 
+CY1$
+Section  Contents
+ 
+    010  Introduction
+ 
+    020  Directives for Setup Which Contain Data
+ 
+    030  Directives for Setup Which Contain no Data
+ 
+    040  Directives for Processing text
+ 
+    050  Text Imbedded Directives for Bold & Underline
+ 
+    060  How to Use on VAX
+ 
+    070  How to Use on a DECstation or SPARCstation
+SEC$.010  Introduction
+BLP$
+TXX manipulates alphameric material
+to form centered and side headings, single lines,
+and left and right justified paragraphs of four styles.
+Pages may be specified to be any length and any width up to 75 characters.
+The input is typed starting in col.
+1 and ending in any column up to 80.
+No word should be broken (continued from one line to the next)
+in the input text.
+Text formating is specified by the use of a number of
+\u\case\\ \u\insensitive\\ directives. 
+The first line processed by TXX must contain a directive
+as must the last line.
+Only the first 4 characters of a directive line (i. e. the directive itself)
+is processed unless stated otherwise in the following list. The following
+directives are recognized:
+SEC$.020  Directives for Setup Which Contain Data
+CY1$
+ \B\RPD$IIIJJJKKK\\
+FIP$
+Says set page dimension to be III characters wide and JJJ
+lines long. KKK specifies the next page number to use.
+If KKK is left blank, the page number sequence is unchanged.
+The default values are III=75, JJJ=56 and KKK=1.
+CY1$
+ \B\RSH$IIJJ\\
+FIP$
+Says shift pages alternately II and JJ spaces to the right
+(starting with II) - default is II=JJ=3
+CY1$
+ \B\RND$JJ\\  Sets indent or "outdent" to JJ spaces (default=7).
+CY1$
+ \B\NPS$JJ\\  Sets # of blank lines after page label to JJ (default=0).
+CY1$
+ \B\CHP$AAAA  Chapter Label\\ 
+FIP$
+Says set chapter# to AAAA - the first 4 characters following CHP$.
+AAAA is inserted in the Section Labels as described below.
+AAAA and Chapter Label are used in page labels.
+TPF$
+SEC$.020  Directives for Setup Which Contain Data (continued)
+CY1$
+ \B\SEC$NUM  Section Label\\
+FIP$
+Says replace the 4 characters \B\SEC$\\ with Chapter# (AAAA).
+and print the resulting line image in \bu\BOLD UNDERLINED\\ characters.
+SP1$
+SEC$.030  Directives for Setup Which Contain no Data
+CY1$
+ \B\NAS$\\  Says turn OFF automatic spacing       (see \b\Note-1\\)
+ \B\ASP$\\  Says turn ON  automatic spacing       (default)
+ \B\NPL$\\  Says turn OFF automatic page labeling (see \b\Note-2\\)
+ \B\PGL$\\  Says turn ON  automatic Page labeling (default)
+ \B\TPF$\\  Says do top-of-form (page eject)      (see \b\Note-2\\)
+ \B\TOF$\\  Same as TPF$
+ \B\TON$\\  Says process TOF$ & TPF$ directives   (default)
+ \B\NOT$\\  Says ignore  TOF$ & TPF$ directives
+ \B\SIN$\\  Says use single spaced printing       (default)
+ \B\DBL$\\  Says use double spaced printing
+ \B\SPN$\\  Says print N blank lines (N=1,9)
+ \B\BON$\\  Turns BOLD      ON  for subsequent lines, paragraphs, etc.
+ \B\BOF$\\  Turns BOLD      OFF for subsequent lines, paragraphs, etc.
+ \B\UON$\\  Turns UNDERLINE ON  for subsequent lines, paragraphs, etc.
+ \B\UOF$\\  Turns UNDERLINE OFF for subsequent lines, paragraphs, etc.
+ \B\JON$\\  Turns right-justify of paragraphs ON  (default)
+ \B\JOF$\\  Turns right-justify of paragraphs OFF
+ \B\QIT$\\  Says end of all text - wrap it up and go home
+ 
+SEC$.040  Directives for Processing text
+CY1$
+ \B\CY1$\\  Says copy input lines to output lines unaltered
+ \B\CYB$\\  Same as CY1$ except prints \B\bold\\
+ \B\COV$\\  Says copy input lines "verbatim" until \B\COF$\\ encountered
+ \B\COF$\\  Says turn off "verbatim" copy
+ \B\CEN$\\  Says center contents of each input line on specified page
+ \B\CEB$\\  Same as CEN$ except prints \B\bold\\
+ \B\INP$\\  Forms an    indented paragraph of following text
+ \B\BLP$\\  Forms a        block paragraph of following text
+ \B\ODP$\\  Forms an   outdented paragraph of following text
+ \B\FIP$\\  Forms fully indented paragraph of following text
+------------------------------------------------------------------------
+BLP$
+\B\Note-1:\\ Text processing directives (\B\CY1$\\ 
+thru \B\FIP$\\, above)
+automatically insert one blank line unless otherwise requested
+by the \B\NAS$\\ directive.
+BLP$
+\B\Note-2:\\ The \b\TPF$ (or \b\TOF$\\) directive normally starts a new page
+and labels it with the date, text from the \b\CHP$\\ directive and
+a page number. The \b\NPL$\\ directive turns off page labeling.
+TPF$
+SEC$.050  Text Imbedded Directives for Bold & Underline
+COV$
+\B\ or \b\    ;Turns BOLD      ON  within a line or paragraph
+
+\U\ or \u\    ;Turns UNDERLINE ON  within a line or paragraph
+
+\BU\ or \bu\  ;Turns BOLD and UNDERLINE ON
+ 
+\UB\ or \ub\  ;Turns BOLD and UNDERLINE ON
+
+\\            ;Turns both OFF (back to state specified by BON$, 
+              ;BOF$, UON$, UOF$, etc)
+ 
+COF$
+SEC$.060  How to Use on VAX
+BLP$
+Create a text file, \b\text.doc\\ for example (the .doc filename
+extension is required). Don't forget to end with QIT$.
+CYB$ 
+Type:  @U1:[MILNER]TXXL text   ;For automatic listing on LASER3
+FIP$
+Processes text.doc, responding to all
+directives \b\including bold &\\ \bu\underline.\\
+A formatted file \b\text.txx\\ is produced and submitted for
+print/delete on LASER3.
+CYB$
+Type:  @U1:[MILNER]TXXP text   ;To generate text.txx
+FIP$ 
+Processes text.doc, responding to all
+directives \b\except bold &\\ \bu\underline.\\
+A formatted file \b\text.tex\\ is produced
+which can be printed on any printer or 
+viewed on the screen, etc.
+SP3$
+SEC$.070  How to Use on a DECstation or SPARCstation
+BLP$
+Create a text file, \b\text.doc\\ for example (the .doc filename
+extension is required). Don't forget to end with QIT$. Assuming
+that the path to the \b\txx\\ executable is appropriately defined:
+CYB$ 
+Type: txx text X    ;To generate text.txx 
+FIP$
+Processes text.doc, responding to all
+directives \b\including bold &\\ \bu\underline.\\
+A formatted file \b\text.txx\\ is produced
+which can be printed on an LN03 laser
+printer, etc.
+CYB$
+Type: txx text      ;To generate text.tex
+FIP$ 
+Processes text.doc, responding to all
+directives \b\except bold &\\ \bu\underline.\\
+A formatted file \b\text.tex\\ is produced
+which can be printed on any printer or 
+viewed on the screen, etc.
+QIT$

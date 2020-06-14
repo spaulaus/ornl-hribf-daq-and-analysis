@@ -1,0 +1,99 @@
+$$$$CON  - FOR HELP CONTENTS
+Type: h CMD  for ASAP setup and fit commands     
+Type: h VFN  for explaniation of "variables in filenames"
+Type: h LOOP for loop execution and symbol definition 
+Type: h FIL  for definition of output quantities flagged with FIL$ 
+Type: h TIT  for definition of output quantities flagged with TIT$ 
+Type: h DAT  for definition of output quantities flagged with DAT$ 
+Type: h SAP  for definition of output quantities flagged with SAP$ 
+$$$$CMD  - For ASAP setup and fit commands ...........................    
+IN    FIL.EXT    Specify input data file (EXT = spk or his)
+CMD   FIL        Open and process commands from FIL.cmd    
+TIT   TITLE      Enter a TITLE for plots                   
+ECAL  A,B        Energy calibration - E=A+B*(channel#)     
+KWD   N          See HANDBOOK (usually N=2*FWHM).....8=DFLT
+WCAL  A,B        Peak-width=A+B*SQRT(chan#)....A,B=4,0 DFLT
+BIAS  STD        Peak-detect threshold.............3.0=DFLT
+DEL   DX,WDNC    Step size for pos & width....0.0,0.05=DFLT
+KFIT  KIND       Kind of FIT (GAUS OR SUMA).......GAUS=DFLT
+KBAK  KIND       Kind of BGD (FULL,FAST,ZERO).....FULL=DFLT
+BSTD  STD        See HANDBOOK (STD DEV for BGD)....2.0=DFLT
+MPIS  N          Max # Peaks/section (MAX-N=16)......8=DFLT
+VW    KIND       Width variation (NONE,LOCK,FREE) LOCK=DFLT
+FIT   ID,LO,HI   FIT spect# ID   (chans LO thru HI)        
+Ctrl/C           To interrupt fit in progress              
+END              Ends program
+$$$$VFN  - For explaniation of "variables in filenames" ..............
+One symbol (integer variable) may be incorporated in a FILENAME
+specification as the following examples illustrate:
+......................................................................
+SYM=3
+OU FIL"SYM".SPK,NEW  ;Creates and opens FIL3.SPK
+......................................................................
+I=0 
+LOOP 3
+I=I+1
+IN FIL"I".SPK        ;Opens (in succession)  FIL1.SPK, FIL2.SPK, FIL3.SPK
+.   
+.   
+ENDLOOP
+......................................................................
+$$$$LOOP - For loop execution and symbol definition ..................
+Commands related to LOOP execution and SYMBOL definition .............
+SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                 - symbols M, N, O, P, Q, R, S are reserved
+                 - expression syntax is same as in CHIL
+                 - no imbedded blanks are allowed in expressions
+                 - symbols may contain up to 4 characters (5-8 ignored)
+    
+DSYM             - Displays list of currently defined sumbols & values
+    
+LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+CMD  ....        - Nesting supported
+CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+ENDL             - Defines end-of-loop
+                 - KILL (entered before ENDL) kills LOOP
+                 - Ctrl/C - aborts loop-in-progress
+                 - opening of CMD-file within a LOOP not allowed
+$$$$FIL  - For definition of output quantities flagged with FIL$ .....
+MO/DA/YR HR:MN:SC - Month, day, year, hour, minute, second of run
+
+filename          - Name of file from whence spectrum was read
+ 
+Format is:  (1H ,4X,2(I2,1H/),I2,2X,2(I2,1H:)I2,4X,20A4,9X,'FIL$') 
+            If line is read on FORMAT(30A4), FIL$ flag is in word-30
+$$$$TIT  - For definition of output quantities flagged with TIT$ .....
+Title       Entered by usr at ASAP run time
+ 
+Format is:  (1H ,4X,19A4,35X,'TIT$')
+            If line is read on FORMAT(30A4), TIT$ flag is in word-30
+$$$$DAT  - For definition of output quantities flagged with DAT$ .....
+ID          Spetrum or histogram ID number
+ILO         First channel # of peak search range (LO from FIT cmd)
+IHI         Last  channel # of peak search range (HI from FIT cmd)
+KWD         A "width parameter" (see HANDBOOK)
+BIAS        Peak-detect threshold (in standard deviation units)
+KEV/CH      Energy calibration (the B from ECAL command)
+E0          Energy calibration (the A from ECAL command)
+FW          Initial width parameter (the A from WCAL command)
+FWB         Initial width parameter (the B from WCAL command)
+WDNC        Peak width    step size (in fractional units)
+DX          Peak position step size (in channel   units)
+VW          Width variation flag (NONE, LOCK, FREE)
+BSTD        Background control parameter for Sum-Area (see HANDBOOK)
+Format is:  (1H ,4I6,7F8.4,4X,A4,F8.4,I8,11X,'DAT$')
+            If line is read on FORMAT(30A4), DAT$ flag is in word-30
+$$$$SAP  - For definition of output quantities flagged with SAP$ .....
+SAREA       Sum-area (see HANDBOOK for computation details)
+ERR         Estimated error (via counting statistics with BGD subtraction)
+GAREA       Gaussian-area from fitting process
+ERR         Estimated error from quality-of-fit, etc.
+AFWHM       Adjusted full-width at half-maximum from non-linear search
+XG          Gaussian peak position from non-linear search (found in fit)
+CENTROID    Peak centroid (see HANDBOOK)
+EGAM        Peak energy from CENTROID, E0 and KEV/CH
+100(S-G)/S  100*(SAREA-GAREA)/SAREA
+**          Says SAREA & GAREA differ by more than "uncertainties predict"
+ID          Spectrum or histogram ID   
+Format is:  (1H ,9F10,1X,A2,3X,I8,11X,'SAP$') 
+            If line is read on FORMAT(30A4), SAP$ flag is in word-30

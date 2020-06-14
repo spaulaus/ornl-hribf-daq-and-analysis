@@ -1,0 +1,1524 @@
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   1
+ 
+ 
+                   Comprehensive HIstogramming Language - CHIL
+ 
+ 
+   Sec Page Contents
+ 
+ 
+ 
+   010   2  How to Compile A CHIL Program
+ 
+   020   3  Introduction
+ 
+   030   4  CHIL Syntax - List
+ 
+   040   7  CHIL Syntax - General Rules
+ 
+   050   8  Parameter Lengths
+ 
+   060   9  Parameter Names
+ 
+   070  10  Gates - Simple    (Lo-limit, Hi-limit Pairs)
+ 
+   080  11  Gates - Simple    (Mapped)
+ 
+   090  12  Gates - Free-form (Bananas)
+ 
+   100  13  IF-statements and Computed GO TOs
+ 
+   110  14  Bit-tests
+ 
+   120  15  Histogram - Bits/channes
+ 
+   130  15  Histogram - ID Numbers
+ 
+   140  15  Histogram - Titles
+ 
+   150  16  Histogram - Statements
+ 
+   160  18  Loops
+ 
+   170  19  Symbol & Expressions
+ 
+   180  20  Pre-scanning - Considerations
+ 
+   190  21  User-Supplied Subroutines
+ 
+   200  23  How to Create Customized CHIL-based Processes
+ 
+   210  24  Directory File - Structure
+ 
+   220  25  Examples
+ 
+   230  30  Comments and warnings
+ 
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   2
+ 
+ 
+ 
+   U350.010  HOW TO COMPILE A CHIL PROGRAM
+ 
+   If  chil  is defined in your .login or .cshrc files, you may compile a CHIL
+ 
+   program by typing:
+ 
+ 
+ 
+ 
+   chil cfile              ;For compilation with listing on cfile.prt
+ 
+ 
+ 
+   chil cfile OP,OP,..     ;For compilation with options
+ 
+ 
+ 
+ 
+   Where, cfile denotes the filename  prefix  of  a  source  file  whose  name
+ 
+   extension must be .chl (you don't type the .chl part) and:
+ 
+ 
+   OP = NOT  Says no his-table listing
+ 
+   OP = NOS  Says no source    listing
+ 
+   OP = MIL  Says mil-code listing (for developers only)
+ 
+ 
+   Two  other  files,  cfil.drr  &  cfil.mil,  are  created or overwritten, at
+ 
+   chil-time. If cfil.his does not exist, you will be prompted  at  "scan  run
+ 
+   time" for permission to create it.
+ 
+ 
+   ---------------------------------------------------------------------------
+ 
+ 
+   Note: that all filename extensions (.chl, .drr, .mil, .his) are lower case.
+ 
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   3
+ 
+ 
+ 
+   U350.020  INTRODUCTION
+ 
+   CHIL  is a histogramming language used for writing data processing programs
+ 
+   for both on-line (for data acquisition) and off-line  (for  tape  scanning)
+ 
+   analysis. Some features of CHIL-based processing programs are listed below.
+ 
+ 
+   (1)  Both simple and free-form gating accomodated.
+ 
+   (2)  Input of simple gate lists from files (created graphically).
+ 
+   (3)  IF-statements   of the form - IF (CONDITION) DEST-LABEL
+ 
+   (4)  Computed-GOTO's of the form - IF (COND-SET)  L1,L2,L3,L4..
+ 
+   (5)  Bit testing and branching.
+ 
+   (6)  Loops (no nesting).
+ 
+   (7)  Histograms of dimensionality as large as 4 may be specified.
+ 
+   (8)  Histogram dimensions not restricted to a power of 2.
+ 
+   (9)  Any mixture of legal histogram dimensions may be specified.
+ 
+   (10) Histograms may be any combination of 16- or 32-bits/channel.
+ 
+   (11) Use of Parameter-names as well as Parameter-numbers in CHIL programming.
+ 
+   (13) Multiple USERSUBS (up to 3) called from CHIL at will.
+ 
+   (14) Up to 3 output data-streams from LEMO-based prescan programs.
+ 
+   (15) Specification of TITLES for individual histograms supported.
+ 
+   (16) Specification of ID's   for individual histograms supported.
+ 
+   ---------------------------------------------------------------------------
+ 
+ 
+   For this version:
+ 
+   Maximum number of parameters supported                 = 2000
+ 
+   Maximum histogram size (if scan-time memory available) = 512 megachannels
+ 
+   Maximum number of bananas (from one file only)         = 880
+ 
+   Maximum banana space (in 256-channel banana units)     = 864
+ 
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   4
+ 
+ 
+   U350.030  CHIL SYNTAX - DEFINITIONS AND ASSIGNMENTS
+ 
+   $LSTL = LENG                      ;Specify Tape Record Length (bytes)
+   $NPR = NPAR                       ;NPAR =Max# Parms (RAW+GENERATED)
+ 
+   $LPR IPA TO IPB,IS  = LENG        ;Specify Parm Lengths (loop)
+   $LPR IPA TO IPB     = LENG        ;Specify Parm Lengths (loop)
+   $LPR IP1,IP2,IP3,.. = LENG        ;Specify Parm Lengths (list)
+   ---------------------------------------------------------------------------
+   $BAN (LENG) ID1,ID2,ID3 ......... ;Specify BAN-ID's to get from file
+   $BAN (LENG) IDA,IDB,IDC ......... ;Determines stacking order
+   $BAN (LENG) ..................... ;LENG must match that from file
+ 
+   $BAF filename.ban                 ;Specify ban-file to process
+                                     ;Must follow $BAN specification
+   ---------------------------------------------------------------------------
+   $GAT (ISN,NG) (ISN,NG) (ISN,NG)   ;Specify (Set#, # of gates)
+   $GAT (ISN,NG) (ISN,NG) (ISN,NG)   ;   ''     ''      ''       ''
+   $GAT ...........................  ;As many lines as required
+ 
+   $MAPF (LENG) ISA,ISB,ISC .......  ;Map Sets ISA,ISB,ISC .........
+                                     ;with length = LENG
+                                     ;must follow $GAT-definition
+ 
+   $GAF filename.gaf                 ;Specify Gate-file to process
+                                     ;Must follow $MAPF spec if any
+   ---------------------------------------------------------------------------
+   $MAPL  LENG,ISN (LO,HI) (LO,HI).. ;Map specific Gate-List with
+   &(LO,HI) (LO,HI) ................ ;SET# = ISN (must be unique)
+   & ............................... ;(any # of continuation lines)
+ 
+   $GLST  LENG,ISN (LO,HI) (LO,HI).. ;Specific unmapped Gate-List with
+   &(LO,HI) (LO,HI) ................ ;SET# = ISN (must be unique)
+   & ............................... ;(any # of continuation lines)
+   ---------------------------------------------------------------------------
+   $DIP SYMA(IV),SYMB(JV)...         ;Define Parameter names & dimensions
+ 
+   $ASS SYM(ISA TO ISB,INC)=JLO,JNC  ;Assign values to Parameter names
+   $ASS SYM(ISA TO ISB)    =JLO,JNC  ;Assign values to Parameter names
+   $ASS SYM(IS1,IS2...)    =JLO      ;Assign value  to Parameter name
+   ---------------------------------------------------------------------------
+   $DIM SYMA(IV),SYMB(JV)...         ;Define name & dimension of symbols
+ 
+   $DAT SYM(ISA TO ISB)    =V1,V2... ;Assign values to symbol names
+   $DAT SYM(IS)            =V1       ;Assign value  to symbol name
+   ---------------------------------------------------------------------------
+   XX=EXPRESSION                     ;Define or re-define scaler XX
+   SYMB(I)=EXPRESSION                ;Set SYMB(I) equal to EXPRESSION
+   ---------------------------------------------------------------------------
+   $HWD ICOD,ICOD,ICOD .....         ;Insert Half-WD code into MIL
+   $FWD ICOD,ICOD,ICOD .....         ;Insert Full-WD code into MIL
+   $H16                              ;Specify 16-bits/channel
+   $H32                              ;Specify 32-bits/channel
+   $HID NUID                         ;Specify next H-ID to use
+   $TEX TEXT                         ;Up to 76 bytes of text
+   $TIT TITLE                        ;Specify title (40 bytes max)
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   5
+ 
+ 
+ 
+   U350.030  CHIL SYNTAX - ASP, IF & CALL STATEMENTS
+ 
+   ASP(IP,IV)                        ;Assign to Parm-IP the value IV
+ 
+   IFU(COND)LABEL                    ;IF COND  unsatisfied, GO TO LABEL
+   IFS(COND)LABEL                    ;IF COND    satisfied, GO TO LABEL
+                                     ;otherwise, drop thru (IFU & IFS)
+ 
+   IFC(CONDITION-SET)   L1,L2,L3.... ;Defines a "Computed GO TO"
+   IFC(GS(P,IS,NA,NB))  L1,L2,L3.... ;IF COND(1) satisfied, GO TO L1
+   IFC(B(PX,PY,IDA,IDB))L1,L2,L3.... ;IF COND(2) satisfied, GO TO L2
+                                     ;IF COND(J) satisfied, GO TO LJ
+                                     ;otherwise, drop through
+                                     ;Limited use inside loop: ref Note-1
+ 
+   IFX(PARM)LABEL                    ;IF PARM       exists, GO TO LABEL
+   IFN(PARM)LABEL                    ;IF PARM    non-exist, GO TO LABEL
+                                     ;otherwise, drop thru (IFX & IFN)
+ 
+   IFP(PARM)L1,L2,L3,,LJ,..........  ;IF PARM = 0         , GO TO L1
+                                     ;IF PARM = 1         , GO TO L2
+                                     ;IF PARM = J-1       , GO TO LJ
+                                     ;otherwise, drop through
+                                     ;Cannot be used inside loops!
+ 
+   BTAB(PARM,MASK)LALL,LSOME,LNONE   ;GO TO LALL,LSOME,LNONE IF
+                                     ;       ALL ,SOME, NONE bits match
+                                     ;Goes to LNONE if Parm non-exist
+                                     ;no drop thru for BTAB
+ 
+   CALL USERSUB1                     ;CALL USERSUB1
+   CALL USERSUB2                     ;CALL USERSUB2
+   CALL USERSUB3                     ;CALL USERSUB3
+ 
+   CALL REPACK1   PA,PB              ;Send Parms PA-PB to Out-Stream-1
+   CALL REPACK2   PA,PB              ;Send Parms PA-PB to Out-Stream-2
+   CALL REPACK3   PA,PB              ;Send Parms PA-PB to Out-Stream-3
+ 
+ 
+   Important Comment on Banana-Gate Specifications - B(PX,PY IDA,IDB)
+ 
+   At a given X-coordinate - Banana IDA+1 must lie above Banana IDA
+ 
+                           - Banana IDA+2 must lie above Banana IDA+1
+ 
+                           - Banana IDA+N must lie above Banana IDA+N-1
+ 
+ 
+   Note-1:  IFC- and IFP-statements may be used inside loops ONLY on the
+   condition that all associated branches are to labels outside the loop.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   6
+ 
+ 
+ 
+   U350.030  CHIL SYNTAX - HISTOGRAM STATEMENTS
+ 
+   THE HISTOGRAM SPECIFICATION STATEMENT TAKES THE GENERAL FORM:
+ 
+   H(I,J..) L(LI,LJ..) "CONDITIONS"
+ 
+   or
+ 
+   H(I,J..) L(LI,LJ..) R(LOI,HII LOJ,HIJ..) "CONDITIONS"
+ 
+   Where:
+ 
+   H(I,J..)                 ;Says histogram Parms I,J..
+ 
+   OH(I,J.)                 ;Says histogram Parms I,J..
+                            ;in previously defined "space"
+ 
+   L(LI,LJ,LK..)            ;Defines histogram "Lengths" (Pwr of 2)
+                            ;Length of Parm-I = LI
+                            ;Length of Parm-J = LJ
+                            ;Length of Parm-K = LK
+ 
+   R(LOI,HII LOJ,HIJ ..)    ;Says select Hist-Parm Range (after
+                            ;shifting) for
+                            ;Parm-I to be LOI thru HII
+                            ;Parm-J to be LOJ thru HIJ
+   ---------------------------------------------------------------------------
+   G(P L,H L,H ..)          ;Explicit Gate-List (P# LO,HI LO,HI ...)
+                            ;(not mapped)
+ 
+   GS(P,IS,NA,NB)           ;Gate-List specified by Set# (IS), Gate#'s
+                            ;(NA,NB) from $GAT, $GLST- or $MAPL-spec.
+                            ;Mapped if included in $MAPF-spec or given
+                            ;in $MAPL-spec and if (NA,NB) specifies
+                            ;full Gate-Set: Otherwise, not mapped.
+ 
+   B(PX,PY,IDA,IDB)         ;Ban-List from ban-file (X-Parm, Y-Parm,
+                            ;list of adjacent Bananas)
+ 
+ 
+   Important Comment on Banana-Gate Specifications - B(PX,PY IDA,IDB)
+ 
+   At a given X-coordinate - Banana IDA+1 must lie above Banana IDA
+ 
+                           - Banana IDA+2 must lie above Banana IDA+1
+ 
+                           - Banana IDA+N must lie above Banana IDA+N-1
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   7
+ 
+ 
+ 
+   U350.040  CHIL SYNTAX - GENERAL RULES
+ 
+                       RULES WHICH APPLY TO ALL STATEMENTS
+ 
+   (1)....All 80 cols of a line may be used.
+ 
+   (2)....A blank line shows up as a blank line on the listing.
+ 
+   (3)....All left and right parenthesis must match.
+ 
+   (4)....A semicolon ";" is used to introduce a "comment field".
+ 
+                 RULES FOR THE $-DIRECTIVE AND EQUATE STATEMENTS
+ 
+   (1)....All $-directives ($NPR, $DIM, $ASS, etc) must start in col-1.
+ 
+   (2)....No continuation of $-directives are allowed except for the
+          $MAPL- and $GLST-statements.
+ 
+   (3)....Equate-directives may start anywhere but shall not be labeled.
+ 
+                         RULES FOR ALL OTHER STATEMENTS
+ 
+   (1)....Statement labels must be contained within cols 1 thru 5 and be
+          no more than 4 characters in length.
+ 
+   (2)....Statement labels may be composed of any combination of numeric
+          and alphabetic characters.
+ 
+   (3)....All statements must start in col-7 or beyond.
+ 
+   (4)....Only the H-statement may be "continued" - any char in col-6.
+          the max number of continuation lines = 19.
+   ---------------------------------------------------------------------------
+   SYNTAX IS RIGID - FOLLOW DOCUMENTATION & EXAMPLES CAREFULLY
+   ---------------------------------------------------------------------------
+ 
+                                    COMMENTS
+ 
+   Meaning of the Assign directive - $ASS SYM(I TO J)=JLO,JNC
+ 
+   This  means  assign  symbols  SYM(I),  SYM(I+1)  ... SYM(J) the values JLO,
+   JLO+JNC, JLO+2*JNC ....
+ 
+   Difference between $DIP and $DIM
+ 
+   Values assigned to symbols dimensioned via the $DIP specification  must  be
+   unique  and in the range 1 through NPAR (the max # Parms given by $NPR). In
+   addition, only those parameters defined by the $DIP specification  will  be
+   represented  by  their  "names" on the histogram summary. Values may not be
+   assigned to $DIP-symbols via an "Equate". None  of  these  rules  apply  to
+   $DIM-symbols.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   8
+ 
+ 
+ 
+   U350.050  PARAMETER LENGTHS
+ 
+   The  "Parameter  Length" defines the maximum value (always a power of 2) to
+   be associated with a given parameter. Parameter Length specifications  must
+   follow the $NPR-statement. The following specification forms are supported:
+ 
+   $LPR IPA TO IPB,IS  = LENG    ;Sets length of parameters (IPA to IPB
+                                 ;in steps of IS) to be LENG.
+ 
+   $LPR IPA TO IPB     = LENG    ;Sets length of parameters (IPA to IPB
+                                 ;in steps of 1) to be LENG.
+ 
+   $LPR IP1,IP2,IP3,.. = LENG    ;Sets length of parameters (IP1,IP2,
+                                 ;IP3,...) to be LENG.
+ 
+   Lengths  may  be  re-specified  as many times as convenient but all lengths
+   must be given at least once before another statement type  is  encountered.
+   The following example illustrates the procedure:
+ 
+   $NPR = 240
+ 
+   $LPR   1 TO 240    = 2048
+ 
+   $LPR 220 TO 222    = 1024
+ 
+   $LPR 229 TO 239,2  = 8192
+ 
+   $LPR 219           = 64
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE   9
+ 
+ 
+ 
+   U350.060  PARAMETER NAMES
+ 
+   Names  (beginning  with  a  letter and up to 8 characters in length) may be
+   associated with some or all parameter numbers and can be used to  reference
+   any parameter, so named, in the CHIL program. Two steps are required.
+ 
+   (1)....First,  the  name  must  appear  in  a   $DIP-statement   (dimension
+          parameter statement) even if it's dimension is to be only unity.
+ 
+   (2)....Values  must  then  be  assigned  to  the  names  by  means  of  the
+          $ASS-statement (assign statement).
+ 
+   The $DIP-statement takes the form:
+ 
+   $DIP NAME1(IV),NAME2(JV),..     ;Where, NAME1, NAME2, .. denotes the
+                                   ;parameter names being defined and
+                                   ;IV, JV, .. denotes the associated
+                                   ;dimension.
+ 
+   The $ASS-statement takes the form:
+ 
+   $ASS NAME1(IA TO IB,IS)=JLO,JNC ;Where, NAME1 denotes the name to
+                                   ;which values are being assigned and
+                                   ;(IA TO IB,IS) defines a loop on the
+                                   ;name index.
+ 
+                                   ;JLO is the first value to assign.
+                                   ;JNC is the value-increment to be
+                                   ;added for successive assignments.
+                                   ;In this case we have:
+ 
+                                   ;NAME1(IA)      = JLO
+                                   ;NAME1(IA+IS)   = JLO+JNC
+                                   ;NAME1(IA+2*IS) = JLO+2*JNC
+ 
+   $ASS NAME2(IA TO IB)  =JLO,JNC  ;Assigns values with index increment
+                                   ;equal to unity.
+ 
+   $ASS NAME2(IC)        =JLO      ;Assigns the value JLO to NAME2(IC)
+ 
+   THE FOLLOWING EXAMPLE ILLUSTRATES:
+ 
+   $DIP NAI(72),TAC(72),GELI(6)    ;Define parameter names & dimensions
+   $DIP TOTK(1)
+ 
+   $ASS NAI(1 TO 72) = 1,3         ;Assign values 1,4,7,10,13 .........
+   $ASS TAC(1 TO 72) = 2,3         ;Assign values 2,5,8,11,14 .........
+   $ASS TOTK(1)      = 219         ;Assign the value 219 to TOTK(1)
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  10
+ 
+ 
+   U350.070  GATES - SIMPLE (LO-LIMIT, HI-LIMIT PAIRS)
+ 
+   Simple gates (i.e.  Lo-Limit,  Hi-Limit  pairs  to  be  imposed  on  single
+   parameters) can be entered in three different ways.
+ 
+   METHOD - 1 ----------------------------------------------------------------
+ 
+   A  single gate of the form: G(PARM LO,HI) may be defined in an IF-statement
+   (IFS or IFU) or an H-statement.  The  H-statement  also  allows  the  form:
+   G(PARM  LO,HI  LO,HI  LO,HI ..) - i.e multiple gates on a single parameter.
+   Here, PARM denotes the test-parameter number or name and LO,HI denotes  the
+   pair  of  limits  to be imposed. Gates entered in this way must be given in
+   terms of the raw test-parameter length.
+ 
+   METHOD - 2 ----------------------------------------------------------------
+ 
+   Multiple gates may also be entered by means of  the  $GLST-statement  which
+   takes the form:
+ 
+   $GLST LENG,ISN LO,HI LO,HI LO,HI .....
+ 
+   Where,  LENG  represents the Parameter-Length on which the limits are based
+   and ISN  the  Set-Number  by  which  this  particular  Gate-Set  is  to  be
+   referenced.  In this case, limits do not have to be entered on the basis of
+   the raw test-parameter length.
+ 
+   METHOD - 3 ----------------------------------------------------------------
+ 
+   Gate-Sets may also be read from a disk file  generated  by  program  GATLIN
+   which  allows one to define gates interactively. Input of gates from such a
+   file requires two types of statements:
+ 
+   $GAT (ISN,NG) (ISN,NG) ....
+   and
+   $GAF filename.gaf           ;The .gaf-extension is required
+ 
+   The $GAT-statement specifies which Gate-Set ID's (denoted by  ISN)  are  to
+   be  read  from  the file and the maximum number of gates (denoted by NG) to
+   be read from each Gate-Set. Note: that the file may actually  contain  more
+   or  less gates per Set than is specified. If it contains less, the "excess"
+   gates are set to "impossible". If it  contains  more,  only  the  first  NG
+   gates  are  read  in.  The  length  basis on which the gates are defined is
+   provided automatically by GATLIN. The $GAF-statement specifies the name  of
+   the file to be processed
+ 
+                               IMPORTANT COMMENTS
+ 
+   Gates entered via METHOD-2 or -3 may only be used in H-statements  and
+   Computed  GOTO's (IFC-statements) and are referenced by Set# (ISN) and
+   a Gate# range (NA thu NB) as follows.
+ 
+   GS(PARM,ISN NA,NB)
+ 
+   Gates must be entered in increasing order and cannot overlap.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  11
+ 
+ 
+   U350.080  GATES - SIMPLE (MAPPED)
+ 
+   If  a large number (5 or more) gates are to be imposed on a given parameter
+   (in an H-statement), processing  will  proceed  faster  if  the  gates  are
+   "mapped". This may be accomplished in two ways:
+ 
+   METHOD - 1 ----------------------------------------------------------------
+ 
+   One  may  specify the gates to be mapped by means of the $MAPL-statement as
+   follows:
+ 
+   $MAPL LENG,ISN  LO,HI LO,HI LO,HI .........................................
+   & ............ as many continuation lines as required .....................
+ 
+   Where, LENG represents the Parameter-Length on which the limits  are  based
+   and  ISN  the  Set-Number  by  which  this  particular  Gate-Set  is  to be
+   referenced. In this case, limits do not have to be entered on the basis  of
+   the raw Test-Parameter length.
+ 
+   METHOD - 2 ----------------------------------------------------------------
+ 
+   Gate-Sets  may  also  be  read from a disk file generated by program GATLIN
+   which allows one to define gates interactively. Mapping of gates from  such
+   a file requires three types of statements given in the order shown below:
+ 
+   $GAT  (ISN,NG) (ISN,NG) ........
+   $MAPF LENG ISA,ISB,ISC  ........
+   $GAF  filename.gaf               ;The .gaf-extension is required
+ 
+   The  $GAT-statement  specifies  which Gate-Set ID's (denoted by ISN) are to
+   be read from the file and the maximum number of gates (denoted  by  NG)  to
+   be  read  from each Gate-Set. Note: that the file may actually contain more
+   or less gates per set than is specified. If it contains less, the  "excess"
+   gates  are  set  to  "impossible".  If  it contains more, only the first NG
+   gates are read in.
+ 
+   The $MAPF-statement specifies which of these Gate-Sets  are  to  be  mapped
+   (ISA,  ISB  ..  etc) and gives the length basis LENG on which mapping is to
+   be done. Note: This can be different from the basis  on  which  gates  were
+   entered.
+ 
+   The $GAF-statement specifies the name of the file to be processed
+ 
+                                IMPORTANT COMMENT
+ 
+   Gates  entered  as  described  above  may only be used in H-statements  and
+   Computed  GOTO's (IFC-statements) and are referenced by  Set#  (ISN)  and a
+   Gate# range (NA thu NB) as follows.
+ 
+   GS(PARM,ISN NA,NB)
+ 
+   For  gate  mapping  to  be  used,  the  full  Gate-Set  specified  by   the
+   $GAT-statement or by the $MAPL-statement must be requested by (NA,NB).
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  12
+ 
+ 
+ 
+   U350.090  GATES - FREE-FORM (BANANAS)
+ 
+   Free-Form-Gates  must always be created "outside" of the CHIL program using
+   the   interactive  display  program  RIP  and  stored  on  a  special  file
+   (ban-file). Incorporation of  such  Free-Form-Gates  into  a  CHIL  program
+   requires one or more statements of the following form:
+ 
+   $BAN  LENG  IDA,IDB,IDC ....
+ 
+   The  $BAN-statement specifies which Banana ID-numbers (IDA, IDB ...) are to
+   be retrieved from the ban-file and gives the X-length basis LENG  on  which
+   they  were  constructed  or  will be constructed. At this time space is set
+   aside to accommodate Free-Form-Gates which are to be processed.
+ 
+   The ban-file to be processed may be specified in the CHIL program  or  this
+   specification  may  be  deferred  until run-time. Specification in the CHIL
+   program takes the following form:
+ 
+   $BAF filename.ban        ;The .ban-extension is required
+ 
+   If the $BAF-statement is not included in the CHIL program or if it  desired
+   to  process  a  new or modified ban-file at run-time, the following command
+   may be issued to the monitor task or scan program.
+ 
+   NUBAN  filename.ban
+ 
+   At such time, all Free-Form-Gates are reset to "impossible" and  the  given
+   file is processed to provide a new set.
+ 
+                                    COMMENTS
+ 
+   (1)....The  length given in the $BAN-statement must match that contained in
+          the ban-file.
+ 
+   (2)....Any ID-numbers specified in the $BAN-statement but not found in  the
+          ban-file  will  be  left  set  to  "impossible"  and  a  "not found"
+          diagnostic message will be issued when such file is processed.
+ 
+   (3)....If no $BAF-statement is entered at CHIL-time,  no  comment  will  be
+          made - you will find out sooner or later, I guess.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  13
+ 
+ 
+   U350.100  IF-STATEMENTS AND COMPUTED GOTO'S
+ 
+   CHIL supports IF-statements of the following forms: -----------------------
+ 
+   IFS(CON)LABEL           ;IF condition CON   satisfied, GO TO LABEL
+   IFU(CON)LABEL           ;IF condition CON unsatisfied, GO TO LABEL
+   IFX(PAR)LABEL           ;IF parameter PAR      exists, GO TO LABEL
+   IFN(PAR)LABEL           ;IF parameter PAR  non-exists, GO TO LABEL
+ 
+   Here,  CON  denotes a single Simple-Gate or a single Free-Form-Gate and PAR
+   denotes a parameter number or name. Note examples below:
+ 
+   IFS(G(1,50,100))100     ;IF gate on Parm-1 (50 thru 100) is
+                           ;satisfied, GO TO statement LABEL 100.
+ 
+   IFU(G(NAI(7),50,100))20 ;IF gate on Parm-NAI(7) (50 thru 100)
+                           ;is not satisfied, GO TO 20.
+ 
+   IFU(B(E(1),DE(1) 1))ZIP ;IF Free-Form-Gate test on X-Parm-E(1) and
+                           ;Y-Parm-DE(1), using Banana-ID# 1, is not
+                           ;satisfied, GO TO the statement labeled, ZIP.
+ 
+   IFN(23) NEXT            ;IF Parm-23 does not exist, GO TO NEXT.
+ 
+   CHIL supports computed GOTO's of the following forms: ---------------------
+ 
+   IFC(COND-SET)L1,L2,L3 ..;COND-SET denotes a Condition-Set
+                           ;If 1st member is satisfied, GO TO L1
+                           ;If 2nd member is satisfied, GO TO L2
+                           ;... etc ..., otherwise, drop through.
+ 
+   IFP(PARM)    L1,L2,L3 ..;PARM denotes a parameter number or name
+                           ;IF PARM = 0,   GO TO L1
+                           ;IF PARM = 1,   GO TO L2
+                           ;IF PARM = J-1, GO TO LJ
+                           ;... etc ..., otherwise, drop through.
+ 
+   The   "Condition   Set"  refered  to  here,  denotes  an  adjacent  set  of
+   Free-Form-Gates (ordered such that at a given X-coordinate,  Banana-N  lies
+   below  Banana-(N+1) which are all of the same "length" and whose ID-numbers
+   are consecutive or a list of Simple Gates which have been specified by  the
+   $GLST-statement  or  defined  by the $GAT-statement and read in from a disk
+   file by the $GAF-statement or the NUGAT command. A couple of  examples  are
+   given below:
+ 
+   IFC(GS(ETOT(1),ISN 1,3)) 10,20,30  ;Test-Parm=ETOT(1), Gate-Set#=ISN
+                                      ;gates 1 thru 3 are to be tested.
+ 
+   IFC(B(10,11 5,8)) 100,200,300,400  ;X-Parm=10, Y-Parm=11, Banana-ID's
+                                      ;5 thru 8 are to be tested.
+ 
+   Note: # of gates or Banana-ID's implied must match number of labels!
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  14
+ 
+ 
+ 
+   U350.110  BIT-TESTS
+ 
+   CHIL  supports  a  bit-test and three-way branch statement of the following
+   form:
+ 
+   BTAB(PARM,MASK)LALL,LSOME,LNONE
+ 
+   where,
+ 
+   PARM denotes the parameter number or name to be  tested  and  MASK  defines
+   the  bits  of  interest.  MASK  can  be,  most  conveniently,  specified as
+   hexadecimal number whose first character must  be  a  decimal  integer  and
+   whose last character must be an "H".
+ 
+   The statement means:
+ 
+   GOTO...the  statement labeled LALL, if all of the bits which are set in the
+          MASK are also set in the Test-Parameter.
+ 
+   GOTO...the statement labeled LSOME, if some  (but  not  all)  of  the  bits
+          which are set in the MASK are also set in the Test-Parameter.
+ 
+   GOTO...the  statement  labeled  LNONE, if none of the bits which are set in
+          the MASK are set in the Test-Parameter.
+ 
+   GOTO...the statement labeled LNONE if the  Test-Parameter  does  not  exist
+          (i.e. has the hexidecimal value FFFF).
+ 
+   There is no "drop through" condition for this test.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  15
+ 
+ 
+ 
+   U350.120  HISTOGRAM - BITS/CHANNEL
+ 
+   The  number of bits per channel used for histogram storage may be set to be
+   either 16 (half word) or 32 (full word). This is accomplished in  the  CHIL
+   program by the following two direstives:
+ 
+   $H16   ;Sets 16-bits/channel - Max count = 65,535 ------ the default
+ 
+   $H32   ;Sets 32-bits/channel - Max count = 4,294,967,303
+ 
+   There  is no restriction on how many such directives may be entered but the
+   user should be aware of the fact  that  each  such  entry  results  in  the
+   histogram  space  required being rounded up to the next integer multiple of
+   32768 16-bit channels (i.e. next multiple of 64 kb). I will say it again.
+ 
+       Each $H16 or $H32 entry rounds up memory required to a multiple of
+                                  64 kilobytes
+ 
+   U350.130  HISTOGRAM - ID NUMBERS
+ 
+   If   you  do  nothing,  histogram  ID-numbers  will  start  at  1  and  run
+   consecutively, however, the beginning of  the  ID-number  sequence  may  be
+   redefined by the following statement:
+ 
+   $HID  ID
+ 
+   Where,  ID  (a  decimal integer of up to 8 digits) denotes the ID-number to
+   be assigned to the next histogram processed. Histogram ID-sequences may  be
+   defined  any  number  of  times in the CHIL program so long as one sequence
+   does not overlap another.
+ 
+   U350.140  HISTOGRAM - TITLES
+ 
+   A title of up to 40 characters may be associated  with  each  histogram  by
+   using the following statement.
+ 
+   $TIT  TITLE
+ 
+   Where  TITLE  denotes the 40 ASCII characters mentioned above. Once a title
+   is defined, it becomes associated (stored in the directory  entry)  of  all
+   subsequent histograms until re-defined.
+ 
+   Program  HEDDO  may  be  used to display and list directory entries as well
+   modify (or add) titles contained therein.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  16
+ 
+ 
+ 
+   U350.150  HISTOGRAM - STATEMENTS
+ 
+   The Histogram statement (H-statement) specifies which parameters are to  be
+   histogrammed,  the  length  of each histogram parameter (implies the number
+   of bits to shift the associated raw parameter), optionally - the  range  to
+   be  selected  after  shifting and any conditions (Simple Gates or Free-Form
+   Gates) to be imposed. The H-statement must start in  col-7  or  beyond  and
+   has the following general form:
+ 
+ 
+    H(I,J..) L(LI,LJ..) R(LOI,HII LOJ,HIJ..)  "CONDITIONS"
+                        !                  !  !          !
+                        !---- optional ----!  ! optional !
+   or
+ 
+   OH(I,J..) L(LI,LJ..) R(LOI,HII LOJ,HIJ..)  "CONDITIONS"
+                        !                  !  !          !
+                        !---- optional ----!  ! optional !
+   Where:
+ 
+   H(I,J..)                 ;Means histogram parameters I,J .. etc
+ 
+   OH(I,J.)                 ;Means histogram parameters I,J .. etc
+                            ;in the same "space" defined by the most
+                            ;recent H-statement.
+ 
+   L(LI,LJ,LK..)            ;Defines histogram parameter "lengths".
+                            ;always a power-of-2
+                            ;Implies # of bits to shift raw parameter.
+                            ;Specifies histogram dimensions unless the
+                            ;range is specified explicitly by the
+                            ;R-specification below.
+                            ;Length of histogram-parameter-I = LI
+                            ;Length of histogram-parameter-J = LJ
+                            ;Length of histogram-parameter-K = LK
+ 
+   R(LOI,HII LOJ,HIJ ..)    ;Means select histogram-parameter Range
+                            ;(after shifting - i.e. on the basis of the
+                            ;length defined above) for:
+                            ;Parameter-I  to be LOI thru HII
+                            ;Parameter-J  to be LOJ thru HIJ
+ 
+   I  will  try  to  say  it in a different way - just to fill out the page if
+   nothing else. The L-specification L(LI,LJ ..) tells CHIL how many  bits  to
+   shift  the  raw  parameters  prior  to  histogramming.  The R-specification
+   R(LOI,HII LOJ,HIJ ..), which is optional, can be used to select  a  limited
+   portion  of  the histogram dimensions given by the L-specification. See the
+   last section for some examples.
+ 
+                 SEE NEXT PAGE FOR A DISCUSSION OF "CONDITIONS"
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  17
+ 
+ 
+ 
+   U350.150  HISTOGRAM - STATEMENTS (CONTINUED)
+ 
+   Histogram "CONDITIONS" consist of one or more  Condition  Lists  (OR-lists)
+   of the following types:
+ 
+   G(P LO,HI LO,HI ..)      ;Explicit list of non-overlapping simple
+                            ;gates
+                            ;P - denotes test parameter number or name
+                            ;LO,HI - denotes gate-limits
+                            ;not mapped
+ 
+   GS(P,IS,NA,NB)           ;Gate-List specified by Set# (IS), Gate#'s
+                            ;(NA,NB) from $GAT-, $GLST-, or
+                            ;$MAPL-statement.
+                            ;mapped if included in a $MAPF-statement or
+                            ;given in a $MAPL-statement and if (NA,NB)
+                            ;specifies the full Gate-Set:
+                            ;Otherwise, not mapped.
+ 
+   B(PX,PY IDA,IDB)         ;Free-Form Gate-List from ban-file
+                            ;PX = X-test-parameter number or name
+                            ;PY = Y-test-parameter number or name
+                            ;IDA,IDB - gives first and last ID-numbers
+                            ;of a list of "adjacent" Free-Form-Gates.
+                            ;That is, at a given X-coordinate, BAN-IDA
+                            ;must lie below BAN-(IDA+1).
+                            ;All members of list must be of equal
+                            ;length and have consecutive ID-numbers.
+ 
+                 WHAT IS THE IMPLICATION OF MULTIPLE GATE-LISTS?
+ 
+   Definition:  OR-list = Simple Gate-List or Free-Form Gate-List.
+ 
+   You  will  get  a  count  "somewhere"  if  and  only if some member of each
+   OR-list is satisfied. If you have N OR-lists in the H-statement  and  NG(I)
+   represents  the  number  of  gates  in  the  Ith  list,  then the number of
+   histograms (NH) actually implied by the H-statement is given by:
+ 
+                       NH=NG(1)*NG(2)*------NG(N-1)*NG(N)
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  18
+ 
+ 
+ 
+   U350.160  LOOPS
+ 
+   Loops are implemented so as to "look like FORTRAN". However, one must  keep
+   in  mind  that  "loops" are actually expanded by the CHIL complier and that
+   all "loop parameters" are constants. See SEC# U350.170 for more  discussion
+   of symbols and expressions.
+ 
+   Two examples which make use of loops are given below.
+ 
+   EXAMPLE-1: ----------------------------------------------------------------
+ 
+   Produce  72 1-D histograms of parameters 1,4,7...214 with a gate (500,1000)
+   set on associated parameters 2,5,8...215.
+ 
+         DO 100 I=1,214,3
+         J=I+1
+         H(I) L(512) G(J,500,1000)
+     100 CONTINUE
+ 
+   EXAMPLE-2: ----------------------------------------------------------------
+ 
+   Produce 72 1-D histograms of parameters 1,4,7...214  with  the  requirement
+   that a parameter named ETOT (parameter # 250) be in the range 1000 to 2000.
+   Define parameter names and associated values as follows:
+ 
+   $DIP NAI(72),ETOT(1)                 ;Define parameter names
+   $ASS NAI(1 TO 72)=1,3                ;Assign values to NAI
+   $ASS ETOT(1)=250                     ;Assign value  to ETOT
+ 
+         IFU(G(ETOT(1),1000,2000)) 200  ;Skip loop if gate un-satisfied
+ 
+         DO 100 I=1,72                  ;Loop on 72 NAI detectors
+         H(NAI(I)) L(256)               ;Histogram NAI(I)
+     100 CONTINUE
+ 
+     200 CONTINUE
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  19
+ 
+ 
+ 
+   U350.170  SYMBOLS & EXPRESSIONS
+ 
+   Symbols  defined  by  the  "Equate  Directive"  (SYM=EXPRESSION) are called
+   compile-time   variables.   Such   variables   may  be  re-defined  without
+   restriction. These are not run-time variables!  -  THERE  ARE  NO  RUN-TIME
+   VARIABLES  IN  CHIL!!  Compile-time  variables  must be defined in terms of
+   numbers and/or previously defined compile-time variables. At a given  place
+   in  a  CHIL program, the value associated with a given symbol is always the
+   same - NO MATTER HOW YOU GET THERE!!
+ 
+   The CHIL compiler supports simple expressions which are evaluated  left  to
+   right.  REPEAT!! EVALUATED! LEFT! TO! RIGHT! Let V represent a single value
+   (number or previously defined symbol). Let S represent an algebraic sum  of
+   V's. Expressions of the following type are legal:
+ 
+   A=V
+   A=S
+   A=S*V+S                Means: A=(S)*V+S
+   A=S/V+S                Means: A=(S)/V+S
+   A=S/V*V+S              Means: A=((S)/V)*V+S
+   A=MOD(S,S)             No additional terms allowed
+                          (same argument definition as in FORTRAN)
+   A=S+[S,S,..]           Where [ ] encloses a list of bit-numbers
+                          (Lo-order bit-number = 1)
+ 
+   NUMERICAL EXAMPLES:
+ 
+   ASSIGNMENT             RESULT
+ 
+   A=10                   A=10
+   B=A+4                  B=14
+   C=A+B-9                C=15
+   D=100/B                D=7
+   E=A+B+C/6              E=6
+   F=A+B-C*7              F=63
+   G=A+B-C/6*A            G=10
+   H=A+B-C/6*A+C+10       H=35
+   I=MOD(A+B,7)           I=3
+   J=MOD(A+B,E-1)         J=4
+   K=[A+6,3]              K=8004 (HEX)
+   L=[A+6,3]+40H          L=8044 (HEX)
+   M=[2,1]                M=3
+   N=[A+6,M]              N=8004 (HEX)
+ 
+      * * * PARENTHESES ARE NOT ALLOWED EXCEPT IN THE "MOD STATEMENT" * * *
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  20
+ 
+ 
+ 
+   U350.180  PRE-SCANNING - CONSIDERATIONS
+ 
+   Pre-scanning  (as  interpreted  here)  involves  the processing of an input
+   data stream (usually from Mag  Tape)  to  produce  an  output  data  stream
+   (usually  to  Mag  Tape). The "processing" may include selection of certain
+   events, selection of certain parameters, modification of  input  parameters
+   or creation of new parameters or any combination of the preceding.
+ 
+   A  CHIL-based  prescan  task  involves  the  use  of  LEMO (or a customized
+   version thereof) to control the process combined with a CHIL program  which
+   aides  in  the  selection  of  events  and/or  parameters.  Modification or
+   creation of parameters will normally  require  one  or  more  user-supplied
+   subroutines USERSUBS.
+ 
+   The  CHIL-based prescan program may include any legal CHIL statement except
+   for the H-statement (i.e. concurrent histogramming is not  supported).  The
+   CALL  REPACK1 (not legal in histogramming programs) is used to initiate the
+   "saving of an event" into the output  data  stream.  The  following  simple
+   example illustrates:
+ 
+   ---------------------------------------------------------------------------
+ 
+   Prescan  program  which  selects  only those events for which parameters 18
+   and 16 satisfy Free-Form-Gate number-1  from  file  DEC2.ban.  If  gate  is
+   satisfied, all parameters of event are saved.
+ 
+   $LSTL        = 8192        ;Specify tape record length in bytes
+ 
+   $NPR 18                    ;Specify number of parameters
+ 
+   $LPR 1 TO  2 = 64          ;Specify length of parameters 1 & 2
+   $LPR 3 TO 18 = 2048        ;Specify length of parameters 3 to 18
+ 
+   $BAN (256) 1               ;Request Free-Form-Gate from ban-file
+                              ;(X-length = 256, ID-number = 1)
+ 
+   $BAF DCE2.ban              ;Give name of ban-file
+ 
+         IFU(B(18,16 1)) 100  ;Test X,Y-parameters (18,16) against gate
+                              ;Skip it if gate not satisfied
+ 
+         CALL REPACK1 1,18    ;Otherwise, save event in output stream
+                              ; 1 is lowest  parameter-# to save
+                              ;18 is highest parameter-# to save
+ 
+     100 CONTINUE
+   ---------------------------------------------------------------------------
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  21
+ 
+ 
+ 
+   U350.190  USER-SUPPLIED SUBROUTINES
+ 
+   The  user  is able (by means of from 1 to 3 user-supplied subroutines named
+   USERSUB1, USERSUB2, USERSUB3) to intercept and  modify  the  Event-by-Event
+   data  stream that is being processed by a CHIL-based tape scan, prescan, or
+   on-line monitor task. (i.e. standard programs  designed  to  process  HHIRF
+   format  L002).  The  interception  occurrs  after  the  event  is unpacked,
+   always, and when the CALL USERSUB1, etc is executed in  the  CHIL  program.
+   Thus,  new  or  modified  parameters  may  be  ,subsequently,  tested   and
+   histogrammed  in  the  same  way  as  any  others. The number of parameters
+   specified   by   the  $NPR-statement  must  be  increased  to  include  any
+   additional parameters which are generated.
+ 
+   Stock histogramming and prescan tasks include a dummy  USERSUB:  Customized
+   packages  are  created by linking a new task in which this dummy routine is
+   replaced by the user's routines. A customized task usually includes a  user
+   command  processor  USERCMP and possibly other support routines in addition
+   to the  USERSUBS.  A  skeleton  USERSUB  which  just  sets  parameter-50  =
+   parameter-1 is shown below:
+ 
+         SUBROUTINE USERSUB1(IBUF)
+         INTEGER*2 IBUF(512)
+         IBUF(50)=IBUF(1)
+         RETURN
+         END
+ 
+   Your  routine  will  receive  the  "Event"  in  expanded form. That is, all
+   parameters will be in their "proper place" and any  parameters  which  were
+   not present in the raw event will be set to X'FFFF'.
+ 
+   Suppose  that  the  maximum # of parameters in the original event is 20 and
+   USERSUB1 is to generate up to 10 more. You would specify $NPR = 30 in  your
+   CHIL  program. When your subroutine is entered, IBUF(I),I=1,20 would be set
+   to   the  parameter  value  or  to  X'FFFF'  for  any  missing  parameters.
+   IBUF(I),I=21,30 would be set to X'FFFF'.
+ 
+   Parameters which you generate should be in the range 0  -  16383  or  less.
+   Any  missing  parameters  should be left set to X'FFFF'. In the interest of
+   speed, USERSUBS should avoid calling other routines  on  an  Event-by-Event
+   basis.  Subroutine and function calls take at least 10 microseconds and the
+   linkage time increases as the number of subprogram arguments increase.
+ 
+                        USER COMMAND PROCESSOR - USERCMP
+ 
+   The function of the user  command  processor  is  to  process  user-defined
+   commands  for set-up purposes etc. When the main program receives a command
+   UCOM, it strips off the UCOM as well as blanks between UCOM  and  the  next
+   non-blank  character  and  calls  USERCMP  with  the remaining buffer as an
+   argument. A skeleton user command processor is shown on the next page.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  22
+ 
+   U350.190  USER-SUPPLIED SUBROUTINES - COMMAND PROCESSOR
+ 
+   The skeleton user command processor given below  illustrates  some  of  the
+   basic  functions  normally  required.  Note:  the  use  of  routines  GREAD
+   (reformats input line), FINAME  (picks  up  file  name),  FILMAN  (creates,
+   opens  &  closes  files),  MILV  (pause proof decoder of integer & floating
+   number fields), and UMESSO (message sender).
+ 
+         SUBROUTINE USERCMP(IWD)
+         INTEGER*4 IWD(20),LWD(2,40),ITYP(40),NAMFIL(6),MESBUF(13,3)
+         COMMON/MYCOM/ IV(50),NI
+         EQUIVALENCE (KMD,LWD(1,1))
+         DATA MESBUF/
+        1'UNRECOGNIZED UCOM COMMAND - IGNORED                 ',
+        2'SYNTAX ERROR IN UCOM COMMAND - IGNORED              ',
+        3'ERROR DECODING LIST OF INTEGER NUMBERS              '/
+   C
+         CALL GREAD(IWD,LWD,ITYP,NF,1,80,NTER)    ;RE-FORMAT INPUT LINE
+   C
+         IF(KMD.EQ.'FILE') GO TO 100              ;TEST COMMAND TYPE
+         IF(KMD.EQ.'ICON') GO TO 200              ;  "     "     "
+         GO TO 510                                ;ERROR IF NOT FOUND
+   C
+   C     PICK UP FILE-NAME AND OPEN A FILE ***********************************
+   C
+     100 CALL FINAME(IWD,5,80,NAMFIL,IERR)        ;GET FILE NAME
+         IF(IERR.NE.0) RETURN                     ;TST FOR ERROR
+         LU=1                                     ;SPECIFY LOGICAL UNIT
+         CALL FILMAN(2,NAMFIL,LU,0,0,0,0,0,ISTAT) ;OPEN THE FILE
+         CALL OPERR(ISTAT)                        ;REPORT ANY ERROR
+         IF(ISTAT.NE.0) RETURN                    ;TEST FOR ERROR
+   C
+   C     DO WHATEVER  -  AND RETURN ******************************************
+   C
+         RETURN
+   C
+   C     DECODE A LIST OF INTEGER VALUES *************************************
+   C
+     200 IF(NTER.NE.0) GO TO 520                  ;TEST FOR GREAD ERROR
+         NI=0                                     ;INIT # OF VALUES
+         DO 210 J=2,NF                            ;LOOP ON NF-1 FIELDS
+         CALL MILV(LWD(1,J),IV(J-1),XX,KIND,IERR) ;DECODE INTO IV(J-1)
+         IF(IERR.NE.0.OR.KIND.NE.1) GO TO 530     ;TEST FOR ERROR
+     210 CONTINUE
+         NI=NF-1                                  ;SET # OF VALUES
+         RETURN
+   C
+   C     SEND ERROR MESSAGES *************************************************
+   C
+     510 CALL UMESSO(1,MESBUF(1,1))
+         RETURN
+     520 CALL UMESSO(1,MESBUF(1,2))
+         RETURN
+     530 CALL UMESSO(1,MESBUF(1,3))
+         RETURN
+         END
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  23
+ 
+ 
+ 
+   U350.190  USER-SUPPLIED SUBROUTINES - MESSAGES FROM
+ 
+   Information may be sent to the terminal and/or the  log-file  by  means  of
+   routine  UMESSO  which  is  included  in the main package. The procedure is
+   this: Set the text that you wish to be transmitted into an INTEGER*4  array
+   of  dimension 13 and call UMESSO to send it. The following code illustrates
+   the different options:
+ 
+         INTEGER*4 MESBUF(13)
+   C
+         DATA MESBUF/'THIS IS A MESSAGE   ',8*4H    /
+   C
+         CALL UMESSO(1,MESBUF)   ;Send to terminal only
+         CALL UMESSO(2,MESBUF)   ;Send to log-file only
+         CALL UMESSO(3,MESBUF)   ;Send to terminal and log-file
+ 
+   U350.200  HOW TO CREATE CUSTOMIZED CHIL-BASED TASKS
+ 
+   (1)....Use the editor to create  the  desired  USERSUBS,  USERCMP  and  any
+          other  required  routines  and save all such routines on one or more
+          files (sub1.f, sub2.f ... for example).
+ 
+   (2)....Copy   /usr/hhirf/scan.make   (or  /home/upak/scan.make)  into  your
+          directory and use it as a template to construct your own  customized
+          make.file.  These  files  are  listed  below.  The  portions  of the
+          make-file that you may need to replace are shown bold faced.
+ 
+   For DECstation Users
+   DIRA= /usr/hhirf/
+   DIRB= /usr/users/milner/Dscan/
+   OBJS= $(DIRA)scan.o $(DIRB)dummysubs.o
+   LIBS= $(DIRA)scanlib.a $(DIRA)orphlib.a
+   scan: $(OBJS) $(LIBS)
+   	f77 -O2 $(OBJS) $(LIBS) -o scan
+ 
+   For SPARCstation Users
+   DIRA= /home/upak/
+   DIRB= /home/milner/Dscan/
+   OBJS= $(DIRA)scan.o $(DIRB)dummysubs.o
+   LIBS= $(DIRA)scanlib.a $(DIRA)orphlib.a
+   scan: $(OBJS) $(LIBS)
+   	f77 -O2 $(OBJS) $(LIBS) -o scan
+   ---------------------------------------------------------------------------
+ 
+                         LOGICAL UNITS AND COMMON BLOCKS
+ 
+   CHIL-based SCAN programs use - LOGICAL UNITS 4,5,6,7,10,14
+   CHIL-based PRESCAN progs use - LOGICAL UNITS 5,6,7,8,10,14
+   User supplied routines should NOT attempt to use these LOGICAL UNITS.
+   All CHIL-based tasks use COMMON BLOCK labels /AAA/ through /ZZZ/
+   User supplied routines should not use these COMMON BLOCK labels .
+ 
+   See LEMO document for how to create customized prescan programs.
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  24
+ 
+   U350.210  DIRECTORY FILE - STRUCTURE
+ 
+   STRUCTURE OF .drr-FILE - FIRST RECORD (128 BYTES) *************************
+ 
+   JDIRF(1-3)   - 'HHIRFDIR0001'
+   JDIRF(4)     - # of histograms on .his-file
+   JDIRF(5)     - # of half-words on .his-file
+   JDIRF(7-12)  - YR,MO,DA,HR,MN,SC (date, time of CHIL run)
+   JDIRF(13-32) - TEXT (entered in CHIL via $TEX command)
+ 
+   STRUCTURE OF .drr-FILE - DIRECTORY ENTRY (128 BYTES) **********************
+ 
+   IDIRH(1)     - Histogram dimensionality (max = 4)
+   IDIRH(2)     - Number of half-words per channel (1 or 2)
+   IDIRH(3-6)   - Histogram Parm#'s (up to 4 parameters)
+   IDIRH(7-10)  - Length of raw    parameters (pwr of 2)
+   IDIRH(11-14) - Length of scaled parameters (pwr of 2)
+   IDIRH(15-18) - MIN channel# list
+   IDIRH(19-22) - MAX channel# list
+   IDIRF(12)    - Disk offset in half-words (1st word# minus 1)
+   IDIRF(13-15) - X-Parm label
+   IDIRF(16-18) - Y-Parm label
+   XDIRF(19-22) - Calibration constants (up to 4 FP numbers)
+   IDIRF(23-32) - Sub-title (40 bytes) (entered via $TIT cmd)
+ 
+   STRUCTURE OF .drr-FILE - ID-LIST (32 ID'S/RECORD) *************************
+ 
+   IDLST(1)     - ID number of 1st histogram defined
+   IDLST(2)     - ID number of 2nd histogram defined
+                -
+   DEFINITIONS OF COMMON/DIR/ ************************************************
+ 
+    COMMON/DIR/KLOC(6),JHSP(4),LENG(4),ND,NHW,LENH,LENT,IOF,LDF,
+   &NHIS,LEND(4),LENS(4),MINC(4),MAXC(4),CONS(4),ITEX(20),
+   &ITIT(10),LABX(3),LABY(3),MSER(10),KFILT
+ 
+   KLOC(I),I=1,6  = YR,MO,DAY,HR,MIN,SEC
+   JHSP(I),I=1,4  = Histogram parameters
+   LENG(I),I=1,4  = HIST "Lengths" - (MIXC(I)-MINC(I)+1)
+   LEND(I),I=1,4  = Raw   -Data "Lengths" in channels
+   LENS(I),I=1,4  = Scaled-Data "Lengths" in channels
+   MINC(I),I=1,4  = MIN channel# list
+   MAXC(I),I=1,4  = MAX channel# list
+   CONS(I),I=1,4  = CAL constants
+   ITEX(I),I=1,20 = TEXT  from $TEX CHIL-entry
+   ITIT(I),I=1,10 = TITLE from $TIT CHIL-entry
+   LABX(I),I=1,3  = X-Parm label if any
+   LABY(I),I=1,3  = Y-Parm label if any
+   ND   = Dimensionality of histogram (# parms and # lengths)
+   NHW  = # half-words/channel
+   LENH = # of half-words in this histogram
+   LENT = Not defined
+   IOF  = Disk "offset" of 1st WD of this histogram (1st WD # -1)
+          (in half-words)
+   LDF  = Length of disk file "user.his" in half-words
+   NHIS = Total # of histograms on file "user.his"
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  25
+ 
+ 
+   U350.220  EXAMPLES
+ 
+   EXAMPLE-1 - SIMPLE PROGRAM DEFINING SYMBOLS & USING LOOPS & GATES
+ 
+   $TEX XFER EXP 150Nd+154Sm with 2-PPAC 3-GE 4-NAI (P2G3N4)
+   $LSTL = 8192                  ;Tape record length (bytes)
+   $NPR  = 21                    ;Number of parameters/event (max)
+   $LPR 1 TO 5,2  = 8192         ;Length of parameters 1,3,5 - GE Energy
+   $LPR 2 TO 6,2  = 2048         ;Length of parameters 2,4,6 - GE Time
+   $LPR 7 TO 21,1 = 2048         ;Length of all other parameters
+   $DIP GE(3),GT(3)              ;Define names - GE  Energy & GE  Time
+   $DIP NAE(4),NAT(4)            ;Define names - NAI Energy & NAI Time
+   $DIP LX(1),LY(1)              ;Define names - PPAC Left-X & Left-Y
+   $DIP RX(1),RY(1)              ;Define names - PPAC Right-X & Right-Y
+   $DIP DT(1)                    ;Define name  - Delta Time
+   $DIP H(1)                     ;Define name  - NAI Total Energy
+   $DIP K(1)                     ;Define name  - NAI Multiplicity
+   $ASS  GE(1 TO 3) = 1,2        ;Assign Parameter# to GE  Energy
+   $ASS  GT(1 TO 3) = 2,2        ;Assign Parameter# to GE  Time
+   $ASS NAE(1 TO 4) = 7,2        ;Assign Parameter# to NAI Energy
+   $ASS NAT(1 TO 4) = 8,2        ;Assign Parameter# to NAI Time
+   $ASS H(1)  = 15               ;Assign Parameter# to NAI Total Energy
+   $ASS K(1)  = 16               ;Assign Parameter# to NAI Multiplicity
+   $ASS LX(1) = 17               ;Assign Parameter# to PPAC Left-X
+   $ASS LY(1) = 18               ;Assign Parameter# to PPAC Left-Y
+   $ASS RX(1) = 19               ;Assign Parameter# to PPAC Right-X
+   $ASS RY(1) = 20               ;Assign Parameter# to PPAC Right-Y
+   $ASS DT(1) = 21               ;Assign Parameter# to Delta Time
+   $H32                          ;Specify 32-bits/channel histogramming
+ 
+   $HID 1
+   $TIT PPAC's
+         H(RX(1),LX(1)) L(256,256)             ;PPAC L-X vs R-X    ID = 1
+         H(RY(1),LY(1)) L(256,256)             ;PPAC L-Y vs R-Y    ID = 2
+         H(DT(1),LX(1)) L(256,256)             ;PPAC L-X vs D-T    ID = 3
+   $TIT K vs H
+         H(K(1),H(1))   L(64,128)              ;K vs H             ID = 4
+   $TIT GE RAW
+   $HID 11
+         DO GEE I=1,3                          ;GE Energy   ID = 11 to 13
+         H(GE(I)) L(4096)  G(GE(I) 0,8191)
+   GEE   CONTINUE
+   $HID 21
+         DO GET I=1,3                          ;GE Time     ID = 21 to 23
+         H(GT(I)) L(256)   G(GT(I) 0,2047)
+   GET   CONTINUE
+   $TIT NAI RAW
+   $HID 31
+         DO NAIE I=1,4                         ;NAI Energy  ID = 31 to 34
+         H(NAE(I)) L(1024) G(NAE(I) 0,2047)
+   NAIE  CONTINUE
+   $HID 41
+         DO NAIT I=1,4                         ;NAI Time    ID = 41 to 44
+         H(NAT(I)) L(256)  G(NAT(I) 0,2047)
+   NAIT  CONTINUE
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  26
+ 
+ 
+ 
+   EXAMPLE-2 - PRESCAN EXAMPLE SELECTING EVENTS SATISFYING 1 CONDITION
+ 
+   $NPR 18                    ;SPECIFY NUMBER OF PARAMETERS
+   $LPR 1 TO  2 = 64          ;SPECIFY LENGTH OF PARAMETERS 1 & 2
+   $LPR 3 TO 18 = 2048        ;SPECIFY LENGTH OF PARAMETERS 3 TO 18
+   $LSTL        = 8192        ;SPECIFY TAPE RECORD LENGTH IN BYTES
+   $BAN (256) 1               ;REQUEST FREE-FORM-GATE FROM ban-file
+                              ;(X-LENGTH = 256, ID-NUMBER = 1)
+   $BAF DCE2.ban              ;GIVE NAME OF BAN-FILE
+ 
+         IFU(B(18,16 1)) 100  ;TEST X,Y-PARAMETERS (18,16) AGAINST GATE
+                              ;GO TO 100 IF GATE NOT SATISFIED
+ 
+         CALL REPACK1 1,18    ;OTHERWISE, SAVE EVENT IN OUTPUT STREAM
+ 
+     100 CONTINUE
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  27
+ 
+   EXAMPLE-4  - PROGRAM USING IF-STATEMENTS, COMPUTED GOTO'S & LOOPS
+ 
+   $LSTL=8192                               ;TAPE RECORD LENGTH (BYTES)
+   $NPR =240                                ;SPECIFY # OF PARAMETERS
+   $LPR   1 TO 240,1=2048                   ;ASSIGN PARAMETER LENGTHS
+   $LPR 219         =64                     ;   "      "        "
+   $LPR 220 TO 222,1=1024                   ;   "      "        "
+   $LPR 223 TO 228,1=256                    ;   "      "        "
+   $LPR 229 TO 239,2=8192                   ;   "      "        "
+   $DIP NAI(72),GE(6)                       ;DEFINE PARAMETER NAMES
+   $DIP TOTH(1),TOTK(1)                     ;   "      "        "
+   $DIP LAMD(3),PHI(1)                      ;   "      "        "
+   $ASS NAI(1 TO 72)=1,3                    ;ASSIGN VALUES TO NAMES
+   $ASS GE(1 TO 6)  =229,2                  ;   "      "    "   "
+   $ASS TOTH(1)     =218                    ;   "      "    "   "
+   $ASS TOTK(1)     =219                    ;   "      "    "   "
+   $ASS LAMD(1 TO 3)=220,1                  ;   "      "    "   "
+   $ASS PHI(1)      =224                    ;   "      "    "   "
+   $GLST  64,1 1,15 16,18 19,21 22,24 25,60 ;SPECIFY SIMPLE GATE-LIST
+   $H16                                     ;SPECIFY 16-BITS/CHANNEL
+         IFS(G(TOTH(1),320,2000))10         ;TST TOTH VS SIMPLE GATE
+         IFU(G(TOTK(1),1,8))     1000       ;TST TOTK VS SIMPLE GATE
+      10 DO 15 I=1,6                        ;LOOP ON 6 GELI'S
+         IFS(G(GE(I),1431,1440)) 20         ;TST VS GATE (1431,1440)
+      15 CONTINUE
+         GO TO 1000                         ;RETURN IF NONE HIT
+ 
+                                            ;TST TOTK VS GATE-LIST IN
+      20 IFC(GS(TOTK(1),1,1,5))100,200,300,400,500
+                                            ;COMPUTED GOTO
+         GO TO 1000                         ;RETURN IF NONE HIT
+ 
+     100 H(NAI(2))  L(1024)                 ;FOR TOTK = 1 TO 15
+         DO 110 I=3,72                      ;HISTOGRAM NAI(2)-NAI(72)
+         OH(NAI(I)) L(1024)                 ;ALL IN SAME SPACE
+     110 CONTINUE
+         GO TO 1000
+     200 H(NAI(2))  L(1024)                 ;FOR TOTK = 16 TO 18
+         DO 210 I=3,72
+         OH(NAI(I)) L(1024)
+     210 CONTINUE
+         GO TO 1000
+     300 H(NAI(2))  L(1024)                 ;FOR TOTK = 19 TO 21
+         DO 310 I=3,72
+         OH(NAI(I)) L(1024)
+     310 CONTINUE
+         GO TO 1000
+     400 H(NAI(2))  L(1024)                 ;FOR TOTK = 22 TO 24
+         DO 410 I=3,72
+         OH(NAI(I)) L(1024)
+     410 CONTINUE
+         GO TO 1000
+     500 H(NAI(2))  L(1024)                 ;FOR TOTK = 25 TO 60
+         DO 510 I=3,72
+         OH(NAI(I)) L(1024)
+     510 CONTINUE
+    1000 CONTINUE
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  28
+ 
+ 
+   EXAMPLE-5 - PROG USING FREE-FORM-GATES, USERSUB1, RANGES, LOOPS, ETC
+ 
+   $TEX PRE-SCANNED GMR DATA WITH NN SUM (3 LEVEL)
+ 
+   $LSTL = 8192                            ;TAPE RECORD LENGTH (BYTES)
+ 
+   $NPR  = 248                             ;NUMBER OF PARAMETERS
+ 
+   $LPR   1 TO 248,1 = 2048                ;ASSIGN PARAMETER LENGTHS
+   $LPR   2 TO 215,3 = 1024                ;   "      "        "
+   $LPR 218 TO 234,1 = 8192                ;   "      "        "
+   $LPR 220 TO 235,3 = 2048                ;   "      "        "
+   $LPR 217          = 4096                ;   "      "        "
+   $LPR 239          = 1024                ;   "      "        "
+   $LPR 236          = 4096                ;   "      "        "
+ 
+   $DIP NAE(72),NAT(72),NAS(72)            ;DEFINE PARAMETER NAMES
+   $DIP PE(6),PDE(6),PT(6)                 ;   "      "        "
+   $DIP SUMH(1),FOLD(1),EMAX(1),PART(1)    ;   "      "        "
+   $DIP VECP(1),COST(1),COSR(1),PHIR(1)    ;   "      "        "
+   $DIP COSE(1),FFG(1)                     ;   "      "        "
+ 
+   $ASS NAE(1 TO 72) = 1,3                 ;ASSIGN VALUES TO NAMES
+   $ASS NAT(1 TO 72) = 2,3                 ;   "      "    "   "
+   $ASS NAS(1 TO 72) = 3,3                 ;   "      "    "   "
+   $ASS PE( 1 TO  6) = 218,3               ;   "      "    "   "
+   $ASS PDE(1 TO  6) = 219,3               ;   "      "    "   "
+   $ASS PT( 1 TO  6) = 220,3               ;   "      "    "   "
+   $ASS SUMH(1) =236                       ;   "      "    "   "
+   $ASS FOLD(1) =237                       ;   "      "    "   "
+   $ASS EMAX(1) =238                       ;   "      "    "   "
+   $ASS PART(1) =239                       ;   "      "    "   "
+   $ASS VECP(1) =240                       ;   "      "    "   "
+   $ASS COST(1) =241                       ;   "      "    "   "
+   $ASS COSR(1) =242                       ;   "      "    "   "
+   $ASS PHIR(1) =243                       ;   "      "    "   "
+   $ASS COSE(1) =244                       ;   "      "    "   "
+   $ASS FFG(1)  =248                       ;   "      "    "   "
+ 
+   $BAN (1024) 1                           ;REQUEST FREE-FORM GATE
+   $BAF GPOST.ban/85                       ;GIVE NAME OF BAN-FILE
+ 
+   $H32                                    ;SPECIFY 32-BITS/CHANNEL
+ 
+         H(SUMH(1)) L(512)                             ;SUMH SINGLES
+         H(PART(1)) L(512)                             ;PART SINGLES
+ 
+         H(PART(1),SUMH(1)) L(256,256) R(70,255 0,255) ;SUMH VS PART
+ 
+         IFU(B(PART(1),SUMH(1),1)) ZIP                 ;TST BANANA-GATE
+ 
+         CALL USERSUB1                                 ;CALL USERSUB1
+                                                       ;TO DO THE MAGIC
+ 
+                            (CONTINUED ON NEXT PAGE)
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  29
+ 
+ 
+   EXAMPLE-5  (CONTINUED)
+ 
+         H(NAS(2)) L(512)                              ;OVERLAY
+         DO 50 J=3,72                                  ;NAS(2 THRU 72)
+         OH(NAS(J)) L(512)                             ;BANANA-GATED
+      50 CONTINUE
+ 
+         H(NAE(2))  L(512)                             ;OVERLAY
+         DO 60 J=3,72                                  ;NAE(2 THRU 72)
+         OH(NAE(J)) L(512)                             ;BANANA-GATED
+      60 CONTINUE
+ 
+         H(PART(1),SUMH(1)) L(256,256) R(70,255 0,255) ;SUMH VS PART
+                                                       ;BANANA-GATED
+ 
+         H(NAS(2) ,SUMH(1)) L(256,256) R(0,255 0,127)  ;OVERLAY (2-72)
+         DO 100 J=3,72                                 ;SUMH VS NAS
+         OH(NAS(J),SUMH(1)) L(256,256) R(0,255 0,127)  ;BANANA-GATED
+     100 CONTINUE
+ 
+         H(NAE(2) ,SUMH(1)) L(256,256) R(0,255 0,127)  ;OVERLAY (2-72)
+         DO 200 J=3,72                                 ;SUMH VS NAE
+         OH(NAE(J),SUMH(1)) L(256,256) R(0,255 0,127)  ;BANANA-GATED
+     200 CONTINUE
+ 
+         IFU(G(VECP(1),950,1023)) ZIP                  ;1ST GATE ON VECP
+                                                       ;IF SATISFIED,
+         H(NAS(2) ,SUMH(1)) L(256,256) R(0,255 0,127)  ;OVERLAY (2-72)
+         DO 300 J=3,72                                 ;SUMH VS NAS
+         OH(NAS(J),SUMH(1)) L(256,256) R(0,255 0,127)  ;FOR 1ST VECP-GATE
+     300 CONTINUE                                      ;PLUS BANANA-GATE
+ 
+         IFU(G(VECP(1),980,1020)) ZIP                  ;2ND GATE ON VECP
+                                                       ;IF SATISFIED,
+         H(NAS(2) ,SUMH(1)) L(256,256) R(0,255 0,127)  ;OVERLAY (2-72)
+         DO 400 J=3,72                                 ;SUMH VS NAS
+         OH(NAS(J),SUMH(1)) L(256,256) R(0,255 0,127)  ;FOR 2ND VECP-GATE
+     400 CONTINUE                                      ;PLUS BANANA-GATE
+ 
+         H(SUMH(1),COSR(1)) L(256,256) R(0,127 0,255)  ;COSR VS SUMH
+         H(SUMH(1),COST(1)) L(256,256) R(0,127 0,255)  ;COST VS SUMH
+         H(SUMH(1),COSE(1)) L(256,256) R(0,127 0,255)  ;COSE VS SUMH
+         H(SUMH(1),PHIR(1)) L(256,256) R(0,127 0,255)  ;PHIR VS SUMH
+                                                       ;FOR 2ND VECP-GATE
+                                                       ;PLUS BANANA-GATE
+   ZIP   CONTINUE
+    
+   02-Feb-02 ........... U350  CHIL (UNIX version) - WTM ............ PAGE  30
+ 
+ 
+ 
+   U350.230  COMMENTS AND WARNINGS
+ 
+                                 Warning on NPAR
+ 
+   Don't set NPAR (the maximum number of parameters  per  event)  to  be  less
+   than  it  actually is in an attempt to save on unpack time or whatever. Any
+   event found to contain more than NPAR parameters is trashed!
+ 
+                       Comment & Warning on Bit-numbering
+ 
+   CHIL defines bit-numbers such that the lo-order bit  is  number-1  and  the
+   hi-order  bit  (of  a 16-bit word) is number-16. See SEC# U350.170 for some
+   examples if you are still uncertain.
+ 
+                             Warning on Expressions
+ 
+   CHIL evaluates EXPRESSIONS left-to-right  -  NOT  like  FORTRAN.  See  SEC#
+   U350.170 for some examples.
+ 
+            Warning on Banana-Gate Specifications - B(PX,PY IDA,IDB)
+ 
+   At a given X-coordinate - Banana IDA+1 must lie above Banana IDA
+ 
+                           - Banana IDA+2 must lie above Banana IDA+1
+ 
+                           - Banana IDA+N must lie above Banana IDA+N-1
+ 
+   This  rule  is  made in the interest of speed. If you can't live by it, you
+   will have to do your Banana gating one at a time.

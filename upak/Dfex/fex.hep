@@ -1,0 +1,115 @@
+$$$$CON   - Contents
+CODE    CONTENTS
+----    --------
+G     - General & setup commands
+SWAP  - Commands to byte-swap a file (in place)
+MASK  - Commands to MASK      a file (in place)
+VFN   - Explaniation of "variables in filenames"
+LOOP  - Loop execution and symbol definition 
+D     - Data display commands
+L     - Data logging commands
+$$$$G     - For general & setup commands
+RECL N    - Record length in bytes for subsequent OPEN
+            (not normally needed - default = 512 bytes)
+
+LON       - Turn command logging to fex.log ON          
+LOF       - Turn command logging to fex.log OFF (dflt)  
+
+CMD file  - Process commands from file.cmd              
+WO        - Wait for typed [RETURN] to continue         
+
+IN  file  - Specify input file                          
+                                                        
+HOFF N    - Specify 16-bit word offset on input file
+FOFF N    - Specify 32-bit word offset on input file
+          - (does not apply to DL and PL commands)
+
+SWAP      - Specify  byte-swap (except for DL and PL commands)
+SWOF      - Turn off byte-swap
+
+H         - Displays this list again                    
+END       - Ends program                                
+$$$$SWAP  - For commands to byte-swap a file
+ 
+CVIF SWAF - Says do full-word byte-swap of input file (in place)
+ 
+CVIF SWAB - Says do half-word byte-swap of input file (in place)
+ 
+NOTE:     - The file length should be an integer multiple of RECL
+            for this procedure to work to completion.
+
+$$$$MASK  - For commands to mask a file
+
+MSKF MSK  - Says do a full-word masking of input file (in place)
+          - MSK is entered in hexadecimal 
+
+NOTE:     - The file length should be an integer multiple of RECL
+            for this procedure to work to completion.
+
+$$$$VFN   - For explaniation of "variables in filenames"
+One symbol (integer variable) may be incorporated in a FILENAME
+specification as the following examples illustrate:
+
+SYM=3
+OU FIL"SYM".SPK,NEW  ;Creates and opens FIL3.SPK
+
+I=0 
+LOOP 3
+I=I+1
+IN FIL"I".SPK        ;Opens (in succession)  FIL1.SPK, FIL2.SPK, FIL3.SPK
+.   
+.   
+ENDLOOP
+
+$$$$LOOP  - For loop execution and symbol definition 
+Commands related to LOOP execution and SYMBOL definition
+SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                 - symbols M, N, O, P, Q, R, S are reserved
+                 - expression syntax is same as in CHIL
+                 - no imbedded blanks are allowed in expressions
+                 - symbols may contain up to 4 characters (5-8 ignored)
+    
+DSYM             - Displays list of currently defined sumbols & values
+    
+LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+CMD  ....        - Nesting supported
+CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+ENDL             - Defines end-of-loop
+                 - KILL (entered before ENDL) kills LOOP
+                 - Ctrl/C - aborts loop-in-progress
+                 - opening of CMD-file within a LOOP not allowed
+$$$$D     - For data display commands
+DZ  IA,IB<,IS> - Display 16-bit word IA-IB (HEX   fmt) IS per line 
+                                                        
+DI  IA,IB<,IS> - Display 16-bit word IA-IB (INT*2 fmt) IS per line
+                                                        
+DZF IA,IB<,IS> - Display 32-bit word IA-IB (HEX   fmt) IS per line
+                                                        
+DIF IA,IB<,IS> - Display 32-bit word IA-IB (INT*4 fmt) IS per line
+               - (default is 10 per line)
+
+DF  IA,IB      - Display 32-bit word IA-IB (E-format)   5 per line
+                                                        
+DA  IA,IB      - Display 16-bit word IA-IB (ASCII fmt)
+ 
+DL  IA,IB      - Display lines       IA-IB (ASCII fmt)
+ 
+DEV IA,IB      - Display 16-bit word IA-IB (EVENT fmt) 
+$$$$L     - For data logging commands
+PZ  IA,IB<,IS> - LOG  16-bit word IA-IB (HEX   fmt) IS per line 
+                                                        
+PI  IA,IB<,IS> - LOG  16-bit word IA-IB (INT*2 fmt) IS per line 
+                                                        
+PZF IA,IB<,IS> - LOG  32-bit word IA-IB (HEX   fmt) IS per line 
+                                                        
+PIF IA,IB<,IS> - LOG  32-bit word IA-IB (INT*4 fmt) IS per line 
+
+PF  IA,IB      - LOG  32-bit word IA-IB (E-format)   5 per line
+                                                        
+PA  IA,IB      - LOG  16-bit word IA-IB (ASCII fmt) 
+ 
+PL  IA,IB      - LOG  lines       IA-IB (ASCII fmt) 
+ 
+PEV IA,IB      - LOG  16-bit word IA-IB (EVENT fmt)
+ 
+LOG is to fex.log ............................................. 

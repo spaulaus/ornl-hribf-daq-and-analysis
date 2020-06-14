@@ -1,0 +1,157 @@
+RPD$075066                                                                      
+CHP$xxxx  Spline Fitting Routines 
+TPF$
+SP2$
+CYB$                                                                            
+===========================================================================
+C
+      SUBROUTINE CURVS (N,X,Y,D,ISW,S,EPS,YS,YSP,SIGMA,TEMP,IERR)
+C   
+      INTEGER*4  N,ISW,IERR
+C
+      REAL*4     X(N),Y(N),D(N),S,EPS,YS(N),YSP(N),SIGMA,TEMP(N,9)
+C   
+===========================================================================
+From Fitpack -- August 31, 1981                                                 
+Coded by A. K. Cline and R. J. Renka                                            
+Department of Computer Sciences                                                 
+University of Texas at Austin                                                   
+===========================================================================     
+BLP$
+This subroutine determines the parameters necessary to                    
+compute a smoothing spline under tension. For a given                     
+increasing sequence of abscissae (X(I)),I=1,N) and                 
+associated ordinates (Y(I)),I=1,N) the function                   
+determined minimizes the summation from (I=1,N-1) of                   
+the square of the second derivative of F plus SIGMA
+squared times the difference of the first derivative of F                 
+and (F(X(I+1))-F(X(I)))/(X(I+1)-X(I)) squared, over all                   
+functions F with two continuous derivatives such that the                 
+summation of the square of (F(X(I))-Y(I))/D(I) is less                    
+than or equal to a given constant S, where (D(I)),I=1,N)
+are a given set of observation weights. The                        
+function determined is a spline under tension with third                  
+derivative discontinuities at (X(I)),I=2,N-1). for                 
+actual computation of points on the curve it is necessary                 
+to call the function CURV2. The determination of the curve                
+is performed by subroutine CURVSS, the subroutine CURVS                  
+only decomposes the workspace for CURVSS.                                 
+CEB$
+ON INPUT
+ODP$
+N......is the number of values to be smoothed (N.GE.2).                  
+ODP$
+X......is an array of the N increasing abscissae of the                  
+values to be smoothed.                                                    
+ODP$
+Y......is an array of the N ordinates of the values to be                
+smoothed, (i.e. Y(K) is the functional value                             
+corresponding to X(K) ).                                                  
+ODP$
+D......is a parameter containing the observation weights.                
+This may either be an array of length N or a scalar                       
+(interpreted as a constant). The value of D                               
+corresponding to the observation (X(K),Y(K)) should                       
+be an approximation to the standard deviation of error.                   
+ODP$
+ISW....contains a switch indicating whether the parameter                
+D is to be considered a vector or a scalar,                               
+CY1$
+       ISW = 0 if D is an array of length N,                                 
+       ISW = 1 if D is a scalar.                                             
+ODP$
+S......contains the value controlling the smoothing. This                
+must be non-negative. For S equal to zero, the                            
+subroutine does interpolation, larger values lead to                      
+smoother funtions. If parameter D contains standard                       
+deviation estimates, a reasonable value for S is                          
+FLOAT(N).                                                              
+TPF$
+SP2$
+ODP$
+EPS....contains a tolerance on the relative precision to                 
+which S is to be interpreted. This must be greater than                   
+or equal to zero and less than or equal to one. A
+reasonable value for EPS is SQRT(2.0/FLOAT(N)).                            
+ODP$
+YS.....is an array of length at least N.                                 
+ODP$
+YSP....is an array of length at least N.                                 
+ODP$
+SIGMA..contains the tension factor. This value indicates                 
+the degree to which the first derivative part of the                      
+smoothing functional is emphasized. If SIGMA is nearly                    
+zero (e.g. .001) the resulting curve is approximately a                  
+cubic spline. If SIGMA is large (e.g. 50.) the                           
+resulting curve is nearly a polygonal line. If SIGMA                     
+equals zero a cubic spline results. A standard value for                  
+SIGMA is approximately 1.
+ODP$
+TEMP...is an array of length at least 9*N which is used                  
+for scratch storage.                                                      
+CEB$
+ON OUTPUT
+ODP$
+YS.....contains the smoothed ordinate values.                            
+ODP$
+YSP....contains the values of the second derivative of the               
+smoothed curve at the given nodes.                                        
+ODP$
+IERR...contains an error flag,                                           
+CY1$
+       IERR = 0 for normal return,                                            
+            = 1 if N is less than 2,                                          
+            = 2 if S is negative,                                             
+            = 3 if EPS is negative or greater than one,                       
+            = 4 if X-values are not strictly increasing,                      
+            = 5 if a D-value is non-positive.                                 
+CY1$
+N, X, Y, D, ISW, S, EPS, and SIGMA are unaltered.                         
+
+This subroutine references package modules CURVSS, TERMS and SNHCSH.
+TPF$                                                                            
+SP2$
+CYB$
+===========================================================================     
+C
+      FUNCTION CURV2 (T,N,X,Y,YP,SIGMA)
+C   
+      INTEGER*4  N
+C
+      REAL*4     T,X(N),Y(N),YP(N),SIGMA
+C
+===========================================================================
+BLP$                                                                            
+This function interpolates a curve at a given point                             
+using a spline under tension. The subroutine CURVS should                       
+be called earlier to determine certain necessary                                
+parameters.                                                                     
+CEB$                                                                            
+ON INPUT
+ODP$                                                                            
+T......contains a real value to be mapped onto the interpolating curve.
+ODP$                                                                            
+N......contains the number of points which were specified to                    
+determine the curve.                                                            
+ODP$                                                                            
+X & Y..are arrays containing the abscissae and                                  
+ordinates, respectively, of the specified points.                               
+ODP$                                                                            
+YP.....is an array of second derivative values of the curve                     
+at the nodes.                                                                   
+ODP$                                                                            
+SIGMA..contains the tension factor (its sign is ignored).                       
+CYB$                                                                            
+===========================================================================
+The parameters N, X, Y, YP, and SIGMA should be input unaltered from the 
+output of CURVS
+===========================================================================
+CEB$                                                                            
+ON OUTPUT
+ODP$                                                                            
+CURV2..contains the interpolated value.                                         
+BLP$$                                                                            
+None of the input parameters are altered.                                       
+this function references package modules INTRVL and                             
+SNHCSH.                                                                         
+QIT$                                                                            

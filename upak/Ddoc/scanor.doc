@@ -1,0 +1,1951 @@
+RPD$075066
+CHP$U320  scanor - Unix/Linux Version - WTM
+TPF$
+SP1$
+CYB$
+Sec Page Contents
+
+010   2  Introduction 
+020   3  General Features
+
+030   4  Commands for Setup and Initialization
+040   4  Commands for Tape/File Assignment, Control, etc.
+050   5  Commands for Running (actual processing)
+060   5  Commands for Command File Operation
+070   5  Commands for Reading and Display of Tape or File Records
+075   6  Commands related to VME 100 Hertz Clock - \bu\Linux version only!\\
+
+080   7  Using Shared Histogram Memory Segments 
+
+090   9  Discussion of User-supplied Routine DRRSUB
+100   9  Histogram Specification Routines (called by DRRSUB) 
+110  12  Simple Example of User-supplied Routine DRRSUB
+
+120  12  Discussion of User-supplied Routine HISSUB
+130  12  Discussion of Histogram Incrementing Routines (options)
+
+150  14  Routines to Unpack Full Buffers into Single Events
+190  16  Routines for Testing Bananas
+
+220  17  Discussion of 2-D Free-Form Gating
+230  18  Discussion of 1-D Gating 
+240  19  How to Create and Run Customized scanor Programs
+
+250  20  Example DRRSUB
+260  21  Example HISSUB
+
+280  22  Discussion of Tape Record Lengths
+290  23  Logical Units and COMMON Blocks
+
+300  24  Creation & Use of DVDs & CDs for Data Processing - Outline
+310  25  Creation       of DVDs & CDs for Data Processing - Details
+320  27  Use            of DVDs & CDs for Data Processing - Details
+
+330  28  Processing of User Defined Files - UDFs - \bu\Linux version only!\\
+
+340  35  Using Multiple CPUs to Process Data
+
+CY1$
+\b\How to Get Started\\
+===========================================================================
+\b\Type:\\
+
+\b\scanor filnam\\             ;To start in \b\user-mode & shared-memory\\
+
+\b\scanor filnam local\\       ;To start in \b\user-mode &  local-memory\\
+
+\b\scanor filnam chil\\        ;To start in \b\chil-mode & shared-memory\\
+
+\b\scanor filnam chil local\\  ;To start in \b\chil-mode &  local-memory\\
+
+\b\scanor filnam local chil\\  ;To start in \b\chil-mode &  local-memory\\
+
+===========================================================================
+Where: \b\filnam\\ denotes the filename prefix of the output his-file.
+===========================================================================
+TPF$
+SP1$
+SEC$.010  Introduction
+BLP$
+The \b\scanor\\ package incorporates most of the features provided by
+\b\scanu (or scanuv)\\ as well as the chil-based \b\scan\\ package.
+A number of new features are also provided as shown by the comparison
+table below.
+DBL$
+CYB$
+===========================================================================
+Scan-type--->                  SCAN     SCANU    SCANUV    SCANOR
+Intrinsic Features
+HISSUB Processed L001            no        no        no       YES
+HISSUB Processed L002            no        no        no       YES
+HISSUB Processed L003            no       YES       YES       YES
+CHIL   Processed L001            no        no        no       YES
+CHIL   Processed L002           YES        no        no       YES
+CHIL   Processed L003            no        no        no       YES
+Input from Tape                 YES       YES       YES       YES
+Input from ldf-files             no        no        no       YES
+Input from ACQ SHM               no        no       YES       YES
+Banana support routines          no        no        no       YES
+Read & Display of list data      no        no        no       YES
+Status Display                   no        no        no       YES
+Buffer modification via INPUT   YES       YES       YES        no
+Single event calls to HISSUB     na       YES       YES        no
+===========================================================================
+SIN$
+TPF$
+SP1$
+SEC$.020  General Features
+ODP$
+o......\b\scanor\\ supports input data streams from tape, ldf-files
+and shared-memory (for on-line use).
+ODP$
+o......\b\scanor\\ supports the usual command processing including 
+user cammand processing.
+ODP$
+o......All histograms are generated in memory which is allocated
+is determined by the amount of memory available and will vary with the
+DECstation being used, the time of day, etc.
+ODP$
+o......\b\scanor, scanu, & chil\\ procedures all use the same .his and
+.drr file structures.
+ODP$
+o......A proper .drr file may either exist or you must provide 
+a routine, DRRSUB, to create it at run time. See SEC# 090 thru 110.
+ODP$
+o......The .his file may either exist or you will be asked 
+for permission to create it at run time. 
+ODP$
+o......In user-mode, the main program calls user-supplied routine, 
+HISSUB(IBUF,N),
+with an INTEGER*2 event buffer IBUF which contains one raw buffer
+from tape, ldf-file or shared-memory segment.
+ODP$
+o......histogramming is accomplished by user-supplied calls,
+normally from routine HISSUB,
+to one of the following standard routines:
+CY1$
+       COUNT1(  ID,IX,JY)   ;For no limit-checking, ranging, compression
+       COUNT1C( ID,IX,JY)   ;For    limit-checking, ranging
+       COUNT1CC(ID,IX,JY)   ;For    limit-checking, ranging, compression
+FIP$
+Where, ID is a histogram ID-number
+in the range 1 to 8000. IX and JY are X- and Y-channel numbers in the
+range 0 to whatever. For 1-D histograms, JY is ignored but must be
+supplied. See SEC# 130.
+CY1$
+\bu\Important Note for CHIL Users\\
+BLP$
+Any \b\USERSUBs\\ called via the \b\CHIL\\ program is now passed an INTEGER*4
+array rather than INTEGER*2 array as in the original \b\SCAN\\
+package as illustrated below.
+CYB$
+     SUBROUTINE USERSUB1(IBUF)
+C
+     INTEGER*4 IBUF(*)
+C
+     ...
+     ...
+C
+     RETURN
+     END
+TPF$
+SP1$
+SEC$.030  Commands Related Setup and Initialization
+BLP$
+The standard \b\scanor\\ commands, which are also available in the form
+of run-time \b\help\\ are listed below. All commands may be entered
+in lower case.
+CY1$
+UCOM TEXT       Send TEXT to USERCMP
+
+GATE ID LO HI   Interactively specify 1-D gate (ID = 1 to 1000)
+
+GAT  file.gat   Open and read 1-D gates from file.gat (which contains a
+                number of GATE entries as defined above)
+
+GATZ            Reset all previously defined gates to "impossible"
+STAT GATE       Displays/logs currently defined gates
+
+BAN  file.ban   Open and read in bananas from file.ban
+BANZ            Zero (reset) in-memory banana list
+
+SWAB            Turn byte-swap ON
+SWOF            Turn byte-swap OFF (default)
+
+RECL N          Set tape data record length to N-bytes (dflt = auto-detect)
+                (See SEC# 280 for discussion)
+
+L001 NSKIP,NPPE Specify L001 input format (see Handbook SEC# 300.060)
+L002            Specify L002 input format 
+L003            Specify L003 input format (default)
+
+LON             Turns log-file output ON (default)
+LOF             Turns log-file output OFF
+
+WAIT NSEC       Waits NSEC seconds (allowed range NSEC = 1 to 300)
+
+STAT            Displays current status (options chosen, open files, etc
+
+MSG  TEXT       Display TEXT (44 bytes) on (VDT)
+SEC$.040  Commands Related to Tape/File Assignment, Control, etc.
+CY1$
+TAPE rxxx  Assign input to tape unit   - (rxxx = rmt0, rmt1, ..etc)
+
+FILE NAME  Assign input to file NAME   - (must be standard ldf-file)
+
+FILE /mnt/cdrom0/NAME ;NAME of ldf-file from CD     on CD  drive (top)
+FILE /mnt/cdrom1/NAME ;NAME of ldf-file from CD/DVD on DVD drive
+                      ;(see \b\SEC# 300 - SEC# 326\\ for details)
+
+SHM  VMEx  Assign input to SHM channel - VMEx = VME1, VME2, VME3, ....
+IPC  VMEx  Assign input to SHM channel - VMEx = VME1, VME2, VME3, ....
+ACQ  VMEx  Assign input to SHM channel - VMEx = VME1, VME2, VME3, ....
+
+CLOS       Close currently open input file/dev/segment whatever it is
+CLUN       Close and unload input tape
+
+REW        Rewind input tape/file
+BR   N     Backspace N-records on input tape/file
+FR   N     Forward   N-records on input tape/file
+BF   N     Backspace N-files   on input tape/file
+FF   N     Forward   N-files   on input tape/file
+FIND ID    Find HEADER # ID
+
+TPF$
+SP1$
+SEC$.050  Commands Related to Running (actual processing)
+CY1$
+ZERO       Zero his-file & reset all pointers & counters
+Z I,J...   Zero individual histogram IDs I,J...
+Z I to J   Zero histogram IDs I to J in steps of 1
+Z I to J,k Zero histogram IDs I to J in steps of K
+Z          Repeats last Z-list
+
+ZBUC       Zero BUFFER-counter (record counter)
+
+GO         START/CONT process (stops on EOF,EOM or ERROR)
+GO   N     Process N-files (skip bad records)
+GO   N,M   Process N-files or M-recs - 1st to occur
+
+GOEN       START/CONT process - unloads tape (if any) and ends
+GOEN N     START/CONT process - unloads tape (if any) and ends
+GOEN N,M   Process N-files or M-recs - 1st to occur
+
+HUP        Updates his-file but does not terminate
+CTRL/C     Interrupts tape processing and waits for next typed CMD
+END        END gracefully - update his-file & END
+KILL       Abort program  - no update!!
+SP1$
+SEC$.060  Commands Related Command File Operation
+CY1$
+CMD  fil   Assign fil.cmd as cmd-file (not read yet)
+
+CCMD       Continue reading instructions from fil.cmd
+
+CLCM       Continue with last CMD from fil.cmd (backspaces)
+
+CCON       Continue (reading instructions from CON:)
+SP1$
+SEC$.070  Commands for Reading and Display of Tape or File Records
+CY1$
+RDI  N     Read    N records from input tape, ldf-file or shared-memory
+
+PEV  IA,IB  Print   16-bit word IA thru IB in EVENT format (integer)
+DEV  IA,IB  Display 16-bit word IA thru IB in EVENT format (integer)
+
+PEVZ IA,IB  Print   16-bit word IA thru IB in EVENT format (hex)
+DEVZ IA,IB  Display 16-bit word IA thru IB in EVENT format (hex)
+
+PZ   IA,IB  Print   16-bit word IA thru IB in HEX   format
+DZ   IA,IB  Display 16-bit word IA thru IB in HEX   format
+
+PA   IA,IB  Print   16-bit word IA thru IB in ASCII format
+DA   IA,IB  Display 16-bit word IA thru IB in ASCII format
+
+PI   IA,IB  Print   16-bit word IA thru IB in INT*2 format
+DI   IA,IB  Display 16-bit word IA thru IB in INT*2 format
+
+PIF  IA,IB  Print   32-bit word IA thru IB in INT*4 format
+DIF  IA,IB  Display 32-bit word IA thru IB in INT*4 format
+TPF$
+SEC$.075  Commands Related to VME 100 Hertz Clock - Linux version only!
+CY1$
+CLID IDHI IDLO  Specifies ID numbers (Hi & Lo parts) for 100 Hertz clock
+                (these are the IDs specified by $CID in the PAC-file)
+                RDI will now show VME clock for first event of data buffer
+
+CLID            Without IDs will remove ID specifications
+
+CLIM MIN  MAX   Specifies Min & Max value of 100 Hertz clock for which
+                processing is to be executed. (see \b\Note-1\\)
+
+CLIM            Without MIN, MAX data will remove specification
+
+CLBF            Enables  buffer-by-buffer limit testing by scanor
+                Disables event-by-event   limit testing by user
+
+CLEV            Enables  event-by-event   limit testing by user (default)
+                Disables buffer-by-buffer limit testing by scanor
+
+CLLO VMET       Locates the LDF record "containing" specified VME-time
+                (see \b\Note-1 & Note-2)
+===========================================================================
+CY1$
+\b\Note-1\\ Since 9 or 10 digit numbers are hard to read (at least for me)
+I display the 100 Hertz clock values with commas. For example the number
+\b\1234567890\\ is displayed as \b\1,234,567,890\\
+You are also allowed to enter the CLIM & CLLO parameters MIN, MAX & VMET
+in a similar manner using any non-numeric character as separators except 
+\b\DO NOT USE BLANKS or ! or ;\\.
+BLP$
+\b\Note-2\\ the command \b\CLLO VMET\\ command attempts to locate the 
+LDF record containing the 100 Hertz clock time VMET. It only checks the
+first time found in each record and unless the first time happens to match
+the requested time it will find the record containing a greater time and 
+back up one record.
+CEN$
+\bu\Comments Related to Processing\\
+BLP$
+If the commands \b\CLID IDHI IDLO, CLIM MIN MAX & CLEV\\ are given 
+then the user may scan a specified time interval of an LDF-file.
+This is how it works.
+In routine HISSUB, call UNPACKL, UNPACKAA or UNPACKBB to return an event list
+in (IDLST(*), DALST(*), NPAR=# of parameters) or an expanded event in 
+array EXPEV(*). (see SEC#150) Then:
+CYB$
+       CALL VMETCHEKA(IDLST,DALST,NPAR,ISTAT) or
+
+       CALL VMETCHEKB(EXPEV,ISTAT)
+CY1$
+       ISTAT=-1  says VME time of event is below lo-limit
+       ISTAT= 0  says VME time of event is within specified limits
+       ISTAT= 1  says VME time of event is above hi-lomit
+       ISTAT= 2  says VME time of event is not found
+       ISTAT= 3  says CLID or CLIM has not been entered
+
+To abort the scan (when hi-limit is exceeded for example):
+CYB$
+       CALL SCANSTOP
+BLP$
+If the commands \b\CLID, CLIM & CLBF\\ are all given, time checking is
+carried out by \b\scanor\\ itself but only on a buffer-by-buffer basis.
+I.E. only the first event in the input buffer is time-checked.
+TPF$
+SP2$
+SEC$.080  Using Shared Histogram Memory Segments 
+BLP$
+Program \b\scanor\\ generates histograms in either a 
+\b\shared or local\\ memory segment as indicated below:
+CYB$
+scanor name        ;Starts scanor using a shared memory segment (default)
+scanor name local  ;Starts scanor using a local  memory segment
+BLP$
+The advantage of using the \b\shared\\ segment is that \b\damm\\ can
+access histograms (in memory) as they are being generated without
+waiting for an \b\end\\ or a \b\hup\\.
+CEB$
+Problems With Orphan Shared Segments
+BLP$
+Once upon a time there was this problem with shared
+memory segments.  It seems that when a user program
+goes belly up, any shared memory segments it was using
+remain allocated.  In time no one is able to use shared
+memory since all available memory is allocated to these
+orphan segments.  The existence of this problem was
+documented and instructions for removing these shared
+memory segments have been provided (see Note: on shm_fixup below).
+Strangely enough,
+users do not alway remove their orphan segments!
+BLP$
+In the current implementation, a subroutine (shared_wipe) is 
+called at the startup of \b\scanor\\ which deletes orpham shared memory
+segments belonging to the current user.
+An orphan shared memory segment is one which meets \b\ALL\\
+of the following:
+CY1$
+(1)....The CREATOR is the current user
+(2)....The OWNER is the current user
+(3)....The number of processes attached to this segment is zero 
+       (i.e. nobody is using this one).
+(4)....The process which created this segment is no longer existant.
+
+If all conditions are satisfied, the shared memory segment is removed.
+BLP$
+\bu\WARNING:\\ This may be machine dependent.  It depends on the format
+of the output from the system command 'ipcs -mcop'. So far it has worked
+on DECstations, Alphas and SUNs but we can't make any guarantees for other
+platforms or future operating systems on these platforms.
+TPF$
+SP2$
+SEC$.080  Using Shared Memory Segments (continued)
+SP1$
+CYB$
+THE FOLLOWING PROCEDURE SHOULD NO LONGER BE REQUIRED BUT I WILL RETAIN 
+
+THE DOCUMENTATION FOR NOW. This only applies DECstations and Alphas.
+
+BLP$
+\b\WARNING!!\\ if \b\scanor\\ should terminate abnormally (core dump),
+the \b\shared segment\\ will not be released as it normally would.
+You will need to perform the cleanup operation shown below, otherwise
+the system will eventually be eaten up with "abandoned memory segments".
+CYB$
+Type: /usr/hhirf/shm_fixup name
+BLP$
+Where, \b\name\\ is the his-file name prefix that you used in starting
+\b\scanor\\.
+CY1$
+---------------------------------------------------------------------------
+CEB$
+IMPORTANT!!
+BLP$
+If you do not run \b\shm_fixup\\ at the time of the "abnormal termination"
+and the machine becomes almost inoperable due to the memory tied up
+with abandoned segments, do the following:
+Find these abandoned segments by displaying all files with
+the \b\.shm\\ name extension. If you find a file \b\name.shm\\ and
+are not currently running scanor or scan with \b\name.his\\,
+then you have found an abandoned segment and should run
+\b\shm_fixup\\ as described above.
+BLP$
+Under certain conditions, abandoned segments may not have an associated
+\b\shm-file\\. To find and remove these do the following.
+CY1$
+Type: \b\ipcs\\           ;To \b\display\\ shared mmemory segments & IDs
+ 
+Type: \b\ipcrm -m ID\\    ;To \b\remove\\  shared memory  segment    ID
+CY1$
+---------------------------------------------------------------------------
+TPF$
+SP1$
+SEC$.090  Discussion of User-supplied Routine DRRSUB
+BLP$
+The basic function of a DRRSUB is to define histogram
+specifications and write a HHIRF form directory file (.drr file).
+It is called ONCE by a \b\scanor\\ task, during the initialization
+process, at the beginning of a scan, and 
+builds a HHIRF format histogram directory file (.drr file). The same
+information is used to allocate a .his file, and to determine how much
+memory to request from the OS for histogram storage.
+You can make it as elaborate as you like, with
+user prompting, etc.(for example you could test for the
+existence of a directory file, and if it exists ask the user if he
+wants to recreate it or not). The call sequence of a DRRSUB is:
+CYB$
+      SUBROUTINE DRRSUB(IEXIST)
+      INTEGER IEXIST
+C
+C     At entry  IEXIST will be 1 if a .drr file of the proper name already
+C     exists and 0 otherwise. The basic structure of a DRRSUB is:
+C
+      ...
+C                      !tests and/or user interaction
+C
+      CALL DRRMAKE     !make new or overwrite existing DRR
+C                      !calls to HDEF, HD1D or HD2D (up to 2008,
+C                      !one for each histogram being defined.
+C                      !See call sequence below)
+      CALL ENDRR
+      ...
+      RETURN
+      END
+BLP$
+\b\A DRRSUB is not required.\\ A dummy DRRSUB is included in
+scanmlib and will be linked if you don't include one in your link
+list. It is a no-op which writes a message to the screen to the
+effect that it hasn't done anything. Using the dummy DRRSUB
+means that you are depending on the .drr file to already exist,
+whose name matches that specified on your start command line 
+(e.g. "\b\scanor\\ name"). A directory file produced by CHIL works
+just as well as one generated by fortran calls (they're
+functionally identical).
+BLP$
+DRRMAKE should not be called if you want to reuse an existing
+DRR, since it destroys the information in the old .drr. The calls 
+to DRRMAKE and ENDRR are both required to generate a valid
+new .drr file and to finalize the generation of histogram specs. 
+There is no harm in regenerating a .drr every time you run \b\scanor\\,
+even though it's always the same. This does not result in a loss
+of information in the .his file. (Renewing a .drr file doesn't
+zero a .his file.)
+SEC$.100  Histogram Specification Routines (called by DRRSUB)
+BLP$
+There are three basic histogram definition routines, a general
+one HDEF which allows up to 4 dimensional histograms, and HD1D and HD2D
+which are specific to 1 and 2 dimensional histograms respectively. A
+DRRSUB should consist of a series of calls to HDxx family routines (one
+call per histogram) followed by a call to ENDRR (no arguments) which
+tells the system you're finished. A histogram directory is then listed
+for you on stderror and on your log file.
+TPF$
+SP1$
+SEC$.100  Histogram Specification Routines (continued)
+BLP$ 
+Note that there are some philosophical differences between a
+histogram specification in DRRSUB and a histogram definition in CHIL:
+some examples of these differences will be mentioned here to
+illustrate basic concepts. In CHIL, gates, conditions, etc. are directly 
+associated with a histogram. A call to a HDxx family routine only reserves 
+space and assigns an ID number, minimum and maximum parameter values 
+and a compression factor to the histogram. How you increment the 
+histogram depends of the logic of the fortran in your HISSUB. 
+In CHIL, histograms are associated with parameter numbers, and multiple
+H() and OH() specs are required to generate an overlay of many 
+parameters in to one HID. In a DRRSUB a single HDxx call is all that 
+is necessary. The HISSUB does the overlaying. 
+CYB$
+Call Sequence for HDEF -  General Histogram Specification Routine
+BLP$
+HDEF is really too general for most purposes and requires dimensioned
+arrays, etc. So, read about HDEF but use routines HD1D and HD2D 
+described on following pages.
+CY1$ 
+===========================================================================
+      SUBROUTINE HDEF(
+     &      HID,     ![INT] HIST. ID 
+     &      HDIM,    ![INT] HIST. DIMENSIONALITY (1-4) 
+     &      NHWPC,   ![INT] NO. OF HALF WORDS PER CHANNEL (1 or 2) 
+     &      RAWL_LST,![INT ARR] LIST OF HDIM RAW PARAM LENGTHS 
+     &      HSTL_LST,![INT ARR] LIST OF HDIM HISTOG. PARAM LENG. 
+     &      MIN_LST, ![INT ARR] LIST OF HDIM "RANGE" MINIMA 
+     &      MAX_LST, ![INT ARR] LIST OF HDIM "RANGE" MAXIMA 
+     &      LABX,    ![CHAR*N] (N.LE.12) X-LABEL
+     &      LABY,    ![CHAR*N] (N.LE.12) Y-LABEL
+     &      TIT)     ![CHAR*N] (N.LE.40) TITLE FOR HISTOGRAM
+c     ---------------------------------------------------------------------
+      IMPLICIT INTEGER*4 (A-Z)
+      INTEGER*4 RAWL_LST(HDIM),HSTL_LST(HDIM),MIN_LST(HDIM),MAX_LST(HDIM)
+      CHARACTER*(*) LABX,LABY,TIT
+c     ---------------------------------------------------------------------
+c        o   Reserves 1 histogram per call.
+c        o   A call to DRRMAKE is required before first HDxx call.
+c        o   A call to ENDRR is required after last HDxx call.
+c        o   The four dummy arguments with suffix "_LST" (i.e. list)
+c            in the HDEF call are (and the corresponding real arguments 
+c            must also be) arrays of dimension HDIM. The corresponding
+c            dummy arguments (similar names, no "_LST" suffix) in 
+c            HD1D and HD2D are scalars. I leave off the "_LST" in the
+c            following discussion.
+c        o   RAWL and HSTL are both automatically adjusted to the  
+c            nearest power  of 2. working in powers of 2 is 
+c            traditional at HHIRF.
+c        o   A value of MIN different from 0 and/or a value of MAX
+c            different from HSTL has the same effect as a range
+c            specification in CHIL....e.g. the corresponding CHIL is 
+c            $LPR 15 = RAWL 
+c            ..
+c            $HID HID
+c            H(15) L(HSTL) R(MIN,MAX).
+TPF$
+SP1$
+SEC$.100  Histogram Specification Routines (continued)
+CY1$
+c        o   A compression (given by RAWL/HSTL) is associated with 
+c            each parameter of each HID. This compression is applied for 
+c            you if you increment with COUNT1CC. COUNT1 and
+c            COUNT1C ignore it. A compression is always a power of 2.
+c        o   Some of the arguments are "optional" in the sense that
+c            that if the value is 0 in the call (not missing)
+c            a sensible default will be taken:
+c                RAWL  IF 0 SET TO 2048. 
+c                HSTL  IF 0 SET TO RAWL
+c                MIN   IF 0 LEFT AS 0
+c                MAX   IF 0 SET TO HSTL-1
+c        o   Two special entries HD1D and HD2D are provided for
+c            1d and 2d histograms. They are all you will ever need.
+             Forget HDEF.
+CYB$
+Call Sequence for HD1D -  1D Histogram Specification Routine
+CY1$
+C     =====================================================================
+C     ENTRY HD1D -  ENTRY FOR 1D HISTOGRAM
+C     =====================================================================
+      ENTRY HD1D(
+     &     HID,     ! [INT] HIST. ID 
+     &     NHWPC,   ! [INT] NO. OF HALF WORDS PER CHANNEL (1 or 2)
+     &     RAWL,    ! [INT] RAW PARAMETER LENGTH 
+     &     HSTL,    ! [INT] HISTOGRAMED PARAM LENGTH 
+     &     MN,      ! [INT] MINIMUM PARAM "RANGE" VALUE
+     &     MX,      ! [INT] MAXIMUM PARAM "RANGE" VALUE 
+     &     TIT)     ! [CHAR*N] (N<40) TITLE FOR HISTOGRAM
+C    ======================================================================
+C    Same as HDEF but only for 1D. Note all numeric arguments are scalars
+C    whereas in HDEF many are arrays.
+C    See HDEF for values assumed when arguments are 0.
+CYB$
+Call Sequence for HD2D -  2D Histogram Specification Routine
+CY1$
+C     =====================================================================
+C     ENTRY HD2D - ENTRY FOR 2D HISTOGRAM
+C     =====================================================================
+      ENTRY HD2D(
+     &      HID,    ! [INT] HIST. ID 
+     &      NHWPC,  ! [INT] NO. OF HALF WORDS PER CHANNEL (1 or 2)
+     &      RAWLX,  ! [INT] RAW X PARAM LENGTH  
+     &      HSTLX,  ! [INT] HISTOGRAMED X PARAM LENGTH 
+     &      MNX,    ! [INT] MINIMUM X PARAM "RANGE" VALUE
+     &      MXX,    ! [INT] MAXIMUM X PARAM "RANGE" VALUE 
+     &      RAWLY,  ! [INT] RAW Y PARAM LENGTH 
+     &      HSTLY,  ! [INT] HISTOGRAMED Y PARAM LENGTH 
+     &      MNY,    ! [INT] MINIMUM Y PARAM "RANGE" VALUE
+     &      MXY,    ! [INT] MAXIMUM Y PARAM "RANGE" VALUE 
+     &      TIT)    ! [CHAR*N] (N<40) TITLE FOR HISTOGRAM
+C     =====================================================================
+C     Same as HDEF but only for 2D. Note all numeric arguments are scalars
+C     whereas in HDEF many are arrays.
+C     See HDEF for values assumed when arguments are 0.
+TPF$
+SP1$
+SEC$.110  Example User-supplied DRRSUB routine
+BLP$
+A very simple DRRSUB, which books 7 1D histograms and one 2D
+histogram. The ranging feature is illustrated by the 2D histogram. The
+H1D calls depend on the defaulting of MAX to HSTL-1 (i.e. 511).
+CY1$
+===========================================================================
+      SUBROUTINE DRRSUB(IXST)
+C
+C     Very simple example of a DRRSUB.
+C
+      IMPLICIT INTEGER*4 (A-Z)
+C
+      CALL DRRMAKE
+C
+      DO I=1,7
+      CALL HD1D(I,2,2048,512,0,0,'RAW PARAM. HIST.')
+      ENDDO
+C
+      CALL HD2D(100,1,2048,2048,0,1000,2048,2048,27,2047,'2D HIST.')
+C
+      CALL ENDRR
+      END
+===========================================================================
+Hisogram spec list produced by running \b\scanor\\ with the DRRSUB above.
+
+           8 HISTOGRAMS,      2030189 HALF-WORDS
+ ID-LIST:
+       1       2       3       4       5       6       7     100
+
+  HID  DIM HWPC  LEN(CH)   COMPR  MIN   MAX   OFFSET    TITLE
+    1    1   2      512       4     0   511        0  RAW PARAM. HIST.    
+    2    1   2      512       4     0   511     1024  RAW PARAM. HIST.    
+    3    1   2      512       4     0   511     2048  RAW PARAM. HIST.    
+    4    1   2      512       4     0   511     3072  RAW PARAM. HIST.    
+    5    1   2      512       4     0   511     4096  RAW PARAM. HIST.    
+    6    1   2      512       4     0   511     5120  RAW PARAM. HIST.    
+    7    1   2      512       4     0   511     6144  RAW PARAM. HIST.    
+  100    2   1  2023021       1     0  1000     7168  2D HIST.            
+===========================================================================
+
+
+SEC$.120  Dicussion of User-supplied Routine HISSUB
+BLP$
+The main program calls user-supplied routine, HISSUB(IBUF,N),
+with an INTEGER*2 event buffer IBUF which may contains a raw buffer
+from tape, ldf-file or shared-memory segment.
+BLP$
+You can and will, of course, do many complicated things in HISSUB but see
+SEC# 260 for a simple example.
+TPF$
+SP1$
+SEC$.130  Discussion of Histogram Incrementing Routines
+BLP$
+There are three histogram incrementing routines which differ
+only in the amount of checking and manipulating they do for you. The
+routines are COUNT1, COUNT1C and COUNT1CC. All perform the same "add 
+one to histogram HID" function but COUNT1, which is the fastest routine
+does the incrementing without any checking or modification of parameter 
+values. COUNT1C (add 1 and check) does no compression does do "ranging"
+and limit checking. COUNT1CC (add 1 check and compress) increments with
+compression (divide input by power of 2) as well as ranging and limit
+checking. The compression factor used by COUNT1CC and the range
+limits used by COUNT1CC and COUNT1C are associated with a HID at 
+the time the histogram is defined with the HDxx family call in 
+DRRSUB. Call sequences are given below. 
+CY1$  
+===========================================================================
+
+      \b\SUBROUTINE COUNT1(ID,IX,IY)\\
+      \b\INTEGER*4 ID,IX,IY\\
+      ---------------------------------------------------------------------
+      Increments histogram with HID ID at IX and IY. No limit
+      checking or "ranging" is done. No compression is applied. 
+      You're on your own. This call is provided to let you do things 
+      the fastest way you know how. IY is ignored for a 1D histogram.
+      NOTE!!! IX and IY are NOT HALF WORDS!!!
+      ---------------------------------------------------------------------
+
+      \b\SUBROUTINE COUNT1C(ID,IX,IY)\\
+      \b\INTEGER*4 ID,IX,IY\\
+      ---------------------------------------------------------------------
+      Increments histogram with HID ID at IX and IY. Limit
+      checking is done, and CHIL type "ranging" is done, but 
+      no compression is applied. This lets you do your own
+      compressing or save a few instructions if you know it's
+      not needed.
+      NOTE!!! IX and IY are NOT HALF WORDS!!!
+      ---------------------------------------------------------------------
+
+      \b\SUBROUTINE COUNT1CC(ID,IX,IY)\\
+      \b\INTEGER*4 ID,IX,IY\\
+      ---------------------------------------------------------------------
+      Increments histogram with HID ID at IX and IY. Limit
+      checking is done, and CHIL type "ranging" is done, and 
+      the compression implied by the RAWL/HSTL ratio in your
+      HDxx call is applied.  
+      NOTE!!! IX and IY are NOT HALF WORDS!!!
+===========================================================================
+
+BLP$
+Note that no calls are provided to increment histograms with 
+dimensionality .GT. 2, so HDEF isn't all that useful
+(that's what I meant by too general). You can actually
+increment a 3 or 4D histogram with COUNT1 if you think 
+about it a bit. 
+TPF$
+SP1$
+SEC$.150  Routines to Unpack Full Buffers into Single Events
+SP1$
+CY1$
+\bu\UNPACKL - Unpacks L001, L002 & L003 Buffers to Single Events\\
+BLP$
+The data format is interpreted as (L001, L002 or L003) depending 
+on that specified by the user at run time. The default format is
+\b\L003\\ since that is the one we are currently using in data
+acquisition.
+CY1$
+      SUBROUTINE UNPACKL(
+     &           IBUF,   !I*2 - raw data buffer
+     &           NHW,    !I*4 - # of I*2 words in IBUF
+     &           MXID,   !I*4 - max-ID (dimension of IDLST, DALST & EXPEV)
+     &           IDLST,  !I*4 - ID-list   for returned event
+     &           DALST,  !I*4 - Data-list for returned event
+     &           EXPEV,  !I*4 - expanded-event array
+     &           NPAR,   !I*4 - # of parameters in this event
+     &           DONE,   !C*4 - YES/NO - requests new IBUF
+     &           IERR)   !I*4 - 0 means OK, nonzero means error
+BLP$
+\bu\Important Note: \\In interest of speed,
+\b\UNPACKL\\ resets (to -1) only those elements of \b\EXPEV\\ which
+were set by the previous call (all elements are initially set to -1). 
+If the user sets other elements 
+in this array, it is her/his/its responsibility to reset these elements
+prior to subsequent calls to \b\UNPACKL\\.
+BLP$
+\bu\Important Note: \\In the interest of speed,
+\b\UNPACKL uses IDLST\\ to reset elements
+in \b\EXPEV\\ which were set in the previous unpack operation.
+Therefore, the user should \b\NOT\\ modify \b\IDLST\\.
+BLP$
+\bu\Important note:\\ Routine \b\UNPACKBB\\ resets elements in the 
+expanded array \b\EVBUF\\ to 0 (not -1).
+TPF$
+SP1$
+SEC$.150  Routines to Unpack Full Buffers into Single Events (continued)
+CY1$
+\bu\UNPACKAA - Unpacks L003 Buffers to Single Events\\
+BLP$
+The L003 format used in the ORPHAS data acquisition system consists of pairs
+of 16-bit words.  The first word is the parameter ID and the second word is
+the parameter data.  The end-of-event is marked by a pair for which both
+the ID and the data are 'FFFF'X.  An event data buffer always has an
+integral number of events.
+BLP$
+UNPACKAA unpacks single events from a buffer.  Each call returns a single
+event in the EVBUF array.  When all events in the buffer have been processed,
+the alternate FORTRAN return is taken.
+BLP$
+UNPACKAA returns data in a two dimensional array.  The first element is the
+parameter ID and second is the parameter data.
+CY1$
+     CALL UNPACKAA(IBUF,NHW,EVBUF,NPARAM,EVSIZE,IERR,IEND)
+
+\b\call:\\   INTEGER*2  IBUF       - raw event data buffer
+        INTEGER*4  NHW        - number of INT*2 words in IBUF
+        INTEGER*4  EVSIZE     - Second dimension of array EVDAT
+
+\b\return:\\ INTEGER*4  EVBUF(2,*) - Event data. EVBUF(1,*) is the parameter ID
+        INTEGER*4  NPARAM     - Number of parameters in this event.
+        INTEGER*4  IERR       - 0 says OK.  Nonzero says too many parameters.
+
+        INTEGER*4  IEND       - 0 says more data - nonzero says end-of-buffer
+                              - Also nonzero if L003 format error occurs
+
+\b\NOTE: IEND has been implemented because gnu fortran doesn't support the
+alternate RETURN used in previous versions\\ 
+CY1$
+
+\bu\UNPACKBB - Unpacks L003 Buffers to Single Events\\
+BLP$
+UNPACKBB performs the same function as UNPACKAA.  The parameter ID is
+used as an index to the EVBUF array to get the parameter data.  The EVBUF
+is zero for parameters which were not present in the event.
+CY1$
+     CALL UNPACKBB(IBUF,NHW,IDBUF,EVBUF,MAXID,NPARAM,IERR,IEND)
+
+\b\call:\\   INTEGER*2  IBUF      - raw event data buffer
+        INTEGER*4  NHW       - number of INT*2 words in IBUF
+        INTEGER*4  MAXID     - Max ID. IDBUF and EVBUF must be dimensioned
+                               at least as great as MAXID
+
+\b\return:\\ INTEGER*4  IDBUF()   - List of IDs in this event
+        INTEGER*4  EVBUF(id) - Event data for parameter id
+        INTEGER*4  NPARAM    - Number of parameters in this event.
+        INTEGER*4  IERR      - 0 says OK. Nonzero says too many parameters.
+
+        INTEGER*4  IEND       - 0 says more data - nonzero says end-of-buffer
+                              - Also nonzero if L003 format error occurs
+
+\b\NOTE: IEND has been implemented because gnu fortran doesn't support the
+alternate RETURN used in previous versions\\
+TPF$
+SP1$
+SEC$.190  Routines for Testing Bananas
+CY1$
+\bu\BANTESTI - Banana Tester by Banana ID\\
+BLP$
+After the appropriate ban-files have been read in, 
+logocal function \b\BANTESTI\\ may be used by routine \b\USERMOC\\ to test
+X and Y parameters against individual bananas.
+CYB$
+      LOGICAL FUNCTION BANTESTI(IG,IX,IY)
+C
+      INTEGER*4 IG,IX,IY
+BLP$
+\b\BANTESTI\\ references
+bananas via ID-numbers IG. If the the IX,IY point is contained within the
+specified banana, the value of the function is .TRUE., otherwise it .FALSE.
+In NG or IG do not exist, .FALSE. is returned. There are no error messages.
+SP1$
+CY1$
+\bu\BANTESTN - Banana Tester by Banana Ordinal\\
+BLP$
+After the appropriate ban-files have been read in, 
+logical function \b\BANTESTN\\ may be used by routine \b\USERMOC\\ to test
+X and Y parameters against individual bananas.
+CYB$
+      LOGICAL FUNCTION BANTESTN(NG,IX,IY)
+C
+      INTEGER*4 NG,IX,IY
+BLP$
+\b\BANTESTN\\ references bananas via sequence numbers NG.
+If the the IX,IY point is contained within the
+specified banana, the value of the function is .TRUE., otherwise it .FALSE.
+In NG or IG do not exist, .FALSE. is returned. There are no error messages.
+TPF$
+SP1$
+SEC$.220  Discussion of 2-D Free-Form Gating
+BLP$
+2-D free-form gate testing must be carried out by user-supplied
+code executed by routine HISSUB. This is also true for 1-D gate 
+testing. However, there are some intrinsic aids for 2-D gate testing
+and ban-file processing. This is how it goes:
+CYB$
+Reading in ban-files-------------------------------------------------------
+BLP$
+One or more ban-files are opened and read in via the commands:
+CYB$
+ban file1.ban
+ban file2.ban
+ban file3.ban
+     .
+     .
+BLP$
+All entries (bananas) in each file are read in and stored in memory
+in the order in which they occur in the file. Subsequent references to 
+individual bananas (stored in memory) may be via the stacking ordinal
+(sequence number as read in) or via the ban-ID from the ban-file.
+If more than one file is read in, one must make sure that all IDs are
+unique or one must reference bananas by sequence number rather than
+ID-number. 
+Non-unique IDs will generate a warning at read-in time but it is not
+a fatal error. 
+Also, the ID numbers of bananas to be referenced by ID number must be
+limited to the range of 1 to 8000. Any out-of-range IDs will generate
+a warning at read-in time but, again, the error is not fatal. 
+CYB$
+Zeroing the in-memory bananas ---------------------------------------------
+BLP$ 
+You may use the command \b\banz\\ to clear all in-memory bananas. 
+Subsequently, a new set may be read in as described above.
+CYB$
+Functions which test 2-D Gates --------------------------------------------
+BLP$
+After the appropriate ban-files have been read in, one or both of the
+following logical functions may be used by routine HISSUB to test X and Y
+parameters against individual bananas.
+CY1$
+-----------------------------------------
+      LOGICAL FUNCTION BANTESTN(NG,IX,IY)
+C
+      INTEGER*4 NG,IX,IY
+----------------------------------------- 
+      LOGICAL FUNCTION BANTESTI(IG,IX,IY)
+C
+      INTEGER*4 IG,IX,IY
+----------------------------------------- 
+BLP$
+BANTESTN references bananas via sequence numbers NG and BANTESTI references
+bananas via ID-numbers IG. If the the IX,IY point is contained within the
+specified banana, the value of the function is .TRUE., otherwise it .FALSE.
+In NG or IG do not exist, .FALSE. is returned. There are no error messages.
+CEN$
+(continued on next page)
+TPF$
+SP1$
+SEC$.220  Discussion of Free-Form Gating (continued)
+BLP$
+The following list summarizes the features and limitations of this type
+of free-form gating support.
+ODP$
+(1)....Multiple ban-files may be read in. All bananas in each file are
+stored in memory.
+ODP$
+(2)....A ban-ID directory is built as files are read in. If more than one
+banana has the same ID, only the last one read will be entered in the
+directory. A warning will be displayed at read-in time but the error is not
+fatal (you can always reference via sequence # via routine BANTESTN).
+ODP$
+(3)....Up to 3000 bananas may be stored by the standard support routines.
+ODP$
+(4)....Banana
+ID numbers must be in he range of 1 through 8000 in order to be entered
+into the ID-directory. If any IDs are out of range, a warning will be
+given at read-in time but the error is not fatal (you can always reference
+via sequence# via routine BANTESTN).
+ODP$
+(5)....Up to 1024000 banana channels (2000 512-channel bananas) may be
+stored in memory by the support routines contained in \b\scanorlibc\\.
+SP1$
+SEC$.230  Discussion of 1-D gateing
+BLP$
+Simple 1-D gating is supported in user-mode as follows:
+ODP$
+o......One or more 1-D gates are specified via the syntax:
+CYB$
+       GATE ID LO HI
+FIP$
+Where, \b\ID\\ is the gate ID# and \b\LO & HI\\ are the gate
+limits. The allowed range for \b\ID\\ is 1 to 1000. All
+quantities are \b\INTEGER*4\\.
+ODP$
+o......\b\LOGICAL FUNCTION GATTESTI(ID,IP)\\ is used to test
+the parameter \b\IP\\ against gate \b\ID\\. (Note: gates are inclusive)
+CYB$
+       GATTESTI is .TRUE.  if gate is satisfied
+       GATTESTI is .FALSE. otherwise
+ODP$
+o......Gates may be redefined - no warning is given.
+ODP$
+o......There is no check on gate limits.
+ODP$
+o......Gates must be on the same basis (scale) as the parameter being
+tested.
+ODP$
+o......Gates may be specified interactively, or read from a file (see
+SEC# 030 for relavant commands).
+TPF$
+SP1$
+SEC$.240  How to Create and Run Customized scanor Programs
+BLP$
+The make-files listed below
+can be used as templates for creating your own customized make files.
+CY1$
+===========================================================================
+For both on-line & off-line use the template listed below which is found at
+\b\/usr/hhirf/scanor.make\\
+===========================================================================
+FFLAGS = -fpe2
+#
+LDF = -laio -lpthreads
+#
+OBJS= /usr/hhirf/scanor.o\
+      \b\scanusubs.o\\
+#
+LIBS= /usr/hhirf/scanorlib.a\
+      /usr/hhirf/orphlib.a\
+      /usr/hhirf/wks/acqlib.a\
+      /usr/hhirf/wks/ipclib.a
+#
+scanor: $(OBJS) $(LIBS)
+#
+        f77 $(FFLAGS) $(OBJS) $(LIBS) $(LDF) -o scanor
+BLP$
+\b\Bold face\\ entries in the make file examples above indicate places where
+you will probably need to make changes. In this example, all customizing
+routines are contained in \b\scanusubs.o\\. Of course,
+your routines may be located in more than one directory.
+Assuming the name of the make-file is \b\scanor.make\\
+and the name of the executable is to be \b\scanor\\; 
+CY1$
+Make it by typing:  \b\make -f scanor.make scanor\\
+
+Run  it by typing:  \b\scanor filename\\
+BLP$ 
+Where, \b\filename\\ denotes the filename prefix of the his- & drr-files
+to be used or created. 
+CY1$
+
+===========================================================================
+For off-line use only, use template listed below which is found at 
+\b\/usr/hhirf/scanof.make\\
+===========================================================================
+FFLAGS = -fpe2
+#
+LDF = -laio -lpthreads
+#
+OBJS= /usr/hhirf/scanof.o\
+      \b\scanusubs.o\\
+#
+LIBS= /usr/hhirf/scanorlib.a\
+      /usr/hhirf/orphlib.a
+#
+scanof: $(OBJS) $(LIBS)
+#
+        f77 $(FFLAGS) $(OBJS) $(LIBS) $(LDF) -o scanof
+
+TPF$
+SP1$
+SEC$.250  Example DRRSUB
+CY1$
+C$PROG DRRSUB
+C
+      SUBROUTINE DRRSUB(IEXST)
+C
+C     =====================================================================
+C     Example DRRSUB which reserves space for:
+C     30 256-channel 1-D histograms at 32-bits/channel and
+C     4  256*256-channel (range 0,199 0,199) 2-D histograms at 32-bits/chan
+C     =====================================================================
+C
+      IMPLICIT INTEGER*4 (A-Z)
+C
+      CALL DRRMAKE
+C
+      DO 10 HID=1,30
+C
+      CALL HD1D(
+     &          HID,    !HIST ID
+     &          2,      !# HWDS/CHANNEL
+     &          2048,   !RAW  PARAM LENGTH
+     &          256,    !HIST PARAM LENGTH
+     &          0,      !MIN  PARAM "RANGE" VALUE
+     &          255,    !MAX  PARAM "RANGE" VALUE
+     &      '1D HIS')   !TITLE
+C
+   10 CONTINUE
+C
+      DO 20 HID=31,34
+      CALL HD2D(
+     &          HID,    !HIST ID
+     &          2,      !# HWDS/CHANNEL
+     &          2048,   !RAW  PARAM X-LENGTH
+     &          256,    !HIST PARAM X-LENGTH
+     &          0,      !MIN  X-PAR "RANGE" VALUE
+     &          199,    !MAX  X-PAR "RANGE" VALUE
+     &          2048,   !RAWW PARAM Y-LENGTH
+     &          256,    !HIST PARAM Y-LENGTH
+     &          0,      !MIN  Y-PAR "RANGE" VALUE
+     &          199,    !MAX  Y-PAR "RANGE" VALUE
+     &     '2D HIST')   !TITLE (40 BYTES MAX)
+C
+   20 CONTINUE  
+C
+      CALL ENDRR
+      RETURN
+      END
+TPF$
+SP1$
+SEC$.260  Example HISSUB
+CY1$     
+C$PROG HISSUB
+C
+      SUBROUTINE HISSUB(IBUF,NB)
+C   
+C     =====================================================================
+C     Example HISSUB
+C     Calls UNPACKL to unpack full buffer IBUF into single events
+C     Histograms all raw parameters at resolution specified by DRRSUB
+C     with his-ID = parameter number.
+C     Generates ungated   2-D histogram  of 15,17 (HID=31)
+C     Generates ban-gated 2-D histograms of 15,17 (HID=32,33,34)
+C     =====================================================================
+C
+      IMPLICIT NONE
+C
+      LOGICAL     BANTESTN
+      INTEGER*2   IBUF(*)
+      INTEGER*4   NHW,NPAR,IERR,MXID,I,IX,IY
+      INTEGER*4   IDLST(2000),DALST(2000),EXPEV(2000)
+      CHARACTER*4 DONE
+      DATA        MXID/2000/
+C
+      DONE='NO  '
+C
+  100 IERR=0
+C
+      CALL UNPACKL(
+     &           IBUF,   !I*2 - raw data buffer
+     &           NHW,    !I*4 - # of I*2 words in IBUF
+     &           MXID,   !I*4 - max-ID (dimension of IDBUF & EVBUF)
+     &           IDLST,  !I*4 - ID-list   for returned event
+     &           DALST,  !I*4 - Data-list for returned event
+     &           EXPEV,  !I*4 - Expanded event data array
+     &           NPAR,   !I*4 - # of parameters in this event
+     &           DONE,   !C*4 - YES/NO - requests new IBUF
+     &           IERR)   !I*4 - 0 means OK, nonzero means error
+C
+      IF(DONE.EQ.'YES ') RETURN
+      IF(IERR.NE.0)      GO TO 100
+      IF(NPAR.LE.0)      GO TO 100
+C
+      DO 120 I=1,NPAR
+      CALL COUNT1CC(IDLST(I),DALST(I),0)
+  120 CONTINUE
+C
+      IX=EXPEV(15)
+      IY=EXPEV(17)
+C
+      CALL COUNT1CC(31,IX,IY)
+C
+      IF(BANTESTN(1,IX,IY)) CALL COUNT1CC(32,IX,IY)
+      IF(BANTESTN(2,IX,IY)) CALL COUNT1CC(33,IX,IY)
+      IF(BANTESTN(3,IX,IY)) CALL COUNT1CC(34,IX,IY)
+C
+      GO TO 100
+      END
+TPF$
+SP2$
+SEC$.280  Discussion of Tape Record Lengths
+BLP$
+If \b\RECL\\ is unspecified or entered as zero (or blank), \b\scanor\\ will
+automatically determine the data record length as follows:
+BLP$
+The data record length will be checked at the beginning of the tape 
+as well as at the beginning of each new file. It will also be checked
+following any tape control command.
+The first record found which meets the following requirements will be
+taken to be a data record.
+CY1$
+o......Record must not be a header    record (256   bytes)
+
+o......Record must not be a dead time record (128   bytes)
+
+o......Record must not be a PAC-file  record (1600  bytes)
+
+o......Record must not be a scaler    record (32000 bytes & labeled)
+
+o......Record must be greated than or equal to 2048 bytes
+
+o......Record must be no longer than 32768 bytes
+BLP$
+If \b\RECL\\ is enter as non-zero, any even value in the range of 4 to 32768
+will be accepted, however, the use of data record lengths which are 128, 256
+or 1600 bytes will lead to problems.
+SP1$
+BON$
+BLP$
+In any case, scanor displays & logs the data record length that it is using 
+and whether it was specified or auto-detected.
+BOF$
+TPF$
+SP2$
+SEC$.290  Logical Units and COMMON Blocks
+CYB$
+\b\scanor\\ may use some or all of the following logical unit assignments:
+===========================================================================
+LU#     USE
+
+  4     BAN-file input
+  5     VDT input
+  6     VDT output
+  7     Log file output
+  8     Help file - scanor.hep
+  9     drr-file
+ 14     CMD file
+ 15     Gate file input
+ 21     Shared memory
+ 31     ldf-file
+===========================================================================
+
+
+
+
+
+\b\scanor\\ may use the following labeled COMMON blocks:
+===========================================================================
+COMMON/SC00/ thru COMMON/SC99/
+
+COMMON/LLL/
+
+COMMON/ML01/
+COMMON/ML02/
+
+COMMON/ORPHAS/
+
+COMMON/FFGA/
+COMMON/FFGB/
+COMMON/FFGC/
+COMMON/FFGD/
+COMMON/FFGE/
+===========================================================================
+BLP$
+The user should not attempt to use any of these logical units or COMMON
+block labels.
+CHP$U325  Creation and Use of DVDs & CDs
+TPF$
+SP1$
+SEC$.300  Creation & Use of DVDs & CDs for Data Processing - Outline
+CY1$
+\bu\To Create a DVD or CD\\
+
+Insert a DVD or CD into the DVD drive (bottom - labeled)
+
+Follow steps 1 through 5 (see \b\SEC# 310\\)
+
+
+\bu\To use the DVD or CD in program scanor\\
+
+Insert the DVD or CD in the DVD drive (bottom - labeled)
+or
+Insert the CD in the CD drive         (top  - unlabeled)
+and Type: 
+
+\b\mount /dev/cdrom0\\              ;If using CD  drive (unlabeled - top)
+
+\b\mount /dev/cdrom1\\              ;If using DVD drive (labeled - bottom)
+
+
+\bu\To open a file in  program scanor, Type:\\
+
+\b\file /mnt/cdrom0/filename.ldf\\  ;if using CD  drive (top)
+
+\b\file /mnt/cdrom1/filename.ldf\\  ;if using DVD drive (bottom)
+
+===========================================================================
+\b\Note:\\ You cannot "punch out" a disk without dismounting it.
+\b\Note:\\ A mounted DVD or CD is readable by all.
+===========================================================================
+    \b\WARNING - FOUR WAYS YOU CAN SCREW THINGS OP WITHOUT REALLY TRYING!!\\
+BLP$
+(1) Execute a creation process using the \b\Gnome\\ window manager 
+without disabling the \b\magicdev\\ tool. It will hang the system at the
+end of writing the DVD and you will need to get a \b\root person\\ to fix it.
+BLP$
+(2) Kill the creation process before it is finished and you will need a
+\b\root person\\ to un-hang the DVD writing system.
+BLP$
+(3) Log off without dismounting the DVD or CD and nobody else but you or a
+\b\root person\\ can dismount it.
+BLP$
+(4) Tell the system that you are going to create a DVD but insert CD media
+into the drive. It may run out of space and hang the system.
+CY1$
+===========================================================================
+CEB$
+See also:   http://www.phy.ornl.gov/local/computer   and it's links
+CEB$
+It has PICTURES!
+TPF$
+SP1$
+SEC$.310  Creation of DVDs & CDs for Data Processing - Details
+BLP$
+We presume that you have written your data to an \b\LDF\\ format event file
+on disk, and now you need to preserve it in a permanent form. We use
+DVD for long-term storage of event data.
+CY1$
+\bu\A recording process consists of the following steps in order:\\
+  
+\bu\(1) Start the application\\
+BLP$
+The application is started by calling: \b\/opt/bin/DvdIoHandler\\ which
+brings up the graphical user interface to the DVD recording software.
+CY1$
+\bu\(2) Create a container file system to temporally hold files to be stored\\
+BLP$
+A screen will present itself.  You can select to create a CD or a DVD,
+either will be written with the UDF file format. The choice here
+determines the size of the container file system created and thus how
+much data you can write to the CD or DVD. Once you made you selection,
+press the \b\Create\\ button to create the container file system. The
+programm cannot be terminated during the time the container file
+system is created, hence the \b\Exit\\ button will become unavailable.
+BLP$
+While the container file system is created, you can monitor the
+process in the progress bar in the bottom of the window. Once the
+container file system is created, a new window will appear that allows
+you to select files.
+CY1$
+\bu\(3) Add files - create a list of files to be copied to container file\\ 
+BLP$
+You may select files that you want to record on DVD or CD. In this
+step the files are not actually copied, they are just collected. You
+may add files or directories using the \b\Add\\ button in the screen
+presented.  The files and directories will be displayed in tree
+form.  The available space will be listed in the progress bar at the
+bottom of the screen. You may also delete previously selected files.
+BLP$
+In order to add new files or directories press the \b\Add\\ button, which
+will present you with a screen to select.  Select the radio button
+labeled \b\Directory\\ if you want to add an entire directory. Press \b\OK\\
+when you have made your selection from this window.
+CY1$
+\bu\(4) Copy files to the container file\\
+BLP$
+Once you selected all the files you want to record on the DVD or the
+CD, you may press either the \b\Copy, Copy&Record\\ or the 
+\b\Copy&Record&Exit\\
+button. This will start the copying process.  Depending on where your
+orignal files reside and how much data you are copying, this may take
+a while. The progress bar at the bottom of the screen let's you know
+how many data have been copied.
+CY1$
+\bu\(5) Record files to DVD or CD - copy from container file to DVD or CD\\
+BLP$
+Once all files are copied, the recording process can be started by
+pressing the \b\Record\\ button. However, after the \b\Record\\ button is 
+pressed, the
+\b\Exit\\ button will become unavailable since terminating the program at
+the recording stage will make the recorded DVD useless. \b\Please to not
+kill the program during the recording stage!\\
+TPF$
+SP1$
+SEC$.310  Creation of DVDs & CDs for Data Processing - Details (continued)
+BLP$
+If a recording error occurs, you are informed by a pop-up window.  The
+error may be due to missing recording media or other problems with the
+DVD Writer itself. Please make sure that the DVD Writer contains a
+writable DVD or CD disk and try to record again.
+BLP$
+If you selected the \b\Copy&Record\\ or the \b\Copy&Record&Exit\\ button and
+a record error occurs, you will be given the opportunity to press the
+\b\Record\\ button after the DVD Writer problem was resolved. The program
+will NOT exit. 
+CYB$
+Recording will take about 30min. 
+BLP$
+It is easiest to use the GUI \b\/opt/bin/DvdIoHandler\\ to write the
+DVD.  Several steps may be combined, once the container file system
+has been created and the desired data has been selected. After these
+tasks are completed you have to option to copy and record in one
+step. These two tasks are the most time intensive, since it may take
+to actually copy the data from their current location into the
+container file system. In addition, recording a DVD or CD will take
+about 30min. If you plan to leave, select the \b\Copy&Record&Exit\\
+button, which will copy the data, record them and exit the program.
+BLP$
+Please make sure to exit the program after you finish recording the
+DVD or CD. This will clean up resources you use while copying and
+recording.
+BLP$
+Once you started the DVD recording process, you are the only person
+that can record data to the DVD Writer. You may have up to three
+processes simulataneously, however, only one process can record
+data. If you use the \b\Copy&Record&Exit\\ or the 
+\b\Copy&Record\\ you will be
+automatically limited to one concurrent process.
+CYB$
+Limitations and problems we have noted
+RND$05
+ODP$
+(1)..The software we are using to make the UDF file system seems to crash
+the system under Linux kernels greater than \b\2.4.20-18.9.\\  The
+problem occurs while copying the data to the container filesystem.
+ODP$
+(2)..We have observed that if you use the \b\Gnome\\ window manager, it will
+hang the system at the end of writing the DVD.  The solutions are:  
+RND$07
+CY1$  
+     (a) Switch to \b\KDE\\ or a lightweight window manager (e.g. \b\TWM\\)
+
+     (b) Disable the \b\magicdev\\ tool which runs under \b\Gnome\\. 
+TPF$
+SP1$
+SEC$.320  Use of DVDs & CDs for Data Processing - Details
+BLP$
+The files stored on the disk have the same format and encodings as on
+the original disk.  Please note that the data are BINARY, and that the
+Intel machines on which we take data are \b\little-endian\\.  If you read
+the disks on a \b\big-endian\\ machine, it may be necessary to swap the
+bytes, especially in histogram files.  Event files  will be swapped
+automatically by \b\SCANOR\\, at some loss of efficiency.  If you  need to
+byte-swap use the program \b\/usr/hhirf/swapo\\. 
+SEC$.322  Macintosh and Windows computers
+BLP$
+Using the DVD is as easy as inserting it into your DVD drive and
+waiting for the system to mount it. You can then copy the files about as
+you wish. 
+SEC$.324  Linux computers
+BLP$
+On Linux, ordinary users  logged in at the console can arrange to mount
+CD and DVD devices. Some window managers, e.g. \b\Gnome\\ and \b\KDE\\, under
+Linux will try to mount the  DVD for you, then popup a file manager
+window.  Then you can manipulate the files as you wish. 
+BLP$
+Failing that, your system should be setup to permit you to mount the
+DVD. If your \b\/etc/fstab\\ file has a line like: 
+CYB$
+/dev/cdrom1     /mnt/cdrom1      udf,iso9660 noauto,owner,kudzu,r o 0 0  
+CY1$
+Then you can mount the DVD by using a command like:
+
+\b\mount /dev/cdrom1\\ 
+BLP$
+It seems that the default will be to mount the DVD as  \b\/mnt/cdrom1\\ 
+which can be treated like an ordinary disk. 
+To dismount the disk, use one of the following commands:
+CY1$
+\b\umount /dev/cdrom1\\, or   
+
+\b\eject /dev/cdrom1\\ 
+
+SEC$.326  Other UNIX computers
+BLP$
+Our experience with other UNIX systems, especially older ones, 
+is that  only the \b\root\\
+user can mount DVD's.  
+Thus you would have to arrange with the sys admin to get root access,
+or copy all your data at once to local storage.
+The commands for mounting a CD or DVD vary substantially from UNIX
+version to UNIX version, so please consult a local expert.
+CYB$
+==========================================================================
+The website for this documentation will be found at:
+
+http://www.phy.ornl.gov/local/computer
+
+and the links to be found there.
+
+The website has PICTURES as well as text!
+===========================================================================
+CHP$U320  Processing  UDFs - Linux Version Only!
+TPF$
+SP1$
+SEC$.330  Processing of User Defined Files - UDFs - Linux Version Only!
+BLP$
+Support is provided for the processing of non-scandard event data files.
+Such files might be generated via simulations or from some other source.
+I will call such files User Defined Files or just \b\UDFs\\. 
+BLP$
+Please don't confuse this usage of \b\UDF\\ with that refered to in SEC#
+320.310 "Creation of DVDs & CDs". I chose the acronym to be similar to \b\LDF\\
+without being aware of it's other usage. If its too confusing, I could
+change it.
+CY1$
+The commands:
+CY1$
+\b\UDF filename\\      ;Opens the \b\UDF\\ for sequential access reading
+                  ;and sets flags for \b\UDF\\ processing
+
+\b\UDF filename RECL\\ ;Opens the \b\UDF\\ for direct access reading with
+                  ;record length = \b\RECL\\
+                  ;and sets flags for \b\UDF\\ processing
+BLP$
+A number of special routines are brought into play. Depending on specific
+requirements, one or more of these routines must be customized by the user.
+There are three routines that may need to be customized. These are:
+ODP$
+\b\UDFOPEN\\ which opens the \b\UDF\\ for the type of access required for
+reading (sequential, direct, etc). The default version opens the file as
+a formatted (ASCII) file to be read sequentially.
+ODP$
+\b\UDFHAN\\ processes the positioning commands \b\REW, FR, & BR\\
+which provides for REWIND, BACK-RECORD and FORWARD-RECORD operations.
+ODP$
+\b\UDFEVENT\\ reads the \b\UDF\\ and returns one event per call in the form
+of INTEGER*4 ID and DATA arrays. These event arrays are then used
+to build standard L003 buffers. This routine will most
+certainly need to be customized, however, it is probably the only one 
+which does.
+CY1$
+The archive for default routines are in \b\/usr/hhirf/scanorlib.a\\
+
+The source  for default routines are in \b\/tera/milner/DDgnu/Dscanorlib/\\ 
+BLP$
+In order to use the \b\UDF\\ support, the user must understand the structure
+of the \b\UDF\\ and be able to:
+ODP$
+o......Modify \b\UDFOPEN\\ to be compatible with the reading requirements,
+ODP$
+o......Modify \b\UDFEVENT\\ so as to read the \b\UDF\\ and return one
+event per call.
+BLP$
+The template (default) \b\UDF\\ support routines are internally documented and
+listed on subsequent pages.
+TPF$
+CY1$
+
+
+CEN$
+(continued on next page)
+CHP$U320  Routine UDFOPEN - Linux Version Only!
+TPF$
+SP1$
+CY1$
+C$PROG UDFOPEN   - Opens Input UDF-Files for SCANOR
+C
+C     ******************************************************************
+C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 03/31/2005
+C     ******************************************************************
+C
+      SUBROUTINE UDFOPEN(IERR)
+C
+      IMPLICIT NONE
+C
+C     ------------------------------------------------------------------
+      COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+      INTEGER*4   MSSG,NAMPROG,LOGUT,LOGUP
+      CHARACTER*4 LISFLG,MSGF
+      CHARACTER*112 CMSSG
+      EQUIVALENCE (CMSSG,MSSG)
+C     ------------------------------------------------------------------
+      COMMON/ML02/ IWDRAW(20)
+      INTEGER*4    IWDRAW
+C     ------------------------------------------------------------------
+      COMMON/SC15/ NCEOF,LAUTO
+      INTEGER*4    NCEOF
+      CHARACTER*4        LAUTO
+C     ------------------------------------------------------------------
+      COMMON/SC16/ INDIR(8192),INTYP,INRECI,LUINF
+      INTEGER*4    INDIR,            INRECI,LUINF
+      CHARACTER*4              INTYP
+C     ------------------------------------------------------------------
+      COMMON/SC29/ UDFNAM(20),UDFRECL
+      INTEGER*4    UDFNAM,    UDFRECL
+C     ------------------------------------------------------------------
+      CHARACTER*80 CNAMF
+      EQUIVALENCE (CNAMF,UDFNAM)
+      INTEGER*4    RECLVALU,IOS,IERR
+C     ------------------------------------------------------------------
+      SAVE
+C     ------------------------------------------------------------------
+C     Process: UDF filename <RECL>     ;i.e. get UDFNAM & UDFRECL
+C     ------------------------------------------------------------------
+C
+      CALL UDFNAME(IWDRAW,UDFNAM,UDFRECL,IERR)
+C
+      IF(IERR.NE.0) GO TO 1000
+
+
+CEN$
+(continued on next page)
+TPF$
+SP1$
+CY1$
+C
+C     ------------------------------------------------------------------
+C     Open User-Defined-File for input
+C     ------------------------------------------------------------------
+C
+      CLOSE(UNIT=LUINF)               !Close input file if open
+      INTYP='    '                    !Reset input type
+      NCEOF=0                         !Reset contiguous EOF counter
+C
+      IF(UDFRECL.EQ.0) THEN           !Test for RECL specified
+      OPEN(UNIT      = LUINF,         !Otherwise,
+     &     FILE      = CNAMF,         !Open UDF for sequential access
+     &     STATUS    = 'OLD',
+     &     IOSTAT    = IOS)
+      GO TO 100                       !Go test status
+      ENDIF
+C
+      OPEN(UNIT      = LUINF,         !Otherwise,
+     &     FILE      = CNAMF,         !Open UDF for DIRECT access
+     &     ACCESS    = 'DIRECT',
+     &     RECL      = RECLVALU(UDFRECL),!with RECORD LENGTH = UDFRECL
+     &     STATUS    = 'OLD',
+     &     IOSTAT    = IOS)
+C
+  100 IF(IOS.NE.0) THEN               !Test OPEN status for good
+      CALL IOFERR(IOS)
+      GO TO 1000
+      ENDIF
+C
+      INTYP='UDF '                    !Set input type to UDF
+C
+      INRECI=1                        !Next rec# to be read
+C
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Send error messages
+C     ------------------------------------------------------------------
+C
+ 1000 WRITE(CMSSG,1005)
+ 1005 FORMAT('UDFOPEN ERROR')
+      CALL MESSLOG(LOGUT,LOGUP)
+      IERR=1
+      RETURN
+      END
+CHP$U320  Routine UDFHAN - Linux Version Only
+TPF$
+SP1$
+CY1$
+C$PROG UDFHAN    - Manages UDF-file position pointers for SCANOR
+C
+C     ******************************************************************
+C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 11/22/2004
+C     ******************************************************************
+C
+      SUBROUTINE UDFHAN(IERR)
+C
+      IMPLICIT NONE
+C
+C     ------------------------------------------------------------------
+      COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+      INTEGER*4   MSSG,NAMPROG,LOGUT,LOGUP
+      CHARACTER*4 LISFLG,MSGF
+      CHARACTER*112 CMSSG
+      EQUIVALENCE (CMSSG,MSSG)
+C     ------------------------------------------------------------------
+      COMMON/ML01/ IWD(20),LWD(2,40),ITYP(40),NF,NTER
+      INTEGER*4    IWD,    LWD,      ITYP,    NF,NTER
+C     ------------------------------------------------------------------
+      COMMON/SC15/ NCEOF,LAUTO
+      INTEGER*4    NCEOF
+      CHARACTER*4        LAUTO
+C     ------------------------------------------------------------------
+      COMMON/SC16/ INDIR(8192),INTYP,INRECI,LUINF
+      INTEGER*4    INDIR,            INRECI,LUINF
+      CHARACTER*4              INTYP
+C     ------------------------------------------------------------------
+      INTEGER*4    IERR,KIND,NUM,NV,N
+      REAL*4       XV
+      CHARACTER*4  KMD
+      EQUIVALENCE (KMD,LWD(1,1))
+C     ------------------------------------------------------------------
+      SAVE
+C     ------------------------------------------------------------------
+C
+C     LUINF    =  Logical unit# for UDF-file
+C
+C     INTYP    = '    ', TAPE, FILE = input type
+C
+C     INRECI   =  Current rec# pointer for input file if DIRECT access
+C                 Otherwise just keeps track of position but not used
+C     ------------------------------------------------------------------
+C
+      IERR=0
+C
+      CALL MILV(LWD(1,2),NV,XV,KIND,IERR)
+      IF(IERR.NE.0) GO TO 1000
+      NUM=NV
+      IF(NUM.LE.0) NUM=1
+C
+      IF(INTYP.NE.'UDF ') GO TO 1000
+C
+      IF(KMD.EQ.'REW ') GO TO 100
+      IF(KMD.EQ.'BR  ') GO TO 150
+      IF(KMD.EQ.'FR  ') GO TO 200
+      GO TO 1000
+
+CEN$
+(continued on next page)
+TPF$
+SP1$
+CY1$
+C
+C     ------------------------------------------------------------------
+C     Process REW  -  Rewind input file
+C     ------------------------------------------------------------------
+C
+  100 REWIND LUINF               !For SEQUENTIAL access only
+      NCEOF=0                    !Reset contiguous EOF counter
+      INRECI=1                   !Next REC# to be read for DIRECT access
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Process BR   -  Backup record/s on input file
+C     ------------------------------------------------------------------
+C
+  150 DO 160 N=1,NUM
+      BACKSPACE LUINF            !For SEQUENTIAL access only
+      INRECI=INRECI-1
+      IF(INRECI.LT.1) THEN
+      INRECI=1
+      RETURN
+      ENDIF
+  160 CONTINUE
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Process FR   -  Forward record/s on input file
+C     ------------------------------------------------------------------
+C
+  200 DO 210 N=1,NUM
+      READ(LUINF,205)KIND         !For SEQUENTIAL access only
+  205 FORMAT(A4)
+      INRECI=INRECI+1
+  210 CONTINUE
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Send error messages
+C     ------------------------------------------------------------------
+C
+ 1000 IERR=1
+      RETURN
+      END
+CHP$U320  Routine UDFEVENT - Linux Version Only
+TPF$
+SP1$
+CY1$
+C$PROG UDFEVENT  - Reads & returns one event from example UDF-file 
+C
+C     ******************************************************************
+C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 11/28/2004
+C     ******************************************************************
+C
+      SUBROUTINE UDFEVENT(MXID,PID,DAT,NP,IERR)
+C
+      IMPLICIT NONE
+C
+C     ------------------------------------------------------------------
+      COMMON/SC16/ INDIR(8192),INTYP,INRECI,LUINF
+      INTEGER*4    INDIR,            INRECI,LUINF
+      CHARACTER*4              INTYP
+C     ------------------------------------------------------------------
+      COMMON/SC29/ UDFNAM(20),UDFRECL
+      INTEGER*4    UDFNAM,    UDFRECL
+C     ------------------------------------------------------------------
+      INTEGER*4    MXID,PID(*),DAT(*),BUF(2,8),NP,LU,IERR,I
+C     ------------------------------------------------------------------
+      SAVE
+C     ------------------------------------------------------------------
+C
+      NP=0
+      IERR=0
+C
+  100 INRECI=INRECI+1
+C
+      IF(UDFRECL.EQ.0) THEN
+      READ(LUINF,110,ERR=200,END=300)BUF      !Read ASCII input line
+      ENDIF
+C
+      IF(UDFRECL.GT.0) THEN
+      READ(LUINF,REC=INRECI,ERR=200)BUF       !Read binary input line
+      ENDIF
+C
+  110 FORMAT(16I5)
+C
+      IF(BUF(1,1).EQ.0.AND.BUF(2,1).EQ.0) RETURN  !If 1st 2 wds 0, 
+C                                                 !then its end-event
+C
+  140 DO 150 I=1,8                            !Loop on buffer values
+      IF(BUF(1,I).EQ.0) GO TO 150             !If parm-ID 0, skip it
+      NP=NP+1                                 !Inc cntr
+      PID(NP)=BUF(1,I)                        !Save parm-ID
+      DAT(NP)=BUF(2,I)                        !Save data
+  150 CONTINUE
+      GO TO 100                               !Go read next record
+C
+  200 WRITE(6,205)                            !Error return
+  205 FORMAT('Error reading UDF file')
+      IERR=5
+      RETURN
+C
+  300 WRITE(6,305)                            !EOF return
+  305 FORMAT('EOF reading UDF file')
+      IERR=999
+      RETURN
+      END
+CHP$U320  scanor - (Using multiple CPUs)
+TPF$
+SP1$
+SEC$.340  Using Multiple CPUs to Process Data
+BON$
+BLP$
+First, let me say that this does not represent a special feature in scanor
+but rather a suggested method for using multiple CPUs in processing data.
+BOF$
+BLP$
+Actually, a new feature has been added to \b\damm\\ (see \b\SEC# U300.310\\ 
+for a complete list of commands)
+which supports the use of multiple CPUs in
+processing list data into standard \b\ORPH\\ histogram files. The following
+method is assumed:
+ODP$
+o......The user prepares a scanning program in the usual way.
+ODP$
+o......Let the list-data input be from \b\listdata.ldf\\.
+ODP$
+o......Then run a number of identical scan processes on different
+CPUs (\b\alphalnx0, alphalnx1, ... alphalnx9\\, for example).
+ODP$
+o......All scan processes input from different regions (specified files or
+specified records within specified files, etc.)
+of \b\listdata.ldf\\.
+ODP$
+o......All scan processes generate output to histogram files with different
+full-path-names.
+ODP$
+o......Use \b\damm\\ to examine the different output histograms for 
+gain match problems or whatever.
+ODP$
+o......Finally, use \b\damm\\ to add all of the scan-generated his-files
+to a final his-file \b\"total.his"\\.
+ODP$
+o......Any scan process which produces the scandard .his & .drr structures
+will work.
+ODP$
+o......No modification of the scan program is required.
+CEB$
+(see the next page for an example)
+TPF$
+SP1$
+SEC$.340  Using Multiple CPUs to Process Data - Example
+BLP$
+For a simple example, assume that you wish to use 10 processors
+(say \b\alphalnx0 - alphalnx9\\) to process data from one \b\ldf-file\\.
+In this example, each processor will process the data from one header of
+the \b\ldf-file\\ and finally \b\damm\\ will be used to sum the results
+of all scan processes into a final \b\his-file\\.
+CY1$
+\bu\Assume the Following:\\
+ODP$
+o......The scan process is called \b\myscan\\
+ODP$
+o......The data file to be processed in \b\/tera/myname/Dmydata/listdata.ldf\\
+ODP$
+o......All scan processes are run in directory \b\/tera/myname/Dscans/\\
+ODP$
+o......Program \b\damm\\ is run in directory \b\tera/myname/Dhistot/\\
+ODP$
+o......Each scan process will process one file (each starting from a different
+header on the \b\ldf-file\\.
+CY1$
+\bu\Do the following:\\
+ODP$
+o......Prepare the scanning program \b\myscan\\ in the usual way.
+ODP$
+o......Open windows & login to \b\alphalnx0, alphalnx1, ... alphalnx9\\.
+CY1$
+On \b\alphalnx0\\ type:
+CY1$
+\b\cd /tera/myname/Dscans/\\
+\b\myscan scan0\\        
+\b\file /tera/myname/Dmydata/listdata.ldf\\
+\b\find 1\\
+\b\goen 1\\
+
+On \b\alphalnx1\\ type:
+CY1$
+\b\cd /tera/myname/Dscans/\\
+\b\myscan scan1\\        
+\b\file /tera/myname/Dmydata/listdata.ldf\\
+\b\find 2\\
+\b\goen 1\\
+.
+.
+.
+On \b\alphalnx9\\ type:
+CY1$
+\b\cd /tera/myname/Dscans/\\
+\b\myscan scan9\\        
+\b\file /tera/myname/Dmydata/listdata.ldf\\
+\b\find 10\\
+\b\goen 1\\
+CEB$
+
+(continued on next page)
+TPF$
+SP1$
+SEC$.340  Using Multiple CPUs to Process Data - Example (continued)
+BLP$
+Prepare a command file \b\addum.cmd\\ for \b\damm\\ which looks like the
+one shown below.
+(Actually, you probably should prepare this file before you start the
+scan processes to make sure that you get all of the paths & names
+defined correctly).
+CYB$
+fadi /tera/myname/Dscans/scan0.his    !Open first input his-file to be added
+
+fadn /tera/myname/Dhistot/total.his   !Create output his-file with identical
+                                      !structure to that of input
+
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan1.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan2.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan3.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan4.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan5.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan6.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan7.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan8.his    !Open next input his-file
+fadd                                  !Add input to output
+
+fadi /tera/myname/Dscans/scan9.his    !Open next input his-file
+fadd                                  !Add input to output
+
+INPUT SWITCHED TO VDT ******          !Returns to VDT control
+
+
+\bu\To execute, type:\\
+
+\b\damm\\
+\b\cmd addum\\
+CEB$
+(see next page for a relevant excerpt from the damm document)
+TPF$
+SP1$
+SEC$.340  Using Multiple CPUs to Process Data - Relevant damm commands
+CYB$
+Commands which add & subtract identically structured  his-files .............
+BLP$
+The following commands support the addition and subtraction of complete
+his-files. The associated drr-files must have identical structures.
+The files may contain any combination of 1D, 2D, INTEGER*2 & INTEGER*4
+histograms
+CY1$
+-----------------------------------------------------------------------------
+FADI   inpfile.his  ;Opens input  his-file - .his & .drr must already exist
+                    ;cannot be same as output
+
+FADO   outfile.his  ;Opens output his-file - .his & .drr must already exist
+                    ;cannot be same as input but must have same structure
+
+FADN   outfile.his  ;Creates & initializes   outfile.his & outfile.drr
+                    ;with same attributes as inpfile.his & inpfile.drr
+                    ;outfiles .his & .drr must NOT already exist
+
+FADZ                ;Zeros outfile.his
+
+FADF                ;Displays FAD files which are open
+
+FADD                ;Adds      inpfile.his to   outfile.his
+
+FSUB                ;Subtracts inpfile.his from outfile.his
+
+CLIF                ;Closes input  FAD-file if open
+
+CLOF                ;Closes output FAD-file if open
+
+Ctrl/C              ;Interrupts (aborts) an ADD-in-progress
+                    ;Interrupts (aborts) a ZERO-in progress
+-----------------------------------------------------------------------------
+NOTE: The input & output file assignments here are NOT the same as those
+      assigned by the damm commands IN, OU & HOU. However, you may open these
+      files for display by commands such as IN, QF, etc.
+      For example, you may do the following:
+
+fadi infile.his  !Open infile.his for add/subtract input
+fado oufile.his  !Open oufile.his for add/subtract output
+in   infile.his  !Open infile.his for normal display etc.
+qf   oufile.his  !Open oufile.his for normal display etc.
+-----------------------------------------------------------------------------
+QIT$

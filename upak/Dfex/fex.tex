@@ -1,0 +1,113 @@
+   02-Feb-02 ........... U930 - FEX (unix version) - WTM ............ PAGE   1
+ 
+ 
+ 
+                            File Examination Utility
+ 
+   FEX  was  written  to  make it easier for me to examine output from program
+   PAC (written onto POB-files). Essentially, it allows  you  to  display  (or
+   log)  any  range  of  16-  or  32-bit words on the file in various formats.
+   Arbitrary ASCII lines may also be displayed or logged.  Assuming  that  the
+   path to the fex executable has been apprpriately defined:
+ 
+   Type:  fex        ;To get started
+ 
+   The following commands are supported:
+ 
+   Commands for general setup ................................................
+ 
+   RECL N    - Record length in bytes for subsequent OPEN - See NOTE-1
+               (not normally needed - default = 512 bytes)
+ 
+   In  file  - Specify input file
+ 
+   LON       - Turn command logging to fex.log ON
+   LOF       - Turn command logging to fex.log OFF (dflt)
+ 
+   CMD file  - Process commands from file.cmd
+   WO        - Wait for typed [RETURN] to continue
+ 
+   HOFF N    - Specify 16-bit word offset on input file (default = 0)
+   FOFF N    - Specify 32-bit word offset on input file (default = 0)
+             - (Display & Log ranges are relative to offset)
+             - (does not apply to DL and PL commands)
+ 
+   END       - Ends program
+ 
+   Byte swapping commands .....................................................
+ 
+   CVIF SWAF - Says do full-word byte-swap of input file (in place)
+ 
+   CVIF SWAB - Says do half-word byte-swap of input file (in place)
+ 
+   NOTE:     - The file length should be an integer multiple of RECL
+               for this procedure to work to completion.
+ 
+   Masking commands ...........................................................
+ 
+   MSKF MSK  - Says do a full-word masking of input file (in place)
+             - MSK is entered in hexadecimal
+ 
+   NOTE:     - The file length should be an integer multiple of RECL
+               for this procedure to work to completion.
+    
+   02-Feb-02 ........... U930 - FEX (unix version) - WTM ............ PAGE   2
+ 
+ 
+ 
+   Symbols and loops ..........................................................
+ 
+   Commands related to LOOP execution and SYMBOL definition
+ 
+   SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                    - symbols M, N, O, P, Q, R, S are reserved
+                    - expression syntax is same as in CHIL
+                    - no imbedded blanks are allowed in expressions
+                    - symbols may contain up to 4 characters (5-8 ignored)
+ 
+   DSYM             - Displays list of currently defined sumbols & values
+ 
+   LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+   CMD  ....        - Nesting supported
+   CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+   ENDL             - Defines end-of-loop
+                    - KILL (entered before ENDL) kills LOOP
+                    - Ctrl/C - aborts loop-in-progress
+                    - opening of CMD-file within a LOOP not allowed
+ 
+ 
+   Commands for screen display ................................................
+ 
+   DZ  IA,IB<,IS> - Display 16-bit word IA-IB (HEX   fmt) IS per line
+   DI  IA,IB<,IS> - Display 16-bit word IA-IB (INT*2 fmt) IS per line
+   DZF IA,IB<,IS> - Display 32-bit word IA-IB (HEX   fmt) IS per line
+   DIF IA,IB<,IS> - Display 32-bit word IA-IB (INT*4 fmt) IS per line
+                  - (default is 10 per line)
+ 
+   DA  IA,IB      - Display 16-bit word IA-IB (ASCII fmt)
+   DL  IA,IB      - Display lines       IA-IB (ASCII fmt)
+   DEV IA,IB      - Display 16-bit word IA-IB (EVENT fmt)
+ 
+   Commands which log output onto fex.log .....................................
+ 
+   PZ  IA,IB<,IS> - LOG     16-bit word IA-IB (HEX   fmt) IS per line
+   PI  IA,IB<,IS> - LOG     16-bit word IA-IB (INT*2 fmt) IS per line
+   PZF IA,IB<,IS> - LOG     32-bit word IA-IB (HEX   fmt) IS per line
+   PIF IA,IB<,IS> - LOG     32-bit word IA-IB (INT*4 fmt) IS per line
+ 
+   PA  IA,IB      - LOG     16-bit word IA-IB (ASCII fmt)
+   PL  IA,IB      - LOG     lines       IA-IB (ASCII fmt)
+   PEV IA,IB      - LOG     16-bit word IA-IB (EVENT fmt)
+ 
+ 
+ 
+   NOTE-1  Files  are opened for direct access (except for DL and PL commands)
+ 
+          with fixed record length = RECL. This means  that  you  may  get  an
+ 
+          error  when trying to display or log words from a short file or near
+ 
+          the end of any file whose length is not a multiple  RECL  bytes.  In
+ 
+          these cases RECL may need to be adjusted.
+ 

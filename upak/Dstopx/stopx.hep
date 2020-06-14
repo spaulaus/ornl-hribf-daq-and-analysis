@@ -1,0 +1,48 @@
+$$$$CON   - Contents
+CODE    CONTENTS
+----    --------
+Type: h gen  - for general & setup commands
+Type: h abs  - for absorber specification syntax
+$$$$GEN  - For general & setup commands
+-------------------------------------------------------------
+CMD   List         Meaning
+
+PROJ  P1,P2,P3,... Define Stoppee  (Pi = element or Z)
+
+EA    E1,E2,E3,... Define MeV/nucleon of Stoppee
+                   (increasing order unless E3=increment)
+                   (if only one Proj, E=total:   not E/A)
+
+DEDX               Calc. Stopping Power MeV/(mg/cm**2)
+
+RNGE  (EMIN,DE)    Calc. Range mg/cm**2 (Opt. EMIN,DE keV/A)
+
+ELOS  (EMIN,DE)    Calc. E-loss in a series of absorbers
+
+CMD   FILENAME     Process commands from FILENAME
+
+FILE               Assign output file for Energy Losses
+
+STAT               Displays/logs status information
+
+TPF                Does a form-feed on log file
+
+END                EXIT
+
+ABSB               Define Absorbers: Prompted for each
+
+$$$$ABS - For absorber specification syntax
+Absorber syntax ---------------------------------------------
+
+For solid, Enter:  Ele-mix Thickness
+
+For gas,   Enter:  Ele-mix "GAS" Pressure(torr) Thickness
+
+For 3.5mg/cm**2 of Silicon, Enter:  28SI 3.5
+
+For 10% Methane + 90% Argon at 500 torr and 30cm thick,
+
+Enter:   .1*(C 1H4)+.9*40AR GAS 500. -30.
+
+Enter negative Thichness if in cm, otherwise in mg/cm**2
+-------------------------------------------------------------

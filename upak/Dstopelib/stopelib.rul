@@ -1,0 +1,30 @@
+     1  ANAT      - Returns AMU of natural elements                             
+    38  BLANK     - Blanks 20 full words                                        
+    53  BUFLOD    - Loads one buffer into another                               
+    75  CMPDEDX   - DEDX command processor for program STOPO                    
+   290  CMPGEN    - Command processor (general) for program FITU                
+   464  DOCMAN    - Displays/logs documentation & notes                         
+   552  DODEDX    - Executes DEDX command for program STOPO                     
+   814  DUBLIV    - 2-D interpolation routine                                   
+   884  FIT3      - Fits 3 X,Y points & returns interpolated value              
+   911  HICRAT    - Computes ratio of heavy-ion frac-eff-Q to proton valu       
+   934  INDXF     - Returns 1-D index in 2-D table                              
+   944  NUCNAME   - Returns nuclear name for a given Z                          
+   982  PLOTDEDX  - Displays fit results for program STOPIT                     
+  1151  PLOTXYFIL - Displays list of X,Y-points as (filled circles)             
+  1237  PLOTXYLIN - Displays list of X,Y-points as connected line segs          
+  1315  PLOTXYREC - Displays list of X,Y-points as (filled rectangles)          
+  1399  PLOTXYSYM - Displays list of X,Y-points as symbols (circles)            
+  1485  PSTOP     - S(ELE) for protons using Ziegler's table & formulas         
+  1739  REDNORTH  - Reads in Northcliff's constants for projs & absorbers       
+  1799  SHE       - S(ELE) for heavy-ions above 1.5 MeV - Ziegler's             
+  1848  SHELCO    - Shell correction factor - from ???                          
+  1875  SNORTH    - S(ELE) - Jacket routine for Northcliff's STOPIT             
+  1903  SNUC      - S(NUC) using Ziegler's formula                              
+  1924  STOPIT    - S(ELE) using Northcliff's tables & formulas                 
+  2238  STOPUM    - S(ELE+NUC) (EV/(10**15) atoms/cmsq) - from Ziegler          
+  2314  SWARD     - S(ELE) from Ward's eff-Q & Zieglers proton S(E)             
+  2353  SWARHE    - S(ELE) for He4 only - Ward's                                
+  2450  SZIEGL    - S(ELE) for all projectiles - from Ziegler                   
+  2508  ZEFCR     - Fract-eff-Q for He & Li ions - from Ziegler                 
+  2549  ZPEF      - Proton effective charge - from Ziegler                      

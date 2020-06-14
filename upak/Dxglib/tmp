@@ -1,0 +1,17 @@
+mv boxit.FF boxit.F
+mv doaxis.FF doaxis.F
+mv dracir.FF dracir.F
+mv getgco.FF getgco.F
+mv lablman.FF lablman.F
+mv lablout.FF lablout.F
+mv markit1.FF markit1.F
+mv markit2.FF markit2.F
+mv markits.FF markits.F
+mv markum1.FF markum1.F
+mv newfig.FF newfig.F
+mv nucur.FF nucur.F
+mv plotpix.FF plotpix.F
+mv plotxy.FF plotxy.F
+mv plotxyl.FF plotxyl.F
+mv texout.FF texout.F
+mv xcomdef.FF xcomdef.F

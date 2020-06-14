@@ -1,0 +1,897 @@
+$$$$CON  - for HELP Contents
+SCR  Scr setup      PROJ Projection     FIND Peak-find      FSET Fit par set    
+FIG  Scr config     BUFF Buff cmds      FPB  Fit pks,bgd    REL  Fit rel-int   
+ASN  File assign    LIST Data lists     FPAR Fit parms      FDEF Fit defaults
+VFN  Filnam var     PPL  Print-plot     FVAR Fit vary       CS   Fit curs  
+LOOP Loop/Symbol    MOD  Chan mods      DS   Fit dat disp   FADD his adding 
+DIR  Directory      TEST Testing        DF   Fit disp       HISX his xfer/gen
+DEF  General defs   D1   1-D disp       FIT  Fit execute    SUMS spk/his sums   
+SET  Setup cmds     C1   1-D curs       FSTA Fit par stat   MOUS Mouse define 
+IO   I/O syntax     D2   2-D disp       FLIS Fit hard-cop   XY   XY display
+GATE 2-D gating     C2   2-D curs       FSAV Fit par save   LABL Labeling cmds 
+----------------    --------------
+ZERO his-zeroing    WO   Ctrl/C,WO
+$$$$ASN  - for file/device assignment syntax
+Commands for assigning Input/Output files & devices ..........................
+
+IN   FIL.EXT    - Open N-file (EXT = SPK or HIS)
+OU   FIL.EXT    - Open O-file (EXT = SPK or HIS) - OUTPUT for SPK only
+OU   FIL.SPK,NEW- Create and open O-file (SPK-file for output)
+QF   FIL.EXT    - Open Q-file (EXT = SPK or HIS) - for display only
+RF   FIL.EXT    - Open R-file (EXT = SPK or HIS) - for display only
+SF   FIL.EXT    - Open S-file (EXT = SPK or HIS) - for display only
+BAN  FIL        - Open FIL.BAN for store, recall, proj, etc
+BAN  FIL,NEW    - Create & open FIL.BAN for store, recall, etc
+                - (Type: HELP VFN for how to specify variable FILENAMES
+
+CLO  F          - Closes F-file (where F = N, O, P, Q, R, S or BAN)     
+DFIL            - Displays data files currently open
+    
+CMD  CON:       - Set CMD-input to be from VDT
+CMD  FIL        - Set CMD-input to be from FIL.CMD & process
+                - Ctrl/C aborts CMD-file & returns to VDT command input
+   
+LON/LOF         - Turn Log-output (to LU7) ON/OFF (default = OFF)
+$$$$SCR  - for screen setup commands
+Commands related to screen setup .............................................
+
+FIGI           ;Set  screen configuration library to default
+FIGF FILNAM    ;Read screen configuration library from FILNAM
+FIG  N         ;Set current screen configuration to type-N 
+ 
+DLAF MS        ;Set FIG-delay     to MS milliseconds (default=1000)
+DLAD MS        ;Set Display-delay to MS milliseconds (default=500)
+
+WIN  ID        ;Set subsequent displays to be in window-ID (dflt=1)
+AXON ID        ;Enable  the drawing of axis for  window-ID (dflt)
+AXOF ID        ;Disable the drawing of axis for  window-ID
+CMAP           ;Set color map to default  ("takes" after next FIG)
+CMAP FILNAM    ;Set color map from FILNAM ("takes" after next FIG)
+REVV           ;Reverse all color specs   ("takes" after next FIG)
+DLNS N         ;Set # disp-lines = N - for HELP, DDIR & DSUM
+CURT LIVE      ;Set full-wind cursor to track mouse LIVE (default) 
+CURT X         ;New full-wind cursor generated via mouse-click or key
+               ;The CURT command takes effect only after next FIG
+SSI            ;Set screen to initial - erase all graphic windows
+$$$$FIG  - for screen configuration diagrams
+Default screen FIG ID's & associated configurations ..........................
+
+ 1-[]     2-[][]   3-[][]   4-[][]   5-[][]   6-[][]   7-[][]   8-[][]
+                     []       [][]     []       [][]     []       [][]
+                                       []       [][]     []       [][]
+                                                         []       [][]
+ 
+ 9-[][]  10-[][]  11-[--]  12-[--]  13-[--]  14-[--]  15-[][][]
+   []       [][]              [--]     [--]     [--]     [][][]
+   []       [][]                       [--]     [--]     [][][]
+   []       [][]                                [--]     [][][]
+   []       [][]                                         [][][]
+
+16-[2D]  17-[2D]  18-[2D]  19-[2D]  20-[][][][]
+                                       [][][][]
+                                       [][][][]
+                                       [][][][]
+                                       [][][][]
+$$$$VFN  - for explanation of "variables in file names"
+One symbol (integer variable) may be incorporated in a FILENAME
+specification as the following examples illustrate:
+..............................................................................
+SYM=3
+OU FIL"SYM".SPK,NEW  ;Creates and opens FIL3.SPK
+..............................................................................
+I=0 
+LOOP 3
+I=I+1
+IN FIL"I".SPK        ;Opens (in succession)  FIL1.SPK, FIL2.SPK, FIL3.SPK
+.   
+.   
+ENDLOOP
+..............................................................................
+$$$$LOOP - for LOOP execution and symbol definition
+Commands related to LOOP execution and SYMBOL definition .....................
+
+SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                 - symbols M, N, O, P, Q, R, S are reserved
+                 - expression syntax is same as in CHIL
+                 - no imbedded blanks are allowed in expressions
+                 - symbols may contain up to 4 characters (5-8 ignored)
+    
+DSYM             - Displays currently defined sumbols & values
+LSYM             - Logs currently defined symbols & values on damm.log
+ZSYM             - Resets symbol table (deletes all symbols)
+    
+LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+CMD  ....        - Nesting supported
+CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+ENDL             - Defines end-of-loop
+                 - KILL (entered before ENDL) kills LOOP
+
+                 - WO included in loop waits for [RETURN] to be typed
+                 - Ctrl/C - aborts loop-in-progress
+                 - opening of CMD-file within a LOOP not allowed
+$$$$DIR  - for directory display commands
+Commands which display & list SPK- & HIS-file directories ....................
+
+DIR          Display  Input  file directory on VDT
+DIR  N       Display  Input  file directory on VDT
+DIR  O       Display  Output file directory on VDT
+DIR  P       Display  P-file      directory on VDT
+DIR  Q       Display  Q-file      directory on VDT
+DIR  R       Display  R-file      directory on VDT
+DIR  S       Display  S-file      directory on VDT
+DIR  BAN     Display  BAN-file    directory on VDT
+LDIR ...     Lists directory on Log-file/device
+
+DDIR  KF     Display/Log directory of  KF-file in more detail
+             Where KF = N,O,P,Q,R,S (default is N) and denotes:
+             IN-FIL, OU-FIL, P-FIL, Q-FIL, R-FIL, S-FIL
+$$$$DEF  - for some general definitions
+Definitions used in command syntax ...........................................
+
+B1   - Memory Buffer-1
+B2   - Memory Buffer-2
+ID   - The  ID-number of histogram to be read
+NUID - Next ID-number to be assigned to output histogram
+LO   - A first-channel-number (usually of a Gate)
+HI   - A last- channel-number (usually of a Gate)
+FAC  - A multiplication factor
+
+Meaning of the individual command-characters .................................
+
+I    - Input  or read
+O    - Output or write
+A    - Add or accumulate
+S    - Shift (gain shift)
+GX   - Gate on X-parameter (i.e. parameter # 1)
+GY   - Gate on Y-parameter (i.e. parameter # 2)
+1    - Buffer-1
+2    - Buffer-2
+M    - Multiply
+C    - Crunch
+D    - Divide
+$$$$SET  - for some setup commands
+Commands for setting up next ID#, std gain-shift & crunch-factor .............
+
+NUID IV    - Set next ID to be used to IV
+    
+IDST N     - Set ID-step to be used in implied I/O loops
+             (remains active until changed - default=1)
+    
+CRUN IVAL  - Sets standard crunch value to IVAL
+    
+GASP XI1,XI2,XF1,XF2,NCF - Standard gain shift specification
+    
+SIDA       - Says treat 16-bit HIS-file data as signed
+USDA       - Says treat 16-bit HIS-file data as un-signed (default)
+$$$$IO   - for I/O syntax
+Commands which input or input/output 1-D histograms ..........................
+
+I    kf ID            Input to B1
+IS   kf ID            Input to B1, gain shift B1
+IA   kf ID,FAC        Input to B1, B2=B2+FAC*B1
+ISA  kf ID,FAC        Input to B1, shift  B1, B2=B2+FAC*B1
+IO   kf ID            Input to B1, output B1
+ISO  kf ID            Input to B1, shift  B1, output B1
+IO   kf IDA,IDB       Input to B1, output B1     (for ID=IDA,IDB)
+ISO  kf IDA,IDB       Input to B1, shift, output (for ID=IDA,IDB)
+                      Where kf = optional file-code = N,O,P,Q,R,S
+                      (Default = N)
+O1                    Output B1
+O2                    Output B2
+$$$$GATE - for 2-D gating syntax
+Commands which pull gates from 2-D histograms ................................
+
+GY   kf ID,LO,HI      Y-gate to B1
+GYS  kf ID,LO,HI      Y-gate to B1, shift  B1
+GYO  kf ID,LO,HI      Y-gate to B1, output B1
+GYO  kf IDA,IDB,LO,HI Y-gate to B1,         output B1 (for ID=IDA,IDB)
+GYSO kf ID,LO,HI      Y-gate to B1, shift & output B1
+GYSO kf IDA,IDB,LO,HI Y-gate to B1, shift & output B1 (for ID=IDA,IDB)
+GYA  kf ID,LO,HI,FAC  Y-gate to B1, B2=B2+FAC*B1
+GYSA kf ID,LO,HI,FAC  Y-gate to B1, shift B1, B2=B2+FAC*B1
+    
+GX   kf ID,LO,HI      X-gate to B1
+GXS  kf ID,LO,HI      X-gate to B1, shift  B1
+GXO  kf ID,LO,HI      X-gate to B1, output B1
+GXO  kf IDA,IDB,LO,HI X-gate to B1,         output B1 (for ID=IDA,IDB)
+GXSO kf ID,LO,HI      X-gate to B1, shift & output B1
+GXSO kf IDA,IDB,LO,HI X-gate to B1, shift & output B1 (for ID=IDA,IDB)
+GXA  kf ID,LO,HI,FAC  X-gate to B1, B2=B2+FAC*B1
+GXSA kf ID,LO,HI,FAC  X-gate to B1, shift B1, B2=B2+FAC*B1
+                      Where kf = optional file-code = N,O,P,Q,R,S
+                      (Default = N)
+O1                    Output B1
+O2                    Output B2
+$$$$PROJ - for projection syntax
+Commands which perform projections from 2-D histograms .......................
+
+PJ   kf ID,BID,DEGR               PROJ TO B1
+PJS  kf ID,BID,DEGR               Proj to B1, shift  B1
+PJO  kf ID,BID,DEGR               Proj to B1, output B1
+PJO  kf IDA,IDB,BIDA,BIDB,DEGR -  Proj to B1, output B1
+                                  (outer loop on BID, inner loop on ID)
+PJSO kf ID,BID,DEGR               Proj to B1, shift & output B1
+PJSO kf IDA,IDB,BIDA,BIDB,DEGR -  Proj, shift, output
+                                  (outer loop on BID, inner loop on ID)
+PJA  kf ID,BID,DEGR,FAC           Proj to B1, B2=B2+FAC*B1
+PJSA kf ID,BID,DEGR,FAC           Proj to B1, shift B1, B2=B2+FAC*B1
+    
+PJAL                              Project all bananas in currently open
+                                  BAN-file for HIS-files, ID's & DEGR'S
+                                  contained therin
+
+Where kf = optional file-code = N,O,P,Q,R,S  (default = N)
+
+O1                                Output B1
+O2                                Output B2
+(DEGR = Projection-axis angle in degrees)
+ID denotes histogram-ID;  BID denotes banana-ID
+$$$$BUFF - for buffer manipulation commands
+Commands which manipulate the internal data buffers (B1 & B2) ................
+
+M1  XM             Multiply B1 by XM
+M2  XM             Multiply B2 by XM
+C1  ICRUN          Crunch B1  by ICRUN (standard crunch unchanged)
+C2  ICRUN          Crunch B2  by ICRUN (standard crunch unchanged)
+S1                 Shift  B1  by standard GASP
+S2                 Shift  B2  by standard GASP
+S1  XI1,XI2,XF1,XF2,NCF - Shift B1 as specified
+                          (standard GASP unchanged)
+S2  XI1,XI2,XF1,XF2,NCF - Shift B2 as specified
+                          (standard GASP unchanged)
+Z1                 Zero B1
+Z2                 Zero B2
+A12  FAC           B2=B2+FAC*B1
+A21  FAC           B1=B1+FAC*B2
+SWAP               Swap B1 & B2
+M2D1 FAC           B2=(FAC*B2)/B1
+
+MX12               B2=MAX(B1,B2) channel-by-channel
+MX21               B1=MAX(B1,B2) channel-by-channel
+MN12               B2=MIN(B1,B2) channel-by-channel
+MN21               B1=MIN(B1,b2) channel-by-channel
+
+O1                 Output B1
+O2                 Output B2
+$$$$LIST - for commands which list data on terminal or printer
+Commands which list data on terminal or printer ..............................
+
+PR1                Print   B1
+PR2                Print   B2
+    
+D1   LO,HI         Display B1 (channels LO thru HI)
+D2   LO,HI         Display B2 (channels LO thru HI)
+$$$$PPL  - for commands related to printer-plots
+Commands related to printer-plots ............................................
+
+SKRZ               Set to skip repeated-zeros for printer plots
+PLRZ               Set to plot repeated-zeros for printer plots
+    
+PLG  ID,LO,HI,NCYC      - Input to B1 & LOG plot
+PLN  ID,LO,HI,NCFS      - Input to B1 & LIN plot
+PLG  IDA,IDB,LO,HI,NCYC - Input to B1 & LOG plot (for ID=IDA,IDB)
+PLN  IDA,IDB,LO,HI,NCFS - Input to B1 & LIN plot (for ID=IDA,IBD)
+    
+PLG1 LO,HI,NCYC    Log    Printer-plot of B1
+PLG2 LO,HI,NCYC    Log    Printer-plot of B2
+PLN1 LO,HI,NCFS    Linear Printer-plot of B1
+PLN2 LO,HI,NCYC    Linear Printer-plot of B2
+    
+(NCFS = # of counts full-scale for LIN plots)
+(NCYC = # of cycles            for LOG plots)
+$$$$MOD  - for commands which modify channel contents
+Commands which modify channel contents of internal buffers ...................
+
+SET1 ICN,YV        Set channel ICN of B1 to YV
+SET2 ICN,YV        Set channel ICN of B2 to YV
+SET1 LO,HI,YV      Set channels LO-thru-HI of B1 to YV
+SET2 LO,HI,YV      Set channels LO-thru-HI of B2 to YV
+SET1 LO,HI,YA,YB   Set channels LO-thru-HI of B1 to YA-thru-YB
+SET2 LO,HI,YA,YB   Set channels LO-thru-HI of B2 to YA-thru-YB
+ADD1 ICN,YV        Add YV to channel ICN of B1
+ADD2 ICN,YV        Add YV to channel ICN of B2
+ADD1 LO,HI,YV      Add YV to channels LO-thru-HI of B1
+ADD2 LO,HI,YV      Add YV to channels LO-thru-HI of B2
+ADD1 LO,HI,YA,YB   Add YA-thru-YB to channels LO-thru-HI of B1
+ADD2 LO,HI,YA,YB   Add YA-thru-YB to channels LO-thru-HI of B2
+                   (i.e. a strait line)
+MSK1 LO,HI,MSK     Mask (with MSK)   channels LO-thru-HI of B1
+MSK2 LO,HI,MSK     Mask (with MSK)   channels LO-thru-HI of B2
+                   (MSK is entered in hexadecimal)
+$$$$TEST - for commands related to testing
+Commands related to testing ..................................................
+
+GEN  ID,KO,KX,NCH  Generate test spectrum in B1 (NCH channels)
+                   Channel contents = KO+KX*(channel#+1)
+    
+COMP NCH           Compare first NCH-channels of B1 & B2
+                   (gives # counts and # mis-matches)
+    
+SUM1 LO,HI         Display sum of counts LO-thru-HI of B1
+SUM2 LO,HI         Display sum of counts LO-thru-HI of B2
+$$$$D1   - for 1-D display commands (normal)
+Commands related to 1-D display ..............................................
+
+DLAD MS        ;Set Display-delay to MS milliseconds (default=500)
+
+LIN/LOG        ;Set display to linear/log  (default is linear)
+ST /OV         ;Set to disp mult hist stacked/overlayed (dflt = OV)
+    
+CAL  A,B,C     ;Define energy calibration (E=A+B*Chan+C*Chan**2)
+COL  I,J,K...  ;Defines color sequence for display
+               ;For I,J.. = 1     2   3     4    5    6       7
+               ;       COL= white,red,green,blue,cyan,magenta,yellow
+KRUD NC        ;KRUnch Display (draw 1 histogram vector per NC chans)
+GWID WID       ;Define cursor-mode sum-region width (channels)
+DNOR LO,HI     ;Normalize displayed data to count-sum of chans LO,HI
+DL   LO,HI     ;Set display limits (min,max chan#)
+DMM  LO,HI     ;Set display limits (min,max counts)
+               ;LO or HI = X  says use MIN or MAX data value
+    
+D    IDLST     ;Display histogram ID's contained in IDLST
+DX   IDLST     ;Display IDLST (range defined by expand-region)
+               ;--------------------------------------------------------------
+               ;IDLST is of the form:
+               ;KF C ID, C ID.. KF C ID, C ID..
+               ;or
+               ;KF C IDA to IDB,<INC> KF C ID ID ID ... KF C IDA to IDB ...
+               ;--------------------------------------------------------------
+               ;ID, IDA & IDB denote ID-numbers
+               ;INC (optional) denotes an ID-number increment (DFLT=1)
+               ;C is an OPTIONAL floating-point norm-coeff (DFLT=1.0)
+               ;KF = M,N,O,P,Q,R,S (default is N) and denotes:
+               ;MEM-BUF, IN-FIL, OU-FIL, PROJ-FIL, Q-FIL, R-FIL, S-FIL
+               ;If IDLST omitted, uses previously defined IDLST
+    
+SUML LO,HI     ;Define sum region for SUM command below
+SUM  IDLST     ;Sum counts (LO,HI) (IDLST same as D except C illegal)
+    
+C              ;Enter cursor-mode
+SSI            ;Set screen to initial - erase all graphic windows
+$$$$C1   - for 1-D display commands (1-key cursor)
+1-key cursor commands for 1-D display ........................................
+
+LF-ARROW       ;Set expand-region lo-limit
+RT-ARROW       ;Set expand-region hi-limit
+E              ;Expand display
+V              ;Make expand- & sum-region markers visible/invisible (toggles)
+J              ;Junk (delete) all exapand- & sum-region markers
+    
+DN-ARROW       ;Pan DOWN - move picture so cursor-chan at right-screen
+UP-ARROW       ;Pan UP   - move picture so cursor-chan at  left-screen
+               ;(you must be expanded to execute pan)
+    
+L              ;Set sum-region lo-limit
+H              ;Set sum-region hi-limit
+G              ;Set sum-region limits (LO=XCUR, HI=XCUR+WID-1)
+    
+S              ;Display sum, centroid & fwhm of sum region
+               ;DATA(LO),DATA(HI) defines BGD for NETS
+    
+A              ;Display sum, centroid & fwhm of sum region
+               ;YCUR(LO),YCUR(HI) defines BGD for NETS
+    
+C              ;Draw peak-marker and display chan#  at cursor pos
+P              ;Draw peak-marker and display energy at cursor pos
+/              ;Display/log XCUR, YCUR, channel# & energy
+               ;(logs to damm.log if PLON - see note below)
+Q              ;Quit cursor-mode (return to normal-mode)
+------------------------------------------------------------------------------
+PLON           ;Turns peak logging (to damm.log) ON
+PLOF           ;Turns peak logging (to damm.log) OFF (default)
+ 
+damm.log may be read (skipping prog, date & time) as follows:
+ 
+       READ(LU,10)IFLG,ID,CH,ENER,(FILNAM(I),I=1,16)
+    10 (29X,A4,I10,2F10.0,2X,16A4)
+
+Where: IFLG   = 'MARK' for marked peak log entry
+       ID     = Spectrum ID number
+       CH     = Peak location in channels
+       ENER   = Peak "energy" from calibration constants
+       FILNAM = First 64 characters of spk- or his-filename   
+$$$$D2   - for 2-D display commands (normal)
+Commands related to 2-D display ..............................................
+
+CMAP           ;Set color map to default  ("takes" after next FIG)
+CMAP  FILNAM   ;Set color map from FILNAM ("takes" after next FIG)
+ZLEV  N        ;Set # of color/grey-scale intensity levels to N
+ZLEV           ;Set # of color/grey-scale intensity levels to 10 (dflt)
+GRAS  I,J,K..  ;Set grey-scale values (range 0-100) & ZLEV (# entries)
+               ;(must do after first FIG  ("takes" after next FIG)
+
+ZINT  COLR     ;Set 2-D intensity mapping to Color (default)
+ZINT  GREY     ;Set 2-D intensity mapping to Grey-scale
+ZINT  DOTS     ;Set 2-D intensity mapping to Dot-matrix (3x3 or 5x5)
+ 
+ZSON           ;Z-scale ON - displays counts vs colors legend (default)
+ZSOF           ;Z-scale OFF
+    
+ZLOG           ;Set 2-D display to log    (default)
+ZLIN           ;Set 2-D display to linear
+    
+XC    LO,HI    ;Set min & max X-channel numbers for display
+YC    LO,HI    ;Set min & max Y-channel numbers for display
+ZMM   LO,HI    ;Set min & max counts/channel    for display & count-sum
+ZMM   LO       ;Sets min & searches for max (semi-autoscale)
+ZMM            ;Searches for min & max      (full-autoscale)
+    
+DD       ID    ;Display 2-D histogram ID from IN-file
+DD    KF,ID    ;Display 2-D histogram ID from KF-file
+DDX      ID    ;Display 2-D histogram ID from IN-file (expand region)
+DDX   KF,ID    ;Display 2-D histogram ID from KF-file (expand region)
+               ;Where KF = N,O,Q,R,S (default is N) and denotes:
+               ;IN-FIL, OU-FIL, Q-FIL, R-FIL, S-FIL
+               ;ID (and KF) omitted says use previously defined spec
+DDID           ;Shows ID-number & Filename for current 2-D display    
+    
+ZBL            ;Zero in-core BAN-library
+LBL            ;List in-core BAN-ID numbers
+    
+C              ;Enter cursor-mode
+SSI            ;Set screen to initial - erase all graphic windows
+$$$$C2   - for 2-D display commands (1-key cursor)
+1-key cursor commands for 2-D display ........................................
+
+LF-ARROW       ;Set expand-region lo-left- limit
+RT-ARROW       ;Set expand-region hi-right-limit
+V              ;Make expand markers visible/invisible (toggles)
+J              ;Junk (delete) all expand-region markers
+    
+1              ;Move display such that cursor is at lo-left
+2              ;Move display such that cursor is at hi-left
+3              ;Move display such that cursor is at hi-right
+4              ;Move display such that cursor is at lo-right
+    
+Z              ;Zero  (open) active X,Y-list
+A              ;Add point to active X,Y-list
+D              ;Dele nearest point in active X,Y-list
+M              ;Move nearest point in active X,Y-list to cursor pos
+I              ;Insert a point in active X,Y-list at cursor position
+L              ;List active X,Y-list (on VDT)
+    
+B              ;Draw active BAN & BAN's in in-core library
+    
+G              ;Prompt for ID & read into in-core BAN-library
+O              ;Open nearest in-core BAN for modification
+S              ;Prompt for ID & store in in-core library & on disk
+R              ;Store  nearest BAN with original ID
+F              ;Remove nearest BAN from in-core library & erase
+K              ;Delete nearest BAN from in-core library and disk
+T              ;Totalize counts in nearest BAN (active or not)
+P              ;Totalize and & save X- & Y-projections on PLOP.SPK
+/              ;Display X,Y-coordinates of cursor
+               ;(logs to damm.log if PLON - see note below)
+    
+E              ;Expand
+Q              ;Quit cursor-mode (return to normal-mode)
+------------------------------------------------------------------------------
+PLON           ;Turns position logging (to damm.log) ON
+PLOF           ;Turns position logging (to damm.log) OFF (default)
+ 
+damm.log may be read (skipping prog, date & time) as follows:
+ 
+       READ(LU,10)IFLG,ID,XC,YC,(FILNAM(I),I=1,16)
+    10 (29X,A4,I10,2F10.0,2X,16A4)
+
+Where: IFLG   = 'MAR2' for marked position log entry
+       ID     = Histogram ID number
+       XC     = X-position in channels
+       YC     = Y-position in channels
+       FILNAM = First 64 characters of spk- or his-filename   
+$$$$FIND - for commands related to peak-finding, display, logging
+Commands related to peak-finding, display, logging ...........................
+
+FIND           ;Turn peak-find & display ON  (BIAS=5.0, FWHM=5)
+FIND BIAS,FWHM ;Turn peak-find & display ON, Where:
+               ;BIAS = peak-detect threshold (useful values = 3-10)
+               ;FWHM = approximate peak FWHM in channels (integer)
+NOFI           ;Turn peak-find & display OFF (default is OFF)
+ 
+PLON           ;Turns peak logging (to damm.log) ON
+PLOF           ;Turns peak logging (to damm.log) OFF (default)
+ 
+damm.log may be read (skipping prog, date & time) as follows:
+ 
+       READ(LU,10)IFLG,ID,CH,HEFT,(FILNAM(I),I=1,16)
+    10 (29X,A4,I10,2F10.0,2X,16A4)
+
+Where: IFLG   = 'PEAK' for found peak log entry
+       ID     = Spectrum ID number
+       CH     = Peak location in channels
+       HEFT   = Peak heftiness
+       FILNAM = First 64 characters of spk- or his-filename   
+$$$$FPB  - for manual entry of peak, background & skip-regions
+Commands for  manual entry of peak, background & skip-regions ................
+
+PZOT                   - Zero the Peak Library
+PK     X,W,ASLO,ASHI   - List of complete peak specifications
+BZOT                   - Delete Fixed Background array
+BACK   X1,Y1 X2,Y2 ..  - X,Y-points for fixed background
+SKIP                   - Without List turns SKIP OFF
+SKIP   I1,I2 J1,J2 ..  - Up to 4 regions to omit from Fit
+$$$$FPAR - for definition of FWHM, ASYM, WLIM, ALIM, NBC, ECAL
+Commands which define FWHM, ASYM, WLIM, ALIM, NBC, ECAL ......................
+
+FW     FWA,FWB,FWC     - Coefficients for standard width function
+ASYM   ASLO,ASHI       - Standard Lo-Side and Hi-Side asymmetries
+WLIM   FWLO,FWHI       - Variation limit factors for peak widths
+ALIM   FALO,FAHI       - Variation limit factors for peak asymmetries
+NBC    NBC             - Number of power series terms in variable BGD
+                       -
+WOOD   ON/OFF          - Says turn Woods-Saxon background term ON/OFF
+                       - ON creates an additional background component 
+                       - with a Woods-Saxon "jog" under each peak which
+                       - is porportional to the peak intensity.
+                       - (default is OFF)
+                       - 
+ECAL   ECO,ECA,ECB     - Coefficients for standard energy calibration
+$$$$REL  - for commands which fix relative peak intensities
+Commands for fixing relative peak intensities ................................
+
+RELI   X,R             - Specifies that the relative intensity of the
+                       - library peak nearest to channel X is to be R.
+                       -
+                       - R may be in any "units" (8 character limit!)
+                       - 
+                       - Peak-areas will be in the same ratios as the
+                       - relative intensities specified ONLY if width
+                       - and asymmetry parameters are the same.
+                       - 
+                       - RELI HAS NO EFFECT UNLESS THERE ARE 2 OR MORE
+                       - SUCH PEAKS IN THE REGION FITTED.
+                       -
+                       - RELI specifications must be entered AFTER the
+                       - associated peak library entries are completed.
+                       -
+RELI   ZOT             - Says delete all relative intensity entries
+ 
+RELI   OFF             - Says turn OFF (disable) relative intensity control
+                       - but do not delete previously entered data
+                       -
+RELI   ON              - Says turn ON  (enable)  relative intensity control
+$$$$FVAR - for commands which control non-linear parameter variation
+Commands for control of non-linear parameter variation .......................
+
+DPX    XSTEP,DXMAX     - Initial step size and limit for peak pos
+DEL    DEL,DELFAC,NDEL - Initial step size, step size multiplier and
+                       - number of DEL-values to use
+VB                     - Use Variable Background (the default)
+FB                     - Use Fixed Background if available
+VX     KVAR            - Kind of variation for peak positions
+VW     KVAR            - Kind of variation for peak widths
+VALO   KVAR            - Kind of variation for Lo-Side asymmetries
+VAHI   KVAR            - Kind of variation for Hi-Side asymmetries
+       KVAR = UIND     - says vary Unconditionally, Independently
+            = CIND     - says vary   Conditionally, Independently
+            = ULOC     - says vary Unconditionally, Locked
+            = CLOC     - says vary   Conditionally, Locked
+            = FIX      - says keep Fixed - this the default assignmemt
+$$$$DS   - for general fit display control commands
+Commands Related to the Display of Data for Fitting ..........................
+
+WIN    NW          - Set subsequent displays to be in window-NW
+LIN/LOG            - Set graphic display to LIN (default) or LOG
+DMM    MIN,MAX     - Set display limits (min,max counts)
+                   - MIN or MAX = X  says use min or max data value
+DL     ILO,IHI     - Set display-range (channel# limits)
+DS     ID          - Display spectrum# ID (range defined by DL)
+DS     ID,ILO,IHI  - Display spectrum# ID (DL values replaced)
+                     (MAX value of IHI-ILO = 8191)
+DSX    ID          - Display Data defined by Expand Region
+ 
+C                  - Enter 1-key cursor-mode
+$$$$DF   - for commands related to display of fits
+Commands related to display of fits ..........................................
+
+WIN    NW          - Set subsequent displays to be in window-NW
+MON/MOF            - Turn peak-markers ON/OFF for DF (dflt=ON)
+DFI                - Set to display (DF ) DATA,FIT,BGD (default)
+DPK                - Set to display (DF ) DATA,FIT,PEAKS,BGD
+DPPB               - Set to display (DF ) DATA,FIT,(PEAKS+BGD),BGD
+DF                 - Display Fit (channel-limits given by Fit-range)
+DF     ILO,IHI     - Display Fit (channel-limits given by ILO,IHI)
+DC     NPK         - Display Calculated peak #  NPK+ RESIDUAL
+$$$$FIT  - for fit control commands
+Commands which control the fitting process ...................................
+
+FIT    ID,ILO,IHI  - Fit Request - (non-linear gradient search)
+GFIT   ID,ILO,IHI  - Fit request - (gaussian method)
+RFIT   ID,ILO,IHI  - Resume FIT/GFIT start with Parms from last Fit
+LFIT   ID,ILO,IHI  - Linear Fit - no non-linear search
+                   - (Fit-range specified by ILO,IHI)
+                   - (MAX # of channels allowed for fit-range is 2048)
+    
+FIT    ID X        - Fit Range specified by cursors (Fit Region)
+GFIT   ID X        - Fit Range specified by cursors (Fit Region)
+RFIT   ID X        - Fit Range specified by cursors (Fit Region)
+LFIT   ID X        - Fit Range specified by cursors (Fit Region)
+                   - (MAX # of channels allowed for fit-range is 2048)
+
+Ctrl/C             - Terminates Fit-in-progress
+$$$$FSTA - for commands which display peaks, bgd-points & fit-parameters
+Commands which display peaks, bgd-points & fit-parameters ....................
+
+PRP    XLO,XHI     - Display peaks from Library in range XLO thru XHI
+PRP                - Display all peaks from Library
+ 
+PRB                - Display all fixed background points
+ 
+FSTAT              - Display current fit-parameters
+$$$$FLIS - for commands related to list, print or hard-copy
+Commands related to list, print or hard-copy .................................
+
+KPPL   NONE        - Do no printer plots (default)
+       FITS        - Plot FITS only 
+       ALL         - Plot FITS, COMPONENTS and RESIDUALS
+    
+PR                 - Print and Plot results of last Fit on printer
+DR                 - List results of last Fit on VDT (terminal)
+$$$$FSAV - for commands which save fit parameters is library
+Commands which save fit parameters is library ................................
+
+SAV    I,J  - Save all Parms from peaks I thru J of last Fit in PK-LIB
+SAX    I,J  - Save X-Parms   for  peaks I thru J of last Fit
+SAW    I,J  - Save W-Parms   for  peaks I thru J of last Fit
+SAL    I,J  - Save ASL-Parms for  peaks I thru J of last Fit
+SAH    I,J  - Save ASH-Parms for  peaks I thru J of last Fit
+(If I,J ommitted, indicated Parms from ALL peaks are saved)
+$$$$FSET - for commands which set fit parameters
+Commands which set fit parameters ............................................
+
+SET- X1,X2          - Set STD WIDTH and ASYM for peaks in range X1-X2
+                      values (defined by FWA, FWB, FWC, ASLO, ASHI)
+SETW X1,X2          - Set WIDTH for peaks in range X1-X2 to STD value
+SETW X1,X2,WA,WB,WC - Set WIDTH for peaks in range X1-X2 to value
+                      defined by WA,WB,WC (FWA,FWB,FWC unchanged)
+SETL X1,X2          - Set ASLO  for peaks in range X1-X2 to STD value
+SETL X1,X2,ASLOT    - Set ASLO=ASLOT for peaks in range X1-X2
+SETH X1,X2          - Set ASHI  for peaks in range X1-X2 to STD value
+SETH X1,X2,ASHIT    - Set ASHI=ASHIT for peaks in range X1-X2
+(If X1,X2,.. omitted, indicated Parms for ALL peaks are set)
+$$$$FDEF - for listing of default fit parameter values
+Listing of default fit parameter values ......................................
+
+DEL   = 0.05    FWLO = 0.5      VX   = CIND    NBC  = 2
+DELFAC=0.25     FWHI = 2.0      VW   = CLOC    WOOD = OFF
+NDEL  = 3       FALO = 0.5      VALO = FIX     KPPL = NONE
+XSTEP = 0.2     FAHI = 2.0      VAHI = FIX
+DXMAX = 5.0     ASLO = 0.0
+                ASHI = 0.0
+$$$$CS   - for 1-key (or 2-key) cursor commands related to fitting
+1-key (or 2-key) cursor related commands related to fitting ..................
+The following commands are valid after a DS or DSX command
+ 
+Type:  C to enter cursor-mode
+ 
+P/UP   Add/Delete peak to Library (pos specified by cursor)
+M      Move nearest displayed peak to cusor pos (FW, ASYM unchanged)
+X/UX   Fix/Free  peak position (for displayed peak nearest to cursor)
+W/UW   Fix/Free  peak width    (for displayed peak nearest to cursor)
+L/UL   Fix/Free  Lo-Side ASYM  (for displayed peak nearest to cursor)
+H/UH   Fix/Free  Hi-Side ASYM  (for displayed peak nearest to cursor)
+O/UO   Turn peak  ON/OFF       (for displayed peak nearest to cursor)
+B/UB   Add/Delete background point at cursor position
+LF-ARO Set Expand Region   Lo-Limit
+RT-ARO Set Expand Region   Hi-Limit
+[      Set Fit Region      Lo-Limit
+]      Set Fit Region      Hi-Limit
+V      Make Expand- & Fit-region markers visible/invisible (toggles)
+J      Junk (delete) all expand- & fit-region markers
+/      Display chan#, cursor Y-value, chan contents
+S      Disp sum, cent & fwhm of Fit-Reg - DAT([),DAT(]) defines BGD
+A      Disp sum, cent & fwhm of Fit-Reg - CUR([),CUR(]) defines BGD
+Q      Return from cursor control routine
+E      Expand display (region defined by <- ->)
+$$$$HISX - for commands related to histogram generation & manipulation
+Commands related to histogram generation & manipulation ......................
+
+HOU  fil.his     - Opens fil.his for histogram Output
+                 - If non-existant, Prompts for permission to create it
+HDIM N           - HIS dimension (N = 1 or 2) (required)
+HWPC N           - half-wds/chan (N = 1 or 2) (required)
+HPAR PX PY       - Parameter IDs              (reference only)
+LRAW LX LY       - Raw    parm lengths        (reference only)
+LSCL LX LY       - Scaled parm lengths        (reference only)
+MINC MNX MNY     - Min chan#s for X & Y       (required)
+MAXC MXX MXY     - Max chan#s for X & Y       (required)
+XLAB labl-x      - X-label (ASCII)            (reference only)
+YLAB labl-y      - Y-label (ASCII)            (reference only)
+HTIT title       - Title   (ASCII)            (reference only)
+HEDD             - Displays current data to be used for next his generation
+HGEN HID         - Generates histogram HID using current data
+==============================================================================
+HOU  FILNAM                - Open FILNAM for histogram Output        
+GSX  XI1,XI2 XF1,XF2       - Define   X-gain-shift             
+GSY  YI1,YI2 YF1,YF2       - Define   Y-gain-shift             
+GSXOF/GSYOF                - Turn OFF X/Y-gain-shift
+SNEG OFF                   - Turn OFF reset of neg 16bit out data (default)
+SNEG IV                    - Says set negative 16-bit output data to IV
+                           - (you MUST use SIDA mode for this to work!!)
+HSTA                       - Shows files open & gain-shift data
+
+HCOP kf IDI,IDO <,FI>      - Copy F*IDI (Input) to IDO (Output)
+HADD kf IDI,IDO <,FI><,FO> - Add FI*IDI to FO*IDO              
+HDIV kf IDI,IDO <,FI>      - Div FI*IDI by IDO & save in IDO   
+SHIF kf IDI,IDO            - Gain-shift IDI & store in IDO     
+SHAD kf IDI,IDO <,FI><,FO> - Gain-shift IDI & add   to IDO     
+Where kf = optional file-code = N,O,P,Q,R,S (default = N)
+
+HSET IDO,IV                - Set IDO on Output to IV      
+HRAN IDO,IV                - Set IDO on Output to IV (with counting statstics)
+HZOT IDO                   - Set IDO on Output to 0       
+$$$$SUMS - for spk-sums, his-sums and directory commands
+Commands for spk-sums, his-sums and directory information ....................
+
+DDIR  KF       ;Display directory of  KF-file 
+               ;Where KF = N,O,P,Q,R,S (default is N) and denotes:
+               ;IN-FIL, OU-FIL, P-FIL, Q-FIL, R-FIL, S-FIL
+ 
+DSUM  KF       ;Displays count-sum of all histograms in KF-file
+               ;Where KF has same meaning as above
+$$$$MOUS - for mouse button definitions (when in 1-key cursor mode)
+Commands defining mouse-buttons (when in 1-key cursor mode) ..................
+
+BUD  L,M,R  ;Defines Left,Middle,Right buttons for cursor in  D-window
+BUDD L,M,R  ;Defines Left,Middle,Right buttons for cursor in DD-window
+BUDS L,M,R  ;defines Left,Middle,Right buttons for cursor in DS-window
+BUD  L,H,S  ;Example (cursor in 1-D)   L-butt sets sum-reg lo-limit,
+            ;M-butt sets sum-reg hi-limit,  R-butt requests S-sum
+BUDD A,T,Z  ;Example (cursor in 2-D)   L-butt adds banana points,
+            ;M-butt totalizes enclosed counts,  R-butt zots banana
+$$$$XY   - for XY-line display commands
+Commands for defining an XY-line for display
+
+XYF  filename   ;Opens XY-file and reads in all data
+ 
+XYI             ;Displays XY IDs which have been read in
+ 
+XYD  I J K L .. ;Displays XY data for IDs (I J K L ..) into active 
+                ;window (default = window 1 or set by WIN command)
+ 
+XYP  I J K L .. ;Same as XYD except that XY-points are shown in
+                ;addition to the connecting vectors
+ 
+                ;XYD or XYP with no ID-list uses previous ID-list
+ 
+XYC  KOL        ;Specifies the "color" for subsequent XY displays
+                ;Legal values of KOL are:
+
+                ;WHIT - compliment white      - CMAP entry 34
+                ;RED  - compliment red        - CMAP entry 35
+                ;GREE - compliment green      - CMAP entry 36
+                ;BLUE - compliment blue       - CMAP entry 37
+                ;RG   - compliment red-green  - CMAP entry 38
+                ;RB   - compliment red-blue   - CMAP entry 39
+                ;GB   - compliment green-blue - CMAP entry 40
+
+Note: Displays are done in "compliment mode" so that displaying the same
+ID a second time will erase it, displaying a third time will show it, etc.
+$$$$LABL - for labeling commands
+Label Generating commands ....................................................
+
+LA7  text   ;Adds line of "text" to LA7 label
+LA8  text   ;Adds line of "text" to LA8 label
+LA9  text   ;Adds line of "text" to LA9 label
+
+LAZ7        ;Deletes all lines of   LA7 label
+LAZ8        ;Deletes all lines of   LA8 label
+LAZ9        ;Deleted all lines of   LA9 label
+
+LAL         ;Displays current labels - LA7, LA8, LA9
+ 
+LAC  KOL    ;Specifies label color for subsequent displays
+            ;Legal values of KOL are:
+
+            ;WHIT - compliment white      - CMAP entry 34
+            ;RED  - compliment red        - CMAP entry 35
+            ;GREE - compliment green      - CMAP entry 36
+            ;BLUE - compliment blue       - CMAP entry 37
+            ;RG   - compliment red-green  - CMAP entry 38
+            ;RB   - compliment red-blue   - CMAP entry 39
+            ;GB   - compliment green-blue - CMAP entry 40
+
+Label Display Commands (1-key cursor-mode) -----------------------------------
+
+KEY      ACTION
+7        Displays LA7 at cursor location (compliment mode)
+8        Displays LA8 at cursor location (compliment mode)
+9        Displays LA9 at cursor location (compliment mode)
+
+0        Locks previously displayed labels against subsequent change
+         (i.e. all labels displayed in a given window will be fixed)
+         (enables the drawing of additional labels)
+ 
+It goes like this: 
+The first strike of say key-7 displays LA7 with the upper-left corner
+of an unclosed box at the cursor location.
+The next strike of key-7 will erase the LA7 label and the box.
+The next strike of key-7 will display LA7 in any new cursor location.
+Etc, etc. and the same for key-8 and -9. 
+Finally, key-0 will close any open boxes and lock in all current labels
+within a given window. Additional labels are now enabled.
+
+Label Pointer Commands (1-key cursor-mode) -----------------------------------
+
+KEY      ACTION 
+=        Adds a vector point to current list and draws point or line
+ 
+-        Deletes last vector point in current list and erases line
+ 
+;        Locks current vector list against subsequent change and
+         enables new list
+$$$$ZERO - for commands which zero in-memory histograms
+Histogram zeroing commands (for on-line, scan-monitor, etc.) .................
+
+Z  ON              ;Enable  Z-command
+Z  OFF             ;Disable Z command (default)
+
+Z  IDA IDB IDC ..  ;Says zero explicit histogram ID-list
+Z  IDA to IDB      ;Says zero IDA thru IDB (in steps of 1)
+Z  IDA to IDB INC  ;Says zero IDA thru IDB (in steps of INC)
+
+For these commands to work, the following conditions are required:
+(A)....The his-file must be opened by DAMM via the IN cmd.
+(B)....The his-file must be attached to a scan or monitor process
+       (i.e. the his-file must be in-memory)
+The disk-file is NOT zeroed!
+$$$$WO   - for commands which suspend or abort operations
+Commands which suspend or abort operations in-progress .......................
+
+WAIT  MS           ;Suspends execution for MS milliseconds
+                   ;(60,000 Milliseconds is the maximum allowed)
+
+WO                 ;Suspends execution until you  type [RETURN] 
+                   ;(it prompts you to: Type [RETURN] to continue
+
+Ctrl/C             ;Interrupts (aborts) a FIT-in-progress
+                   ;Interrupts (aborts) a loop-in-progress
+                   ;Interrupts (aborts) a command-file being executed
+
+Note: If you interrupt a fit-in-progress (being executed within a command
+file), this does not abort the command file execution. 
+An additional Ctrl/C will be required to abort the command file. 
+$$$$FADD - for commands which add & subtract identically structured his-files
+
+Commands which add & subtract identically structured  his-files .............
+
+The following commands support the addition and subtraction of complete
+his-files. The associated drr-files must have identical structures.
+The files may contain any combination of 1D, 2D, INTEGER*2 & INTEGER*4
+histograms
+-----------------------------------------------------------------------------
+FADI   inpfile.his  ;Opens input  his-file - .his & .drr must already exist
+                    ;cannot be same as output
+
+FADO   outfile.his  ;Opens output his-file - .his & .drr must already exist
+                    ;cannot be same as input but must have same structure
+
+FADN   outfile.his  ;Creates & initializes   outfile.his & outfile.drr
+                    ;with same attributes as inpfile.his & inpfile.drr
+                    ;outfiles .his & .drr must NOT already exist
+
+FADZ                ;Zeros outfile.his
+
+FADF                ;Displays FAD files which are open
+
+FADD                ;Adds      inpfile.his to   outfile.his
+
+FSUB                ;Subtracts inpfile.his from outfile.his
+
+CLIF                ;Closes input  FAD-file if open
+
+CLOF                ;Closes output FAD-file if open
+
+Ctrl/C              ;Interrupts (aborts) an ADD-in-progress
+                    ;Interrupts (aborts) a ZERO-in progress
+-----------------------------------------------------------------------------
+NOTE: The input & output file assignments here are NOT the same as those
+      assigned by the damm commands IN, OU & HOU. However, you may open these
+      files for display by commands such as IN, QF, etc.
+      For example, you may do the following:
+
+fadi infile.his  !Open infile.his for add/subtract input
+fado oufile.his  !Open oufile.his for add/subtract output
+in   infile.his  !Open infile.his for normal display etc.
+qf   oufile.his  !Open oufile.his for normal display etc.
+-----------------------------------------------------------------------------

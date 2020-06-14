@@ -1,0 +1,61 @@
+22-Sep-03 ..... Porting to gnu Fortran - In DDgnu directory ...... PAGE   1
+ 
+o......It doesn't like: IWD='name' unless IWD is a character.
+ 
+o......But it does accept DATA IWD/'name'/ when IWD is INTEGER.
+ 
+o......It doesn't like: IF(KMD.EQ.'name') unless KMD is a character
+ 
+o......It  doesn't like: IF(TST.EQ.'0D'X)... You can set TST='0D'X however.
+       It just seems not to accept hex constants in IF-statements. It  also
+       doesn't  like  hex-constants  in  arithmatic  expressions  but  does
+       accept in simple replacement statements such as II='8001'X.
+ 
+o......Fortunately it accepts equivalences of different data types.
+ 
+o......GETARG works!
+ 
+o......It doesn't support ENCODE & DECODE - I have  already  replaced  some
+       of that anyway.
+ 
+o......There  are lots of unsupported OPEN parameters - it gives you a list
+       and you pick out your own violation.
+ 
+o......You need to do variable  definitions  (typing,  equivalencing,  etc)
+       prior to any associated DATA assignments.
+ 
+o......It  wants  C-subroutine names (referenced by FORTRAN) to be followed
+       by TWO underscores rather than ONE.
+ 
+o......Replace any hex-assgnments  in  DATA  statements  CHARACTER  strings
+       where appropriate.
+ 
+o......EOFSTAT changed to return 0/1 instead of 'NO  '/'YES '.
+ 
+o......In COMMON/LLL/, LISFLG & MSGF changed from INTEGER*4 to CHARACTER*4
+ 
+o......Helpfile flag IHEPF changed from type INTEGER*4 to CHARACTER*4
+ 
+o......It  accepts  the  FFLAGS option -static but has no effect that I can
+       tell. You can use the FFLAGS option -fno-automatic instead.  Or  you
+       can  put  a  SAVE  in  each  routine where needed - before the first
+       executable statement.
+ 
+o......It doesn't support STRUCTURES but simple 1-D  and  2-D  arrays  work
+       fine for what I used them for - only in X-lib related stuff.
+ 
+o......It doesn't like II=JJ.AND.KK - you must use II=IAND(JJ,KK).
+ 
+o......It  doesn't  accept the "third argument" in CRTL/Z handler. Ask MCSQ
+       about this.
+ 
+o......It doesn't accept DISP='DELETE' in OPEN statements but  does  accept
+       it in CLOSE statements.
+ 
+o......There  is  a  subtle  between  an  ENCODE and an INTERNAL WRITE. The
+       ENCODE disturbes no  more  characters  than  specified  whereas  the
+       INTERNAL  WRITE  must at least supply a terminating byte. I'll check
+       the detail later but it's something to remember!!
+ 
+o......Don't use RECL in open statements unless you will do "direct access"
+       I/O.

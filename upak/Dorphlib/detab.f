@@ -1,0 +1,88 @@
+C$PROG DETAB     - Removes TABS from FORTRAN source code
+C
+C     ******************************************************************
+C     BY J.R. Beene AT HRIBF - LAST MODIFIED 06/13/2002 - for gnu
+C     ******************************************************************
+C
+	SUBROUTINE DETAB(IBYTE,IIN,IOUT)
+C
+C     *************************************************************
+C	DETAB IS A ROUTINE TO REMOVE TABS FROM FORTRAN SOURCE CODE.
+C	IT ASSUMES THE DEC FORTRAN TAB CONVENTIONS.
+C	  1) A TAB IN COL. 1 IS REPLACED BY:
+C	     1.1) 6 SPACES IF FOLLOWING CHARACTER IS ALPHABETIC.
+C	     1.2) 5 SPACES IF FOLLOWING CHARACTER IS NUMERIC (THIS IS DEC'S
+C	          CONTINUATION LINE CONVENTION).
+C	  2) IF A TAB APPEARS IN ANY COL.<7 AND IS PRECEEDED BY NUMERIC
+C	     CHARACTERS (I.E. A LABEL) IT (THE TAB) IS REPLACED BY SPACES
+C	     SUCH THAT THE NEXT NON SPACE CHARACTER AFTER THE TAB APPEARS IN
+C	     COL. 7
+C	  3)IF A TAB APPEARS IN COL.GE.7 IT IS REPLACED BY 1 SPACE.
+C	THUS:
+C
+C	9000<TAB>FORMAT(...)
+C	<TAB>A=(B*C*D*E)
+C	<TAB>1 /(E+F)
+C
+C	TRANSLATES TO:
+C  COL# 1     7
+C
+C	9000  FORMAT(...)
+C	      A=(B*C*D*E)
+C	     1 /(E+F)
+C     *************************************************************
+C
+	CHARACTER*80 IIN,IOUT
+c	CHARACTER*1 X,TAB,SPACE,ZER/'0'/,NIN/'9'/
+	CHARACTER*1 X,TAB,SPACE,ZER,NIN
+	BYTE BTAB
+        EQUIVALENCE (TAB(1:1),BTAB)
+        DATA ZER/'0'/,NIN/'9'/
+	DATA X/'X'/,SPACE/' '/,BTAB/9/
+C
+        SAVE
+C
+C     ------------------------------------------------------------------
+
+9101	FORMAT(A)
+	IF(IIN(1:1).EQ.'C')GOTO 400
+	ICN=INDEX(IIN(1:IBYTE),TAB)
+	IF(ICN.LE.0)GOTO 100
+	IF(ICN.GE.7)GOTO 400
+	IF(ICN.EQ.1)GOTO 200
+	GOTO 500
+C
+  100 IOUT=IIN
+      RETURN
+C
+200	IOUT(1:5)='     '
+	IZ=NXNB(JIN,2,80)
+	if(iz.ne.0)iz=iz+1
+	IF(IZ.EQ.0)THEN
+		IIN(1:1)=' '
+		GOTO 100
+	ELSE IF(IIN(IZ:IZ).GE.ZER.AND.IIN(IZ:IZ).LE.NIN)THEN
+		IQ=IZ
+		GOTO 220
+	ELSE
+		IQ=IZ
+		GOTO 230
+	ENDIF
+220	IOUT(1:5)='     '
+	CALL CLOAD(IIN,IQ,74,IOUT,6,80)
+	GOTO 600
+230	IOUT(1:6)='      '
+	CALL CLOAD(IIN,IQ,73,IOUT,7,80)
+	GOTO 600
+400	IOUT=IIN
+	GOTO 600
+500	IOUT(1:ICN-1)=IIN(1:ICN-1)
+	IOUT(ICN:6)='      '
+	IOUT(7:)=IIN(ICN+1:)
+600	ICN=INDEX(IOUT,TAB)
+	IF(ICN.NE.0)THEN
+		IOUT(ICN:ICN)=' '
+		GOTO 600
+            ENDIF
+      RETURN
+      END

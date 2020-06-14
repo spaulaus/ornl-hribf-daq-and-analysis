@@ -1,0 +1,60 @@
+C$PROG SELPKS
+      SUBROUTINE SELPKS(NPK,TALL,LOCA)
+      DIMENSION LOCA(*),TALL(*),NA(4),NB(4),IP(4),JP(4)
+C
+      SAVE
+C
+C     SELECT THE LARGEST PEAKS IN EACH OH 4 REGIONS
+C
+      DO 5 I=1,4
+      IP(I)=0
+    5 JP(I)=0
+      IA=LOCA(1)
+      IB=LOCA(NPK)
+      IR=IB-IA+1
+      ISTEP=IR/4
+      NA(1)=IA
+      DO 10 I=1,3
+      NB(I)=NA(I)+ISTEP-1
+      NA(I+1)=NB(I)+1
+   10 CONTINUE
+      NB(4)=IB
+      LP=1
+      DO 40 NG=1,4
+C
+C     FIND THE FIRST PEAK IN THIS RANGE
+C
+      DO 20 J=LP,NPK
+      IF(LOCA(J).GE.NA(NG).AND.LOCA(J).LE.NB(NG)) GO TO 22
+      IF(LOCA(J).GT.NB(NG)) GO TO 35
+   20 CONTINUE
+      GO TO 50
+   22 IP(NG)=J
+      LP=J
+C
+C     FIND LAST PEAK IN THIS RANGE
+C
+      DO 30 J=LP,NPK
+      IF(LOCA(J).GT.NB(NG)) GO TO 32
+   30 CONTINUE
+      GO TO 50
+   32 JP(NG)=J-1
+   35 LP=J
+   40 CONTINUE
+   50 JP(4)=NPK
+      DO 100 IG=1,4
+      IA=IP(IG)
+      IB=JP(IG)
+      NBIG=IA
+      DO 60 I=IA,IB
+      IF(TALL(I).LE.TALL(NBIG)) GO TO 60
+      NBIG=I
+   60 CONTINUE
+      IF(IA.GT.IB) GO TO 100
+      DO 70 I=IA,IB
+      IF(I.EQ.NBIG) GO TO 70
+      TALL(I)=0.0
+   70 CONTINUE
+  100 CONTINUE
+      RETURN
+      END

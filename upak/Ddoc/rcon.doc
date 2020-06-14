@@ -1,0 +1,1393 @@
+RPD$075066
+CHP$rcon - RMS Control Program
+TPF$
+DBL$
+CYB$
+Sec Page Contents
+010   2  How to Get Started - How to End
+020   2  Introduction and General Features
+030   3  Commands - General & Histogram Related
+040   3  Commands - For Status Information
+050   4  Commands - For Teslameter Parameter Check, Set, etc
+060   4  Commands - For rmon Display Management
+070   4  Commands - For Ion Specification
+080   5  Commands - For Setting Operational Mode and Knobs
+090   5  Commands - For Setting Magnets & Electrostatic Dipoles
+100   6  Commands - Related to Electrostatic Dipoles Only
+110   7  Commands - Related to Valves
+120   7  Commands - For Varian Guages
+130   7  Commands - For CAMAC operations
+140   8  Commands - For Monitor options
+150   9  Commands - To Disable/Enable read/write of Certain Devices
+160   9  Commands - For Fingers
+165   9  Commands - For snapshots of RMS parameters to printer & files
+170  10  Discussion of Magnet Related Commands
+180  10  Discussion of Finger Related Commands
+190  11  Discussion of Program RMON Operations
+200  13  Discussion of Magnet Set, Ramp and Cycle Operations
+210  14  Discussion of Magnet Tweaking Operations
+220  15  Miscellaneous Notes and Comments
+230  16  Magnet Power Requirements
+240  17  Hardware specification file       - rmshwd.dat
+250  21  Teslameter Parameter Data File    - teslapar.dat
+260  23  RMS Calibration Constants         - rmscal.dat
+270  24  RMS Mode Table & Discussion       - rmsmode.dat
+280  26  Histogram Table (ID vs Label)
+290  27  What the Hell do I do Now
+SIN$
+TPF$
+SEC$010  How to Get Started - How to End
+ODP$
+(1)....Log onto rms0 as user \b\rms\\.
+ODP$
+(2)....Open two windows: One for \b\rcon\\ which will receive
+all typed commands and one for \b\rmon\\ which performs monitor,
+control, logging, and continuous display functions.
+ODP$
+(3)....\b\rcon\\ and \b\rmon\\ should be run from the same directory,
+Drcon, where the associated data files are located.
+CYB$
+Type:  rcon      ;in the rcon window to start rcon
+Type:  rmon      ;in the rmon window to start rmon
+Type:  h         ;in rcon window for a listing of commands
+                 ;All subsequent commands are typed in the \b\rcon\\ window
+Type:  kill      ;in the \b\rcon\\ window to terminate \b\rmon\\
+Type:  end       ;in the \b\rcon\\ window to terminate \b\rcon\\
+CYB$
+Abnormal termination of rmon can lead to problems (see SECT# 290)
+SEC$020  Introduction and General Features
+CEN$
+\bu\Introduction\\
+BLP$
+The function of this package is to control and/or monitor the devices
+associated with the RMS.
+The program actually consists of two processes;
+\b\rcon and rmon\\.
+ODP$
+(1)....\b\rcon\\ receives all typed input commands, processes some
+itself (related to magnets, status, etc),
+and passes those related to elecrtostatic dipoles to
+\b\rmon\\ via shared memory.
+ODP$
+(2)....\b\rmon\\ receives input commands from \b\rcon\\ and
+performs monitor, control, logging and histogramming functions.
+ODP$
+(3)....\b\rmon\\ generates repeative displays of selected \b\rms\\
+parameters.
+ODP$
+(4)....Both \b\rcon & rmon\\ produce log files - rcon.log and
+rmon.log.
+CEN$
+\bu\General Features\\
+ODP$
+(1)....The voltage of all electrostatic dipoles can be set and monitored.
+ODP$
+(2)....The conditioning currents of electrostatic dipoles can be controled
+and monitored.
+ODP$
+(3)....The current may be set (and monitored) for all magnetic elements 
+and the associated magnetic field monitored.
+ODP$
+(4)....Electrostatic voltages, conditioning currents, magnet currents,
+magnetic fields, magnet interlock status and certain vacuum gauge readings
+are displayed repeatively.
+ODP$
+(5)....The state of all vacuum gauges can be displayed and logged.
+ODP$
+(6)....The state of all valves can be displayed and logged.
+ODP$
+(7)....A full set of Finger positioning commands are provided.
+ODP$
+(8)....A histogram record of all voltages, currents, magnetic fields and
+vacuum gauge readings can be produced. (See SECT# 280)
+TPF$
+SP1$
+SEC$030  Commands - General & Histogram Related
+CYB$
+H               ;Display on-line help
+
+CLDF            ;Clears "rmon already running" flag which will
+                ;be set if rmon is terminated abnormally!
+
+LON             ;Turns output to rcon.log ON
+LOF             ;Turns output to rcon.log OFF (default)
+
+BLON            ;Turn bell associated with rmon messages ON  (default)
+BLOF            ;Turn bell associated with rmon messages OFF
+
+INIT            ;Enables histogramming & sets start Date/Time
+ZERO            ;Zeros histogramms and does an INIT
+HUP             ;Copy  histograms to disk
+STOR            ;Store histograms on \b\rmslog-YR-MO-DA_HR:MN:SEC.spk\\
+                ;(automatic after 16384 minutes)
+
+KILL            ;Kill rmon (sets E1 & E2 control DACs to zero)
+
+CMD  filename   ;Process commands from filename
+END             ;End program \b\rcon\\
+SP2$
+SP2$
+SEC$040  Commands - For Status Information
+DBL$
+CYB$
+STAT  MAGS      ;Disp/logs state of Alphas, Tesla-meters, Interlocks
+STAT  NAME      ;Disp/logs status of NAMEd magnet
+STAT  ION       ;Disp/logs field requirements for specified ion
+STAT  MODE      ;Disp/logs MODE parameters (basic GEOS and KNOB data)
+STAT  CAL       ;Disp/logs Magnet & Electric-Dipole calibration constants
+STAT  ED        ;Disp/logs Electric Dipole status information
+STAT  OPTS      ;Disp/logs rmon options - display, logging, tweaking, etc
+STAT  VACS      ;Disp/logs all vacuum gauge readings
+STAT  VALV      ;Disp/logs all valve positions, set-points, etc
+STAT  HWD       ;Disp/logs hardware configuration (from rmshwd.dat)
+STAT  FING      ;Disp/logs finger status information
+SIN$
+TPF$
+SP1$
+SEC$050  Commands - For Teslameter Paramater Check, Set, etc
+CYB$
+TES   MAG CMD <DAT> ;General Tesla command to magnet, MAG (Q1, D1, etc)
+
+TSLA  CHEC  MAG     ;Checks Tesla parms vs  teslapar.dat for magnet MAG
+TSLA  CHEC  ALL     ;Checks Tesla parms vs  teslapar.dat for all magnets
+
+TSLA  SAVE  MAG     ;Saves Tesla parms on   teslapar.dat for magnet MAG
+TSLA  SAVE  ALL     ;Saves Tesla parms on   teslapar.dat for all magnets
+
+TSLA  LOAD  MAG     ;Loads Tesla parms from teslapar.dat for magnet MAG
+TSLA  LOAD  ALL     ;Loads Tesla parms from teslapar.dat for all magnets
+
+TSLA  NUFI          ;Creates a new teslapar.dat & saves all Tesla parms
+------------------------------------------------------------------------
+MAG = D1, D2, D3, Q1, Q2, Q3, Q4, Q5, Q6, Q7, S1, S2
+------------------------------------------------------------------------
+SP2$
+SEC$060  Commands - For rmon Display Management
+CYB$
+DON   MAGS  ISEC  ;Disp magnet   info every ISEC (min,max,dflt = 10,60,10)
+DON   EDS   ISEC  ;Disp E-dipole info every ISEC (min,max,dflt = 2, 60,10)
+DON   VACS  ISEC  ;Disp vacuum   info every ISEC (min,max,dflt = 10,60,10)
+DON   ALL   ISEC  ;Disp MAGS,EDS,VACS every ISEC (min,max,dflt = 10,60,10)
+
+DOF   MAGS        ;Turn OFF magnet    display
+DOF   EDS         ;Turn OFF E-dipole  display
+DOF   VACS        ;Turn OFF vacuum    display
+DOF   ALL         ;Turn OFF all       display
+
+SSI               ;Set Screen to Initial state (i.e. clear rmon window)
+SP2$
+SEC$070  Commands - For Ion Specification
+CYB$
+ION   NAME            ;Specify ion to be transported
+
+MEV   MEV             ;Specify energy in MeV
+
+Q     Q               ;Specify charge state
+
+AION  AMU             ;Specify ion mass in amu
+
+AOQ   X               ;Specify AMU/Q & compute Q using previous AMU
+
+
+BEAM  NAME            ;Specify beam ion    (for Q-trams information only)
+
+BMEV  MEV             ;Specify beam energy (for Q-trans information only)
+TPF$
+SP1$
+SEC$080  Commands - For Setting Operational Mode and Knobs
+CYB$
+MODE  INIT            ;Reads & process file rmsmode.dat
+                      ;This is done automatically at rcon start-up but you
+                      ;may edit the file and re-process it.
+
+MODE  modefile        ;Reads and processes file modefile which replaces 
+                      ;data contained in rmsmode.dat
+                      ;(See SECT# 270 for discussion)
+
+KNOB  ID  FAC         ;For KNOB ID set Scale-factor FAC
+                      ;(See SECT# 270 for disciussion)
+
+KNOB  INIT            ;Sets all KNOB Scale-factors to zero (default)
+SP1$
+SEC$090  Commands - For Setting Magnets & Electrostatic Dipoles
+CYB$
+ALP  MAG CMD <DAT>    ;General Alpha command to magnet MAG (Q1, D1, etc)
+TES  MAG CMD <DAT>    ;General Tesla command to magnet MAG (Q1, D1, etc)
+
+TURN  NAME  ON        ;Turn ON  named element
+TURN  NAME  OFF       ;Turn OFF named element
+
+SETI  E1              ;Set  E1 to voltage required   for AMU, MeV, Q, X
+SETI  E2              ;Set  E2 to voltage required   for AMU, MeV, Q, X
+
+RAMI  E1              ;Ramp E1 to voltage required   for AMU, MeV, Q, X
+RAMI  E2              ;Ramp E2 to voltage required   for AMU, MeV, Q, X
+
+SETI  MAGS            ;Set   all   magnetic elements for AMU, MeV, Q, X
+RAMI  MAGS            ;Ramp  all   magnetic elements for AMU, MeV, Q, X
+CYCI  MAGS            ;Cycle all   magnetic elements for AMU, MeV, Q, X
+CYCZ  MAGS            ;Cycle all   magnetic elements to  zero
+
+SETI  NAME            ;Set   named magnetic element  for AMU, MeV, Q, X
+RAMI  NAME            ;Ramp  named magnetic element  for AMU, MeV, Q, X
+CYCI  NAME            ;Cycle named magnetic element  for AMU, MeV, Q, X
+
+SETM  NAME  A  AMPS   ;Set   named magnetic element to A amps
+SETM  NAME  G  GAUSS  ;Set   named magnetic element to G Gauss
+
+RAMM  NAME  A  AMPS   ;Ramp  named magnetic element to A amps
+RAMM  NAME  G  GAUSS  ;Ramp  named magnetic element to G Gauss
+
+CYCM  NAME  A  AMPS   ;Cycle named magnetic element to A amps
+CYCM  NAME  G  GAUSS  ;Cycle named magnetic element to G Gauss
+
+AJI   NAME            ;Adjust named magnet  for AMU, MeV, Q, via tweaking
+AJI   MAGS            ;Adjust all   magnets for AMU, MeV, Q, via tweaking
+AJM   NAME  G         ;Adjust named magnet  for G-gauss      via tweaking
+                      ;Note1: Tweaking will be enabled for adjusted magnet
+                      ;Note2: Ramps first, if change is more than 15%
+---------------------------------------------------------------------------
+NAMEs are: Q1, Q2, Q3, Q4, Q5, Q6, Q7, S1, S2, D1, D2, D3, E1, E2
+TPF$
+SP2$
+SEC$100  Commands - Related to Electrostatic Dipoles Only
+CYB$
+ECON               ;Turns electric-dipole control/monitor ON
+ECOF               ;Turns electric-dipole control/monitor OFF (default)
+
+MMON  Ex           ;Turns current-mode monitor  ON (default)
+MMOF  Ex           ;Turns current-mode monitor OFF
+                   ;(no ramp-down in Current-mode)
+
+DWEL  Ex  SEC      ;Dwell-time in sec (for MMOF operation) default = 20
+
+SET+  Ex  KV       ;Set  positive supply    to   +KV
+SET-  Ex  KV       ;Set  negative supply    to   -KV
+SET   Ex  KV       ;Set  both     supplies (to +- KV)
+SET   Ex  KV+ KV-  ;Set  POS supply to KV+ and NEG supply to KV-
+                   ;(Max allowed for set is 100.0 KV)
+ZAP   Ex           ;Set POS and NEG supply to zero
+
+RAMI  Ex           ;Ramp Ex to voltage required   for AMU, MeV, Q, X
+
+RAM+  Ex  KV       ;Ramp positive supply   to KV kilovolts
+RAM-  Ex  KV       ;Ramp negative supply   to KV kilovolts
+RAM   Ex  KV       ;Ramp both     supplies to KV kilovolts
+RAM   Ex  KV+ KV-  ;Ramp POS supply to KV+ and NEG supply to KV-
+
+KVPM  Ex  DKV      ;Set increasing ramp-rate to DKV KV/min (default = 2.0)
+
+KVPS  Ex  DKV      ;Set decreasing ramp-rate to DKV KV/sec (default = 2.0)
+
+MXPR  Ex  TORR     ;Set max vessel pressure (units of torr for operation
+
+MXCC  Ex  UA       ;Set max Conditioning Current (microamps) for operation
+
+CCL   Ex  UA       ;Set +&- supply condit-current limit to UA (hwd limited)
+CCL+  Ex  UA       ;Set    +supply condit-current limit to UA (hwd limited)
+CCL-  Ex  UA       ;Set    -supply condit-current limit to UA (hwd limited)
+
+CYB$
+---------------------------------------------------------------------------
+Note:  Ex  denotes electric dipole  E1  or  E2
+---------------------------------------------------------------------------
+SP1$
+CYB$
+Parameter Values - Defaults and Limits
+------------------------------------------------
+Parameter  Max-value   Min-value   Default-value
+DWEL             500           0              20
+KVPM            60.0        0.10            2.00
+KVPS            20.0        0.10            2.00
+MXCC            50.0        0.50            8.00
+CCL+            50.0        0.50           10.00
+CCL-            50.0        0.50           10.00
+MXPR          3.0E-6           -          2.0E-6
+------------------------------------------------
+TPF$
+SP1$
+SEC$110  Commands - Related to Valves
+CYB$
+VSPP  VSPNAM  TORR      ;Sets set-point-pressure for valve-setpoint-name
+                        ;VSPNAM to pressure = TORR 
+
+VSPG  VSPNAM  VG        ;Sets set-point-gauge    for valve-setpoint-name
+                        ;VSPNAM to gauge VG
+                        ;VSPNAM = V1U, V1D .. VP3U, VP3D, etc
+
+OPEN  VLVN              ;Opens  valve VLVN (only applies to V1 and V6)
+
+CLOSE VLVN              ;Closes valve VLVN (only applies to V1 and V6)
+SP1$
+SEC$120  Commands - For Varian Guages
+CYB$
+VG  STAT  C          ;Display Controler status
+VG  PRES  C G        ;Display Pressure
+VG  EMIS  C G F      ;Read/set Emission - F = ON, ON2, OFF, STAT, READ
+VG  DEGA  C G F      ;Degas             - F = ON, OFF, STAT
+VG  SENS  C G F      ;Sensitivity       - F = READ
+VG  GASC  C G F      ;Gas Correction    - F = READ
+VG  SETP  C G F V P  ;Set-point  (not implemented)
+VG  AUTO  C G F T P  ;Auto       (not implemented)
+VG  HARD  C          ;Display hardware configuration
+VG  TORR  C          ;Sets pressure units to torr
+VG  SLOW  C          ;Sets TC update rate to SLOW
+VG  FAST  C          ;Sets TC update rate to FAST
+VG  LOCK  C          ;Locks           local keyboard
+VG  UNLO  C          ;Unlocks         local keyboard
+VG  PART  C          ;Partial lock of local keyboard
+VG  DEFA  C          ;Resets Controler & sets default paremeters
+CYB$
+---------------------------------------------------------------------------
+Where: C=Controler
+       G=Gauge
+       F=Function
+       P=Pressure(torr)
+       V=Value and
+       T=Thermocouple#
+---------------------------------------------------------------------------
+DADC                 ;Read & display ADCs
+DREG                 ;Read & display REG
+SP3$
+SEC$130  Commands - For CAMAC operations
+SP1$
+CYB$
+CAM  CNA    C N A        ;Specify C, N, A of CAMAC module to be written 
+                         ;or read, subsequently
+CAM  WRIT   DATA         ;Write DATA to previously defined CAMAC module
+
+CAM  READ                ;Read/display 1 data word from defined module
+
+CAM  CNAF C N A F <DATA> ;Execute general CAMAC CNAF
+TPF$
+SP1$
+SEC$140  Commands - For Monitor options
+CYB$
+LGON  MAGS  ISEC  ;Log magnet   info every ISEC (min,max,dflt = 60,any,300)
+LGON  EDS   ISEC  ;Log E-dipole info every ISEC (min,max,dflt = 60,any,300)
+LGON  VACS  ISEC  ;Log vacuum   info every ISEC (min,max,dflt = 60,any,300)
+LGON  ALL   ISEC  ;Log MAGS,EDS,VACS every ISEC (min,max,dflt = 60,any,300)
+
+LGOF  MAGS        ;Turn OFF magnet    logging
+LGOF  EDS         ;Turn OFF E-dipole  logging
+LGOF  VACS        ;Turn OFF vacuum    logging
+LGOF  ALL         ;Turn OFF all       logging
+
+DON   MAGS  ISEC  ;Disp magnet   info every ISEC (min,max,dflt = 10,60,10)
+DON   EDS   ISEC  ;Disp E-dipole info every ISEC (min,max,dflt = 2, 60,10)
+DON   VACS  ISEC  ;Disp vacuum   info every ISEC (min,max,dflt = 10,60,10)
+DON   ALL   ISEC  ;Disp MAGS,EDS,VACS every ISEC (min,max,dflt = 10,60,10)
+
+DOF   MAGS        ;Turn OFF magnet    display
+DOF   EDS         ;Turn OFF E-dipole  display
+DOF   VACS        ;Turn OFF vacuum    display
+DOF   ALL         ;Turn OFF all       display
+
+HON   MAGS        ;Histogram magnet   info at 60 sec intervals
+HON   EDS         ;Histogram E-dipole info at 60 sec intervals
+HON   VACS        ;Histogram vacuum   info at 60 sec intervals
+HON   ALL         ;Histogram MAGS, EDS, VACS
+
+HOF   MAGS        ;Turn OFF magnet    histogramming
+HOF   EDS         ;Turn OFF E-dipole  histogramming
+HOF   VACS        ;Turn OFF vacuum    histogramming
+HOF   ALL         ;Turn OFF all       histogramming
+
+ECON              ;Turn ON  E-dipole monitor/control via rmon
+ECOF              ;Turn OFF E-dipole monitor/control via rmon
+
+MCON              ;Turn ON  magnet   monitor/control via rmon
+MCOF              ;Turn OFF magnet   monitor/control via rmon
+
+MTON  NAME        ;Turn ON  tweaking of NAMEd magnet  via rmon
+MTON  ALL         ;Turn ON  tweaking of ALL   magnets via rmon
+
+MTOF  NAME        ;Turn OFF tweaking of NAMEd magnet  via rmon
+MTOF  ALL         ;Turn OFF tweaking of ALL   magnets via rmon (dflt)
+TPF$
+SP1$
+SEC$150  Commands - To Disable/Enable Read/Write of Certain Devices
+CYB$
+RWON  MAGS  ALL   ;Enables  read/write of all Alpha supplies (dflt)
+RWOF  MAGS  ALL   ;Disables read/write of all Alpha supplies 
+RWON  MAG   NAME  ;Enables  read/write of Alpha supply for NAMEd magnet
+RWOF  MAG   NAME  ;Disables read/write of Alpha supply for NAMEd magnet
+
+RWON  TESL  ALL   ;Enables  read/write of all tesla-meters (dflt)
+RWOF  TESL  ALL   ;Disables read/write of all tesla-meters
+RWON  TESL  NAME  ;Enables  read/write of tesla-meter for NAMEd magnet
+RWOF  TESL  NAME  ;Disables read/write of tesla-meter for NAMEd magnet
+
+RWON  VACS  ALL   ;Enables  read/write of all   vacuum-gauges (dflt)
+RWOF  VACS  ALL   ;Disables read/write of all   vacuum-gauges
+RWON  VAC   NAME  ;Enables  read/write of NAMEd vacuum-gauge
+RWOF  VAC   NAME  ;Disables read/write of NAMEd vacuum-gauge
+---------------------------------------------------------------------------
+Magnet names are: Q1, Q2, Q3, Q4, Q5, Q6, Q7, S1, S2, D1, D2, D3, E1, E2
+---------------------------------------------------------------------------
+Vacuum gauge names are: VG11, VG12, ... VG51, ..., etc
+SP2$
+SEC$160  Commands - For Fingers
+CYB$
+FING  INIT               ;Initialize & calibrate all fingers
+
+FING  PARK  FN           ;Park & calibrate finger-FN
+
+FING  SET   FN XP <UNIT> ;Set   finger-FN to location XP UNITS
+
+FING  SHIF  FN DX <UNIT> ;Shift finger-FN by          DX UNITS (+ or -)
+                         ;UNIT = CM, IN or STEPS (default = CM)
+
+FING  OFF                ;Turn OFF power to all motors
+
+STAT  FING               ;Displays/Logs finger status information
+SP2$
+SEC$165  Commands - for snapshots of RMS paramerers to printer & files
+CYB$
+NAMP  PRNAME             ;Specify Printer name such as cp6000, ps01, etc
+
+NAMP                     ;Says use default printer (this is the default)
+
+SNAP                     ;Send SNAPSHOT to default (or specified) printer
+                         ;and to a file named rms-yr-mo-da-Hr:mn:sc.snap
+
+TPF$
+SP1$
+SEC$170  Discussion of Magnet Related Commands
+ODP$
+\b\ALP..MAG..CMD..<DAT>\\ directs to magnet, MAG, any Alpha
+command, CMD, with associated data, DAT. Where, MAG denotes Q1, D1, etc.
+The command reply is displayed and logged (if LON).
+ODP$
+\b\TES..MAG..CMD..<DAT>\\ directs to magnet, MAG, any Tesla
+command, CMD, with associated data, DAT. Where, MAG denotes Q1, D1, etc.
+The command reply is displayed and logged (if LON).
+SP3$
+SEC$180  Discussion of Finger Related Commands
+ODP$
+\b\FING..INIT\\ initializes and calibrates all fingers. The fingers
+are moved (one at a time) to the outer limit and subsequently moved
+away from the outer linit by a fixed amount (111 steps including 11
+steps of backlash) to a "calibrated" position of 100 steps or 1/64
+inches.
+ODP$
+\b\FING..PARK..FN\\ initializes and calibrates one finger \b\FN\\ as
+described above in \b\FING..INIT\\.
+ODP$
+\b\FING..SET..FN..XP..UNITS\\ sets finger no. \b\FN\\ to the absolute
+location specified by \b\XP. UNITS\\ denotes IN, CM, or STEPS.
+If \b\UNITS\\ is not specified, CM is taken as the default.
+CY1$
+\b\FING..SHIF..FN..DX..UNITS\\ shifts finger no. \b\FN\\ by DX units.
+       If DX is positive, the motion is toward the inner limit.
+       If DX is negative, the motion is toward the outer limit.
+ODP$
+\b\FING..OFF\\ turns OFF the power to all finger motors.
+ODP$
+\b\STAT..FING\\ displays and logs (if LON) the positions and status of
+all fingers.
+CEN$
+\bu\Comments on Finger Movements, Limits etc.\\
+ODP$
+(1)....The finger travel (outer limit to inner limit) is about 9.5 inches.
+ODP$
+(2)....The finger in driven by a 32 turn per inch drive screw.
+ODP$
+(3)....The drive screw in driven by a 200 step per turn stepping motor.
+ODP$
+(4)....Thus the total travel is about 9.5x32x200 = 60800 steps.
+ODP$
+(5)....There is one limit switch for each finger at the outer limit.
+ODP$
+(6)....There is only a single common limit switch at the inner limit.
+ODP$
+(7)....If either limit is encountered, the finger will be automatically
+backed away 400 steps.
+ODP$
+(8)....The outer limit is arbitrarily defined to be at step# 64000.
+ODP$
+(9)....The park position is at step# 63600 (400 steps from outer limit).
+TPF$
+SP1$
+SEC$190  Program RMON Operations
+CYB$
+Operations Performed in Main RMON Loop ------------------------------------
+Check for command every --------------------------- 200 ms
+Do Elec-Dipole monitor/control every --------------   2 sec
+Do Magnet   monitor/control every -----------------   2 sec
+Do Magnet   tweaking        every -----------------  60 sec if ON
+Do screen display of ED, Mag, Vac, etc every ------  10 sec or as specified
+Do logging        of ED, Mag, Vac, etc every ------  60 sec or as specified
+Do histogramming  of ED, Mag, Vac, etc every ------  60 sec if ON
+BLP$
+For Electric Dipoles, there are two modes of operations: The \b\MMON\\ mode 
+(the default)
+and the \b\MMOF\\ mode. In the MMON-mode (the mode-monitor mode), the
+software does not allow the power supplies to run in the current-mode while
+in the MMOF-mode the object is to permit current-mode operation much of the
+time. These two modes are described below - but first some definitions:
+CY1$
+\b\VDEST..\\is the ultimate voltage to be achieved (ramped to).
+\b\VTARG..\\is present target voltage of ramp (can be less than \b\VDEST\\).
+\b\VSET...\\is the present voltage specified by the DAC setting.
+CYB$
+Electric-Dipole operations for both MMON and MMOF modes -------------------
+ODP$
+(1)....Check for power supply OFF. If OFF, set VDEST, VTARG, VSET to 0.
+Power supply will have to be reset manually in RMS room.
+ODP$
+(2)....Check for bad vacuum status. If bad, set VTARG and VSET to 0.
+When vacuum recovers, ramp-up will start from 0.
+CYB$
+Electric-Dipole operations for MMON-mode only -----------------------------
+ODP$
+(3)....Check for current control mode. If yes, set VTARG=0 and
+start to ramp down. Ramp up will start once voltage mode is
+restored.
+ODP$
+(4)....Check conditioning current. If software limit MXCC is exceeded,
+set VTARG to 0 and
+start ramp down. Ramp up will start once conditioning current is less than
+or equal to MXCC.
+ODP$
+(5)....If all is normal, set VTARG=VDEST and call RAMPER to set VSET, etc.
+ODP$
+(6)....Compute HV-supply current limit from minimum of (VSET & VRED)
+and the hardware conditioning current limit (CCL) specified.
+Write the current control
+and voltage control DACs.
+CYB$
+Electric-Dipole operations for MMOF-mode only -----------------------------
+ODP$
+(3)....No check on control mode.
+ODP$
+(4)....Check conditioning current. If software limit MXCC is exceeded,
+set VTARG to 0 and
+start ramp down. Ramp up will start once conditioning current is less than
+or equal to MXCC.
+ODP$
+(5)....If DWEL = 0 or voltage mode has presisted for DWEL
+seconds, start ramp to VTARG.
+ODP$
+(6)....Compute HV-supply current limit from minimum of (VSET & VRED)
+and the hardware conditioning current limit (CCL) specified.
+Write the current control
+and voltage control DACs.
+CEB$
+(continued on next page)
+TPF$
+SP1$
+SEC$190  Program RMON Operations (continued)
+SP1$
+CYB$
+Magnet monitor and control operations -------------------------------------
+BLP$
+If \b\rmon\\ is running and magnet control is enabled
+(i.e. \b\MCON\\), the following magnet related functions 
+are performed.
+ODP$
+(1)....All magnet \b\set, ramp, and cycle\\ commands are processed.
+ODP$
+(2)....The magnet power supply currents are managed (via software)
+so as to limit the sum of primary currents to no more than 350 AC Amps.
+ODP$
+(3)....If magnet tweak is enabled (i.e. \b\MTON\\), an attempt
+will be made to adjust the magnet current such that the field
+measured by the Teslameter is that requested.
+TPF$
+SP1$
+SEC$200  Discussion of Magnet Set, Ramp and Cycle Operations
+CYB$
+SETTING AMPS (or GAUSS)                                    \b\Display\\
+CY1$
+(1)....Checks for ON, enabled, legal amps, etc.
+CY1$
+(2)....If OK, set requested AMPS.                            \b\Set\\
+CYB$
+RAMPING to AMPS (or GAUSS)
+CY1$
+(1)....Checks for ON, enabled, legal amps, etc.
+CY1$
+(2)....Ramps to AMPS at 5 amps/sec                           \b\RAMP\\
+CY1$
+(3)....Waits 300 seconds.                                    \b\WAIT\\
+CY1$
+(6)....Displays Set.                                         \b\Set\\
+CYB$
+CYCLING to AMPS (or GAUSS)
+CY1$
+(1)....Checks for ON, enabled, legal amps, etc.
+CY1$
+(2)....Sets current to zero.
+CY1$
+(3)....Waits 60 seconds.                                     \b\WAIT\\
+CY1$
+(4)....Ramps to MAXamps at 5 amps/sec.                       \b\RAMP\\
+CY1$
+(5)....Waits 120 seconds.                                    \b\WAIT\\
+CY1$
+(6)....Ramps to zero at 5 amps/sec.                          \b\RAMP\\
+CY1$
+(7)....Waits 120 seconds                                     \b\WAIT\\
+CY1$
+(8)....Ramps to AMPS at 5 amps/sec.                          \b\RAMP\\
+CY1$
+(9)....Waits 300 seconds                                     \b\WAIT\\
+CY1$
+(10)...Displays Set.                                         \b\Set\\
+CYB$
+CYCLING to Zero
+CY1$
+(1)....Checks for ON, enabled, legal amps, etc.
+CY1$
+(2)....Sets current to zero.
+CY1$
+(3)....Waits 60 seconds.                                     \b\WAIT\\
+CY1$
+(4)....Ramps to MAXamps at 5 amps/sec.                       \b\RAMP\\
+CY1$
+(5)....Waits 120 seconds.                                    \b\WAIT\\
+CY1$
+(6)....Ramps to zero at 5 amps/sec.                          \b\RAMP\\
+CY1$
+(7)....Waits 300 seconds                                     \b\WAIT\\
+CY1$
+(8)....Displays Set.                                         \b\Set\\
+TPF$
+SP1$
+SEC$210  Discussion of Magnet Tweak Operations
+BLP$
+The objective of the magnet tweak operation is to adjust the 
+magnet current such that the field read \b\GRED\\ is as close as
+possible to the field requested \b\GSET\\.
+Tweaking can take place under the following conditions:
+ODP$
+(1)....Tweaking must be enabled via the \b\MTON\\ command.
+ODP$
+(2)....Magnet must be in a \b\Set, TWEK, or REDY\\ state.
+ODP$
+(3)....For the \b\Set\\ state, tweaking will be initiated if
+\b\GRED & GSET\\ are different.
+ODP$
+(4)....For the \b\TWEK\\ state, tweaking will continue until the
+values \b\GRED & GSET\\ agree or until the maximum number of attempts
+(currently 50) has been made.
+ODP$
+(5)....In the \b\TWEK\\ state, adjustments will be made at 10 sec intervals.
+ODP$
+(6)....When \b\GRED & GSET\\ agree or the maximum number of tries have
+been exhausted, the magnet state will be set to \b\REDY\\.
+ODP$
+(7)....In the \b\REDY\\ state (with \b\MTON\\), the need for re-tweaking
+will be checked at approximately 120 second intervals.
+CYB$
+       Define:  GDIF = absolute value of (GRED-GSET)
+ODP$
+(8)....Re-tweaking of dipoles is initiated if \b\GDIF\\ is greater than 0.2.
+ODP$
+(9)....Re-tweaking of quadrupoles and sextapoles is initiated if
+\b\GDIF\\ is greater than 2.0.
+BLP$
+There are two different tweaking methods which are used depending on
+the value of \b\GDIF\\. The table below summarizes the conditions for each.
+CYB$
+GDIF-range    CFAC      Amp-step        Method    Magnet-Type
+----------    ----      --------        ------    ------------------
+GT    200     0.25         -              1       All
+50  - 200     0.50         -              1       All
+LT    50      0.75         -              1       All
+
+0.4 - 0.8      -         0.006            2       Dipoles
+0.2 - 0.4      -         0.002            2       Dipoles
+
+4.0 - 8.0      -         0.060            2       Quads & Sextapoles
+2.0 - 4.0      -         0.020            2       Quads & Sextapoles
+---------------------------------------------------------------------------
+BLP$
+\b\For Method-1\\, the current change required to make \b\GRED = GSET\\ is 
+estimated. The current change actually made, however, is reduced by the factor
+\b\CFAC\\. That is, an under-correction is made which depends on the
+magnitude of \b\GDIF\\.
+BLP$
+\b\For Method-2\\, the current is changed in small fixed-size steps of 
+magnitude 
+\b\Amp-step\\ as shown in the table above. Note that the size of the current
+step depends on the magnitude of \b\GDIF\\ and the Magnet-Type.
+TPF$
+SP2$
+SEC$220  Miscellaneous Notes and Comments
+DBL$
+CYB$
+For Divider Current - 50 Uamps at 300 kV
+For Current Monitor - 10 Volts = 250 Uamps
+For Current Control - 10 Volts = 250 Uamps
+For Voltage Monitor - 10 Volts = 275 kV
+For Voltage Control - 10 Volts = 275 kV
+Divider Resistance = 6,000 Megohms
+SIN$
+ODP$
+(1)....Voltage control is either local (via front panel) or remote
+but not both at the same time.
+ODP$
+(2)....Current control is either local (via front panel) or remote
+but not both at the same time.
+BLP$
+Initially, we will limit current by front panel and control voltage
+via computer. This gives some hardware protection against software
+failures.
+Conditioning Current
+BLP$
+The conditioning current is defined as the current read from the current
+monitor which is in excess of that which is calculated to flow "internally"
+(in the resistor string) at a given voltage setting.
+TPF$
+SP1$
+SEC$230  Magnet Power Requirements
+CYB$
+The following table was compiled from the Alpha test report.
+
+                Maximum Output       Maximum Input              AC-Amps
+                ----------------     -----------------          -------
+Magnet    Ohms  DC-Volts  DC-Amps    AC-Volts  AC-Amps   %Eff   DC-Amps
+
+D1      0.1574        85      540         472     76.0   74.0    0.1410
+
+D2      0.1574        85      540         466     75.0   76.0    0.1390
+
+D3      0.1574        85      540         470     75.0   75.3    0.1390
+
+Q1      0.0643        42      653         481     57.0   58.0    0.0873
+
+Q2      0.0673        31      460         473     28.3   61.4    0.0615
+
+Q3      0.0660        36      540         479     38.0   62.0    0.0704
+
+Q4      0.0636        21      330         480     17.0   49.1    0.0515
+
+Q5      0.0630        21      330         487     17.0   48.2    0.0515
+
+Q6      0.0636        21      330         475     16.8   50.0    0.0509
+
+Q7      0.0673        31      460         474     28.8   60.1    0.0626
+
+S1      0.0851        40      470         474     33.5   68.6    0.0713
+
+S2      0.0851        40      470         474     33.7   68.1    0.0717
+                                                 -----
+                                                 496.1
+-----------------------------------------------------------------------
+Ohms     = Magnet resistance
+DC-Volts = Alpha supply output voltage
+DC-Amps  = Alpha supply output current (maximum)
+AC-Volts = Alpha supply input  voltage
+AC-Amps  = Alpha supply input  current 
+%Eff     = 100 x (DC-Volts x DC-Amps) / (AC-Volts x AC-Amps x SQRT(3))
+
+In general: Alpha AC-Amps = (AC-Amps/DC-Amps) x DC-Amps(required)
+
+       and: Total AC-Amps = Sum of Alpha AC-Amps
+
+       and: Total AC-Amps must be less than 400 (or maybe 350)
+TPF$
+SEC$240  Hardware specification file - rmshwd.dat
+CYB$
+E1    CTRL    3       ;Controller   no.
+E1    TC      4       ;TC no.
+E1    IG      5       ;Ion-gauge    no.
+
+E1    VSE+    1       ;DAC chan#  for setting voltage of       (+ supply)
+E1    VSE-    2       ;DAC chan#  for setting voltage of       (- supply)
+E1    CSE+    7       ;DAC chan#  for setting current limit of (+ supply)
+E1    CSE-    8       ;DAC chan#  for setting current limit of (- supply)
+
+E1    VRD+    3       ;ADC channel no. for reading voltage of  (+ supply)
+E1    CRD+    4       ;ADC channel no. for reading current of  (+ supply)
+E1    VRD-    5       ;ADC channel no. for reading voltage of  (- supply)
+E1    CRD-    6       ;ADC channel no. for reading current of  (- supply)
+
+E1    VMO+    1       ;Terminal no. for voltage-mode indicator (+ supply)
+E1    CMO+    2       ;Terminal no. for current-mode indicator (+ supply)
+E1    VMO-    3       ;Terminal no. for voltage mode indicator (- supply)
+E1    CMO-    4       ;Terminal no. for current-mode indicator (- supply)
+
+E1    VOF+    9       ;Terminal no. for voltage-OFF  indicator (+ supply)
+E1    VON+    10      ;Terminal no. for voltage-ON   indicator (+ supply)
+E1    VOF-    11      ;Terminal no. for voltage-OFF  indicator (- supply)
+E1    VON-    12      ;Terminal no. for voltage-ON   indicator (- supply)
+
+E1    KVPM    2.0     ;Ramp-up   rate in kV/min
+E1    KVPS    2.0     ;Ramp-down rate in kV/sec
+E1    MXCC    8.0     ;Max condit current in microamps (software limit)
+E1    CCL    10.0     ;Max condit current in microamps (hardware limit)
+E1    MXPR    2.0E-6  ;Max pressure (torr) for conditioning
+
+E2    CTRL    4       ;Controller   no.
+E2    TC      1       ;TC no.
+E2    IG      6       ;Ion-gauge    no.
+
+E2    VSE+    3       ;DAC chan#  for setting voltage of       (+ supply)
+E2    VSE-    4       ;DAC chan#  for setting voltage of       (- supply)
+E2    CSE+    9       ;DAC chan#  for setting current limit of (+ supply)
+E2    CSE-    10      ;DAC chan#  for setting current limit of (- supply)
+
+E2    VRD+    7       ;ADC channel no. for reading voltage of  (+ supply)
+E2    CRD+    9       ;ADC channel no. for reading current of  (+ supply)
+E2    VRD-    8       ;ADC channel no. for reading voltage of  (- supply)
+E2    CRD-    10      ;ADC channel no. for reading current of  (- supply)
+
+E2    VMO+    5       ;Terminal no. for voltage-mode indicator (+ supply)
+E2    CMO+    6       ;Terminal no. for current-mode indicator (+ supply)
+E2    VMO-    7       ;Terminal no. for voltage mode indicator (- supply)
+E2    CMO-    8       ;Terminal no. for current-mode indicator (- supply)
+
+E2    VOF+    13      ;Terminal no. for voltage-OFF  indicator (+ supply)
+E2    VON+    14      ;Terminal no. for voltage-ON   indicator (+ supply)
+E2    VOF-    15      ;Terminal no. for voltage-OFF  indicator (- supply)
+E2    VON-    16      ;Terminal no. for voltage-ON   indicator (- supply)
+
+E2    KVPM    2.0     ;Ramp-up   rate in kV/min
+E2    KVPS    2.0     ;Ramp-down rate in kV/sec
+E2    MXCC    8.0     ;Max condit current in microamps (software limit)
+E2    CCL    10.0     ;Max condit current in microamps (hardware limit)
+E2    MXPR    2.0E-6  ;Max pressure (torr) for conditioning
+TPF$
+SP1$
+SEC$240  Hardware specification file - rmshwd.dat (continued)
+CYB$
+Q1    ACN     8       ;Alpha Controller number
+Q1    TCN    11       ;Tesla Controller number
+Q1    MXC   650       ;Maximum Current (amps)
+
+Q2    ACN     4       ;Alpha Controller number
+Q2    TCN    10       ;Tesla Controller number
+Q2    MXC   450       ;Maximum Current (amps)
+
+D1    ACN    10       ;Alpha Controller number
+D1    TCN    09       ;Tesla Controller number
+D1    MXC   500       ;Maximum Current (amps)
+
+S1    ACN     6       ;Alpha Controller number
+S1    TCN    08       ;Tesla Controller number
+S1    MXC   450       ;Maximum Current (amps)
+
+Q3    ACN     9       ;Alpha Controller number
+Q3    TCN    07       ;Tesla Controller number
+Q3    MXC   500       ;Maximum Current (amps)
+
+S2    ACN     7       ;Alpha Controller number
+S2    TCN    06       ;Tesla Controller number
+S2    MXC   450       ;Maximum Current (amps)
+
+D2    ACN    12       ;Alpha Controller number
+D2    TCN    05       ;Tesla Controller number
+D2    MXC   500       ;Maximum Current (amps)
+
+Q4    ACN     2       ;Alpha Controller number
+Q4    TCN    04       ;Tesla Controller number
+Q4    MXC   330       ;Maximum Current (amps)
+
+Q5    ACN     3       ;Alpha Controller number
+Q5    TCN    03       ;Tesla Controller number
+Q5    MXC   330       ;Maximum Current (amps)
+
+D3    ACN    11       ;Alpha Controller number
+D3    TCN    02       ;Tesla Controller number
+D3    MXC   500       ;Maximum Current (amps)
+
+Q6    ACN     1       ;Alpha Controller number
+Q6    TCN    01       ;Tesla Controller number
+Q6    MXC   330       ;Maximum Current (amps)
+
+Q7    ACN     5       ;Alpha Controller number
+Q7    TCN    00       ;Tesla Controller number (normally 00)
+Q7    MXC   450       ;Maximum Current (amps)
+TPF$
+SP1$
+SEC$240  Hardware specification file - rmshwd.dat (continued)
+CYB$
+VG11   1      1       ;VAC Ctrl-1, Gauge-1, TC
+VG12   1      2       ;VAC Ctrl-1, Gauge-2, TC - Q3 Cryo-1
+VG13   1      3       ;VAC Ctrl-1, Gauge-3, TC
+VG14   1      4       ;VAC Ctrl-1, Gauge-4, TC
+VG15   1      5       ;VAC Ctrl-1, Gauge-5, IG - Target Chamber
+VG16   1      6       ;VAC Ctrl-1, Gauge-6, IG - Q3
+
+VG21   2      1       ;VAC Ctrl-2, Gauge-1, TC
+VG22   2      2       ;VAC Ctrl-2, Gauge-2, TC
+VG23   2      3       ;VAC Ctrl-2, Gauge-3, TC - Q3 Cryo-2
+VG24   2      4       ;VAC Ctrl-2, Gauge-4, TC - Drift Cryo
+VG25   2      5       ;VAC Ctrl-2, Gauge-5, IG - Drift
+VG26   2      6       ;VAC Ctrl-2, Gauge-6, IG - Undefined
+
+VG31   3      1       ;VAC Ctrl-3  Gauge-1, TC
+VG32   3      2       ;VAC Ctrl-3, Gauge-2, TC
+VG33   3      3       ;VAC Ctrl-3, Gauge-3, TC - ED1 Cryo-1
+VG34   3      4       ;VAC Ctrl-3, Gauge-4, TC - ED1 Cryo-2
+VG35   3      5       ;VAC Ctrl-3, Gauge-5, IG - Achromat
+VG36   3      6       ;VAC Ctrl-3, Gauge-6, IG - ED1
+
+VG41   4      1       ;VAC Ctrl-4, Gauge-1, TC - Need to Change
+VG42   4      2       ;VAC Ctrl-4, Gauge-2, TC - Need to Change
+VG43   4      3       ;VAC Ctrl-4, Gauge-3, TC - ED2 Cryo-1
+VG44   4      4       ;VAC Ctrl-4, Gauge-4, TC - ED2 Cryo-2
+VG45   4      5       ;VAC Ctrl-4, Gauge-5, TC - Q6
+VG46   4      6       ;VAC Ctrl-4, Gauge-6, TC - ED2
+
+VG51   5      1       ;VAC Ctrl-5, Gauge-1, TC - Unknown
+VG52   5      2       ;VAC Ctrl-5, Gauge-2, TC - Unknown
+VG53   5      3       ;VAC Ctrl-5, Gauge-3, IG - PSAT
+VG54   5      4       ;VAC Ctrl-5, Gauge-4, IG - Unknown
+TPF$
+SP1$
+SEC$240  Hardware specification file - rmshwd.dat (continued)
+CYB$
+V1u   1  6  3  ;Valve, Ctrl, Gauge, Set-point#
+V1d   1  5  2  ;
+
+V2u   2  5  1  ;
+V2d   1  6  6  ;
+
+V3u   3  5  1  ;
+V3d   2  5  3  ;
+
+V4u   3  5  2  ;
+V4d   3  6  3  ;
+
+V5u   3  6  6  ;
+V5d   4  6  1  ;
+
+V6u   4  2  4  ;
+V6d   4  1  6  ;
+
+VP1u  1  2  7  ;
+VP1d  1  6  4  ;
+
+VP2u  2  3  4  ;
+VP2d  1  6  5  ;
+
+VP3u  2  4  5  ;
+VP3d  2  5  2  ;
+
+VP4u  3  3  7  ;
+VP4d  3  6  4  ;
+
+VP5u  3  4  8  ;
+VP5d  3  6  5  ;
+
+VP6u  4  3  7  ;
+VP6d  4  6  2  ;
+
+VP7u  4  4  8  ;
+VP7d  4  6  3  ;
+TPF$
+SEC$250  Teslameter Parameter Data File - teslapar.dat
+CYB$
+Q1  IN    N            ;Display Mode        
+Q1  IG    C            ;General Function    
+Q1  IR    2            ;Field Range         
+Q1  IZ    -22.0        ;Calibration Zero    
+Q1  ID    0            ;Digital Filtering   
+Q1  IY    20.0         ;Filter Window       
+Q1  IJ    8.00000E+00  ;Filter Factor       
+Q1  IK    0.0          ;Sampling Interval   
+ 
+Q2  IN    N            ;Display Mode        
+Q2  IG    C            ;General Function    
+Q2  IR    2            ;Field Range         
+Q2  IZ    -15.0        ;Calibration Zero    
+Q2  ID    0            ;Digital Filtering   
+Q2  IY    20.0         ;Filter Window       
+Q2  IJ    8.00000E+00  ;Filter Factor       
+Q2  IK    0.0          ;Sampling Interval   
+ 
+D1  IN    N            ;Display Mode        
+D1  IG    DC           ;General Function    
+D1  IR    2            ;Field Range         
+D1  IC    1.00000E+00  ;Calibration Factor  
+D1  IO    0.0          ;Calibration Offset  
+D1  IZ    34.4         ;Calibration Zero    
+D1  IL    1.00000      ;Scale Factor        
+D1  ID    0            ;Digital Filtering   
+D1  IY    10.0         ;Filter Window       
+D1  IJ    4.10000E+01  ;Filter Factor       
+D1  IK    0.0          ;Sampling Interval   
+ 
+S1  IN    N            ;Display Mode        
+S1  IG    C            ;General Function    
+S1  IR    2            ;Field Range         
+S1  IZ    -8.0         ;Calibration Zero    
+S1  ID    0            ;Digital Filtering   
+S1  IY    20.0         ;Filter Window       
+S1  IJ    8.00000E+00  ;Filter Factor       
+S1  IK    0.0          ;Sampling Interval   
+ 
+Q3  IN    N            ;Display Mode        
+Q3  IG    C            ;General Function    
+Q3  IR    2            ;Field Range         
+Q3  IZ    -32.0        ;Calibration Zero    
+Q3  ID    0            ;Digital Filtering   
+Q3  IY    20.0         ;Filter Window       
+Q3  IJ    8.00000E+00  ;Filter Factor       
+Q3  IK    0.0          ;Sampling Interval   
+ 
+S2  IN    N            ;Display Mode        
+S2  IG    C            ;General Function    
+S2  IR    2            ;Field Range         
+S2  IZ    -11.0        ;Calibration Zero    
+S2  ID    0            ;Digital Filtering   
+S2  IY    20.0         ;Filter Window       
+S2  IJ    8.00000E+00  ;Filter Factor       
+S2  IK    0.0          ;Sampling Interval   
+TPF$
+SEC$250  Teslameter Parameter Data File - teslapar.dat (continued)
+CYB$
+D2  IN    N            ;Display Mode        
+D2  IG    DC           ;General Function    
+D2  IR    2            ;Field Range         
+D2  IC    1.00000E+00  ;Calibration Factor  
+D2  IO    0.0          ;Calibration Offset  
+D2  IZ    30.9         ;Calibration Zero    
+D2  IL    1.00000      ;Scale Factor        
+D2  ID    0            ;Digital Filtering   
+D2  IY    10.0         ;Filter Window       
+D2  IJ    4.10000E+01  ;Filter Factor       
+D2  IK    0.0          ;Sampling Interval   
+ 
+Q4  IN    N            ;Display Mode        
+Q4  IG    C            ;General Function    
+Q4  IR    2            ;Field Range         
+Q4  IZ    -10.0        ;Calibration Zero    
+Q4  ID    0            ;Digital Filtering   
+Q4  IY    20.0         ;Filter Window       
+Q4  IJ    8.00000E+00  ;Filter Factor       
+Q4  IK    0.0          ;Sampling Interval   
+ 
+Q5  IN    N            ;Display Mode        
+Q5  IG    C            ;General Function    
+Q5  IR    2            ;Field Range         
+Q5  IZ    -26.0        ;Calibration Zero    
+Q5  ID    0            ;Digital Filtering   
+Q5  IY    20.0         ;Filter Window       
+Q5  IJ    8.00000E+00  ;Filter Factor       
+Q5  IK    0.0          ;Sampling Interval   
+ 
+D3  IN    N            ;Display Mode        
+D3  IG    DC           ;General Function    
+D3  IR    2            ;Field Range         
+D3  IC    1.00000E+00  ;Calibration Factor  
+D3  IO    0.0          ;Calibration Offset  
+D3  IZ    -28.1        ;Calibration Zero    
+D3  IL    1.00000      ;Scale Factor        
+D3  ID    0            ;Digital Filtering   
+D3  IY    10.0         ;Filter Window       
+D3  IJ    4.10000E+01  ;Filter Factor       
+D3  IK    0.0          ;Sampling Interval   
+ 
+Q6  IN    N            ;Display Mode        
+Q6  IG    C            ;General Function    
+Q6  IR    2            ;Field Range         
+Q6  IZ    -7.0         ;Calibration Zero    
+Q6  ID    0            ;Digital Filtering   
+Q6  IY    20.0         ;Filter Window       
+Q6  IJ    8.00000E+00  ;Filter Factor       
+Q6  IK    0.0          ;Sampling Interval   
+ 
+Q7  IN    N            ;Display Mode        
+Q7  IG    C            ;General Function    
+Q7  IR    2            ;Field Range         
+Q7  IZ    -13.0        ;Calibration Zero    
+Q7  ID    0            ;Digital Filtering   
+Q7  IY    20.0         ;Filter Window       
+Q7  IJ    8.00000E+00  ;Filter Factor       
+Q7  IK    0.0          ;Sampling Interval   
+TPF$
+SP1$
+SEC$260  RMS Calibration Constants - rmscal.dat
+BLP$
+The electric and magnetic fields required for a specified ion,
+energy and q-value are computed by scaling values from a
+standard (Amu=100, Mev=100, q=10)
+\b\GEOS\\ calculation. These "required fields" may be
+modified via the specification of a set of calibration constants
+which are used as follows.
+CYB$
+FIELD(required) = A + (B * TESFAC * FIELD(geos))
+BLP$
+The following table lists a template \b\rmscal.dat\\ file for the RMS
+calibration constants:
+CYB$
+---------------------------------------------------------------------------
+Device       A         B    TESFAC
+Q1       89.29  0.901176    1.3173
+Q2      -25.21  0.946534    1.2869
+D1        0.0   0.982652    1.0000
+S1        0.0   1.0         1.3931
+Q3        0.0   1.0         1.2744
+S2        0.0   1.0         1.4125
+D2        0.0   0.984721    1.0000
+Q4       -4.32  0.968259    1.2820
+Q5       -0.05  0.979575    1.2183
+E1        0.03  1.017021    1.0000
+D3       -0.10  0.999816    1.0000
+E2        0.09  1.002130    1.0000
+Q6       -0.68  0.626168    1.2823
+Q7        3.78  0.567794    1.2914
+CYB$
+---------------------------------------------------------------------------
+Note:  A is in units of kV or gauss  - depending on the device
+       B is a multiplication factor
+BLP$
+\b\TESFAC\\ (the correction factor due to Teslameter positioning) may be
+set to 1.0 (or left blank) if B provides the full correction factor required.
+---------------------------------------------------------------------------
+CEB$
+Comments
+ODP$
+(1)....Initially, all constants are set to the "no correction" values
+(i.e. A=0.0, B=1.0, TESFAC=1.0).
+ODP$
+(2)....An attempt is made to open \b\rmscal.dat\\ in the directory from
+which \b\rcon\\ is being run. If the file is not found, the default
+constant values are retained.
+ODP$
+(3)....If \b\rmscal.dat\\ is found, it will be read and any constants 
+which it contains will replace the default values.
+ODP$
+(4)....If any syntax errors are encountered while processing \b\rmscal.dat\\,
+error messages will be displayed & logged and all default values will
+be retained.
+TPF$
+SEC$270  RMS Mode Table & Discussion - rmsmode.dat
+BLP$
+The \b\MODE\\ command provides a means of requesting a specific optics
+configuration (with associated Knob definitions) at run time. The standard
+(default) configuration contained in \b\rmsmode.dat\\ is listed below.
+CYB$
+Entry  Device  Value
+
+GEOS   Q1     -0.6825 
+GEOS   Q2      0.3315
+GEOS   D1      1.0302118
+GEOS   S1      0.4251
+GEOS   Q3      0.3607 
+GEOS   S2      0.3763
+GEOS   D2      1.0302118
+GEOS   Q4      0.2274
+GEOS   Q5     -0.2858
+GEOS   E1      166.57731
+GEOS   D3      1.0302118
+GEOS   E2      166.57731
+GEOS   Q6      0.0944
+GEOS   Q7     -0.3101
+
+KNOB1  Q4      0.0042
+KNOB1  Q5     -0.0022
+
+KNOB2  Q1     -0.0165
+KNOB2  Q2      0.0017
+
+KNOB3  S1      0.0500
+KNOB3  S2      0.0492
+
+KNOB4  S1     -0.0500
+KNOB4  S2      0.0499
+
+KNOB5  Q1     -0.0052
+KNOB5  Q2      0.0008
+
+KNOB6  Q4     -0.0005
+KNOB6  Q5      0.0003
+KNOB6  Q6      0.0175
+KNOB6  Q7     -0.0100
+
+KNOB7  Q4     -0.0006
+KNOB7  Q5      0.0003
+KNOB7  Q6      0.0150
+KNOB7  Q7     -0.0253
+
+KNOB8  Q4      0.0037
+KNOB8  Q5     -0.0120
+KNOB8  Q6     -0.0170
+KNOB8  Q7      0.0289
+
+KNOB9  Q1     -0.0016
+KNOB9  Q2     -0.0036
+KNOB9  S1     -0.0296
+KNOB9  S2      0.0296
+KNOB9  Q4      0.0038
+KNOB9  Q5     -0.0020
+CEB$
+(continued on next page)
+TPF$
+SP2$
+SEC$270  RMS Mode Table & Discussion - rmsmode.dat (continued)
+SP1$
+ODP$
+(1)....Entries labeled \b\GEOS\\ give the value predicted by \b\GEOS\\
+for the device indicated and for Amu=100, MeV=100 and q=10.
+ODP$
+(2)....Entries labeled \b\KNOBx\\ give the Knob value for the device
+indicated where, \b\x \\denotes the Knob-ID.
+BLP$
+The \b\KNOB\\ command (see SECT# 080) provides a means of specifying 
+small coupled
+changes to be made in two or more optical elements (magnetic or
+electrostatic) simultaneously.
+\b\KNOBs\\ are only defined for Ion-related commands such as
+\b\SETI, RAMI & AJI\\.
+
+BLP$
+In the file listed above, 9 Knobs (IDs 1 thru 9) have been specified.
+The numbers in the \b\Value\\ column are pole-tip-field 
+corrections to be added to the basic field value (i.e. for
+Amu=100, MeV=100, Q=10). The "corrected" field value is calculated as
+follows.
+CYB$
+                              I=N
+NEWFIELD(J) = BASFIELD(J) + SUM  S(I,J)*K(I,J)  ;Sum over all Knobs, where:
+                              I=1
+CY1$
+NEWFIELD(J) = New (corrected) field value       (for device-J)
+BASFIELD(J) = Basic field value                 (for device-J)
+S(I,J)      = Scale constant from KNOB command  (for device-J & Knob-I)
+K(I,J)      = Knob-Value from rmsknobs.dat      (for device-J & Knob-I)
+SP1$
+CEB$
+Mode File Processing
+BLP$
+When a \b\MODE modefile\\ command is issued, the following sequence of
+operations take place:
+ODP$
+(1)....The \b\Geos/Knob\\ data set is set to the internal default values
+shown in the table above.
+ODP$
+(2)....An attempt is made to open \b\rmsmode.dat\\. If that file is 
+opened and processed without error, its values will replace the internal
+defaults.
+ODP$
+(3)....Finally, an attempt will be made to open and process \b\modefile\\.
+If that is successful, any entries contained in \b\modefile\\ will replace
+those previously defined. 
+CY1$
+(4)....Finally, one of the following messages will be displayed:
+       Mode set to:  Default Values  or
+       Mode set to:  rmsmode.dat     or
+       Mode set to:  modefile
+BLP$
+Note: It is not required that \b\modefile\\ contain the complete Geos/Knob
+data set. It only needs to contain those entries that are different from
+\b\rmsmode.dat\\. If does contain the full data set, that is OK.
+TPF$
+SP1$
+SEC$280  Histogram Table (ID vs Label)
+DBL$
+CYB$
+  ID   Label        ID   Label          ID   Label        ID   Label
+----------------   ---------------     ---------------  --------------
+   1   E1_VDEST+   101   E2_VDEST+     151   P_targ*e9
+   2   E1_VSET+    102   E2_VSET+      152   P_Q3*e9
+   3   E1_VRED+    103   E2_VRED+      153   P_drift*e9
+   4   E1_CRED+    104   E2_CRED+      154   Undefined
+   5   E1_CCUR+    105   E2-CCUR+      155   P_achro*e9
+   6   E1_CCAV+    106   E2_CCAV+      156   P_ED1*e9
+                                       157   P_Q6*e9
+  11   E1_VDEST-   111   E2_VDEST-     158   P_ED2*e9
+  12   E1_VSET-    112   E2_VSET-      159   P_psat*e9
+  13   E1_VRED-    113   E2_VRED-      160   Undefined
+  14   E1_CRED-    114   E2_CRED-    
+  15   E1_CCUR-    115   E2_CCUR-    
+  16   E1_CCAV-    116   E2_CCAV-
+  21   E1_torr*e9  121   E2_torr*e9
+                                     
+ 201   D1_Aset     301   D1_Ared       401   D1_Gset     501   D1_Gred     
+ 202   D2_Aset     302   D2_Ared       402   D2_Gset     502   D2_Gred     
+ 203   D3_Aset     303   D3_Ared       403   D3_Gset     503   D3_Gred     
+ 204   Q1_Aset     304   Q1_Ared       404   Q1_Gset     504   Q1_Gred     
+ 205   Q2_Aset     305   Q2_Ared       405   Q2_Gset     505   Q2_Gred     
+ 206   Q3_Aset     306   Q3_Ared       406   Q3_Gset     506   Q3_Gred     
+ 207   Q4_Aset     307   Q4_Ared       407   Q4_Gset     507   Q4_Gred     
+ 208   Q5_Aset     308   Q5_Ared       408   Q5_Gset     508   Q5_Gred     
+ 209   Q6_Aset     309   Q6_Ared       409   Q6_Gset     509   Q6_Gred     
+ 210   Q7_Aset     310   Q7_Ared       410   Q7_Gset     510   Q7_Gred     
+ 211   S1_Aset     311   S1_Ared       411   S1_Gset     511   S1_Gred     
+ 212   S2_Aset     312   S2_Ared       412   S2_Gset     512   S2_Gred     
+SIN$
+TPF$
+SP1$
+SEC$290  What the Hell do I do Now
+CY1$
+\bu\Problem:  Unable to Communicate with VME\\
+BLP$
+If \b\rcon & rmon\\ get errors when an attempting to
+communicate with the \b\VME\\ system, you will probably need to
+boot the vme system. To do this, end both \b\rcon & rmon\\
+and type: \b\/usr/hhirf/vme/bootvme\\.
+CY1$
+\bu\Problem:  Can't start rmon - aborts saying, "RMON already running"\\
+BLP$
+\b\rmon\\ sets a flag in a shared memory segment when it is started
+so that two \b\rmon\\s can't be run at the same time. This flag is
+cleared when \b\rmon\\ is terminated normally by a \b\kill\\ command
+typed in the rcon window or a \b\ctrl/c\\ typed in the rmon
+window. Any other type of termination will leave this flag set. This
+flag can be cleared by typing (in the \b\rcon\\ window) the command:
+\b\cldf\\.
+BLP$
+Clearly, you don't want to do this unless you know what you are doing,
+otherwise, you can end up with multiple \b\rmon\\s running and a lot
+of confusion.
+CY1$
+\bu\Problem:  damm doesn't access shared memory histograms for rmslog.his\\
+BLP$
+If \b\damm\\ has rmslog.his open when \b\rmon\\ is killed and
+re-started, it will be looking at the wrong shared memory segment.
+To cure this, open rmslog.his again by typing: \b\in rmslog.his\\
+CY1$
+
+\bu\Problem:  To examine/remove shared memory segments\\
+
+Type: \b\ipcs\\         ;To display existing memory segments & message queues
+
+Type: \b\ipcrm -m ID\\  ;To remove memory segment \b\ID\\
+
+Type: \b\ipcrm -q ID\\  ;To remove message queue  \b\ID\\
+BLP$
+Where: \b\ID\\ denotes the the number in the ID-column displayed via \b\ipcs\\
+as shown in the example below:
+CY1$
+Message Queues:
+T     ID     KEY        MODE       OWNER    GROUP
+q      0   50400021 --rw-rw----   milner    users
+
+Shared Memory
+T     ID     KEY        MODE       OWNER    GROUP
+m      0          0 D-rw-------     root   system
+m      1          0 D-rw-------     root   system
+m      2          0 D-rw-------     root   system
+m   1903   50400020 --rw-rw----   milner    users
+m    104          0 --rw-rw-rw-   milner    users
+CY1$
+\bu\Problem:  Corrupted or lost drr-file\\
+BLP$
+\b\rmon\\ requires that a proper \b\rmslog.drr\\ exist. If this file has been 
+corrupted or lost, it can be recreated by typing: \b\/usr/hhirf/chil rmslog\\
+This, of course, assumes that \b\rmslog.chl\\ exists for chil to operate on.
+If the chl-file is lost, a copy can be gotten from \b\/usr/hhirf/rmslog.chl\\
+TPF$
+DBL$
+CYB$
+      DATA         GFAC/1.3173,  ! Q1
+     &                  1.2869,  ! Q2
+     &                  1.0000,  ! D1
+     &                  1.3931,  ! S1
+     &                  1.2744,  ! Q3
+     &                  1.4125,  ! S2
+     &                  1.0000,  ! D2
+     &                  1.2820,  ! Q4
+     &                  1.2183,  ! Q5
+     &                  1.0000,  ! D3
+     &                  1.2823,  ! Q6
+     &                  1.2914,  ! Q7
+     &                  3*0.0/
+SIN$
+QIT$

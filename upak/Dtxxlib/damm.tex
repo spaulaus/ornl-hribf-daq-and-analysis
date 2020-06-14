@@ -1,0 +1,2318 @@
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   1
+ 
+   Sec Page Contents
+ 
+   010   2  GENERAL      - Introduction and General Features
+   020   3  GENERAL      - Getting Started
+   030   4  GENERAL      - Assigning Input/Output Files
+   040   4  GENERAL      - Loop-Execution & Symbol-Definition
+   050   5  GENERAL      - Log File -  damm.log
+   060   5  GENERAL      - Comments on Hard Copy
+   070   5  GENERAL      - File ID-directories and Count-Sums
+   090   6  GENERAL      - Cursor Tracking Problems With Xterminals
+   100   6  GENERAL      - Changes in Cursor-Mode Commands
+   110   6  GENERAL      - Mouse Button Customizing
+   120   7  GENERAL      - Screen Setup and Color Mapping
+   130   8  GENERAL      - Display Delays (hangup problems)
+   135   8  GENERAL      - Commands Which Suspend or Abort Operations
+   140   8  GENERAL      - Zeroing Histograms in Shared Memory
+ 
+   150   9  DISPLAY      - 1-D Display
+   155  11  DISPLAY      - 1-D Display (Peak Finding/Logging)
+   160  12  DISPLAY      - 2-D Display
+   170  14  DISPLAY      - Special XY-Line Display
+   175  16  DISPLAY      - Label Generation and Annotation
+ 
+   200  18  MANIPULATION - Syntax Definitions
+   210  18  MANIPULATION - Setup
+   220  19  MANIPULATION - I/O     1-D Histograms
+   230  19  MANIPULATION - Gating  2-D Histograms
+   240  19  MANIPULATION - General 2-D Projections
+   250  20  MANIPULATION - Operations on Buffers-1 & -2
+   260  20  MANIPULATION - Show Data, Count-Sums etc (from Bufs-1 & -2)
+   270  20  MANIPULATION - Modify Buffer Contents
+   280  21  MANIPULATION - Printer Plots
+   290  21  MANIPULATION - Gain-Shifts & Compressions
+ 
+   300  22  MANIPULATION - HIS-file (Create, Expand, Copy, Add, Gain-Shift...)
+   310  25  MANIPULATION - HIS-file (Adding & Subtracting Complete HIS-files)
+ 
+   350  26  BANANAS      - Definition, Rules, Construction & Display
+   360  27  BANANAS      - Projections
+ 
+   400  28  FITTING      - Introduction & General Features
+   410  29  FITTING      - 1-Key (Cursor Mode) Commands
+   420  30  FITTING      - Setup Commands
+   430  31  FITTING      - Display of Data, Fits & Printer-Plots
+   440  32  FITTING      - FIT Execution Commands
+   450  32  FITTING      - FIT Parameters - Saving, Setting, Default
+   460  33  FITTING      - Commands to Control Relative Peak-intensities
+   470  34  FITTING      - FIT Specification Details
+   480  35  FITTING      - Peak Shapes
+   490  35  FITTING      - Gradient-Search Method (FIT  request)
+   500  36  FITTING      - Gaussian Method        (GFIT request)
+   510  37  FITTING      - Estimated Uncertainties in Peak Areas
+   520  37  FITTING      - Reading Fit Results from damm.log
+   530  37  FITTING      - Common Problems
+   540  38  FITTING      - Peak Shape vs Asymmetry (Log Plot)
+ 
+   550  39  CUSTOMIZING  - Screen Configuration
+   560  41  CUSTOMIZING  - Graphic Screen Color Mapping
+   570  42  CUSTOMIZING  - Graphic Screen Black & White Mapping
+    
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   2
+ 
+   U300.010  Introduction and General Features
+ 
+   DAMM  is a Display, Analysis and Manipulation Module which is configured to
+   be used on Alpha workstations running Digital  Unix.  Older  versions  were
+   configured  for  DECstations,  SPARCstations and VAXstations. DAMM provides
+   all of the features to be found in VAXPAK programs DAM, SAM,  TDX  and  XAM
+   as  well  as  a  number  of  additional features. Some general features are
+   listed below.
+ 
+   Display features ..........................................................
+ 
+   (1)....Works with Alphas, DECstations, SPARCstations & VAXstations.
+ 
+   (2)....Displays 1-D data from HIS- or SPK-files.
+ 
+   (3)....Displays 2-D data from HIS-files.
+ 
+   (4)....Hardcopy available via screen-copy to networked Laser printers.
+ 
+   (5)....A dialog record may be saved on a Log-file.
+ 
+   (6)....Supports Free-Form (Banana) gate construction.
+ 
+   (7)....Provides for total number of counts within a Banana.
+ 
+   (8)....Supports X- & Y-projections of Bananas (saved on DAMQ8Q.SPK).
+ 
+   (9)....Provides for peak sum, centroid and fwhm.
+ 
+   (10)...Provides for spectrum analysis (fitting - see SEC# U300.400).
+ 
+ 
+   General features ..........................................................
+ 
+   (1)....Reads 1-D histograms from either HIS-, SPK-files.
+ 
+   (2)....Extracts GATES (on parameters 1 or 2) from 2-D histograms.
+ 
+   (3)....Supports general projections of Bananas on arbitrary axis.
+ 
+   (4)....Forms linear combinations, gain-shifts etc. of 1-D histograms.
+ 
+   (5)....Forms linear combinations, gain-shifts etc. of 2-D histograms.
+ 
+   (6)....Does linear gain and intercept transformations by rebinning.
+ 
+   (7)....Does crunches (sums a specified number of channels together).
+ 
+   (8)....Lists and plots 1-D histograms on the line printer.
+ 
+   (9)....Shows directory (ID'S) contained in HIS-, SPK- & BAN-files.
+ 
+   (10)...Shows count-sums for all ID's in SPK- or HIS-files.
+ 
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   3
+ 
+   Program operation .........................................................
+ 
+   The program is controlled by a set of commands (alphabetic directives)  and
+   associated  data-lists  (numbers):  I  call  these  command-lists. Input is
+   free-form. Command and list-element delimiters are BLANK , ( ) /
+ 
+   U300.020  GETTING STARTED
+ 
+   The steps given below outline how I would do it. Of course, you can  do  it
+   any way that you choose or not at all.
+ 
+   (1)....Log onto the workstayion, Xterminal, etc. in the usual manner.
+ 
+   (2)....Open a window and move it to the lower left corner of screen.
+ 
+ 
+   (3)....Type:  damm                ;to start program on any host
+                                     ;where the path to the executable
+                                     ;has been defined in your
+                                     ;.cshrc, .login or login.com files
+                                     ;otherwise,
+ 
+          Type:  /usr/hhirf/damm     ;to start on a HHIRF DECstation
+ 
+          Type   /home/upak/damm     ;to start on a HHIRF SPARCstation
+ 
+   (4)....Type:  H                   ;for HELP directory
+   (5)....Type:  H  ITEM             ;for help on directory ITEM
+   (6)....Type:  H  FIG              ;for screen configurations
+ 
+   (7)....Try a few FIG commands to get a feel for how they work.
+ 
+   (8)....Note  the  fact  that  the  display  required  for  entering fitting
+          information (like peak positions, etc) is via the DS & DSX  commands
+          rather than the general display commands D & DX.
+ 
+   (9)....Learn  to  use  the  HELP  facility.  That  will  usually  be   more
+          up-to-date than this document.
+ 
+   (10)...Filenames  have been made case-sensitive for the UNIX version. Where
+          default extensions apply, upper case is assumed for  VMS  and  lower
+          case  is  assumed  for  UNIX.  Acceptable  standard  extensions  now
+          include .spk, .SPK, .his, .HIS, .ban, .BAN, .cmd &  .CMD.  Note:  If
+          the  his-file  extension  is  lower/upper  case  then  the  drr-file
+          extension must be lower/upper case. Also note:
+ 
+   /usr/users/directory/subdirectory/filename   ;is an acceptable form but
+ 
+           ../directory/subdirectory/filename   ;is NOT! (at least for now)
+    
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   4
+ 
+   U300.030  Commands for Assigning Input/Output Files
+ 
+   IN   FIL.EXT    - Open N-file (EXT = SPK or HIS)
+   OU   FIL.EXT    - Open O-file (EXT = SPK or HIS) - OUTPUT for SPK only
+   OU   FIL.SPK,NEW- Create and open O-file (SPK-file for output)
+   QF   FIL.EXT    - Open Q-file (EXT = SPK or HIS) - for display only
+   RF   FIL.EXT    - Open R-file (EXT = SPK or HIS) - for display only
+   SF   FIL.EXT    - Open S-file (EXT = SPK or HIS) - for display only
+   BAN  FIL        - Open FIL.BAN for store, recall, proj, etc
+   BAN  FIL,NEW    - Create & open FIL.BAN for store, recall, etc
+                   - (See below for how to specify variable FILENAMES)
+   CLO  F          - Closes F-file (where F = N, O, P, Q, R, S or BAN)
+   DFIL            - Displays data files currently open
+ 
+   CMD  FIL        - Open and process commands from FIL.CMD
+   CMD  FIL.EXT    - Open and process commands from FIL.EXT
+ 
+   LON/LOF         - Turn Log-output (to LU7) ON/OFF (default = OFF)
+ 
+   Explanation of variables in FILENAMES .....................................
+ 
+   One   symbol   (integer   variable)  may  be  incorporated  in  a  FILENAME
+   specification as the following examples illustrate:
+ 
+   Example-1 .................................................................
+   SYM=3
+   OU FIL"SYM".SPK  ;Opens FIL3.SPK
+ 
+   Example-2 .................................................................
+   I=0
+   LOOP 3
+   I=I+1
+   IN FIL"I".SPK    ;Opens (in succession) FIL1.SPK, FIL2.SPK, FIL3.SPK
+   .
+   ENDLOOP
+ 
+   U300.040  Commands Related to Loop-Execution & Symbol-Definition
+ 
+   SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                    - symbols: UIND CIND ULOC CLOC FIX NONE FITS ALL and
+                    - COLR GREY DOTS LIVE BAN  M N O P Q R S X are reserved
+                    - expression syntax is same as in CHIL
+                    - no imbedded blanks are allowed in expressions
+                    - symbols may contain up to 8 characters
+ 
+   DSYM             - Displays currently defined sumbols & values
+   LSYM             - Logs currently defined symbols & values on damm.log
+   ZSYM             - Resets symbol table (deletes all symbols)
+ 
+   LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+   CMD  ....        - Nesting supported
+   CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+   ENDL             - Defines end-of-loop
+                    - KILL (entered before END) kills LOOP
+                    - Ctrl/C    - aborts loop-in-progress
+                    - opening of CMD-file within a LOOP not allowed
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   5
+ 
+   LOOP suspension - the WO command ------------------------------------------
+ 
+   A command WO [means the same thing as WOA or WHOA -  i.e  the  opposite  of
+   GIDDUP (my preferred spellings)] has been implemented to work within LOOPs.
+   Whenever the WO command is encountered, the message:
+ 
+   Type [RETURN] to CONTINUE--->
+ 
+   will  appear  on  the  screen. This gives you an opportunity to look at the
+   display etc. before it gets wiped  out.  When  you  are  finished  looking,
+   press the [RETURN] key and it will continue.
+ 
+   U300.050  Log File - damm.log
+ 
+   The  VMS version of DAMM always creates a new version of DAMM.LOG while the
+   UNIX version creates a new  damm.log  or  appends  to  an  old  version  of
+   damm.log  if  it exists. If you enter the command LON, almost all dialog to
+   and from the host will be logged, otherwise, only certain "print  commands"
+   will  produce output to the log-file or device. You may turn the log ON/OFF
+   by entering LON/LOF.
+ 
+   U300.060  Comments on Hard Copy
+ 
+   As I have defined the default the color mapping, it is best to set  up  the
+   Workstation to Print Screen in the negative image mode. If you are printing
+   on  something  like  a LN03 ScriptPrinter, anything you chose to print will
+   be scaled to fit on one page. If you are using an LN03, it may come out  on
+   multiple  pages  (and  you  may  miss some) unless you choose a "Portion of
+   Screen" that it likes.
+ 
+   U300.070  File ID-directories and Count-Sums
+ 
+   DIR  KF   Displays a list of all ID's in file-KF, where
+             KF   left blank says input-file
+             KF = N     denotes   input-file
+             KF = O     denotes  output-file
+             KF = Q     denotes       Q-file
+             KF = R     denotes       R-file
+             KF = S     denotes       S-file
+             KF = BAN   denotes     BAN-file
+ 
+   LDIR KF   Logs a list of all ID's in file-KF on DAMM.LOG
+ 
+   DDIR KF   Displays ID's & # of non-zero channels for SPK-files
+   DDIR KF   Displays ID-directory in detail        for HIS-files
+             Also logs on DAMM.LOG if LON
+ 
+   DSUM KF   Displays count-sums of all ID's on file-KF
+             Also logs on DAMM.LOG if LON
+    
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   6
+ 
+   U300.090  Cursor Tracking Problems With Xterminals
+ 
+   The software-generated full-window cursor displayed by  DAMM  when  in  the
+   "1-key  cursor  mode"  requires  a  lot of real-time response from the host
+   computer for live tracking of the mouse. This works fine when the  host  is
+   a  local workstation but does not work well for Xterminals hosted by a busy
+   VAX. The following commands are intended to alleviate this problem. Type:
+ 
+   CURT LIVE  ;for full-window cursor which tracks mouse "live" (default)
+ 
+   CURT X     ;for new cursor display only for mouse-click or key-press
+              ;(works better for Xterminals hosted by busy VAX, etc.)
+ 
+   Execute the desired CURT command and then FIG to make it take effect.
+ 
+   U300.100  Changes in Cursor-Mode Commands
+ 
+   I have eliminated the destinction between  upper  and  lower  case  in  all
+   cursor-mode  commands.  The  Shift-  and  Caps-lock keys have no effect. In
+   order to do this and retain meaningful command names, it was neccessary  to
+   use  two keys for certain commands. These commands (UP, UX, UW, UL, UH, UO,
+   and UB) are defined below:
+ 
+   P/UP   Add/Delete peak to Library (pos specified by cursor)
+   X/UX   Fix/Free  peak position (for displayed peak nearest to cursor)
+   W/UW   Fix/Free  peak width    (for displayed peak nearest to cursor)
+   L/UL   Fix/Free  Lo-Side ASYM  (for displayed peak nearest to cursor)
+   H/UH   Fix/Free  Hi-Side ASYM  (for displayed peak nearest to cursor)
+   O/UO   Turn peak  ON/OFF       (for displayed peak nearest to cursor)
+   B/UB   Add/Delete background point at cursor position
+ 
+   Read UP as Unset Peak, for example. As usual, no carriage return  is  used.
+   There are also a few other changes in commands. These are listed below:
+ 
+   LF-ARROW    Set expand-region lo-limit
+   RT-ARROW    Set expand-region hi-limit
+   DN-ARROW    Pan DOWN - move picture so cursor-chan at right-screen
+   UP-ARROW    Pan UP   - move picture so cursor-chan at  left-screen
+   /           Display XCUR, YCUR, channel# & energy
+ 
+   U300.110  Mouse Button Customizing
+ 
+   The  Mouse  Buttons  can  be used in place of some key-strokes while in the
+   1-key cursor-mode. Different button definitions are provided for the  three
+   different  types  of  displays  (namely:  the  displays  resulting from the
+   commands  D, DD & DS). The following customizing commands are supported:
+ 
+   BUD  L,M,R  ;Defines Left,Middle,Right buttons for cursor in  D-window
+   BUDD L,M,R  ;Defines Left,Middle,Right buttons for cursor in DD-window
+   BUDS L,M,R  ;defines Left,Middle,Right buttons for cursor in DS-window
+   BUD  L,H,S  ;Example (cursor in 1-D)   L-butt sets sum-reg lo-limit,
+               ;M-butt sets sum-reg hi-limit,  R-butt requests S-sum
+   BUDD A,T,Z  ;Example (cursor in 2-D)   L-butt adds banana points,
+               ;M-butt totalizes enclosed counts,  R-butt zots banana
+ 
+   Buttons can't be set to  / or ;  -  set to  ? or :  instead
+    
+   23-Aug-14 ............. U300  DAMM - GENERAL - WTM ............... PAGE   7
+ 
+   U300.120  Screen Setup and Color Mapping
+ 
+   Screen configuration (placement of graphics  windows  on  the  screen)  and
+   color  (or  black  &  white)  mapping  is  discussed in more detail in SEC#
+   U300.550, U300.560 and U300.570 (if  you  have  a  B&W  monitor,  you  will
+   probably  want to change the color mapping). Here we give the usual list of
+   commands and a brief description of each.
+ 
+   COMMANDS RELATED TO SCREEN SETUP & COLOR MAPPING ...........................
+ 
+   FIGI           ;Set  screen configuration library to default
+   FIGF FILNAM    ;Read screen configuration library from FILNAM
+   FIG  N         ;Set current screen configuration to type-N
+ 
+   WIN  ID        ;Set subsequent displays to be in window-ID (dflt=1)
+ 
+   AXON ID        ;Enable  the drawing of axis for  window-ID (dflt)
+   AXOF ID        ;Disable the drawing of axis for  window-ID
+ 
+   CMAP           ;Set color map to default  ("takes" after next FIG)
+   CMAP FILNAM    ;Set color map from FILNAM ("takes" after next FIG)
+   REVV           ;Reverse all color specs   ("takes" after next FIG)
+ 
+   DLNS N         ;Set # disp-lines = N - for HELP, DDIR & DSUM
+ 
+   CURT LIVE      ;Set full-wind cursor to track mouse LIVE (default)
+   CURT X         ;New full-wind cursor generated via mouse-click or key
+                  ;The CURT command takes effect only after next FIG
+ 
+   SSI            ;Set screen to initial - erase all graphic windows
+ 
+   Program  damm  has,  by  default,  16  pre-defined  screen  connfigurations
+   available.  Each  is  referenced  (via  the FIG command) by an ID-number. A
+   list of the ID-numbers along with the  associated  configuration  is  given
+   below.  Try a few FIGs and observe the results or if you really want to get
+   serious, see SEC# U300.550. In particular, if you have  an  Xterminal  with
+   less  than  1024  x  860  pixels,  you  will  probably  need  to modify the
+   configuration table as described in SEC# U300.550.
+ 
+    1-[]     2-[][]   3-[][]   4-[][]   5-[][]   6-[][]   7-[][]   8-[][]
+                        []       [][]     []       [][]     []       [][]
+                                          []       [][]     []       [][]
+                                                            []       [][]
+ 
+    9-[][]  10-[][]  11-[--]  12-[--]  13-[--]  14-[--]  15-[][][]
+      []       [][]              [--]     [--]     [--]     [][][]
+      []       [][]                       [--]     [--]     [][][]
+      []       [][]                                [--]     [][][]
+      []       [][]                                         [][][]
+ 
+   16-[2D]  17-[2D]  18-[2D]  19-[2D]  20-[][][][]
+                                          [][][][]
+                                          [][][][]
+                                          [][][][]
+                                          [][][][]
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE   8
+ 
+ 
+   U300.130  Display Delay (hangup problems)
+ 
+   Some display devices (X-terminals for example) may require a delay  between
+   successive  displays.  If  your  device  "hangs up" or produces "incomplete
+   displays" when executing LOOPS, you might try  increasing  the  appropriate
+   delay. A range of 10 to 20000 miliseconds is accepted.
+ 
+   DLAF MS        ;Set FIG-delay     to MS   milliseconds (default=1000)
+   DLAF           ;Set FIG-delay     to 1000 milliseconds
+   DLAD MS        ;Set Display-delay to MS   milliseconds (default=500)
+   DLAD           ;Set Display-delay to 500  milliseconds
+ 
+ 
+   U300.135  Commands Which Suspend or Abort Operations
+ 
+   WAIT  MS             ;Suspends execution for MS milliseconds
+                        ;(60,000 Milliseconds is the maximum allowed)
+ 
+   WO                   ;Suspends execution until you  type [RETURN]
+                        ;(it prompts you to: Type [RETURN] to continue
+ 
+   Ctrl/C               ;Interrupts (aborts) a FIT-in-progress
+                        ;Interrupts (aborts) a loop-in-progress
+                        ;Interrupts (aborts) a command-file being executed
+ 
+   Note:  If  you interrupt a fit-in-progress (being executed within a command
+   file), this does not  abort  the  command  file  execution.  An  additional
+   Ctrl/C will be required to abort the command file.
+ 
+ 
+   U300.140  Zeroing Histograms in Shared Memory
+ 
+   The  following  commands  are provided for use when damm is used to monitor
+   histogram generation during data acquisition or tape scanning.
+ 
+   Z  ON                ;Enable  Z-command
+   Z  OFF               ;Disable Z command (default)
+ 
+   Z  IDA IDB IDC ..    ;Says zero explicit histogram ID-list
+   Z  IDA to IDB        ;Says zero IDA thru IDB (in steps of 1)
+   Z  IDA to IDB INC    ;Says zero IDA thru IDB (in steps of INC)
+ 
+   For these commands to work, the following conditions are required:
+ 
+   (A)....The his-file must be opened by DAMM via the IN cmd.
+ 
+   (B)....The his-file must be attached to a scan or monitor process
+          (i.e. the his-file must be in a shared memory segment)
+ 
+                          The disk-file is NOT zeroed!
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE   9
+ 
+ 
+   U300.150  Commands Related to 1-D Display
+ 
+   FIG  NF        ;Choose screen config-NF. See SEC# U300.120 & U300.550
+                  ;for screen configuration and color mapping commands
+   WIN  NW        ;Set subsequent displays to be in window-NW
+ 
+   LIN/LOG        ;Set display to linear/log  (default is linear)
+ 
+   PLON/PLOF      ;Turn peak logging ON/OFF (dflt OFF) see SEC# U300.155
+ 
+   ST /OV         ;Set to disp mult hist stacked/overlayed (dflt = OV)
+ 
+   CAL  A,B,C     ;Define energy calibration (E=A+B*Chan+C*Chan**2)
+ 
+   COL  I,J,K...  ;Defines color sequence for display
+                  ;For I,J.. = 1     2   3     4    5    6       7
+                  ;       COL= white,red,green,blue,yellow,magenta,cyan
+   GWID WID       ;Define cursor-mode sum-region width (channels)
+ 
+   DNOR LO,HI     ;Normalize displayed data to count-sum of chans LO,HI
+ 
+   DL   LO,HI     ;Set display limits (min,max chan#)
+ 
+   DMM  LO,HI     ;Set display limits (min,max counts)
+                  ;LO or HI = X  says use MIN or MAX data value
+ 
+   D    IDLST     ;Display histogram ID's contained in IDLST
+ 
+   DX   IDLST     ;Display IDLST (range defined by expand-region)
+ 
+                  ;-----------------------------------------------------------
+                  ;IDLST is of the form:
+                  ;KF C ID, C ID.. KF C ID, C ID..
+                  ;or
+                  ;KF C IDA to IDB,<INC> KF C ID ID ID ... KF C IDA to IDB ...
+                  ;-----------------------------------------------------------
+                  ;ID, IDA & IDB denote ID-numbers
+                  ;INC (optional) denotes an ID-number increment (DFLT=1)
+                  ;C is an OPTIONAL floating-point norm-coeff (DFLT=1.0)
+                  ;KF = M,N,O,P,Q,R,S (default is N) and denotes:
+                  ;MEM-BUF, IN-FIL, OU-FIL, PROJ-FIL, Q-FIL, R-FIL, S-FIL
+                  ;If IDLST omitted, uses previously defined IDLST
+                  ;-----------------------------------------------------------
+ 
+   SUML LO,HI     ;Define sum region for SUM command below
+   SUM  IDLST     ;Sum counts (LO,HI) (IDLST same as D except C illegal)
+ 
+   C              ;Enter cursor-mode
+ 
+   SSI            ;Set screen to initial - erase graphic windows
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  10
+ 
+ 
+   U300.150  Commands Related to 1-D Display (continued)
+ 
+ 
+   1-KEY CURSOR COMMANDS FOR 1-D DISPLAY .....................................
+ 
+   <-- (LF-ARROW) ;Set expand-region lo-limit
+   --> (RT-ARROW) ;Set expand-region hi-limit
+ 
+   E              ;Expand display
+ 
+   UP-ARROW       ;Pan up   - move picture so cursor-chan at  left-screen
+   DN-ARROW       ;Pan down - move picture so cursor-chan at right-screen
+                  ;(you must be expanded to execute pan)
+ 
+   L              ;Set sum-region lo-limit
+   H              ;Set sum-region hi-limit
+   G              ;Set sum-region limits (LO=XCUR, HI=XCUR+WID-1)
+ 
+   V              ;Make expand-/sum-region markers visible/invisible (toggles)
+   M              ;Turn expand-/sum-region markers ON
+   J              ;Junk (delete) all expand-/sum-region markers
+ 
+   S              ;Display sum, centroid, fwhm (2.354*sigma) of sum region
+                  ;DATA(LO),DATA(HI) defines BGD for NETS
+ 
+   A              ;Display sum, centroid, fwhm (2.354*sigma) of sum region
+                  ;YCUR(LO),YCUR(HI) defines BGD for NETS
+ 
+   C              ;Draw peak-marker and display chan#  at cursor pos
+   P              ;Draw peak-marker and display energy at cursor pos
+ 
+   / or ?         ;Display XCUR, YCUR, channel# & energy
+   '              ;Same as ? except forces logging (see SEC# U300.155)
+ 
+   Q              ;Quit cursor-mode (return to normal-mode)
+ 
+   See SEC# U300.110 or Type: h mous for use of Mouse Buttons.
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  11
+ 
+   U300.155  Peak Finding/Logging
+ 
+   The following commands control peak finding.
+ 
+   FIND BIAS,IFWHM     ;Turn peak-find ON  (see definitions below)
+   FIND                ;Turn peak-find ON  (with defaults - see below)
+   NOFI                ;Turn peak-find OFF (default is OFF)
+ 
+   BIAS...is the number of standard deviations above background  that  a  peak
+          channel  must be in order to be considered as part of a peak. Useful
+          values of BIAS are in the range 3 to 10. The default value is 5.0.
+ 
+   IFWHM..is the approximate full-width at half-max (in channels) of peaks  in
+          the  region  of interest. This value is not very critical but should
+          be within a factor of 2 or so of  the  correct  value.  The  default
+          value is 5.
+ 
+   All  peaks  found  within  the display region will be marked & labeled with
+   the associated energy-calibration value (default is  the  same  as  channel
+   number).  Peak  labels are integers (no decimals - to minimize screen space
+   used) so if you want labels to be in units of keV, for  example,  you  must
+   enter CAL such that E(keV) is a whole number.
+ 
+   See SEC# U300.430 for how peak-finding is used in fitting operations.
+ 
+   Logging "found" and "marked" peaks on damm.log
+ 
+   Peaks  which  either  found  via  the  FIND command above or marked via the
+   1-key command (/ or ? or ;)  may  be  logged  on  damm.log.  The  following
+   commands (independent of LON/LOF) turns said logging ON and OFF.
+ 
+   PLON           ;Turns peak logging (to damm.log) ON
+   PLOF           ;Turns peak logging (to damm.log) OFF (default)
+ 
+   For found peaks, damm.log may be read (skipping prog, date & time) as:
+ 
+          READ(LU,10)IFLG,ID,CH,HEFT,(FILNAM(I),I=1,16)
+       10 (29X,A4,I10,2F10.0,2X,16A4)
+ 
+   Where: IFLG   = 'PEAK' for found peak log entry
+          ID     = Spectrum ID number
+          CH     = Peak location in channels
+          HEFT   = Peak heftiness
+          FILNAM = First 64 characters of spk- or his-filename
+ 
+   For marked peaks, damm.log may be read (skipping prog, date & time) as:
+ 
+          READ(LU,10)IFLG,ID,CH,ENER,(FILNAM(I),I=1,16)
+       10 (29X,A4,I10,2F10.0,2X,16A4)
+ 
+   Where: IFLG   = 'MARK' for marked peak log entry
+          ID     = Spectrum ID number
+          CH     = Peak location in channels
+          ENER   = Peak "energy" from calibration constants
+          FILNAM = First 64 characters of spk- or his-filename
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  12
+ 
+   U300.160  Commands Related to 2-D Display
+ 
+   FIG   NF       ;Choose screen config-NF. See SEC# U300.120 & U300.550
+                  ;for screen configuration and color mapping commands
+ 
+   WIN   NW       ;Set subsequent displays to be in window-NW
+ 
+   ZLEV  N        ;Set # of color/grey-scale intensity levels to N
+   ZLEV           ;Set # of color/grey-scale intensity levels to 10 (dflt)
+ 
+   GRAS  I,J,K..  ;Set grey-scale values (range 0-100) & ZLEV (# entries)
+                  ;Must do after first FIG  ("takes" after next FIG)
+ 
+   ZINT  COLR     ;Set 2-D intensity mapping to Color (default)
+   ZINT  GREY     ;Set 2-D intensity mapping to Grey-scale
+   ZINT  DOTS     ;Set 2-D intensity mapping to Dot-matrix (3x3 or 5x5)
+ 
+   ZSON/ZSOF      ;Z-scale ON/OFF - displays cnts vs colors legend (dflt)
+ 
+   ZLIN/ZLOG      ;Set 2-D display to linear/log (default is log)
+ 
+   XC    LO,HI    ;Set min & max X-channel numbers for display
+   YC    LO,HI    ;Set min & max Y-channel numbers for display
+ 
+   ZMM   LO,HI    ;Set min & max counts/channel    for display & count-sum
+   ZMM   LO       ;Sets min & searches for max (semi-autoscale)
+   ZMM            ;Searches for min & max      (full-autoscale)
+ 
+   DD       ID    ;Display 2-D histogram ID from IN-file
+   DD    KF,ID    ;Display 2-D histogram ID from KF-file
+ 
+   DDX      ID    ;Display 2-D histogram ID from IN-file (expand region)
+   DDX   KF,ID    ;Display 2-D histogram ID from KF-file (expand region)
+                  ;Where KF = N,O,Q,R,S (default is N) and denotes:
+                  ;IN-FIL, OU-FIL, Q-FIL, R-FIL, S-FIL
+                  ;ID (and KF) omitted says use previously defined spec
+ 
+   DDID           ;Shows ID-number & Filename for current 2-D display
+ 
+   ZBL            ;Zero in-core BAN-library
+ 
+   LBL            ;List in-core BAN-ID numbers
+ 
+   C              ;Enter cursor-mode
+ 
+   SSI            ;Set screen to initial - erase graphic windows
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  13
+ 
+ 
+   U300.160  Commands Related to 2-D Display (continued)
+ 
+ 
+   1-KEY CURSOR COMMANDS FOR 2-D DISPLAY .....................................
+ 
+   <-- (LF-ARROW) ;Set expand-region lo-left- limit
+   --> (RT-ARROW) ;Set expand-region hi-right-limit
+ 
+   V      ;Make expand-region markers visible/invisible (toggles)
+   J      ;Junk (delete) expand-region markers
+ 
+   E      ;Expand
+ 
+   1      ;Move display such that cursor is at lo-left
+   2      ;Move display such that cursor is at hi-left
+   3      ;Move display such that cursor is at hi-right
+   4      ;Move display such that cursor is at lo-right
+ 
+   Z      ;Zero  (open) active X,Y-list
+   A      ;Add point to active X,Y-list
+   D      ;Dele nearest point in active X,Y-list
+   M      ;Move nearest point in active X,Y-list to cursor pos
+   I      ;Insert a point in active X,Y-list at cursor position
+ 
+   L      ;List active X,Y-list (on VDT)
+   B      ;Draw active BAN & BAN's in in-core library
+   G      ;Prompt for ID & read into in-core BAN-library
+   O      ;Open nearest in-core BAN for modification
+   S      ;Prompt for ID & store in in-core library & on disk
+   R      ;Store  nearest BAN with original ID
+   F      ;Remove nearest BAN from in-core library & erase
+   K      ;Delete nearest BAN from in-core library and disk
+   T      ;Totalize counts in nearest BAN (active or not)
+   P      ;Totalize and & save X- & Y-projections on DAMQ8Q.SPK
+ 
+   / or ? ;Display/(log if PLON)  X,Y-coordinates of cursor
+   '      ;Like ? but forces log (see X,Y-log format below)
+ 
+   Q      ;Quit cursor-mode (return to normal-mode)
+ 
+   See SEC# U300.110 or Type: h mous for use of Mouse Buttons.
+ 
+   ---------------------------------------------------------------------------
+   X,Y-log format- damm.log may be read (skipping prog, date & time) as:
+          READ(LU,10)IFLG,ID,X,Y,(FILNAM(I),I=1,16)
+       10 (29X,A4,I10,2F10.0,2X,16A4)
+ 
+   Where: IFLG   = 'MAR2' for 2-D position mark entry
+          ID     = Histogram ID number
+          X      = X-position in channels
+          Y      = Y-position in channels
+          FILNAM = First 64 characters of spk- or his-filename
+   ---------------------------------------------------------------------------
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  14
+ 
+ 
+ 
+   U300.170  Special XY-Line Display
+ 
+   DECstation  damm  provides  for  the  display  of  one  or  more  lists  of
+   concatenated vectors (lines) onto any of the FIGed  windows.  In  order  to
+   use this feature, a ASCII file must be created of the following form:
+ 
+ 
+   XYDATA  ID  XLEN  YLEN
+   X Y
+   X Y
+   . .
+   . .
+   XYDATA  ID  XLEN  YLEN
+   X Y
+   X Y
+   . .
+   END-OF-FILE     Where:
+ 
+ 
+   XYDATA  is  the  ASCII  string  "xydata"  in  upper  or lower case (XYDA is
+          enough).
+ 
+   ID.....is an integer ID-number by which the  X,Y  data  set  which  follows
+          will be referenced.
+ 
+   XLEN...is the X-length basis for the following X-values (optional).
+ 
+   YLEN...is the Y-length basis for the following y-values (optional).
+ 
+   X......is a floating# (used as chan# for 1D & 2D displays).
+          (X is decoded via E-format & can contain up to 12 characters)
+ 
+   Y......is a floating# (used as chan# for 2D and count for 1D displays).
+          (Y is decoded via E-format & can contain up to 12 characters)
+ 
+ 
+   If  XLEN  and  YLEN are entered and "histogram lengths" are provided by the
+   displayed histograms, the X,Y data will be appropriately  scaled  to  match
+   the  histogram  data  contained  in  the  window  in  which  it  is  drawn.
+   "Histogram lengths"  are  provided  by  all  his-file  directories  and  by
+   spk-file  entries  which  are  copied  from  his-files.  If either of these
+   "length entries" are missing, no scaling will be done. For 1D displays,  no
+   attempt is made to scale Y.
+ 
+ 
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  15
+ 
+ 
+   U300.170  Special XY-Line Display (continued)
+ 
+   List of commands
+ 
+   XYF  filename     ;Opens XY-file and reads in all data
+ 
+   XYI               ;Displays XY IDs which have been read in
+ 
+   XYD  I J K L ...  ;Displays XY data for IDs (I J K L ..) into active
+                     ;window (default = window 1 or set by WIN command)
+ 
+   XYP  I J K L ...  ;Same as XYD except that XY-points are shown in
+                     ;addition to the connecting vectors
+ 
+                     ;XYD or XYP with no ID-list uses previous ID-list
+ 
+   XYC  KOL          ;Specifies the "color" for subsequent XY displays
+                     ;Legal values of KOL are:
+ 
+                     ;WHIT - white      - CMAP entry 34
+                     ;RED  - red        - CMAP entry 35
+                     ;GREE - green      - CMAP entry 36
+                     ;BLUE - blue       - CMAP entry 37
+                     ;RG   - red-green  - CMAP entry 38
+                     ;RB   - red-blue   - CMAP entry 39
+                     ;GB   - green-blue - CMAP entry 40
+ 
+   Note:  Displays  are  done in "complement mode" so that displaying the same
+   ID a second time will erase it, displaying a third time will show it, etc.
+ 
+   Current Limits
+ 
+   Maximum number of IDs        in a file = 2048
+   Maximum number of XY entries in a file = 256,000
+   Maximum number of XY points  in a set  = 500
+ 
+   These limits are rather arbitrary, and can easily be changed.
+ 
+   Comments
+ 
+   (1)....The XY display feature is for display only. The XY data file is  not
+          another  data  type  on  a  par  with  HIS-file or SPK-file data. It
+          cannot be analysed, summed, or combined with other data, etc.
+ 
+   (2)....If the XY data extend  beyond  the  range  of  the  display,  it  is
+          allowed  to  spill  over  into the "scale label" regions. It is easy
+          enough to prevent this but I  am  not  sure  if  it  would  be  more
+          desirable.
+ 
+   (3)....An  ID label is drawn near to the XY-point which is "nearest" to the
+          center of the window. If multiple XY-lines are displayed, there  may
+          be  some  confusion  in identification. I will think about trying to
+          minimize this.
+ 
+   (4)....All commands and specifications are case insensitive.
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  16
+ 
+ 
+   U300.175  Label Generation and Annotation
+ 
+   damm provides  a  simple  method  for  labeling  and  annotating  graphical
+   displays. The following features are provided:
+ 
+   (1)....Normal  text  labels may be generated either interactively or by the
+          usual processing of command files.
+ 
+   (2)....The Label Generating Commands (LA7, LA8, LA9)  described  below  are
+          used to generate up to three blocks of "label text".
+ 
+   (3)....Each  of the three "label blocks" can contain up to 10 lines of text
+          with each line containing up  to  76  characters  (80  -  4  command
+          characters).
+ 
+   (4)....Each  damm window supports up to 3 independent, active (relocatable)
+          label blocks.
+ 
+   (5)....By "locking" labels already displayed and re-defining label  blocks,
+          you can display as many labels as you like.
+ 
+   (6)....Labels  are positioned within graphics windows using the 1-key Label
+          Display Commands described below.
+ 
+   (7)....Label Pointer Commands, defined below, may be  used  to  make  close
+          associations between labels and specific graphic features.
+ 
+   Note:  LA7,  LA8,  LA9  label  specifiers  are  used  in  order to make the
+   association with the label display keys (7,8,9) easier.
+ 
+   Label Generating Commands -------------------------------------------------
+ 
+   LA7  text   ;Adds line of "text" to LA7 label
+   LA8  text   ;Adds line of "text" to LA8 label
+   LA9  text   ;Adds line of "text" to LA9 label
+ 
+   LAZ7        ;Deletes all lines of   LA7 label
+   LAZ8        ;Deletes all lines of   LA8 label
+   LAZ9        ;Deleted all lines of   LA9 label
+ 
+   LAL         ;Displays current labels - LA7, LA8, LA9
+ 
+   LAC  KOL    ;Specifies label color for subsequent displays
+               ;Legal values of KOL are:
+ 
+               ;WHIT - white      - CMAP entry 34
+               ;RED  - red        - CMAP entry 35
+               ;GREE - green      - CMAP entry 36
+               ;BLUE - blue       - CMAP entry 37
+               ;RG   - red-green  - CMAP entry 38
+               ;RB   - red-blue   - CMAP entry 39
+               ;GB   - green-blue - CMAP entry 40
+ 
+ 
+                   (see next page for label display commands)
+    
+   23-Aug-14 ............. U300  DAMM - DISPLAY - WTM ............... PAGE  17
+ 
+ 
+ 
+   U300.175  Label Generation and Annotation (continued)
+ 
+   Label Display Commands (1-key cursor-mode) --------------------------------
+ 
+   Key      Action
+ 
+   7        Displays LA7 at cursor location (complement mode)
+   8        Displays LA8 at cursor location (complement mode)
+   9        Displays LA9 at cursor location (complement mode)
+ 
+   0        Locks previously displayed labels against subsequent change
+            (i.e. all labels displayed in a given window will be fixed)
+            (enables the drawing of additional labels)
+ 
+   It goes like this:
+ 
+   (1)....The first strike of say  key-7  displays  LA7  with  the  upper-left
+          corner of an unclosed box at the cursor location.
+ 
+   (2)....The next strike of key-7 will erase the LA7 label and the box.
+ 
+   (3)....The  next  strike  of  key-7  will  display  LA7  in  any new cursor
+          location. Etc, etc. and the same for key-8 and -9.
+ 
+   (4)....Finally, key-0 will close any open boxes and  lock  in  all  current
+          labels within a given window. Additional labels are now enabled.
+ 
+   Label Pointer Commands (1-key cursor-mode) --------------------------------
+ 
+   The  following  1-key  commands  provide  for  the  interactive  drawing of
+   concatenated straight-line segments. The idea is to  provide  a  method  of
+   associating  a  block of text with a very specific region in a display. The
+   following 1-key commands are used to draw and modify such lines.
+ 
+   Key      Action
+ 
+   =        Adds a vector point to current list and draws point or line
+ 
+   -        Deletes last vector point in current list and erases line
+ 
+   ;        Locks current vector list against subsequent change and
+            enables new list
+ 
+   Comments:
+ 
+   (1)....Each window supports an independent active vector list.
+ 
+   (2)....The active vector-list associated with  any  window  can  contain  a
+          maximum of 20 points.
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  18
+ 
+   U300.200  Command Syntax - General Definitions
+ 
+   B1   - Memory Buffer-1
+   B2   - Memory Buffer-2
+   ID   - The  ID-number of histogram to be read
+   NUID - Next ID-number to be assigned to output histogram
+   LO   - A first-channel-number (usually of a Gate)
+   HI   - A last- channel-number (usually of a Gate)
+   FAC  - A multiplication factor
+ 
+   Meaning of the individual command-characters ..............................
+ 
+   I    - Input  or read
+   O    - Output or write
+   A    - Add or accumulate
+   S    - Shift (gain shift)
+   GX   - Gate on X-parameter (i.e. parameter # 1)
+   GY   - Gate on Y-parameter (i.e. parameter # 2)
+   1    - Buffer-1
+   2    - Buffer-2
+   M    - Multiply
+   C    - Crunch
+   D    - Divide
+ 
+   U300.210  Commands for Setup (no immediate action)
+ 
+   NUID IV    - Set next ID to be used to IV
+ 
+   IDST N     - Set ID-step to be used in implied I/O loops
+                (remains active until changed - default=1)
+ 
+   CRUN IVAL  - Sets standard crunch value to IVAL
+ 
+   GASP XI1,XI2,XF1,XF2,NCF - Standard gain shift specification
+ 
+   SIDA       - Says treat 16-bit HIS-file data as signed
+   USDA       - Says treat 16-bit HIS-file data as un-signed (default)
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  19
+ 
+   U300.220  Commands for Input/Output of 1-D Histograms
+ 
+   I    kf ID            Input to B1
+   IS   kf ID            Input to B1, gain shift B1
+   IA   kf ID,FAC        Input to B1, B2=B2+FAC*B1
+   ISA  kf ID,FAC        Input to B1, shift  B1, B2=B2+FAC*B1
+   IO   kf ID            Input to B1, output B1
+   ISO  kf ID            Input to B1, shift  B1, output B1
+   IO   kf IDA,IDB       Input to B1, output B1     (for ID=IDA,IDB)
+   ISO  kf IDA,IDB       Input to B1, shift, output (for ID=IDA,IDB)
+   O1                    Output B1
+   O2                    Output B2
+ 
+   U300.230  Commands for Gating 2-D Histograms
+ 
+   GY   kf ID,LO,HI      Y-gate to B1
+   GYS  kf ID,LO,HI      Y-gate to B1, shift  B1
+   GYO  kf ID,LO,HI      Y-gate to B1, output B1
+   GYO  kf IDA,IDB,LO,HI Y-gate to B1,         output B1 (for ID=IDA,IDB)
+   GYSO kf ID,LO,HI      Y-gate to B1, shift & output B1
+   GYSO kf IDA,IDB,LO,HI Y-gate to B1, shift & output B1 (for ID=IDA,IDB)
+   GYA  kf ID,LO,HI,FAC  Y-gate to B1, B2=B2+FAC*B1
+   GYSA kf ID,LO,HI,FAC  Y-gate to B1, shift B1, B2=B2+FAC*B1
+ 
+   GX   kf ID,LO,HI      X-gate to B1
+   GXS  kf ID,LO,HI      X-gate to B1, shift  B1
+   GXO  kf ID,LO,HI      X-gate to B1, output B1
+   GXO  kf IDA,IDB,LO,HI X-gate to B1,         output B1 (for ID=IDA,IDB)
+   GXSO kf ID,LO,HI      X-gate to B1, shift & output B1
+   GXSO kf IDA,IDB,LO,HI X-gate to B1, shift & output B1 (for ID=IDA,IDB)
+   GXA  kf ID,LO,HI,FAC  X-gate to B1, B2=B2+FAC*B1
+   GXSA kf ID,LO,HI,FAC  X-gate to B1, shift B1, B2=B2+FAC*B1
+   O1                    Output B1
+   O2                    Output B2
+ 
+   U300.240  Commands for General 2-D Projections
+ 
+   PJ   kf ID,BID,DEGR               PROJ TO B1
+   PJS  kf ID,BID,DEGR               Proj to B1, shift  B1
+   PJO  kf ID,BID,DEGR               Proj to B1, output B1
+   PJO  kf IDA,IDB,BIDA,BIDB,DEGR -  Proj to B1, output B1
+                                     (outer loop on BID, inner loop on ID)
+   PJSO kf ID,BID,DEGR               Proj to B1, shift & output B1
+   PJSO kf IDA,IDB,BIDA,BIDB,DEGR -  Proj, shift, output
+                                     (outer loop on BID, inner loop on ID)
+   PJA  kf ID,BID,DEGR,FAC           Proj to B1, B2=B2+FAC*B1
+   PJSA kf ID,BID,DEGR,FAC           Proj to B1, shift B1, B2=B2+FAC*B1
+ 
+   PJAL                              Project all bananas in currently open
+                                     BAN-file for HIS-files, ID's & DEGR'S
+                                     contained therin
+   O1                                Output B1
+   O2                                Output B2
+ 
+   ID denotes histogram ID, BID denotes Banana ID
+   (DEGR = Projection-axis angle in degrees)
+   kf is an optional file-code = N,O,P,Q,R,S (default = N)
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  20
+ 
+   U300.250  Commands for Operations on Buffer-1 & Buffer-2
+ 
+   M1  XM             Multiply B1 by XM
+   M2  XM             Multiply B2 by XM
+   C1  ICRUN          Crunch B1  by ICRUN (standard crunch unchanged)
+   C2  ICRUN          Crunch B2  by ICRUN (standard crunch unchanged)
+   S1                 Shift  B1  by standard GASP
+   S2                 Shift  B2  by standard GASP
+   S1  XI1,XI2,XF1,XF2,NCF - Shift B1 as specified (standard GASP unchanged)
+   S2  XI1,XI2,XF1,XF2,NCF - Shift B2 as specified (standard GASP unchanged)
+   Z1                 Zero B1
+   Z2                 Zero B2
+   A12  FAC           B2=B2+FAC*B1
+   A21  FAC           B1=B1+FAC*B2
+   SWAP               Swap B1 & B2
+   M2D1 FAC           B2=(FAC*B2)/B1
+ 
+   MX12               B2=MAX(B1,B2) channel-by-channel
+   MX21               B1=MAX(B1,B2) channel-by-channel
+   MN12               B2=MIN(B1,B2) channel-by-channel
+   MN21               B1=MIN(B1,b2) channel-by-channel
+ 
+   O1                 Output B1
+   O2                 Output B2
+ 
+   U300.260  Commands which Show Data, Count-Sums etc (from Bufs-1 & -2)
+ 
+   PR1                Print   Buffer-1
+   PR2                Print   Buffer-2
+ 
+   D1   LO,HI         Display Buffer-1 (channels LO thru HI)
+   D2   LO,HI         Display Buffer-2 (channels LO thru HI)
+ 
+   SUM1 LO,HI         Display sum of counts LO-thru-HI of B1
+   SUM2 LO,HI         Display sum of counts LO-thru-HI of B2
+ 
+   COMP NCH           Compare first NCH-channels of B1 & B2
+                      (gives # counts and # mis-matches)
+   GEN  ID,KO,KX,NCH  Generate test spectrum in B1 (NCH channels)
+                      Channel contents = KO+KX*(channel#+1)
+ 
+   U300.270  Commands which Modify Buffer Contents
+ 
+   SET1 ICN,YV        Set channel ICN of B1 to YV
+   SET2 ICN,YV        Set channel ICN of B2 to YV
+   SET1 LO,HI,YV      Set channels LO-thru-HI of B1 to YV
+   SET2 LO,HI,YV      Set channels LO-thru-HI of B2 to YV
+   SET1 LO,HI,YA,YB   Set channels LO-thru-HI of B1 to YA-thru-YB
+   SET2 LO,HI,YA,YB   Set channels LO-thru-HI of B2 to YA-thru-YB
+   ADD1 ICN,YV        Add YV to channel ICN of B1
+   ADD2 ICN,YV        Add YV to channel ICN of B2
+   ADD1 LO,HI,YV      Add YV to channels LO-thru-HI of B1
+   ADD2 LO,HI,YV      Add YV to channels LO-thru-HI of B2
+   ADD1 LO,HI,YA,YB   Add YA-thru-YB to channels LO-thru-HI of B1
+   ADD2 LO,HI,YA,YB   Add YA-thru-YB to channels LO-thru-HI of B2
+                      (i.e. a strait line)
+   MSK1 LO,HI,MSK     Mask (with MSK)   channels LO-thru-HI of B1
+   MSK2 LO,HI,MSK     Mask (with MSK)   channels LO-thru-HI of B2
+                      (MSK is entered in hexadecimal)
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  21
+ 
+   U300.280  Commands Related to Printer Plots
+ 
+   SKRZ               Set to skip repeated-zeros for printer plots
+   PLRZ               Set to plot repeated-zeros for printer plots
+ 
+   PLG  ID,LO,HI,NCYC      - Input to B1 & LOG plot
+   PLN  ID,LO,HI,NCFS      - Input to B1 & LIN plot
+   PLG  IDA,IDB,LO,HI,NCYC - Input to B1 & LOG plot (for ID=IDA,IDB)
+   PLN  IDA,IDB,LO,HI,NCFS - Input to B1 & LIN plot (for ID=IDA,IBD)
+ 
+   PLG1 LO,HI,NCYC    Log    Printer-plot of Buffer-1
+   PLG2 LO,HI,NCYC    Log    Printer-plot of Buffer-2
+   PLN1 LO,HI,NCFS    Linear Printer-plot of Buffer-1
+   PLN2 LO,HI,NCYC    Linear Printer-plot of Buffer-2
+ 
+   (NCFS = # of counts full-scale for LIN plots)
+   (NCYC = # of cycles            for LOG plots)
+ 
+   U300.290  Discussion of Gain-Shifts and Compressions
+ 
+   Gain  shifts are specified by five parameters - XI1, XI2, XF1, XF2 and NCF.
+   XI1 and XI2 represent two locations (in channel-#  units)  in  the  initial
+   1-D  histogram  and  XF1  and  XF2 represent corresponding locations in the
+   final histogram (i.e. after the transformation). That is:
+ 
+         XF=A+B*XI
+   where,
+         B=(XF2-XF1)/(XI2-XI1)
+   and
+         A=XF1-B*XI1
+ 
+   NCF gives the number of channels in the histogram after the transformation.
+   If   NCF=0,   the   final   #-of-channels  is  determined  by  the  initial
+   #-of-channels NCI and the transformation specified.  If  NCF=-1  the  final
+   #-of-channels  is set equal to NCI. Counts are redistributed into the final
+   set of channels (bins) by assuming a uniform distribution of counts in  the
+   initial  bins. Data shifted below channel-#-0 and above channel-#-NCF-1 are
+   lost and gone forever.
+ 
+   Gain-shifts are always "in place"
+   CRUN IVAL (i.e. standard crunch) does it at "input time"
+   Data is kept internally as floating - is converted to fixed on output
+   All output from DAMM is 32 bits/channel
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  22
+ 
+ 
+   U300.300  HIS-file (Create, Expand, Copy, Add, Gain-Shift, etc)
+ 
+   The commands given below may be used to Create a new HIS-file or to  Expand
+   an  existing HIS-file (by specifying additional entries) for support of the
+   operations described on the following pages of this section.
+ 
+   HOU  fil.his     - Opens fil.his for histogram Output
+                    - If non-existant, Prompts for permission to create it
+ 
+   HDIM N           - HIS dimension (N = 1 or 2) (required)
+ 
+   HWPC N           - half-wds/chan (N = 1 or 2) (required)
+ 
+   HPAR PX PY       - Parameter IDs              (reference only)
+ 
+   LRAW LX LY       - Raw    parm lengths        (reference only)
+ 
+   LSCL LX LY       - Scaled parm lengths        (reference only)
+ 
+   MINC MNX MNY     - Min chan#s for X & Y       (required)
+ 
+   MAXC MXX MXY     - Max chan#s for X & Y       (required)
+ 
+   XLAB labl-x      - X-label (ASCII)            (reference only)
+ 
+   YLAB labl-y      - Y-label (ASCII)            (reference only)
+ 
+   HTIT title       - Title   (ASCII)            (reference only)
+ 
+   HEDD             - Displays current data to be used for next his generation
+ 
+   HGEN HID         - Generates histogram HID using current data
+ 
+ 
+   When the HGEN command is entered, the data associated  with  HDIM,  MINC  &
+   MAXC  will  be  checked  for  legallity and HID, given in the HGEN command,
+   will be checked for multiple definition.
+ 
+   Note for Input HIS-file
+ 
+   o......If HIS-file is shorter than implied by DRR-file,  the  open  request
+          is rejected.
+ 
+   Notes for Output HIS-file
+ 
+   o......If  HIS  &  DRR files do not exist, you will be asked for permission
+          to create them.
+ 
+   o......If DRR-file  exists  but  HIS-file  does  not,  you  are  asked  for
+          permission to create the HIS-file and then extend it.
+ 
+   o......If  HIS-file  exists  but  DRR-file  does  not,  the open request is
+          rejected.
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  23
+ 
+ 
+   U300.300  HIS-file (Create, Expand, Copy, Add, Gain-Shift, etc) (continued)
+ 
+   DAMM can copy, add (or subtract) and gain-shift 1-D or 2-D histograms  from
+   an input HIS-file to an output HIS-file.
+ 
+   (1)....All  operations  are  from  an  INPUT-file  and INPUT-ID (IDI) to an
+          OUTPUT-file and OUTPUT-ID (IDO).
+ 
+   (2)....For HCOP and HADD operations, the output  histogram  must  have  the
+          same dimensions and ranges as the input histogram.
+ 
+   (3)....For  SHIF  (gain-shift)  and SHAD (gain-shift & add) operations, the
+          dimensions of the output histogram need not match the input.
+ 
+   (4)....The number of bits-per-channel (16 or 32) need not be the  same  for
+          input and output.
+ 
+   (5)....Gain-shifts  are  accomplished  by  converting  the data to floating
+          point, rebinning (with count fractionation) and  finally  converting
+          back to integer.
+ 
+   (6)....Fractional copies and adds are also done in floating point.
+ 
+   (7)....Final  conversion  from  floating  point  to  integer  involves  the
+          addition of a  random  number  whose  range  is  0.0  to  1.0.  This
+          procedure  results  in  slight  differences  in  the total number of
+          counts for the input and output histograms.
+ 
+   ==========================================================================
+   The commands given on the preceeding page may be used to create and/or
+   expand the output HIS- and DRR-files as needed.
+   ==========================================================================
+ 
+   HOU  FIL.HIS               - Opens HIS-file for output
+ 
+   SNEG OFF                   - Turn OFF reset of neg 16bit out data (default)
+   SNEG IV                    - Says set negative 16-bit output data to IV
+                              - (you MUST use SIDA mode for this to work!!)
+ 
+   GSX  XI1,XI2 XF1,XF2       - Defines   X-gain-shift (described below)
+   GSY  YI1,YI2 YF1,YF2       - Defines   Y-gain-shift (described below)
+ 
+   GSXOF                      - Turns X-gain-shift OFF (GSX turns it ON)
+   GSYOF                      - Turns Y-gain-shift OFF (GSY turns it ON)
+ 
+   HSTA                       - Shows files open & gain-shift data
+ 
+   HCOP kf IDI,IDO <,F>       - Copies F*IDI (input) to IDO (output)
+                                (If F is not entered, F=1)
+ 
+   Where kf is an optional file-code field = N,O,P,Q,R,S (default = N)
+ 
+   ===========================================================================
+   For HCOP: If IDO does not exist, it will be created with the same
+   attributes (same header data) as IDI.
+   ===========================================================================
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  24
+ 
+ 
+ 
+   U300.300  HIS-file (Create, Expand, Copy, Add, Gain-Shift, etc) (continued)
+ 
+   HADD kf IDI,IDO <,FI><,FO> - Adds FI*IDI to FO*IDO
+                                (If FI is not entered, FI=1)
+                                (If FO is not entered, FO=1)
+                                (If FO is entered, FI must be entered)
+ 
+   HDIV kf IDI,IDO <,FI>      - Divides FI*IDI by IDO & saves in IDO
+ 
+   SHIF kf IDI,IDO <,FI>      - Gain-shifts IDI & stores in IDO
+   SHAD kf IDI,IDO <,FI><,FO> - Gain-shifts IDI & adds   to IDO
+ 
+   Where kf is an optional file-code field = N,O,P,Q,R,S (default = N)
+ 
+   HSET IDO,IV                - Sets IDO on output to IV
+   HRAN IDO,IV                - Sets IDO on output to IV (counting statistics)
+   HZOT IDO                   - Sets IDO on output to 0
+ 
+                              X- and Y-Gain-shifts
+ 
+   X-gain-shifts are specified by the parameters - XI1, XI2, XF1 & XF2.
+   Y-gain-shifts are specified by the parameters - YI1, YI2, YF1 & YF2.
+ 
+   For an X-gain-shift, XI1 and XI2 represent  two  locations  (in  channel  #
+   units)  in  the  initial  spectrum  and XF1 and XF2 represent corresponding
+   locations in the final spectrum (i.e. after transformation). that is:
+ 
+            XF=A+B*XI
+   where:   B=(XF2-XF1)/(XI2-XI1)
+   and      A=XF1-B*XI1
+ 
+   The "final" # of channels is determined by the "initial" # of channels  and
+   the  transformation  specified. Counts are redistributed into the final set
+   of channels (bins) by assuming a uniform  distribution  of  counts  in  the
+   initial  bins.  Data  shifted  out  of the range of the final histogram are
+   lost and gone forever!
+ 
+   The rules and procedures are identical for Y-gain-shifts.
+ 
+                                    COMMENTS
+ 
+   (1)....If   gain-shift  specifications  are  not  given  (or  turned  off),
+          bin-widths will be the same for output and input.
+ 
+   (2)....Any data which does  not  fall  within  the  ranges  of  the  output
+          histogram will be lost (without comment).
+ 
+   (3)....Data  will  be  properly  positioned in the output histogram even if
+          the ranges of the input and output  are  different.  That  is,  data
+          will  appear  in  that region of the output histogram which overlaps
+          the gain-shifted input histogram.
+    
+   23-Aug-14 ........... U300  DAMM - MANIPULATION - WTM ............ PAGE  25
+ 
+ 
+   U300.310  HIS-file (Adding Subtracting Complete HIS-files)
+ 
+   Commands which add & subtract identically structured  his-files .............
+ 
+   The following commands support the addition  and  subtraction  of  complete
+   his-files.  The  associated  drr-files  must have identical structures. The
+   files may  contain  any  combination  of  1D,  2D,  INTEGER*2  &  INTEGER*4
+   histograms
+ 
+   -----------------------------------------------------------------------------
+   FADI   inpfile.his  ;Opens input  his-file - .his & .drr must already exist
+                       ;cannot be same as output
+ 
+   FADO   outfile.his  ;Opens output his-file - .his & .drr must already exist
+                       ;cannot be same as input but must have same structure
+ 
+   FADN   outfile.his  ;Creates & initializes   outfile.his & outfile.drr
+                       ;with same attributes as inpfile.his & inpfile.drr
+                       ;outfiles .his & .drr must NOT already exist
+ 
+   FADZ                ;Zeros outfile.his
+ 
+   FADF                ;Displays FAD files which are open
+ 
+   FADD                ;Adds      inpfile.his to   outfile.his
+ 
+   FSUB                ;Subtracts inpfile.his from outfile.his
+ 
+   CLIF                ;Closes input  FAD-file if open
+ 
+   CLOF                ;Closes output FAD-file if open
+ 
+   Ctrl/C              ;Interrupts (aborts) an ADD-in-progress
+                       ;Interrupts (aborts) a ZERO-in progress
+   -----------------------------------------------------------------------------
+   NOTE: The input & output file assignments here are NOT the same as those
+         assigned by the damm commands IN, OU & HOU. However, you may open these
+         files for display by commands such as IN, QF, etc.
+         For example, you may do the following:
+ 
+   fadi infile.his  !Open infile.his for add/subtract input
+   fado oufile.his  !Open oufile.his for add/subtract output
+   in   infile.his  !Open infile.his for normal display etc.
+   qf   oufile.his  !Open oufile.his for normal display etc.
+   -----------------------------------------------------------------------------
+    
+   23-Aug-14 ............. U300  DAMM - BANANAS - WTM ............... PAGE  26
+ 
+   U300.350  Bananas - Definition, Rules, Construction & Display
+ 
+   Free-form-gates  (or  Banana-gates  - Bananas for short) are 2-D regions of
+   arbitrary shape which are specified by  a  list  of  X,Y-points  (channel-#
+   coordinates).  Each  Banana  on  a given BAN-file is stored and recalled by
+   means of an identification number (ID #). Attempts  to  store  two  Bananas
+   with the same ID will be rejected. The rules for Bananas are listed below:
+ 
+   (1) Banana coordinates nust be given in CLOCKWISE order.
+   (2) The Banana is formed by connecting X,Y-points with strait lines.
+   (3) The last point is connected to the first by the program.
+   (4) No line segment of the Banana should intersect another.
+   (5) A maximum of 63 points may be specified for any one Banana.
+   (6) A maximim of 880 Bananas may be stored on a given BAN-file.
+ 
+   Bananas may be displayed in two different forms (OPEN and CLOSED).
+ 
+   A  CLOSED  Banana  is  one which has just been recalled from or stored on a
+   BAN-file (i.e. there is an exact image on disk). There  may  be  up  to  20
+   CLOSED  Bananas  displayed  at once. You can do the following things with a
+   CLOSED Banana:
+ 
+   GET      -  recall from disk (prompted for ID)     by typing  G
+   OPEN     -  for modification (change to OPEN)      by typing  O
+   FORGET   -  delete from display                    by typing  F
+   KILL     -  delete from display and BAN-file       by typing  K
+   TOTALIZE -  counts contained within Banana         by typing  T
+   PROJECT  -  (X & Y) and save on DAMQ8Q.SPK         by typing  P
+ 
+   An OPEN Banana is one which is open for creation or  modification.  If  the
+   Banana  is  being  newly  created  there  will be no corresponding image or
+   partial image on a BAN-file. Only one such Banana  can  exist  at  a  given
+   time. You can do the following things with a OPEN Banana:
+ 
+   ADD      -  X,Y-point at cursor position           by typing  A
+   INSERT   -  X,Y-point at cursor position           by typing  I
+   MOVE     -  nearest X,Y-point to cursor position   by typing  M
+   SAVE     -  on BAN-file (prompted for ID)          by typing  S
+   REPLACE  -  on BAN-file (with old ID)              by typing  R
+   ZERO     -  all X,Y-points                         by typing  Z
+   TOTALIZE -  counts contained within Banana         by typing  T
+   PROJECT  -  (X & Y) and save on DAMQ8Q.SPK         by typing  P
+ 
+   All  Banana  references  are  made in cursor mode. ADD, INSERT, MOVE, SAVE,
+   REPLACE and ZERO refer only to the OPEN Banana.  Other  references  (except
+   for  GET)  are  made  by  moving  the cursor such that it is closer to some
+   point on the Banana of interest than it  is  to  any  point  on  any  other
+   Banana.
+ 
+               ALL BANANAS MUST BE CONSTRUCTED IN CLOCKWISE ORDER
+    
+   23-Aug-14 ............. U300  DAMM - BANANAS - WTM ............... PAGE  27
+ 
+   U300.360  Bananas - Projections
+ 
+   Projections via the PJ-command
+ 
+   Data  which fall within and on the boundries of a Banana are projected onto
+   the X-axis of a coordinate system which is rotated through  an  angle  DEGR
+   with  respect  to  the  systen  in  which data channel-# (0,0) falls at the
+   origin and the first and second indices of the histogram array  define  the
+   X-  and  Y-axis,  respectively.  Channel-# XP in the projected histogram is
+   calculated from channel-# X,Y in the 2-D histogram by an expression of  the
+   following form:
+ 
+         XP=A+COS(DEGR)*X+SIN(DEGR)*Y
+ 
+         where,
+ 
+         A=0.0                               For DEGR =   0 -  90
+ 
+         A=-COS(DEGR)*XMAX                   For DEGR =  90 - 180
+ 
+         A=-COS(DEGR)*XMAX-SIN(DEGR)*YMAX    For DEGR = 180 - 270
+ 
+         A=-SIN(DEGR)*YMAX                   For DEGR = 270 - 360
+ 
+ 
+   XMAX  and  YMAX  are  the  "dimensions" of the 2-D histogram. The effect of
+   this transformation is  to  make  all  channel  numbers  in  the  projected
+   histogram positive.
+ 
+   NOTE:  The  "length"  of  the  projected  histogram  may  be  as  large  as
+          SQRT(XMAX**2+YMAX**2).
+ 
+   Projections via the P-command
+ 
+   Each time DAMM is executed it  will  create  a  new  version  of  the  file
+   DAMQ8Q.SPK  for  the  storage  of  projections. The file is only created if
+   projrctions are actually made.
+ 
+   When you project  a  Banana,  both  X-  and  Y-projections  are  stored  on
+   DAMQ8Q.SPK  under  the  ID-numbers  displayed.  These 1-D histograms may be
+   displayed (or otherwise used) in the normal manner for a SPK-file. Use  the
+   P-qualifier  to  display  spectra  from  DAMQ8Q.SPK  without   explicitally
+   opening it. For example, to display ID numbers 1,3,5 from DAMQ8Q.SPK, type:
+ 
+   D P 1,3,5
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  28
+ 
+   U300.400  FITTING - Introduction & General Features
+ 
+   You  specify  how fitting is to be carried out by supplying a number of Fit
+   Specification Data Sets which may be given in  any  order.  Many  of  these
+   have  default  values  (see  SEC#  U300.450).  After the fitting process is
+   specified, one or more Fit Requests are entered. Subsequently, some or  all
+   of  the  Fit  Specifications  may  be changed and more Fit Requests entered
+   etc. etc.
+ 
+                                GENERAL FEATURES
+ 
+   (1)....Fit specifications may be entered interactively or read from a  file
+          or a combination of the two methods may be used.
+ 
+   (2)....Peak  and background intensities are determined in a weighted linear
+          least-squares  fit  while  peak  positions,  widths,  and  asymmetry
+          parameters  are  determined  by  a  non-linear  least-squares search
+          (either Gradient search or Gauss method -  See  SEC#s  U300.490  and
+          U300.500).
+ 
+   (3)....Peak  positions  may  be typed in or selected interactively or found
+          automatically.
+ 
+   (4)....Spectra are fitted one section at a time and can  be  no  more  than
+          2048 channels in length.
+ 
+   (5)....In  the gradient search mode (FIT command), each section may contain
+          a total of 30 peaks and background terms. That  is,  the  number  of
+          linear  coefficients  to  be  determined in the linear least squares
+          fit (# of peaks plus # of background terms) may not  exceed  30.  In
+          the  Gauss  mode,  only  5  peaks  are  allowed and asymmetry is not
+          supported.
+ 
+   (6)....Initial values of peak positions, widths  and  asymmetry  parameters
+          must  be  specified  by  the  user.  Different  values  of width and
+          asymmetry may be assigned to each peak or all peaks may be  assigned
+          the same values.
+ 
+   (7)....The  FWHM  for  peaks  in  a   section   may   vary   independently,
+          conditionally,  or  be  held  fixed.  All  peaks in a section may be
+          forced to have the same width or fixed relative widths.
+ 
+   (8)....Peak positions may be adjusted or held fixed.
+ 
+   (9)....Peaks may be gaussian or asymmetric (see SEC# U300.480 & U300.540
+ 
+   (10)...The background may be specified (by  up  to  50  X,Y-points)  or  be
+          determined  in  the  fit.  If  determined in the fit, the background
+          takes the form, Y = A + B*X + C*X*X + D*X*X*X + . .  .  .  with  the
+          number of terms in the power series specified by the user.
+ 
+   (11)...The  output  includes  the  Fit  Specification Data, peak positions,
+          widths, energies, areas and uncertainties (in percent) as well as  a
+          printer plot of the fit on a 0.5 to 5 cycle plot.
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  29
+ 
+   U300.410  Commands for 1-key (cursor mode)
+ 
+   One-Key cursor commands (valid following a DS or DSX command)
+ 
+   Type: C  - To enter cursor-mode
+ 
+   P/UP   Add/Delete peak to Library (pos specified by cursor)
+ 
+   M/M    Move nearest displayed peak to cusor pos (FW, ASYM unchanged)
+ 
+   X/UX   Fix/Free  peak position (for displayed peak nearest to cursor)
+ 
+   W/UW   Fix/Free  peak width    (for displayed peak nearest to cursor)
+ 
+   L/UL   Fix/Free  Lo-Side ASYM  (for displayed peak nearest to cursor)
+ 
+   H/UH   Fix/Free  Hi-Side ASYM  (for displayed peak nearest to cursor)
+ 
+   O/UO   Turn peak  ON/OFF       (for displayed peak nearest to cursor)
+ 
+   B/UB   Add/Delete background point at cursor position
+ 
+   <--    Set Expand Region   Lo-Limit
+ 
+   -->    Set Expand Region   Hi-Limit
+ 
+   [      Set Fit Region      Lo-Limit
+ 
+   ]      Set Fit Region      Hi-Limit
+ 
+   V      Make Expand- & Fit-region markers visible/invisible (toggles)
+ 
+   J      Junk (delete) all expand- & fit-region markers
+ 
+   / or ? Display chan#, cursor Y-value, chan contents
+ 
+   S      Disp sum, cent & fwhm of Fit-Reg - DAT([),DAT(]) defines BGD
+ 
+   A      Disp sum, cent & fwhm of Fit-Reg - CUR([),CUR(]) defines BGD
+ 
+   Q      Return from cursor control routine
+ 
+   E      Expand display (region defined by <--  -->)
+ 
+ 
+ 
+   See SEC# U300.110 or Type: h mous for use of Mouse Buttons.
+ 
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  30
+ 
+   U300.420  Setup Commands
+ 
+   Commands for entry of peak, background & skip-regions ---------------------
+ 
+   PZOT                   - Zero the Peak Library
+   PK     X,W,ASLO,ASHI   - List of complete peak specifications
+ 
+   BZOT                   - Delete Fixed Background array
+   BACK   X1,Y1 X2,Y2 ..  - X,Y-points for fixed background
+ 
+   SKIP                   - Without List turns SKIP OFF
+   SKIP   I1,I2 J1,J2 ..  - Up to 4 regions to omit from Fit
+ 
+   Commands for defining FWHM, ASYM, WLIM, ALIM, NBC, WOOD, ECAL -------------
+ 
+   FW     FWA,FWB,FWC     - Coefficients for standard width function
+   WLIM   FWLO,FWHI       - Variation limit factors for peak widths
+ 
+   ASYM   ASLO,ASHI       - Standard Lo-Side and Hi-Side asymmetries
+   ALIM   FALO,FAHI       - Variation limit factors for peak asymmetries
+ 
+   NBC    NBC             - Number of power series terms in variable BGD
+   WOOD   ON/OFF          - Turn Woods-Saxon BGD term ON/OFF (default OFF)
+                          - ON creates an additional background component
+                          - with a Woods-Saxon "jog" under each peak which
+                          - is porportional to the peak intensity.
+ 
+   ECAL   ECO,ECA,ECB     - Coefficients for standard energy calibration
+ 
+   Commands for control of non-linear parameter variation --------------------
+ 
+   DPX    XSTEP,DXMAX     - Initial step size and limit for peak pos
+   DEL    DEL,DELFAC,NDEL - Initial step size, step size multiplier and
+                          - number of DEL-values to use
+ 
+   VB                     - Use Variable Background (the default)
+   FB                     - Use Fixed Background if available
+ 
+   VX     KVAR            - Kind of variation for peak positions
+   VW     KVAR            - Kind of variation for peak widths
+   VALO   KVAR            - Kind of variation for Lo-Side asymmetries
+   VAHI   KVAR            - Kind of variation for Hi-Side asymmetries
+ 
+          KVAR = UIND     - says vary Unconditionally, Independently
+               = CIND     - says vary   Conditionally, Independently
+               = ULOC     - says vary Unconditionally, Locked
+               = CLOC     - says vary   Conditionally, Locked
+               = FIX      - says keep Fixed - this the default assignmemt
+ 
+   Conditional says hold Fixed if peak so specified.
+ 
+   Unconditional says vary regardless of peak specifications.
+ 
+   Independent says given parameter-types are varied independently.
+ 
+   Locked  says  given parameter-types (width for example) are varied together
+          (multiplied by the same factor) in the non-linear search.
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  31
+ 
+   U300.430  Display of Data, Fits and Printer-plots
+ 
+   Commands for general display control --------------------------------------
+ 
+   FIG    N           - Select screen configuration number-N
+   WIN    N           - Select window-N for subsequent displays
+   LIN/LOG            - Set graphic display to LIN (default) or LOG
+   DMM    YMIN,YMAX   - Set display-range (YMIN & YMAX)
+   DL     ILO,IHI     - Set display-range (channel# limits)
+   DS     ID          - Display spectrum# ID (range defined by DL)
+   DS     ID,ILO,IHI  - Display spectrum# ID (DL values replaced)
+                        (MAX value of IHI-ILO = 4095)
+   DSX    ID          - Display Data defined by Expand Region
+   C                  - Enters 1-key cursor-mode
+ 
+   Commands related to display of FITS ---------------------------------------
+ 
+   MON/MOF            - Peak Markers ON/OFF for DF (default = ON)
+   DFI                - Set to display (DF ) DATA,FIT,BGD (default)
+   DPK                - Set to display (DF ) DATA,FIT,PEAKS,BGD
+   DPPB               - Set to display (DF ) DATA,FIT,(PEAKS+BGD),BGD
+   DF                 - Display Fit (channel-limits given by Fit-range)
+   DF     ILO,IHI     - Display Fit (channel-limits given by ILO,IHI)
+   DC     NPK         - Display Calculated peak #  NPK+ RESIDUAL
+ 
+   PRP    XLO,XHI     - Display peaks from Library in range XLO thru XHI
+   PRP                - Display all peaks from Library
+   PRB                - Display all fixed Bgd-points
+   FSTAT              - Display current fit-parameters
+   DR                 - List results of last Fit on VDT (terminal)
+ 
+   Commands related to printer-plots of results ------------------------------
+ 
+   KPPL   NONE        - Says do no printer plots
+   KPPL   FITS        - Says plot FITS only (the default)
+   KPPL   ALL         - Says plot FITS, COMPONENTS and RESIDUALS
+ 
+   PR                 - Print and Plot results of last Fit on printer
+ 
+   Commands related to peak-finding ------------------------------------------
+ 
+   FIND  BIAS,FWHM    - Enables  peak-finding (see SEC# U300.155)
+   FIND               - Enables  peak-finding with (BIAS=5, FWHM=5)
+   NOFI               - Disables peak-finding
+ 
+   If FIND is enabled (see SEC# U300.155 for general details), DAMM will do  a
+   peak  find  within  the  display  region each time a DS (or DSX) command is
+   given. An attempt will then be made to add the newly  found  peaks  to  the
+   internal  peak  library.  If  a  newly  found  peak is closer than 0.5*FWHM
+   channels to an existing library peak, it will not be  added.  Finally,  all
+   library  peaks  will  be  marked  on  the  display  in the usual manner. No
+   distinction is made between "found peaks" and "manually entered peaks".
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  32
+ 
+   U300.440  FIT Execution Commands
+ 
+   Commands for FIT execution ------------------------------------------------
+ 
+   FIT    ID,ILO,IHI  - Fit Request - (non-linear gradient search)
+   GFIT   ID,ILO,IHI  - Fit request - (gaussian method)
+   RFIT   ID,ILO,IHI  - Resume FIT/GFIT start with Parms from last Fit
+   LFIT   ID,ILO,IHI  - Linear Fit - no non-linear search
+                      - (Fit-range specified by ILO,IHI)
+   FIT    ID X        - Fit Range specified by cursors (Fit Region)
+   GFIT   ID X        - Fit Range specified by cursors (Fit Region)
+   RFIT   ID X        - Fit Range specified by cursors (Fit Region)
+   LFIT   ID X        - Fit Range specified by cursors (Fit Region)
+ 
+   Ctrl/C             - Terminates Fit-in-prograss
+ 
+   U300.450  FIT Parameters - Saving, Setting, Default
+ 
+   Commands which save FIT parameters in memory library ----------------------
+ 
+   SAV    I,J  - Save all Parms from peaks I thru J of last Fit in PK-LIB
+   SAX    I,J  - Save X-Parms   for  peaks I thru J of last Fit
+   SAW    I,J  - Save W-Parms   for  peaks I thru J of last Fit
+   SAL    I,J  - Save ASL-Parms for  peaks I thru J of last Fit
+   SAH    I,J  - Save ASH-Parms for  peaks I thru J of last Fit
+   (If I,J ommitted, indicated Parms from ALL peaks are saved)
+ 
+   Commands which set FIT parameters -----------------------------------------
+ 
+   SET- X1,X2          - Set STD WIDTH and ASYM for peaks in range X1-X2
+                         values (defined by FWA, FWB, FWC, ASLO, ASHI)
+ 
+   SETW X1,X2          - Set WIDTH for peaks in range X1-X2 to STD value
+   SETW X1,X2,WA,WB,WC - Set WIDTH for peaks in range X1-X2 to value
+                         defined by WA,WB,WC (FWA,FWB,FWC unchanged)
+ 
+   SETL X1,X2          - Set ASLO  for peaks in range X1-X2 to STD value
+   SETL X1,X2,ASLOT    - Set ASLO=ASLOT for peaks in range X1-X2
+ 
+   SETH X1,X2          - Set ASHI  for peaks in range X1-X2 to STD value
+   SETH X1,X2,ASHIT    - Set ASHI=ASHIT for peaks in range X1-X2
+ 
+   (If X1,X2,.. omitted, indicated Parms for ALL peaks are set)
+ 
+   List of default FIT parameters --------------------------------------------
+ 
+   DEL   = 0.05    FWLO = 0.5      VX   = CIND    NBC  = 2
+   DELFAC=0.25     FWHI = 2.0      VW   = CLOC    WOOD = OFF
+   NDEL  = 3       FALO = 0.5      VALO = FIX     KPPL = FITS
+   XSTEP = 0.2     FAHI = 2.0      VAHI = FIX
+   DXMAX = 5.0     ASLO = 0.0
+                   ASHI = 0.0
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  33
+ 
+   U300.460  Commands to Control Relative Peak-intensities
+ 
+   The following commands may be used to fix the  intensity  of  two  or  more
+   peaks relative to each other within a section being fitted:
+ 
+   RELI  X,R   Sets relative intensity of library-peak nearest chan-X to be R
+   RELI  ZOT   Deletes all relative intensity entries
+   RELI  OFF   Disables relative intensity control but saves previous entries
+   RELI  ON    Enables  relative intensity control (default)
+ 
+   NOTE:  RELI  specifications  must  be  entered  AFTER  the  associated peak
+   library entries are completed. RELI has no effect unless there two or  more
+   peaks  with specified relative intensities within the region being fitting.
+   R may be in any units however there is an 8 character limit on  the  number
+   entered!  Peak-areas will be in the same ratios as the relative intensities
+   specified ONLY if width & asymmetry parameters are the same for each peak.
+ 
+   U300.470  FIT Specification Details
+ 
+                   PK  Data Set - Complete Peak Specifications
+ 
+   The PK Data Set accomodates a full specification of the characteristics  of
+   each  individual  peak.  Up  to 100 peaks may be included in the list. Each
+   peak is specified by the following parameters.
+ 
+   X......Gives the initial peak position in channels.
+ 
+   W......Specifies the initial peak FWHM in channels. If  not  entered,  FWHM
+          is set to the value specified by FWA, FWB & FWC.
+ 
+   ASLO...Specifies the Lo-Side asymmetry parameter.
+ 
+   ASHI...Specifies the Hi-Side asymmetry parameter.
+ 
+                              Other Specifications
+ 
+   ECO,ECA,ECB...Defines  the  spectrum  energy  calibration (not required for
+          fitting) through the relation;
+ 
+          E = ECO + ECA*(CHAN #) + ECB*(CHAN #)**2
+ 
+   FWA,FWB,FWC...Defines the peak  WIDTH  as  a  function  of  channel  number
+          through the relation;
+ 
+          FWHM(CHANNELS)=FWA+FWB*SQRT(CHAN #)+FWC*(CHAN #)
+ 
+   ASLO,ASHI...Are  the  initial  values  of the Lo-Side and Hi-Side asymmetry
+          parameters. If this specification is used, the initial  values  will
+          be the same for all peaks.
+ 
+   FWLO...Is  the  minimum  fraction of the initially specified value by which
+          any peak width may be reduced.
+ 
+   FWHI...Is the maximum fraction of the initially specified  value  by  which
+          any peak width may be increased.
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  34
+ 
+   U300.470  FIT Specification Details (continued)
+ 
+   FALO...Is  the  minimum  fraction of the initially specified value by which
+          any peak asymmetry parameter may be reduced.
+ 
+   FAHI...Is the maximum fraction of the initially specified  value  by  which
+          any peak asymmetry parameter may be increased.
+ 
+   DEL....Specifies  the  fraction  by  which  the  peak  width  and  the peak
+          asymmetry parameters are to be changed in  each  step  of  the  non-
+          linear search. For example,
+ 
+                      (NEW WIDTH) = (OLD WIDTH)*(1.0+-DEL)
+ 
+   DELFAC-Is  a  factor  by  which  the  current value of DEL is multiplied in
+          order to obtain a new (smaller) value. Typically one starts  with  a
+          fairly  large value of DEL (say 0.02 to 0.05) and subsequently makes
+          one or more reductions in order to  achieve  a  greater  convergence
+          speed.
+ 
+   NDEL...Is the number of DEL-values to be used
+ 
+   XSTEP..Is  the maximum amount (in channels) that a peak may be moved in any
+          one step in the  non-linear  search  for  the  best  fit.  XSTEP  is
+          reduced  at  the  same time and by the same factor (DELFAC) that DEL
+          is reduced.
+ 
+   DXMAX..Is the maximum number of channels (either + or -) that any  peak  is
+          allowed to be moved from its original position.
+ 
+   SKIP...Defines  up  to  four  regions  within the Fit Range which are to be
+          ignored in doing the fit.
+ 
+   KPPL=..NONE says do no printer plots.
+ 
+   KPPL=..FITS says plot the FIT (experimental and calculated spectrum on  the
+          same graph).
+ 
+   KPPL=..ALL  says  plot  the  FIT (as in KPPL...=FITS) and in addition, plot
+          each component (calculated peak)  together  with  the  corresponding
+          "residual  component".  What  do you mean by residual component, you
+          ask. When plotting the  Ith  peak  we  calculate  the  Ith  residual
+          component  by  subtracting  any background (specified or calculated)
+          as well as  all  calculated  peaks  other  than  the  Ith  from  the
+          experimental spectrum.
+ 
+   NBC....Denotes  the  number  of background components to be included in the
+          power series. NBC=2 Says use the form Y=A+B*X  and  NBC=4  says  use
+          Y=A  +  B*X + C*X*X + D*X*X*X. The number of peaks in a section plus
+          NBC must not exceed 30.
+ 
+                            (continued on next page)
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  35
+ 
+   U300.470  FIT Specification Details (continued)
+ 
+   WOOD...ON/OFF says turn Woods-Saxon background term ON/OFF. The default  is
+          OFF.  If  WOOD is ON, an additional background component is included
+          which has  a  Woods-Saxon  type  "jog"  under  each  peak  which  is
+          porportional to the peak intensity. The jog form is given by:
+ 
+          Y    =  1.0/(1.0+EXP(ARG))    ;where
+          ARG  =  4.714*(X0-X)/FWHM     ;and
+          X0=peak-position, X=channel-of-interest, and FWHM=peak-FWHM.
+ 
+          The  use  of such a background form could be helpful in the analysis
+          of weak peaks which are located on the  low-energy  side  of  strong
+          peaks. You will have to be the judge.
+ 
+   U300.480  Discussion of Peak Shapes
+ 
+   The most general peak shape allowed is given by
+ 
+                    YL=EXP(-(X-XO)**2/(A**2*(1+ASLO*(XO-X)/A)
+                    YH=EXP(-(X-XO)**2/(A**2*(1+ASHI*(X-XO)/A)
+ 
+   Where  A  is  the gaussian Half-Width at 1/e max and YL and YH describe the
+   curve on the Lo- and Hi-Sides, respectively. If  all  asymmetry  parameters
+   are  held  to zero, the shape is gaussian. The ASLO/ASHI parameters broaden
+   the Lo/Hi sides of the peak and result in  an  expodential  fall-off  (like
+   EXP(-(XO-X)/(A*ASLO))  for  example)  As  you  move  far away from the peak
+   maximum (i.e. channel  XO).  To  get  some  idea  of  what  size  asymmetry
+   parameters to use see Fig 1.
+ 
+   U300.490  Gradient-search Method (FIT request)
+ 
+   Each  time  the  program encounters a Fit Request, it searches the complete
+   Library and includes in the Fit all peaks which are ON and whose  positions
+   lie within the Range of Fit (i.e. between ILO and IHI).
+ 
+                   GENERAL PROCEDURE FOR THE NON-LINEAR SEARCH
+ 
+   (1)....The  initial  values  of  all  parameters  which  are  to  vary in a
+          non-linear way are set to the initial values specified by the user.
+ 
+   (2)....Each individual parameter is changed (both increased and  decreased)
+          by  an  amount  determined  by  DEL or XSTEP in order to establish a
+          "direction" (increase or decrease) for each parameter.
+ 
+   (3)....All parameters are changed in the direction determined in  step  (2)
+          and  in  step sizes determined by DEL and XSTEP until the Quality of
+          Fit is no longer improved.
+ 
+   (4)....Steps (2) and (3) are repeated until no improvment in  the  Fit  can
+          be made
+ 
+   (5)....DEL  and  XSTEP  are  multiplied by DELFAC and steps (2) and (3) are
+          repeated until no improvment in the Fit can be made.
+ 
+   (6)....Step (5) is repeated (NDEL-1) times.
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  36
+ 
+   U300.500  Gaussian Method (GFIT request)
+ 
+   The GFIT (Gauss-method)  fit  request  initiates  an  alternate  non-linear
+   procedure. Commands are:
+ 
+   GFIT ID,ILO,IHI
+   or
+   GFIT ID X
+ 
+   This  command  initiates  a nonlinear least-squares search by Gauss' method
+   as modified by Marquardt.  (See, for example, P.R. Bevington's  book, "Data
+   Reduction  and  Error  Analysis for the Physical Sciences", p. 235 ff.  The
+   routines used in GFIT are not Bevington's, but are those of M.J.  Saltmarsh
+   from the SEL 840-A program PKFT.)
+ 
+   The  search  continues  until  chi-squared  per degree of freedom (QFN) has
+   changed by less than 0.0001 or until  25  iterations  have  occurred.   The
+   search  may  be  resumed by the RFIT command.  The iteration number and QFN
+   appear on the right side of the screen.
+ 
+   The printer output from GFIT includes  absolute  error  estimates  for  the
+   peak  positions,  widths,  and areas which are derived from the correlation
+   matrix of the fit.  The percentage error in  the  area  is  printed  in the
+   column labeled PCE.
+ 
+   The  DAMM  commands  VW ULOC or VW CLOC (the default option) ae interpreted
+   to mean that the widths of the peaks are to be the same and vary  together.
+   Widths  may  be  varied  independently  by  VW UIND or VW CIND.  Individual
+   widths or positions may be  frozen  or  released  by  the  standard  cursor
+   commands  of DAMM.  If one or more widths are to be kept fixed while others
+   are varied, the command VW CIND or VW CLOC should be given; if UIND or ULOC
+   is given, the instruction to fix is ignored.
+ 
+   If GFIT is chosen, the program  attempts  to  estimate  the  width  of  the
+   tallest  peak  for  its initial guess of width.  If unsuccessful it reverts
+   to the standard DAMM procedure of using whatever was stored from  the  last
+   previous FW, SETW commands (or the default option, which is FW = 5).
+ 
+   At  present  The  GFIT  request  is  limited  to  fitting  a sum of up to 5
+   Gaussian peaks with a linear background.  The parameters ASLO and  ASHI for
+   asymmetric peaks are ignored.
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  37
+ 
+   U300.510  Estimated Uncertainties in Peak Areas
+ 
+   Estimated  uncertainties  should  always  be   viewed   with   considerable
+   skepticism,  especially  when  non-linerar  as  well  as   linear   fitting
+   processes  are involved, as it is here. The uncertainties in the peak areas
+   estimated by both the FIT and GFIT procedures  are  rather  "standard"  and
+   involve  CHISQ  (of  the  overall  fit) as well the diagonal element of the
+   inverse matrix corresponding  to  the  peak  intensity  in  question.  This
+   inverse  matrix  is  found  in  the  standard  linear least-squares fitting
+   process. See a book like "Bevington" or Cziffra  et.  al.  UCRL-8523,  1958
+   for a real discussion of this subject. I have used:
+ 
+   D(J) = SQRT(AINV(J,J)*QFN)     where;
+ 
+   D(J)      = the estimated uncertainty in the J-th fit parameter B(J)
+               (there is a B(J) for each peak-area(J))
+ 
+   QFN       = CHISQ/(#data-points  -  #adjustable-parameters)
+ 
+   AINV(J,J) = the J-th diagonal element of the inverse matrix found in the
+               linear least-squares fitting process.
+ 
+   PCE(J)    = 100*D(J)/B(J)  =  percent uncertainty in J-th peak-area.
+ 
+ 
+   U300.520  Reading Fit Results from damm.log
+ 
+   The  table  of  fit-results  recorded  on  damm.log,  as  a  result of a PR
+   command, includes flags of the form LAB$ to facillitate  the  location  and
+   decoding  of  relevant  data by other programs. Formats associated with the
+   different line-labels are listed below.
+ 
+   Label  Format
+   TIT$   (1X,15X,2I6,6X,20A4)
+   DEL$   (1X,2F10.0,I10,6F10.0)
+   SKP$   (1X,8I10)
+   CAL$   (1X,8F10.0,I10)
+   VAR$   (1X,6(6X,A4),I10)
+   FIT$   (1X,5F10.0,3F8.0,4F7.0,I5,I7)
+   GFI$   (1X,5F10.0,3F8.0,4F7.0,I5,I7)
+   BGD$   (1X,2F10.2)
+   QFN    (1X,6X,F10.0,11X,F10.0)
+ 
+   Alternatively,   one  may  make  use  of  the  routines  contained  in  the
+   internally documented demonstration program  samred.  The  source  of  this
+   program is in /usr/users/milner/Ddamm/samred.f.
+ 
+   U300.530  Common Problems
+ 
+   (1)....If  you  define  the  standard FWHM (via command: FW FWA,FWB,FWC) or
+          standard asymmetry parameters (via command:  ASYM  ASLO,ASHI),  this
+          does  not  re-define  such  parameters for previously defined peaks.
+          You must use SETW to do this (see SEC# U300.450).
+    
+   23-Aug-14 ............. U300  DAMM - FITTING - WTM ............... PAGE  38
+ 
+   U300.540  Peak Shape vs Asymmetry (Log plot)
+ 
+            YL=EXP(-(X-XO)**2/(A**2*(1+ASLO*(XO-X)/A)
+            YH=EXP(-(X-XO)**2/(A**2))
+   Y = 100  ------------------------------------------------------------------
+            SYMBOL  ASLO                            0
+                 0   0.0                          11 00
+                 2   0.2                         1     0
+                 4   0.4                        1
+                 6   0.6                       10       0
+                 8   0.8                      14
+                 1   1.0                     140         0
+                                            162
+              FWHM = 12                    1640           0
+                                          18 2
+                                         1864
+                                            20             0
+                                        1864
+                                       186
+                                      1   420               0
+                                     1 86
+                                      8  4
+                                    1  6  20                 0
+                                   1 8  4
+                                  1 8 6  2
+ 
+                                 1 8 6 4  0                   0
+                                1
+                                  8 6 4 2
+   Y = 10  ------------------- 1 8 -------------------------------------------
+                              1    6     0                     0
+                             1  8    4 2
+                                  6
+                            1  8    4
+                           1  8  6    2
+                                        0                       0
+                          1  8  6  4
+                         1
+                        1   8  6     2
+                           8      4
+                       1               0                         0
+                      1   8   6  4
+                                    2
+                     1   8   6
+                    1           4
+                   1    8   6
+                       8           2  0                           0
+                  1        6   4
+                 1    8
+                          6
+                1    8        4   2
+               1         6
+                    8                0                             0
+              1    8         4
+   Y = 1   -------------------------------------------------------------------
+ 
+                                    Figure 1
+    
+   23-Aug-14 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  39
+ 
+   U300.550  Screen Configurations
+ 
+   The sizes and locations of display windows are controlled by  one  or  more
+   of the commands - FIG, FIGF or FIGI.
+ 
+   FIG ID - Sets the number and size of display windows to that specified
+          by configuration number ID. A given configuration ID number
+          may specify up to 20 display windows. The default configuration
+          library contains ID-numbers 1 thru 16. Type: H FIG for a
+          display indicating the default sceen configurations or just
+          Type: FIG 1, FIG 2 ... FIG 16 and see what you get.
+ 
+   FIGF FILENAME - Requests that a new configuration library be read from
+          a file named FILENAME. The file /usr/hhirf/fig.dat (or the file
+          /home/upak/fig.dat) which contains the default configuration is
+          listed on the next next two pages. The **** in col-1 of the table
+          denote comment lines and are ignored in processing.
+ 
+   ****DEFAULT SCREEN-CONFIGURATION TABLE
+   ****--------------------------------------------------
+   ****FIG-ID   X0(PIX)   Y0(PIX)    W(PIX)    H(PIX)
+            1        30        84       540       480
+   ****
+            2         0        39       480       480
+            2       495        39       480       480
+   ****
+            3        30       369       540       300
+            3        30        39       540       300
+            3       585        39       390       390
+   ****
+            4         0       369       480       300
+            4         0        39       480       300
+            4       495       369       480       300
+            4       495        39       480       300
+   ****
+            5        30       489       480       195
+            5        30       264       480       195
+            5        30        39       480       195
+            5       525        39       435       435
+   ****
+            6         0       489       480       195
+            6         0       264       480       195
+            6         0        39       480       195
+            6       495       489       480       195
+            6       495       264       480       195
+            6       495        39       480       195
+   ****
+            7        30       534       480       135
+            7        30       369       480       135
+            7        30       204       480       135
+            7        30        39       480       135
+            7       525        39       435       435
+ 
+                    (continued on next page)
+    
+   23-Aug-14 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  40
+ 
+   ****DEFAULT SCREEN-CONFIGURATION TABLE (continued)
+   ****--------------------------------------------------
+   ****FIG-ID   X0(PIX)   Y0(PIX)    W(PIX)    H(PIX)
+            8         0       534       480       135
+            8         0       369       480       135
+            8         0       204       480       135
+            8         0        39       480       135
+            8       495       534       480       135
+            8       495       369       480       135
+            8       495       204       480       135
+            8       495        39       480       135
+   ****
+            9        30       579       480       105
+            9        30       444       480       105
+            9        30       309       480       105
+            9        30       174       480       105
+            9        30        39       480       105
+            9       525        39       435       435
+   ****
+           10         0       579       480       105
+           10         0       444       480       105
+           10         0       309       480       105
+           10         0       174       480       105
+           10         0        39       480       105
+           10       495       579       480       105
+           10       495       444       480       105
+           10       495       309       480       105
+           10       495       174       480       105
+           10       495        39       480       105
+   ****
+           11         0        39       960       525
+   ****
+           12         0       354       960       270
+           12         0        54       960       270
+   ****
+           13         0       489       960       195
+           13         0       264       960       195
+           13         0        39       960       195
+   ****
+           14         0       549       960       135
+           14         0       384       960       135
+           14         0       219       960       135
+           14         0        54       960       135
+   ****
+           15       240        39       750       750
+   ****
+           16         0        39       645       645
+   ---------------------------------------------------------------------------
+   FIG-ID  = Configuration ID number to be associated with window.
+   X0(PIX) = X-coordinate of upper left corner of window in pixels.
+   Y0(PIX) = Y-coordinate of upper left corner of window in pixels.
+   W(PIX)  = Width  of window in pixels.
+   H(PIX)  = Height of window in pixels.
+   ---------------------------------------------------------------------------
+ 
+   FIGI   Restores the configuration library to the default state.
+    
+   23-Aug-14 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  41
+ 
+   U300.560  Graphic Screen Color Mapping
+ 
+   The  colors (or grey scale) is controlled by means of a color map which has
+   40 entries that  specify  (red,  green,  blue)  intensities  in  the  range
+   0-65535.  The  default  table  contained  in  /usr/hhirf/cmap.dat   or   in
+   /home/upak/cmap.dat is listed below:
+ 
+       RED  GREEN   BLUE   ;ENTRY# - NORMAL USE ------------------------------
+ 
+         0      0      0  ;01 - BLACK
+     65535  65535  65535  ;02 - 1-D DISPLAY - COL(1) - FIT DATA
+     65535      0      0  ;03 - 1-D DISPLAY - COL(2)
+         0  65535      0  ;04 - 1-D DISPLAY - COL(3) - FIT CALC
+         0      0  65535  ;05 - 1-D DISPLAY - COL(4)
+     65535  65535      0  ;06 - 1-D DISPLAY - COL(5) - FIT BACK
+     65535      0  65535  ;07 - 1-D DISPLAY - COL(6)
+         0  65535  65535  ;08 - 1-D DISPLAY - COL(7)
+     65535  65535      0  ;09 - 1-D DISPLAY - COL(8)
+     65535  65535      0  ;10 - NOT USED FOR NOW
+         0      0  32767  ;11 - 2-D COLOR DISPLAY
+         0      0  65535  ;12 - 2-D COLOR DISPLAY
+     32767      0  32767  ;13 - 2-D COLOR DISPLAY
+     65535      0  65535  ;14 - 2-D COLOR DISPLAY
+     32767      0      0  ;15 - 2-D COLOR DISPLAY
+     65535      0      0  ;16 - 2-D COLOR DISPLAY
+     32767  32767      0  ;17 - 2-D COLOR DISPLAY
+     65535  65535      0  ;18 - 2-D COLOR DISPLAY
+     32767  32767  32757  ;19 - 2-D COLOR DISPLAY
+     65535  65535  65535  ;20 - 2-D COLOR DISPLAY
+     15000  15000  15000  ;21 - 2-D GREY-SCALE DISPLAY
+     20600  20600  20600  ;22 - 2-D GREY-SCALE DISPLAY
+     26200  26200  26200  ;23 - 2-D GREY-SCALE DISPLAY
+     31800  31800  31800  ;24 - 2-D GREY-SCALE DISPLAY
+     37400  37400  37400  ;25 - 2-D GREY-SCALE DISPLAY
+     43000  43000  43000  ;26 - 2-D GREY-SCALE DISPLAY
+     48600  48600  48600  ;27 - 2-D GREY-SCALE DISPLAY
+     54200  54200  54200  ;28 - 2-D GREY-SCALE DISPLAY
+     59800  59800  59800  ;29 - 2-D GREY-SCALE DISPLAY
+     65535  65535  65535  ;30 - 2-D GREY-SCALE DISPLAY
+     32767  32767  32767  ;31 - NOT USED FOR NOW
+     32767  65535  65535  ;32 - NOT USED FOR NOW
+     65535      0      0  ;33 - NOT USED FOR NOW
+     65535  65535  65535  ;34 - GCOR(1)
+     65535      0      0  ;35 - GCOR(2), SAM PK MARK,  FIT VAR MARK
+         0  65535      0  ;36 - GCOR(3), 1-D PK LAB, 2-D BAN & EX-MARK
+         0      0  65535  ;37 - GCOR(4), 1-D REG MARK, FIT VAR MARK
+     65535  65535      0  ;38 - GCOR(5), CURSOR
+     65535      0  65535  ;39 - GCOR(6)
+         0  65535  65535  ;40 - GCOR(7)
+ 
+   Different color mapping is accomplished by the CMAP command as shown below:
+ 
+   CMAP FILENAME  ;Processes a file FILENAME of the structure shown above
+                  ;and maps as  specified  therein.  The new mapping only
+                  ;takes place subsequent to the next FIG command.
+    
+   23-Aug-14 ........... U300  DAMM - CUSTOMIZING - WTM ............. PAGE  42
+ 
+   U300.570  Graphic Screen Black & White Mapping
+ 
+   When  using  black  &  white  monitors,  the table /usr/hhirf/bmap.dat, (or
+   /home/upak/bmap.dat) listed below, may be more useful.  If  you  are  using
+   the  REVV  mode,  then  table /usr/hhirf/bmapr.dat or /home/upak/bmapr.dat,
+   not listed here, should be used as a template. You will  probably  need  to
+   make  other  adjustments  in  order  to  achieve semi-satisfactory results.
+   Note: that table entries are labeled with their uses.
+ 
+       RED  GREEN   BLUE   ;ENTRY# - NORMAL USE ------------------------------
+ 
+         0      0      0  ;01 - BLACK
+     65535  65535  65535  ;02 - 1-D DISPLAY - COL(1) - FIT DATA
+     65535  65535  65535  ;03 - 1-D DISPLAY - COL(2)
+     65535  65535  65535  ;04 - 1-D DISPLAY - COL(3) - FIT CALC
+     65535  65535  65535  ;05 - 1-D DISPLAY - COL(4)
+     65535  65535  65535  ;06 - 1-D DISPLAY - COL(5) - FIT BACK
+     65535  65535  65535  ;07 - 1-D DISPLAY - COL(6)
+     65535  65535  65535  ;08 - 1-D DISPLAY - COL(7)
+     65535  65535  65535  ;09 - 1-D DISPLAY - COL(8)
+     65535  65535  65535  ;10 - NOT USED FOR NOW
+         0      0  32767  ;11 - 2-D COLOR DISPLAY
+         0      0  65535  ;12 - 2-D COLOR DISPLAY
+     32767      0  32767  ;13 - 2-D COLOR DISPLAY
+     65535      0  65535  ;14 - 2-D COLOR DISPLAY
+     32767      0      0  ;15 - 2-D COLOR DISPLAY
+     65535      0      0  ;16 - 2-D COLOR DISPLAY
+     32767  32767      0  ;17 - 2-D COLOR DISPLAY
+     65535  65535      0  ;18 - 2-D COLOR DISPLAY
+     32767  32767  32757  ;19 - 2-D COLOR DISPLAY
+     65535  65535  65535  ;20 - 2-D COLOR DISPLAY
+     15000  15000  15000  ;21 - 2-D GREY-SCALE DISPLAY
+     20600  20600  20600  ;22 - 2-D GREY-SCALE DISPLAY
+     26200  26200  26200  ;23 - 2-D GREY-SCALE DISPLAY
+     31800  31800  31800  ;24 - 2-D GREY-SCALE DISPLAY
+     37400  37400  37400  ;25 - 2-D GREY-SCALE DISPLAY
+     43000  43000  43000  ;26 - 2-D GREY-SCALE DISPLAY
+     48600  48600  48600  ;27 - 2-D GREY-SCALE DISPLAY
+     54200  54200  54200  ;28 - 2-D GREY-SCALE DISPLAY
+     59800  59800  59800  ;29 - 2-D GREY-SCALE DISPLAY
+     65535  65535  65535  ;30 - 2-D GREY-SCALE DISPLAY
+     32767  32767  32767  ;31 - NOT USED FOR NOW
+     32767  65535  65535  ;32 - NOT USED FOR NOW
+     65535      0      0  ;33 - NOT USED FOR NOW
+     65535  65535  65535  ;34 - GCOR(1)
+     45000  45000  45000  ;35 - GCOR(2), FIT PK MARK,  FIT VAR MARK
+     65535  65535  65535  ;36 - GCOR(3), 1-D PK LAB, 2-D BAN & EX-MARK
+     65535  65535  65535  ;37 - GCOR(4), 1-D REG MARK, FIT VAR MARK
+     65535  65535  65535  ;38 - GCOR(5), CURSOR
+     65535  65535  65535  ;39 - GCOR(6)
+     65535  65535  65535  ;40 - GCOR(7)

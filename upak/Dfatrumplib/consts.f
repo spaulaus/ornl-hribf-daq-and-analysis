@@ -1,0 +1,66 @@
+C$PROG CONSTS
+      SUBROUTINE CONSTS
+      IMPLICIT REAL*8(A-H,O-Z)
+      COMMON/AAA/ Z(4), NZ(30), CONST(50), ZZ(25)
+      EQUIVALENCE (CONST(2),ACONST), (CONST(3),AK0), (CONST(4),ALP), (CO
+     1NST(5),AM), (CONST(6),AN), (CONST(8),BAR2), (CONST(9),BETA), (CONS
+     2T(10),BL), (CONST(12),CCOMEG), (CONST(13),CL), (CONST(14),COMEGA),
+     3 (CONST(15),CSTH), (CONST(16),CXI1P), (CONST(17),DB), (CONST(18),D
+     4DIAL), (CONST(19),DEGRAD), (CONST(20),DLH0), (CONST(21),DL0), (CON
+     5ST(22),OMEGA0), (CONST(23),RP), (CONST(24),RPP), (CONST(25),SCOMEG
+     6), (CONST(27),SI), (CONST(28),SSTH), (CONST(29),STHETA), (CONST(30
+     7),SXI1P), (CONST(31),TLC), (CONST(32),TRC), (CONST(33),TSTH), (CON
+     8ST(34),XA), (CONST(35),XI1P), (CONST(36),X0), (CONST(37),Y0), (CON
+     9ST(38),ZL1P), (CONST(26),SE)
+C      CCC
+C   
+C     ******************************************************************
+C     THE OTHER SUBROUTINES.
+C     THIS SUBROUTINE FILLS THE ARRAY CONST WITH CONSTANTS USED BY
+C     ******************************************************************
+      DEGRAD=.0174532925
+C   
+      ACONST=.3443276133
+      XA=931.478
+      SE=3.3356404846
+      ZL1P=60.
+      RP=-20.
+      RPP=54.
+      COMEGA=1.0122909661
+      XI1P=.646
+      STHETA=.2617993878
+      X0=53.829414626
+      Y0=-29.513933642
+      SXI1P=.6019972375
+      CXI1P=.7984981691
+      TSTH=.2679491924
+      SCOMEG=.8480480961
+       CCOMEG=.5299192642
+      SSTH=.2588190451
+      CSTH=.9659258263
+      SI=34.6
+      BAR2=23.124
+      BL=72.9
+      CL=67.1
+      DB=2.5
+      BETA=1.23918
+      D1=67.72
+      D2=4.2
+      DDIAL=100.
+      D3=10.
+      DL0=21.28
+      DLH0=17.71
+      TRC=0.0
+      TLC=6.
+      ALP=BL+CL
+      AM=D1+D2/(2.*DSIN(BETA))
+      AN=D3/DDIAL
+      A=(BL/DTAN(BETA))-DB
+      B=BL+DB/DTAN(BETA)
+      C=AM-DLH0+DL0/DTAN(BETA)
+      OMEGA0=DASIN((-A*C+DSQRT(B**4-C*C*B*B+A*A*B*B))/(A*A+B*B))
+      AK0=DL0-DB*DCOS(OMEGA0)+ALP*DSIN(OMEGA0)
+      AK0=AK0+ACONST*(DLH0+DB*DSIN(OMEGA0)+ALP*DCOS(OMEGA0))
+C   
+      RETURN
+      END

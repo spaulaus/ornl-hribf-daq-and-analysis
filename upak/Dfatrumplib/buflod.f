@@ -1,0 +1,16 @@
+C$PROG BUFLOD
+      SUBROUTINE BUFLOD(IBUF,NBYT,ISEC)
+C   
+      COMMON/BBB/ KBUF(3120)
+C   
+      INTEGER*4 IBUF(1)
+C   
+      NWDS=NBYT/4
+      N   =64*ISEC
+C   
+      DO 10 I=1,NWDS
+      N=N+1
+      IBUF(I)=KBUF(N)
+   10 CONTINUE
+      RETURN
+      END

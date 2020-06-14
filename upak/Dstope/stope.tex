@@ -1,0 +1,193 @@
+   02-Feb-02 ..... U640  STOPE (Stopping Power Program) - WTM ....... PAGE   1
+ 
+ 
+                 A Stopping Power Program With Graphical Display
+ 
+   Sec Page Contents
+ 
+   010   2  Introduction
+ 
+   020   3  List of Commands
+ 
+   030   4  Definition of Output Quantities
+ 
+   040   5  References
+ 
+ 
+ 
+                                    Foreword
+ 
+   Program  stope  estimates  the  stopping  power  for  any ion in any target
+   element by the three different methods given below.
+ 
+   o......Using the formulas and coefficients given by J.F. Ziegler in Ref 1.
+ 
+   o......Using the method and parameters of Northcliffe  and  Schilling  from
+          Ref 2.
+ 
+   o......Using  D.  Ward's  effective  charge  (Ref  3)  and Ziegler's proton
+          stopping power (Ref 1).
+ 
+   o......Shell correction  factors  for  Northcliffe's  values  are  computed
+          using the Ward's tables and formulas given in Ref 3 and 4.
+ 
+   o......Computation  results  are  presented  in  both tabular and graphical
+          form.
+ 
+ 
+                               How to Get Started
+ 
+   ---------------------------------------------------------------------------
+   Type:  stope              ;To start if /usr/hhirf/ is defined in your
+                             ;.login, .cshrc or login.com files, otherwise:
+ 
+   Type:  /usr/hhirf/stope   ;To start on HRIBF Alpha platforms
+   ---------------------------------------------------------------------------
+    
+   02-Feb-02 ..... U640  STOPE (Stopping Power Program) - WTM ....... PAGE   2
+ 
+   U640.010  Introduction
+ 
+   Program stope calculates tables of stopping power vs  ion  energy  for  any
+   ion  in any elemental target (ZT = 1-92). It's main feature is ease of use.
+   For stopping powers, energy loss and ranges in compounds and mixtures,  see
+   program stopx by T. C. Awes - SEC# U630.
+ 
+                A Brief Description of Ziegler's Method Used Here
+ 
+   Program  stope uses the formulas and coefficients given by J. F. Ziegler in
+   - Stopping and Ranges of Ions in Matter, Vols 3 & 5, Pergamon Press,  1980.
+   However,  Ziegler  uses  somewhat  more elaborate procedures in calculating
+   his final "curves" than are used here.  The  nuclear  stopping  power  (col
+   labeled - SNUC) is calculated from Formula 16 given in Vol 5.
+ 
+   For Protons ===============================================================
+ 
+   EPN=EKEV/AP                ;Energy per nucleon
+ 
+   SE=PSTOP(ZT,EPN)           ;Electronic stopping power
+                              ;(in units of eV/(10**15 atoms/cmsq))
+ 
+   For He or Li ==============================================================
+ 
+   EPN=EKEV/AP                ;Energy per nucleon
+ 
+   EFCR=ZEFCR(AP,ZP,ZT,EKEV)  ;Fractional effective charge ratio to that for
+                              ;protons at same velocity in target element
+ 
+   ZEF=EFCR*ZP                ;Fractional effective charge of ion
+ 
+   SE=ZEF*ZEF*PSTOP(ZT,EPN)   ;Electronic stopping power of ion in target
+                              ;(in units of eV/(10**15 atoms/cmsq))
+ 
+   For Heavy Ions ============================================================
+ 
+   EPN=EKEV/AP                ;Energy per nucleon
+ 
+   EFCR=HICRAT(AP,ZP,ZT,EKEV) ;Fractional effective charge ratio to that for
+                              ;protons at same velocity in target element
+ 
+   ZEF=EFCR*ZP                ;Fractional effective charge of ion
+ 
+   SE=ZEF*ZEF*PSTOP(ZT,EPN)   ;Electronic stopping power of ion in target
+                              ;(in units of eV/(10**15 atoms/cmsq))
+ 
+   Where:
+ 
+   PSTOP..is  a  routine  which calculates proton stopping power in any target
+          element (ZT = 1-92) at energy per nucleon = EPN. It uses a table  of
+          coefficients (12 per target element) and formulas from Ref 1.
+ 
+   ZEFCR..is  a  special routine for He & Li which uses formulas from Ref 1 to
+          compute the fractional effective charge ratio of  the  ion  to  that
+          for protons at the same velocity in the same target element.
+ 
+ 
+   HICRAT.is  a  routine  for for heavy ions which uses formulas from Ref 1 to
+          compute the fractional effective charge ratio of  the  ion  to  that
+          for protons at the same velocity in the same target element.
+    
+   02-Feb-02 ..... U640  STOPE (Stopping Power Program) - WTM ....... PAGE   3
+ 
+ 
+   U640.020  List of Commands
+ 
+   Command        ;Meaning
+   -------        ;---------------------------------------------
+   h              ;Displays this list again
+ 
+   soli           ;Specifies SOLID  target - default
+   gas            ;Specifies GAS    target
+ 
+   doc            ;Displays/logs definitions & references
+ 
+   lon            ;Enables  output to stope.log- dflt
+   lof            ;Disables output to stope.log
+ 
+   lmon           ;Turns Lo-E modification ON - dflt
+   lmof           ;Turns Lo-E modification OFF
+ 
+   cmd  filename  ;Processes commands from filename
+ 
+   proj ion       ;ion = name like he4, ar40, u238, etc
+ 
+   targ ele       ;ele = name like 58Ni or H2o, CH2, Mylar
+ 
+   eion ea eb ec  ;Ion energy (MeV) ea to eb in steps of ec
+                  ;(if ea,eb,ec omitted - does preset list)
+ 
+   dedx           ;Generates DE/DX table using proj, targ, eion
+ 
+   end            ;Ends program
+ 
+    
+   02-Feb-02 ..... U640  STOPE (Stopping Power Program) - WTM ....... PAGE   4
+ 
+ 
+   U640.030  Definition of Output Quantities
+ 
+   All stopping powers are in units of MeV*CMSQ/MG
+ 
+   NUCL   = Nuclear stopping power - from Ziegler - Ref 1
+ 
+   WARZIG = S(ele) from Ward's effective charge & Ziegler's proton electronic
+            stopping power Ref 1,3
+ 
+   ZIEGL  = S(ele) from Ziegler - Ref 1
+ 
+   NORTH  = S(ele) from Northcliff & Schilling corrected for target mass
+            Ref 2
+ 
+   CNORTH = S(ele) shell-corrected NORTH - see SHELF - Ref 2,4
+ 
+   SHELF  = Shell correction factor = S(ele,He4)WARD/S(ele,He4)NORTH
+            Ref 2,4
+ 
+   WARHE4 = S(ele,He4) from Ward's table for MeV/Amu listed in Ref 4
+ 
+   Entries flagged by * computed from linear velocity dependance in
+   range of 0.0 to 0.10 MeV/Amu
+ 
+ 
+   T-WARZIG = WARZIG+NUCL
+   T-ZIEGL  = ZIEGL +NUCL
+   T-CNORTH = CNORTH+NUCL
+ 
+   Display-solid-line   = ZIEGL  (electronic)
+   Display-open-circle  = WARZIG (electronic)
+   Display-close-circle = NORTH  (electronic)
+ 
+ 
+   U640.040  References
+ 
+   1)  J. F. Ziegler, The Stopping and Ranges of Ions in Matter, Vols 3 & 5,
+       Pergamon Press, 1980.
+ 
+   2)  L. C. Northcliff & R. F. Schilling, Nuc Data Tables, Vol 7, 1970.
+       (Range .0125 to 12.0 MeV/Amu
+ 
+   3)  D. Ward, et al, Stopping Powers for Heavy Ions, AECL-5313,
+       Chalk River, 1976.
+ 
+   4)  D. Ward, et al, Compilation of Realistic Stopping Powers for 4He Ions
+       in Selected Materials, AECL-4914, Chalk River, 1975

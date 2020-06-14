@@ -1,0 +1,29 @@
+$$$$CON   - Contents
+CODE    CONTENTS
+----    --------
+DEDX  - Commands related to stopping power
+RANG  - Commands related to range 
+$$$$DEDX  - For stopping power related commands
+Command        ;Meaning
+H              ;Displays this list again
+
+SOLI           ;Specifies SOLID  target - default
+GAS            ;Specifies GAS    target
+
+DEF            ;Displays output definition & refs
+LON            ;Enables  output to stope.log- dflt
+LOF            ;Disables output to stope.log
+
+LMON           ;Turns Lo-E modification ON - dflt
+LMOF           ;Turns Lo-E modification OFF
+
+PROJ ION       ;ION = name like he4, ar40, u238, etc
+TARG ELE       ;ELE = name like 58Ni or H2o, CH2, Mylar
+EION EA,EB,EC  ;Ion energy (MeV) EA to EB in steps of EC
+               ;(if EA,EB,EC, omitted - does preset list)
+
+DEDX           ;Generates DE/DX table using PROJ, TARG, EION
+
+END            ;Ends program
+$$$$RANG  - For range related commands
+

@@ -1,0 +1,65 @@
+RPD$075066
+CHP$NUCI - Nuclear Information Program
+TPF$
+SP1$
+CEB$
+\bu\Introduction\\
+BLP$
+Program \b\nuci\\ (located in \b\/usr/hhirf/\\)
+displays and logs nuclear information for
+all nuclei contained in the BNL Radioactive and Stable Nuclei
+data base
+(which was retrieved from the BNL Nuclear Data Center by Mary Ruth Lay).
+The following commands are recognized:
+CYB$
+---------------------------------------------------------------------------
+alla  amu   - Displays/logs all nuclei with mass#   (amu)
+allz  z     - Displays/logs all nuclei with atomic# (z)      
+all  elenam - Displays/logs all nuclei for  element (elenam)
+mass nucnam - Displays/logs mass (amu) for nucleus  (nucnam)
+
+d    nucnam - Displays data-table for  nucleus (nucnam)
+log  nucnam - Logs     data-table for  nucleus (nucnam) 
+
+            - Logging is to file nuci.log (initialized for each run)
+
+            - elenam examples -   s,   ni,    u, pu,    etc 
+            - nucnam examples - 32s, 58ni, 238u, pu240, etc 
+---------------------------------------------------------------------------
+CY1$
+\bu\Decay mode definitions:\\
+
+sta  -  denotes stable nuclei
+b-   -  denotes decay beta emission
+ec   -  denotes decay by electron capture
+a    -  denotes decay by alpha emission
+it   -  denotes decay by internal transition
+
+\bu\Half-life notation:\\
+
+Entries without units are in seconds.
+Otherwise: m = minutes                ;Some entries are in compact 
+           h = hours                  ;expodential form such as 2-04 which
+           d = days                   ;means 2.0E-04 seconds or 3+3c which
+           y = years                  ;means 3.0E+03 centuries.
+           c = centuries
+---------------------------------------------------------------------------
+
+\bu\Examples\\
+
+The command: \b\alla 127\\ displays/logs the following information:
+
+Nucleus  Decay-Mode  Half-life
+127I                    Stable
+127In          b-         1.09
+127Sn          b-          247
+127Sb          b-          92h
+127Te          b-         561m
+127Xe          ec          36d
+127Cs          ec         375m
+127Ba          ec          12m
+
+The command: \b\log 127ba\\ logs the table given on the following page:
+
+The command: \b\d   127ba\\ displays the same table.
+QIT$

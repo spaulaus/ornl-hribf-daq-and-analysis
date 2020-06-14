@@ -1,0 +1,1744 @@
+RPD$075066
+CHP$U310  LEMOR - Unix/Linux Version - WTM
+TPF$
+SP1$
+CEB$
+LEMOR (List-tape Examine, Modify, Output - Revised)
+CYB$
+Sec Page Contents
+
+010   2  Introduction - General
+012   3  Introduction - Definition of L001 List-Data Format
+014   4  Introduction - Definition of L002 List-Data Format
+016   5  Introduction - Definition of L003 List-Data Format
+018   6  Introduction - Definition of List Data Files (LDFs)
+
+020   7  Commands General
+030   7  Command  File Operations
+
+040   7  Commands to  Assign Tapes and Files
+050   8  Commands for Tape & File Control
+060   8  Commands to  Examine a Tape or LDF
+
+070   9  Commands to  Display/Log Special Records from a Tape or LDF
+
+080  10  Commands for Simple  Copy from (Tape of LDF) to (Tape or LDF)
+090  11  Commands for Modify--Copy from (Tape or LDF) to (Tape or LDF)
+
+100  12  Commands to  Copy Simulations from Disk to (Tape or LDF)
+110  13  Commands to  Copy PAC-files from (Tape or LDF) to Disk
+120  13  Commands to  Copy ASCII Files (Tape-to-Disk or Disk-to-Tape)
+
+130  14  Discussion of Certain Commands
+140  15  Discussion of Byte-Swapping
+150  16  Discussion of Tape Conversion
+160  17  Discussion of Prescan (Modify-Copy)
+170  19  Discussion of Banana Gating (Free-Form-Gating)
+
+180  20  How to Create a Customized Prescan Program
+
+190  21  Lemor Routines Which aid in Customization
+200  21  User  Routines Which aid in Customization
+
+210  22  User  Routine -  USERCMP  - User Command Processor
+220  22  User  Routine -  USERMOC  - User Processing of Raw Data
+230  23  User  Routine -  USERMOC  - Example with Banana Gating
+
+240  24  Lemor Routines which Unpack Events
+250  26  Lemor Routines which Output Events
+260  27  Lemor Routine  for Testing  1-D Gates
+270  27  Lemor Routines for Testing  2-D Gates (Bananas)
+
+300  28  Logical Units and COMMON Blocks
+
+310  29  Processing of User Defined Files - UDFs - Linux Version Only!
+CYB$
+===========================================================================
+Type:  lemor              ;To start with /usr/hhirf/ defined in your .login
+                          ;Otherwise:
+
+Type:  /usr/hhirf/lemor   ;To start on HHIRF DECstation or Alpha
+===========================================================================
+TPF$
+SP2$
+SEC$.010  Introduction - General
+BLP$
+\b\lemor\\ is a tape processing utility which can be customized
+(via user supplied routines) to produce a
+prescan program. The stock version of \b\lemor\\ can do a number of
+useful things: Some of these are:
+CY1$
+                                                                   \b\Refer to\\
+                                                                   \b\--------\\
+o....L001, L002 & L003 formatted data tapes may be copied to        \b\SEC#018\\
+     list-data-files on disk (called  LDFs) for subsequent          \b\SEC#080\\
+     processing with scanur histogramming programs.
+
+o....Any  tape  or LDF containing records no longer than 32768      \b\SEC#060\\
+     bytes, may be examined (records read and displayed in various
+     formats).
+
+o....Any tape or LDF may be copied to another tape or LDF           \b\SEC#080\\
+ 
+o....Input data  records may be byte-swapped for compatibility      \b\SEC#140\\
+     with other platforms.
+ 
+o....The text records from L002 or L003 formatted tapes or LDFs     \b\SEC#110\\
+     (which normally contain the Data Acquisition PAC program) can 
+     be restored to disk.
+ 
+o....In the modify-copy mode, the stock lemor can copy (tapes       \b\SEC#150\\
+     or LDFs) in data formats (L001, L002, L003) to another tape
+     or LDF in the same or different format.
+ 
+o....The  usual  tape  control  functions  (forward  and  backward  \b\SEC#050\\
+     spacing of records and files, rewind etc.) are provided.
+ 
+o....Simulated list-data files may be copied from disk to tape.     \b\SEC#100\\
+CYB$
+===========================================================================
+See SEC#220 & 230 for discussion of the user-supplied customizing routine
+USERMOC 
+===========================================================================
+TPF$
+SP1$
+SEC$.012  Introduction - Definition of L001 List-Data Format
+CYB$
+L001 formatted list-data (often generated in external labs) consists of:
+ODP$
+o......16-bit data words.
+ODP$
+o......Fixed length data records which are no shorter than 2048 bytes and
+no longer than 32768 bytes.
+ODP$
+o......A fixed number of parameters per event.
+ODP$
+o......A fixed (integer) number of events per record (no event splitting
+across record boundries).
+ODP$
+o......A number of data-record header-words may be specified which are 
+to be ignored during processing.
+ODP$
+o......Header records of 256 bytes in length and structured as defined
+in SEC#014 may be utilized for display, searches, etc.
+ODP$
+o......All other records not of the specified data-record length will be 
+ignored during processing.
+TPF$
+SEC$.014  Introduction - Definition of L002 List-Data Format
+BLP$
+The \b\L002 data stream\\ (from the old Concurrent system) consists of 
+Header records, Event Handler
+Source Code (EVS) records, Data records and Scaler records - as
+illustrated below:
+CY1$
+Header    record   ;256 bytes
+EVS-file  record   ;1600 bytes
+ .
+Data      record   ;8192 bytes
+Data      record   ;8192 bytes
+ .          .
+Scaler    record   ;6780 bytes
+End-of-File        ;File mark
+Header    record
+Data      record
+ .          .
+ .          .
+End-of-File        ;Double file-mark
+End-of-File        ;ends all data on tape
+BLP$
+\b\L002 events\\ consist of parameter ID flags followed by one or more
+data words corresponding to sequential parameter IDs  - as illustrated 
+below:
+CY1$
+8000-hex + ID     ;Parameter ID
+Data              ;for Parameter ID
+Data              ;for Parameter ID+1
+ .
+8000-hex + JD     ;Parameter JD
+Data              ;for Parameter JD
+Data              ;for Parameter JD+1
+ .
+FFFF-hex          ;End-of-event
+CYB$
+o......Events \b\may be split\\ across record boundries.
+o......Data words cannot have the hi-order bit set.
+o......All parameter IDs and data words are 16-bit.
+CY1$
+===========================================================================
+\bu\Structure of the 256-byte header record\\
+\bu\Header Word Number\\
+   16-BIT   32-BIT   # BYTES  CONTENTS                        TYPE
+  01 - 04  01 - 02         8  'HHIRF   '                      ASCII
+  05 - 08  03 - 04         8  'L002    '                      ASCII
+  09 - 16  05 - 08        16  'LIST DATA       '              ASCII
+  17 - 24  09 - 12        16  MO/DA/YR HR:MN                  ASCII
+  25 - 64  13 - 32        80  User Title                      ASCII
+  65 - 66       33         4  Header Number                   BINARY
+  67 - 70  34 - 35         8  Reserved (set to 0)             BINARY
+  71 - 72       36         4  # of Secondary Header Records   BINARY
+                37         4  Record Length (bytes)           BINARY
+                38         4  # Blocked Line Image Records    BINARY
+                39         4  Record Length (bytes)           BINARY
+                40         4  Parameters/Event (ref only)     BINARY
+                41         4  Data Record Length (bytes)      BINARY
+           42 - 64            Reserved (set to 0)             BINARY
+TPF$
+SP1$
+SEC$.016  Introduction - Definition of L003 List-Data Format
+SP1$
+CYB$
+The L003 data stream (currently in use) may consist of:
+CY1$
+Header    records - 256   bytes
+PAC-file  records - 1600  bytes
+Scaler    records - 32000 bytes
+Dead-time records - 128   bytes
+Data      records - 2048 to 32768 bytes (but not 32000 bytes)
+CYB$
+A typical data stream might look like:
+CY1$
+Header    record
+PAC-file  record
+PAC-file  record
+Data      record
+Data      record
+ .          .
+ .          .
+Scaler    record
+Data      record
+ .          .
+ .          .
+Scaler    record
+Dead-time record
+End-of-File
+Header    record
+Data      record
+ .          .
+ .          .
+End-of-File
+End-of-File
+
+BLP$
+\b\L003 events\\ consist of pairs of 16-bit numbers, the first of
+which defines the parameter ID and the second the data - as shown
+below.
+CY1$
+8000-hex + ID     ;Parameter ID
+Data              ;Parameter data
+8000-hex + ID
+Data
+8000-hex + ID
+Data
+  .
+  .
+FFFF-hex          ;End-of-event word-1
+FFFF-hex          ;End-of-event word-2
+
+ODP$
+o......Events are \b\not\\ split across record boundries.
+ODP$
+o......Unfilled records are padded with FFFF-hex.
+TPF$
+SEC$.018  Introduction - Definition of List Data Files (LDFs)
+BLP$
+The list data file (LDF) ia a structured disk file for containing
+L001, L002 or L003 data. It is processed as a direct access file whose
+record length is 8194 32-bit words.
+CY1$
+\bu\The General Record Structure is:\\
+
+32-bit word  1       TYPE  - Record type (DIR, HEAD, PAC, SCAL, DEAD, DATA)
+             2       NFW   - number of 32-bit words of data
+             3-8194  DATA  - 8192 full-words (32768 bytes) data plus pads
+
+\bu\Directory record structure:\\
+
+32-bit word  1       'DIR '  - type = Directory
+             2       8192    - full-word data size
+             3       8194    - full-word blocksize
+             4       NREC    - number of records written on file
+             5               - un-used
+             6       NHED    - number of header records written on file
+
+             7       HED-ID  - header ID number
+             8       RECN    - record number where header is written
+
+             9       HED-ID  - header ID number
+            10       RECN    - record number where header is written
+             .
+
+\bu\Header record structure\\
+
+32-bit word  1       'HEAD'  - type = header
+             2        64     - number of full-words of header
+             3-66            - header record - 256 bytes
+
+\bu\PAC record structure\\
+
+32-bit word  1       'PAC '  - type = PAC
+             2        NFW    - number of full-words of data
+             3-NFW+2         - PAC file records (up to 409 lines)
+
+\bu\Scaler record structure\\
+
+32-bit word  1       'SCAL'  - type = Scaler
+             2        NFW    - number of full-words of data
+             3-NFW+2         - Data for up to 400 scalers
+
+\bu\Deadtime record structure\\
+
+32-bit word  1       'DEAD'  - type = Deadtime
+             2        32     - 128 bytes of deadtime data
+             3-34            - Deadtime data
+
+\bu\Data record structure\\
+
+32-bit word  1       'DATA'  - type = Data
+             2        8192   - number of full-words of data
+             3-8194          - list data plus padding
+TPF$
+SP1$
+SEC$.020  Commands General
+CY1$
+H             ;Displays directory to list of commands
+
+LON           ;Enable  output to log-file \b\lemor.log\\ (default)
+LOF           ;Disable output to log-file \b\lemor.log\\
+
+STAT          ;Displays/logs open tapes, LDFs, options, etc.
+
+STAT GATE     ;Displays/logs currently defined gates
+
+STX           ;Display/log tape status (MB-used, MB-left, Errors/MB)
+              ;(for all tape units which are open)
+
+UCOM TEXT     ;Send TEXT to USERCMP
+
+END           ;Terminates program
+
+SEC$.030  Command File Operations
+CY1$
+CMD  FIL.CMD  ;Assign FIL.CMD as CMD-file (not read yet)
+
+CCMD          ;Continue reading  CMDS from CMD-file
+
+CLCM          ;Continue with last CMD from file (backspaces)
+
+CCON          ;Continue reading  CMDS from VDT (Terminal)
+
+MSG  TEXT     ;Display TEXT (44 bytes) on VDT
+
+Ctrl/C        ;Interrupts command file processing
+
+SEC$.040  Commands to Assign Tapes and Files
+CY1$
+IN   rxxx     ;Specifies tape (rmxx) for INPUT
+
+OU   ryyy     ;Specifies tape (rmyy) for OUTPUT
+              ;rxxx, ryyy Denote rmt0:,rmt1:, rst0,  etc
+
+INF  file.ldf ;Opens LDF \b\file.ldf\\ for input
+
+UDF  filename ;Specifies input to be a special User Defined File
+              ;(see SEC# 310) \bu\Linux Version Only!\\
+
+OUF  file.ldf ;Opens/creates LDF \b\file.ldf\\ for output 
+
+ELDF          ;Erases output LDF (i.e. deletes & recreates)
+
+GAT  file.gat ;Open and read 1-D gates from file.gat
+
+GATZ          ;Reset all previously defined gates to "impossible"
+
+BAN  file.ban ;Open file.ban for banana testing
+
+BANZ          ;Zero banana archive
+TPF$
+SEC$.050  Commands for Tape & File Control
+CY1$
+RDI  N        ;Read    N records from INPUT    
+RDO  N        ;Read    N records from OUTPUT
+
+FRI  N        ;Forward N records on   INPUT
+FRO  N        ;Forward N records on   OUTPUT
+
+BRI  N        ;Backup  N records on   INPUT
+BRO  N        ;Backup  N records on   OUTPUT
+
+FFI  N        ;Forward N files   on   INPUT
+FFO  N        ;Forward N files   on   OUTPUT
+
+BFI  N        ;Backup  N files   on   INPUT
+BFO  N        ;Backup  N files   on   OUTPUT
+
+RWI           ;Rewind                 INPUT
+RWO           ;Rewind                 OUTPUT
+
+BTI           ;Go to BOTTOM of INPUT  (to DBL EOF, Backup 1 F)
+BTO           ;Go to BOTTOM of OUTPUT (to DBL EOF, Backup 1 F)
+
+CLI           ;Close                  INPUT
+CLO           ;Close                  OUTPUT
+
+ULI           ;Unload and Close       INPUT  tape
+ULO           ;Unload and Close       OUTPUT tape
+SEC$.060  Commands to  Examine a Tape or LDF
+BLP$
+Open an input tape (or LDF) or an output tape (or LDF),
+read one or more records and display (or log) data from the last
+record read using one of the following commands:
+CY1$
+CLID IDH,IDL  ;Specify VME clock parameter IDs (hi & lo parts respectively)
+              ;1st VME-clock entry, VMET, of each buffer displayed via RDI
+              ;format is full decimal value displayed as xxx,xxx,xxx
+              ;\bu\Linux Version Only!\\
+
+CLID          ;Disables VMET search & display - \bu\Linux Version Only!\\
+
+RDI  N        ;Read    N records from INPUT  (displays REC#, #bytes, VMET)
+RDO  N        ;Read    N records from OUTPUT (displays REC#, #bytes, VMET)
+
+PEV  IA,IB    ;Print 16-bit word IA thru IB in EVENT   Format (integer)
+DEV  IA,IB    ;Disp  16-bit word IA thru IB in EVENT   Format (integer)
+
+PEVZ IA,IB    ;Print 16-bit word IA thru IB in EVENT   Format (hex)
+DEVZ IA,IB    ;Disp  16-bit word IA thru IB in EVENT   Format (hex)
+
+PZ   IA,IB    ;Print 16-bit word IA thru IB in HEX     Format
+DZ   IA,IB    ;Disp  16-bit word IA thru IB in HEX     Format
+
+PA   IA,IB    ;Print 16-bit word IA thru IB in ASCII   Format
+DA   IA,IB    ;Disp  16-bit word IA thru IB in ASCII   Format
+
+PI   IA,IB    ;Print 16-bit word IA thru IB in INTEGER Format
+DI   IA,IB    ;Disp  16-bit word IA thru IB in INTEGER Format
+
+PIF  IA,IB    ;Print 32-bit word IA thru IB in INTEGER Format
+DIF  IA,IB    ;Disp  32-bit word IA thru IB in INTEGER Format
+TPF$
+SEC$.070  Commands to  Display/Log Special Records from a Tape or LDF
+CY1$
+LISF filename ;Open output file for recording records
+
+LISI          ;Display/log HEAD, DEAD, PAC, & SCAL records from 
+              ;INPUT tape or LDF
+
+LISI SCAL     ;Display/log SCAL (scaler) records only
+
+LISI TYPA TYPB .. ;Display/log record types TYPA, TYPB, etc. where,
+                  ;legal types are HEAD, DEAD, PAC, SCAL
+
+LISO          ;Same function as LISI but for OUTPUT tape or LDF
+===========================================================================
+If output file is undefined (via LISF command), the specified records
+will be recorded on lemor.log if LON. 
+===========================================================================
+TPF$
+SP1$
+SEC$.080  Commands for Simple  Copy from (Tape of LDF) or (LDF or tape)
+BLP$
+\b\Tape-to-tape\\ copies are double buffered for speed. Also, the
+maximum input record length is auto-detected unless you override
+the auto-detect feature via the \b\RECI\\ command.
+Output record lengths are the same as the number of bytes actually read from
+the input.
+BLP$
+\b\Tape-to-disk\\ copies are tape-buffered for speed. Also, the
+maximum input record length is auto-detected unless you override
+the auto-detect feature via the \b\RECI\\ command.
+Output record lengths are fixed at 32776 bytes (8 bytes of ID information
+and 32768 bytes of data) to enable direct access to the file.
+BLP$
+\b\Disk-to-Tape\\ copies are un-buffered. 
+Output data record lengths are fixed at 32768 bytes.
+BLP$
+\b\Disk-to-disk\\ copies are un-buffered. 
+CY1$
+===========================================================================
+IN   rxxx     ;Specifies input  tape (rxxx denotes rmt0, rmt1, etc)
+
+INF  file.ldf ;Specifies the input LDF \b\file.ldf\\
+
+UDF  filename ;Specifies input to be a special User Defined File
+              ;(see SEC# 310) \bu\Linux Version Only!\\
+
+OU   ryyy     ;Specifies output tape (rmyy denotes rmt0, rmt1, etc)
+
+OUF  file.ldf ;Specifies the output LDF \b\file.ldf\\
+
+STX           ;Display/log tape status (MB-used, MB-left, Errors/MB)
+              ;(for all tape units which are open)
+
+ELDF          ;Erases output LDF (i.e. deletes & recreates) 
+
+STAT          ;Displays/logs open tapes, LDFs, options, etc.
+
+RECI          ;Says max input record length be auto-detected (default)
+RECI RECL     ;Sets max input record length to be \b\RECL\\
+
+SWAB          ;Request    byte-swap of input buffers (SEC#140)
+SWOF          ;Request no byte-swap (default)
+SHON          ;Says byte-swap headers once more than data
+SHOF          ;Says byte-swap headers & data the same way (default)
+
+COPY N        ;Copy N files   from INPUT to OUTPUT
+CREC N        ;Copy N records from INPUT to OUTPUT
+CC            ;Continue COPY - saves file- or record-count
+
+Ctrl/C        ;Interrupts copy process
+
+EOF           ;Write EOF on OUTPUT (not normally needed)
+TPF$
+SEC$.090  Commands for Modify--Copy from (Tape or LDF) or (LDF to tape)
+BLP$
+Tape-to-tape modify-copies are double buffered for speed. Also, the
+maximum input record length is auto-detected unless you override
+the auto-detect feature via the \b\RECI\\ command.
+Output record lengths are 32768 bytes by default but can be set to
+smaller values via the \b\RECO\\ command.
+CY1$
+IN   rxxx       ;Specifies input  tape (rxxx denotes rmt0, rmt1, etc)
+INF  file.ldf   ;Opens LDF \b\file.ldf\\ for input
+
+OU   ryyy       ;Specifies output tape (rmyy denotes rmt0, rmt1, etc)
+OUF  file.ldf   ;Opens/creates LDF \b\file.ldf\\ for output 
+
+STX             ;Display/log tape status (MB-used, MB-left, Errors/MB)
+                ;(for all tape units which are open)
+
+ELDF            ;Erases output LDF (i.e. deletes & recreates)
+
+STAT            ;Displays/logs open tapes, LDFs & record pointers
+
+FMTI L001 NS NP ;Specify non-standard           Input (see SEC#012)
+FMTI L002       ;Specify old     HHIRF standard Input  format
+FMTI L003       ;Specify current HIRBF standard Input  format (default)
+
+FMTO L001 NS NP ;Specify non-standard           Output (see SEC#012)
+FMTO L002       ;Specify old     HHIRF standard Output format
+FMTO L003       ;Specify current HIRBF standard Output format (default)
+
+RECI            ;Says max input record length be auto-detected (default)
+RECI RECL       ;Sets max input record length to be \b\RECL\\
+
+RECO            ;Sets output data record length to 32768 bytes (default)
+RECO RECL       ;Sets output data record length to \b\RECL\\  bytes 
+                ;(Allowed range is 2048 to 32768 bytes)
+
+UPON NPRAW      ;Turn User-processing ON (see SEC#220)
+                ;NPRAW = Max # of raw parameters (for user only)
+UPON            ;Turn User-processing ON (NPRAW=0) (default)
+
+UPOF            ;Disable User-processing (enable CHIL processing)
+MILF file.mil   ;Read & process CHIL generated \b\mil-file\\
+ 
+UCOM TEXT       ;Send TEXT to USERCMP
+
+SWAB            ;Request    byte-swap of input buffers (SEC#140)
+SWOF            ;Request no byte-swap (default)
+SHON            ;Says byte-swap headers once more than data
+SHOF            ;Says byte-swap headers & data the same way (default)
+
+INIT            ;Resets Modify-Copy Input & Output buffers
+ZBUC            ;Zero total Input & Output buffer counters
+
+MOC  N,M        ;Modify-Copy (N-files/M-recs - 1st to occur)
+MOCE N,M        ;Modify-Copy (END on request complete)
+
+Ctrl/C          ;Interrupts Modify-Copy process
+TPF$
+SEC$.100  Commands to  Copy Simulations from Disk to (Tape or LDF)
+BLP$
+\b\lemor\\ 
+accomodates the examining and copying of disk-files containing
+event-list data. This feature is intended to be an aid to those
+doing simulations. The following commands are available.
+CY1$
+RECI RECL     ;Sets input  data record length to be RECL
+RECI          ;Sets input  data record length to be default (32768)
+
+RECO RECL     ;Sets output data record length to RECL  bytes 
+RECO          ;Sets output data record length to be default (32768)
+
+INEV filname  ;Specify input file for exam (RDI, DEV) & copy
+
+OU   ryyy     ;Specifies output tape (rmyy denotes rmt0, rmt1, etc)
+OUF  file.ldf ;Opens/creates LDF file.ldf for output 
+
+STAT          ;Displays/logs open tapes, evel-files & record pointers
+
+SWAB          ;Request    byte-swap of input buffers (SEC#140)
+SWOF          ;Request no byte-swap (default)
+
+HTIT  TITLE   ;TITLE contains title for next tape header 
+HNUM  HN      ;HN specifies next tape header number to use
+HOUT          ;Outputs tape header and increments HN
+
+COPY  1       ;Copies one file input-to-output
+
+Ctrl/C        ;Interrupts copy process
+BLP$
+In addition, an example program found in
+\b\/usr/users/milner/Develx/evelx.f\\
+contains routines for opening an event-file (EVELOPEN) and for
+writing data to it (EVELOUT). The "simulator" might (or might not)
+wish to include these routines in his simulation source code. Feel
+free to copy \b\evelx.f\\ to your directory for examination etc.
+The routines are internally documented.
+The idea is this:
+ODP$ 
+o......You do your simulations and write the generated events to a file.
+ODP$
+o......Use \b\lemor\\ to examine this file (read, display, etc)
+ODP$
+o......You may also specify a tape header number and title, 
+output the header and finally copy the entire file to tape or LDF.
+BLP$
+An typical file-to-LDF copy session might look as follows:
+CY1$
+lemor>\b\inev  eventfile.dat           \\;open event-file for input
+lemor>\b\ouf   eventfile.ldf           \\;open LDF for output
+lemor>\b\htit  simulation-3 no-gates   \\;title for header
+lemor>\b\hnum  3                       \\;next header number to use
+lemor>\b\hout                          \\;output the header
+lemor>\b\copy  1                       \\;copy 1-file input-to-output
+BLP$
+\b\NOTE:\\ You can also use the header setup and output feature (hnum,
+htit & hout commands) to add headers while copying one tape to another.
+There is no provision, however, to delete or modify existing headers.
+TPF$
+SP2$
+SEC$.110  Commands to  Copy PAC-files from (Tape or LDF) to Disk
+SP1$
+CY1$
+\bu\Commands to Copy a PAC-file From Input to Disk\\
+CY1$
+STEX filname  ;Store text records (PAC source) on \b\filename\\
+SP2$
+SEC$.120  Commands to  Copy ASCII Files (Tape-to-Disk or Disk-to-Tape)
+CY1$
+FCOP filename ;Copies \b\filename\\ to output-tape (previously opened)
+              ;Variable length records from \b\filename\\ are de-tabbed and
+              ;written as fixed length (80 byte) records on tape.
+              ;(DEC's rules for Fortran tabs are used in de-tabbing)
+
+TCOP filename ;Copies 1 file from input-tape to \b\filename\\ (created)
+              ;Fixed length (80 byte) records from tape are
+              ;written as variable length records on \b\filename\\.
+TPF$
+SP1$
+SEC$.130  Discussion of Certain Commands
+ODP$
+FIND...N attempts to find HEADER # N by searching forward on the
+INPUT tape (TITLES and HEADER numbers are displayed along the way):
+If found, \b\lemor\\ backs up one record.
+If  not found, \b\lemor\\ will read past the first
+Double-EOF, and back up one File Mark.
+ODP$
+BTO....Advances OUTPUT past the first Double-EOF and backs
+up one File Mark (i.e. positions properly for appending).
+Header titles and numbers are displayed along the way.
+ODP$
+BTI....Does the same thing for the INPUT tape.
+ODP$
+DEV....PEV, DA, PA, DZ, PZ, DI, PI, DIF & PIF
+are all commands which display on the terminal
+or list on the printer some portion of the last record read from
+tape (either the INPUT or OUTPUT). When you do a read (RIN or ROU),
+\b\lemor\\ tells you how many bytes were read but you must specify the
+portion of the buffer to be displayed in half-words (16-bit words).
+FIP$
+In EVENT FORMAT (DEV or PEV), \b\lemor\\ looks for a hex FFFF before
+starting to accumulate the first EVENT to be displayed.
+Therefore, the first EVENT in any record is usually not displayed
+by DEV or PEV (you can see it via DZ or PZ, however).
+ODP$
+COPY...N says COPY N-files from INPUT to OUTPUT. All that is
+required is that records be no longer than 32768 bytes. File-marks
+are copied and the OUTPUT tape is always positioned between Double
+File-Marks on normal completion of a COPY request.
+The OUTPUT tape is positioned ahead of Double File-Marks on
+abnormal completion (via SEND STOP, input error, etc) of a COPY
+request. The COPY is terminated (normally) if a Double-EOF or an
+End-Of-Medium is encountered on the INPUT.
+ODP$
+CREC...N says copy N-records from INPUT to OUTPUT. The same rules
+apply as for COPY except that the OUTPUT tape is always left
+positioned ahead of a Double File-Mark.
+ODP$
+CC.....Says continue previous COPY or CREC. It remembers how
+many files or records have already been copied and continues the
+count.
+TPF$
+SP1$
+SEC$.140  Discussion of Byte-Swapping
+BLP$
+The command SWAB causes the following byte-swapping actions:
+ODP$
+o......For L002 or L003 input, swaps bytes for all input records
+(appropriately) in both COPY and MOC modes.
+ODP$
+o......For L001 input, swaps bytes of all input records (assuming
+16-bit integers) in the COPY mode.
+ODP$
+o......For L001 input, swaps bytes of data records only in MOC mode.
+BLP$
+Under some circumstances, you may need to byte-swap the data and
+not the headers or vice versa. In such cases, the command SHON turns
+on an additional byte-swap for the header only. SHOF turns it off
+and is the default.
+TPF$
+SP1$
+SEC$.150  Discussion of Tape Conversion
+BLP$
+The stock \b\lemor\\ may be used to convert certain non-standard
+tapes to L003 format under the Modify-Copy (\b\MOC\\) mode
+if the following conditions are met:
+ODP$
+o......The length of event-by-event data records to be processed
+must be different from all other records which will be encountered.
+ODP$
+o......All data records must be written in 16-bit mode.
+ODP$
+o......If the high-order bit of a data word in the input stream is set
+it will be masked off (lost) in the converted data stream.
+ODP$
+o......Each data record must contain a fixed (integer) number of
+events. i.e. events may not be split across record boundries.
+ODP$
+o......Each event must contain a fixed number of parameters.
+ODP$
+o......Bytes may be swapped if requested.
+ODP$
+o......A specified number of data words (record header words etc)
+may be skipped at the beginning of each data record.
+CYB$
+Execute the following commands:
+
+lemor             ;Starts program lemor
+
+IN   rmtx         ;Specify input  tape rmtx
+
+ou   rmty         ;Specify output tape rmty  -  or
+
+ouf  file.ldf     ;Specify output LDF (file.ldf)
+
+L001 ns np        ;L001 says that input meets the requirements above
+                  ;ns = # of header words to skip before reading events
+                  ;np = # of parameters per event
+
+swab              ;Only if bytes are to be swapped!!
+
+reco nbyts        ;Specifies output record-length = nbyts bytes
+                  ;Default   output record-length = 32768 bytes
+
+upon              ;Enable "User Processing" (the default)
+
+moc nfiles        ;Says process nfiles files from input
+TPF$
+SP2$
+SEC$.160  Discussion of Prescan (Modify-Copy)
+BLP$
+Pre-Scanning (as interpreted here) involves the processing of an
+INPUT data stream (from Mag Tape) to produce an OUTPUT data
+stream (to Tape or LDF). The processing may include
+selection of certain events, selection of certain parameters,
+modification of input parameters or creation of new parameters or
+any combination of the preceding.
+BLP$
+A prescan task involves the use of \b\lemor\\ (or a
+customized version thereof) to control the process combined with
+user-supplied routines which aid in the selection of events and/or
+parameters. Modification or creation of parameters will normally
+require one or more user-supplied subroutines USERSUBS.
+BLP$
+In the MODIFY-COPY mode, records are read from the input tape,
+events are expanded and passed (one at a time) to the USERSUBS.
+BLP$
+Input records which are not of the length specified by the command 
+\b\reci or auto-detected\\ are taken to be non-data records and
+are simply copied to the output tape or LDF.
+Thus, Headers are copied automatically.
+If the record length and/or the Max # of Parms for the output tape
+is specified differently from the input, the primary Header is
+modified appropriately.
+BLP$
+If an End-of-Medium is encountered on an output tape and the
+recording is continued on a new tape, only the primary header
+(not the text blocks containing the PAC program etc) will
+be reproduced on the continuation tape.
+CEB$
+End-of-File or End-of-Medium on Input Tape
+BLP$
+When an EOF or EOM is encountered on the input tape, \b\lemor\\ writes
+any partially filled output buffer and two File Marks onto all
+output tapes and backs up one File Mark.
+To continue with the next input file, type the command MOC.
+To continue with the next input tape, type RWI, mount next input
+tape and type MOC.
+CEB$
+End-of-Medium on Output Tape
+BLP$
+When an EOM is encountered on the output tape, \b\lemor\\ backs up one
+record, writes a File Mark, rewinds the output, instructs you to
+mount a new tape, and pauses.
+When you type: CONTINUE, \b\lemor\\ writes the primary header (not the text
+blocks) and the last output record (the one it was writing when it
+hit EOM) onto the new tape, and continues processing.
+CYB$
+See table on subsequent page for more information on termination of processing.
+CEB$
+
+(continued on next page)
+TPF$
+SP2$
+SEC$.160  Discussion of Prescan (Modify-Copy) (continued)
+BLP$
+When running in the modify-copy (MOC) mode,
+one or more of the following operations may be initiated which
+can result in the modification of the data stream. Operations
+are listed in the order that they will be carried out if requested.
+The column headed CMD gives the run-time \b\lemor\\ command which requests
+the associated operation.
+CY1$
+CMD    OPERATION-----------------------------------------------------------
+ODP$
+SWAB...Swap bytes in data buffers (also HHIRF headers) (see SEC#140).
+ODP$
+L001...Convert data buffers from L001 to L003 format (see SEC#???).
+ODP$
+UPON...Process buffers via user-supplied routine USERMOC (see SEC#220).
+ODP$
+INIT...Resets both the EVENT- and OUTPUT-buffers. Do this if you
+have been doing some tests but are now ready to prescan for
+real or any time you wish to make a clean start.
+ODP$
+MOC....N,M Starts the MODIFY-COPY process, where: N is the number
+of files to process and M is the number of records to process.
+The processing terminates on either N or M - the first to be
+satisfied. The default values of N and M are 1 and 100,000,000
+respectvely.
+ODP$
+MOCE...N,M Differs from the MOC-command described above only in that
+upon completion of the request, both INPUT and OUTPUT tapes are
+unloaded and the program is terminated.
+FIP$
+The following table summarizes the different ways in which processing
+may be terminated and the state of the OUTPUT-tape, OUTPUT-buffer
+and EVENT-buffer for each:
+CY1$
+       ====================================================================
+       TERMINATION BY---   RESULTS IN -------------------------------------
+
+       Requested # Files   Flush OUT-BUF, 2-EOF, 1-BKFIL, Scrub-EV
+       EOM on INPUT        Flush OUT-BUF, 2-EOF, 1-BKFIL, Scrub-EV
+       Requested # Recs    Flush OUT-BUF, 2-EOF, 2-BKFIL,  Save-EV
+       Ctrl/C                             2-EOF, 2-BKFIL,  Save-EV
+       Input Error         Flush OUT-BUF, 2-EOF, 2-BKFIL, Scrub-EV
+       MOCE                Flush OUT-BUF, 2-EOF, Unload Tapes, EXIT
+       ====================================================================
+FIP$
+Where, Scrub-EV indicates that any partial-event which has not
+been fully processed will be deleted from the EVENT-buffer and
+Save-EV means that any partial-event will be retained for
+subsequent MOC requests.
+FIP$
+NOTE: Processing is always terminated with two File-Marks being
+written on all OUTPUT tapes.
+CYB$
+       ====================================================================
+TPF$
+SEC$.170  Discussion of Banana Gating (Free-Form-Gating)
+BLP$
+\b\2-D free-form gate\\ testing must be carried out by user-supplied
+code executed by routine \b\USERMOC\\. 
+There are some intrinsic aids for 2-D gate testing
+and ban-file processing. This is how it goes:
+CYB$
+Reading in ban-files-------------------------------------------------------
+BLP$
+One or more ban-files are opened and read in via the commands:
+CYB$
+ban file1.ban
+ban file2.ban
+     .
+BLP$
+All entries (bananas) in each file are read in and stored in memory
+in the order in which they occur in the file. Subsequent references to
+individual bananas (stored in memory) may be via the stacking ordinal
+(sequence number as read in) or via the ban-ID from the ban-file.
+If more than one file is read in, one must make sure that all IDs are
+unique or one must reference bananas by sequence number rather than
+ID-number.
+Non-unique IDs will generate a warning at read-in time but it is not
+a fatal error.
+Also, the ID numbers of bananas to be referenced by ID number must be
+limited to the range of 1 to 8000. Any out-of-range IDs will generate
+a warning at read-in time but, again, the error is not fatal.
+CYB$
+Zeroing the in-memory bananas ---------------------------------------------
+BLP$
+You may use the command \b\banz\\ to clear all in-memory bananas.
+Subsequently, a new set may be read in as described above.
+CYB$
+Functions which test 2-D Gates --------------------------------------------
+BLP$
+After the appropriate ban-files have been read in, functions \b\BANTESTI\\
+or \b\BANTESTN\\ may be used to test
+X and Y parameters against individual bananas. (see SEC#270).
+BLP$
+The following list summarizes the features and limitations of this type
+of free-form gating support.
+ODP$
+o......Multiple ban-files may be read in. All bananas in each file are
+stored in memory.
+ODP$
+o......A ban-ID directory is built as files are read in. If more than one
+banana has the same ID, only the last one read will be entered in the
+directory. A warning will be displayed at read-in time but the error is not
+fatal (you can always reference via sequence # via routine \b\BANTESTN\\).
+ODP$
+o......Up to 3000 bananas may be stored by the standard support routines.
+ODP$
+o......Up to 8000 banana IDs can be accomodated by the standard routines.
+ID numbers must be in he range of 1 through 8000 in order to be entered
+into the ID-directory. If any IDs are out of range, a warning will be
+given at read-in time but the error is not fatal (you can always reference
+via sequence# via routine \b\BANTESTN\\).
+ODP$
+o......Up to 1024000 banana channels (2000 512-channel bananas) may be
+stored in memory.
+TPF$
+SP2$
+SEC$.180  How to Create a Customized Prescan Program
+CY1$
+
+\bu\For Alphas Workstations\\
+BLP$
+Use the make file \b\/usr/hhirf/lemor.make\\
+(listed below) as a template for creating
+your own make file for generating a customized \b\prescan\\ program.
+CY1$
+FFLAGS= -fpe2
+#
+OBJS= /usr/hhirf/lemor.o\
+      /usr/users/milner/Dlemor/dummysubs.o
+#
+LIBS= /usr/hhirf/lemorlib.a\
+      /usr/hhirf/miliba.a\
+      /usr/hhirf/orphlib.a
+#
+LDF = -laio -lpthreads
+#
+lemor: $(OBJS) $(LIBS)
+#
+        f77 -O4 $(FFLAGS) $(OBJS) $(LIBS) $(LDF) -o lemor
+
+BLP$
+Assume that your username is \b\userdoe\\ and your customizing routines
+are in your directory \b\Dlemosubs\\ and there are two files to be
+included, \b\subsa\\ and \b\subsb\\ and you wish to produce a program
+\b\mylemo\\. Copy the template file into your directory and
+create a make file \b\mylemo.make\\ by changing the template
+file as/where indicated by the \b\bold\\ face type. The generic result
+is shown below.
+CY1$
+FFLAGS= -fpe2
+#
+OBJS= /usr/hhirf/lemor.o\
+      /usr/users/\b\userdoe/Dlemosubs/subsa.o\\\
+      /usr/users/\b\userdoe/Dlemosubs/subsb.o\\
+#
+LIBS= /usr/hhirf/lemorlib.a\
+      /usr/hhirf/miliba.a\
+      /usr/hhirf/orphlib.a
+#
+LDF = -laio -lpthreads
+#
+\b\mylemo\\: $(OBJS) $(LIBS)
+
+        f77 -O4 $(FFLAGS) $(OBJS) $(LIBS) $(LDF) -o \b\mylemo\\
+CY1$
+===========================================================================
+The procedures is the same for \b\DECstations\\ except that the \b\LDF\\
+entry is not defined.
+===========================================================================
+TPF$
+SP1$
+SEC$.190  Lemor Routines Which aid Customization
+CY1$
+Routine   Function or use                                               See
+
+UNPACKL   Unpacks L001, L002 or L003 buffers into single events     SEC#240
+          Form is ID-list, Data-list and expanded data-array
+
+UNPACKAA  Unpacks L003 buffers into single events                   SEC#240
+          Form is ID-list and associated data-list
+
+UNPACKBB  Unpacks L003 buffers into single events                   SEC#240
+          Form is ID-list and associated expanded data-array
+
+GATTESTI  Tests X data against a 1-D gate identified by ID-number   SEC#260
+
+BANTESTI  Tests X,Y data against a banana identified by ID-number   SEC#270
+
+BANTESTN  Tests X,Y data against a banana identified by ordinal     SEC#270
+
+EVLISOUT  Sends single events to the output data stream             SEC#250
+
+EVEXPOUT  Sends single events to the output data stream             SEC#250
+
+SP1$
+SEC$.200  User-Supplied Routines Which aid Customization
+CY1$
+Routine   Function or use                                               See
+
+USERCMP   Receives \b\UCOM\\ commands for the support of other           SEC#210
+          user-supplied routines
+
+USERMOC   The user-supplied routine called by \b\lemor\\ when operating  SEC#220
+          in the modify-copy mode.                                  SEC#230
+SP1$
+SEC$.210  User Routine: USERCMP - Users Command Processor
+BLP$
+\b\lemor\\ supports customization by means of a user supplied command
+processor as follows:
+CY1$
+The command:  \b\ucom text\\
+
+Results in the following actions:
+BLP$
+The \b\ucom\\ is removed from the command line and the \b\text\\ field
+is used as an argument in a call to routine \b\USERCMP\\ as follows:
+CY1$
+CALL USERCMP(text)
+BLP$
+The user supplied routine \b\USERCMP\\ may then interpret the 80-byte
+character string \b\text\\ as desired and pass the results to other
+routines through user defined \b\COMMON\\ or calls to other user supplied
+routines.
+TPF$
+SP1$
+SEC$.220  User Routine: USERMOC - User Processing of Raw Data
+BLP$
+\b\lemor\\ provides users with the means
+(via a user-supplied routine \b\USERMOC\\) to do the following:
+ODP$
+o......Receive raw input data buffers and modify if desired.
+ODP$
+o......Call routine \b\UNPACKL\\ (see SEC#240) to return single events.
+ODP$
+o......Process (test, modify, etc) events and call an event
+output routine (\b\EVLISOUT or EVEXPOUT)\\ (see SEC#250) to output
+single events to tape or LDF.
+BLP$
+At run time, calls to \b\USERMOC\\ are enabled/disabled as follows:
+CY1$
+UPOF             ;Disable calling of USERMOC
+UPON             ;Enable  calling of USERMOC (NPRAW=0) (default)
+UPON NPRAW       ;Enable  calling of USERMOC with NPRAW defined
+                 ;NPRAW = Max # raw parms (for USERMOC only,  if needed)
+BLP$
+The default \b\USERMOC\\ listed below does no event selection, however it
+may be used to convert one of the data formats (L001, L002, L003) 
+to another.
+CY1$
+===========================================================================
+C$PROG USERMOC   - Default USERMOC (can convert data formats)
+C
+      SUBROUTINE USERMOC(IBUF,NHW)
+      IMPLICIT NONE
+C     ------------------------------------------------------------------
+      INTEGER*2    IBUF(*)
+      INTEGER*4    IDLST(2000),DALST(2000),EXPEV(2000)
+      INTEGER*4    NHW,MXID,NPAR,IERR
+      INTEGER*4    NWDS,IX,IY
+      CHARACTER*4  DONE
+      DATA         MXID/2000/
+C     ------------------------------------------------------------------
+C
+  100 CALL UNPACKL(
+     &           IBUF,   !I*2 - raw data buffer
+     &           NHW,    !I*4 - # of I*2 words in IBUF
+     &           MXID,   !I*4 - max-ID (dimension IDLST, DALST, EXPEV)
+     &           IDLST,  !I*4 - ID-list   for returned event
+     &           DALST,  !I*4 - Data-list for returned event
+     &           EXPEV,  !I*4 - expanded-event array
+     &           NPAR,   !I*4 - # of parameters in this event
+     &           DONE,   !C*4 - YES/NO - requests new IBUF
+     &           IERR)   !I*4 - 0 means OK, nonzero means error
+C
+C
+      IF(DONE.EQ.'YES ') GO TO 200
+      IF(IERR.NE.0)      GO TO 100
+      CALL EVLISOUT(IDLST,DALST,NPAR)
+      GO TO 100
+  200 RETURN
+      END
+===========================================================================
+TPF$
+SP2$
+SEC$.230  User Routine USERMOC - Example with Banana Gating
+CY1$
+The following \b\USERMOC\\:
+
+(1)....Receives data buffers in default (L003) or specified data format.
+
+(2)....Calls \b\UNPACKL\\ to unpack and return single events,
+
+(3)....Calls \b\BANTESTI\\ to test parameters 5 & 7 against banana 1,
+
+(4)....Calls \b\EVLISOUT\\ to output events into a tape or LDF.
+
+===========================================================================
+CY1$
+C$PROG USERMOC   - Example USERMOC which tests one banana-gate
+C
+      SUBROUTINE USERMOC(IBUF,NHW)
+C
+      IMPLICIT NONE
+C
+C     ---------------------------------------------------------------------
+      INTEGER*2    IBUF(*)
+      INTEGER*4    IDlST(2000),DALST(2000),EXPEV(2000)
+      INTEGER*4    NHW,MXID,NPAR,IERR
+      INTEGER*4    NWDS,IG,IX,IY
+      CHARACTER*4  DONE
+      LOGICAL      BANTESTI
+      DATA         MXID/2000/
+C     ---------------------------------------------------------------------
+C
+      IG=1               !Banana ID number to test
+      IX=5               !X-parameter to test
+      IY=7               !Y-parameter to tset
+C
+  100 CALL UNPACKL(
+     &           IBUF,   !I*2 - raw data buffer
+     &           NHW,    !I*4 - # of I*2 words in IBUF
+     &           MXID,   !I*4 - max-ID (dimension of IDLST, DALST, EXPEV)
+     &           IDLST,  !I*4 - ID-list   for returned event
+     &           DALST,  !I*4 - Data-list for returned event
+     &           EXPEV,  !I*4 - expanded-event array
+     &           NPAR,   !I*4 - # of parameters in this event
+     &           DONE,   !C*4 - YES/NO - requests new IBUF
+     &           IERR)   !I*4 - 0 means OK, nonzero means error
+C
+C
+      IF(DONE.EQ.'YES ')     GO TO 200     !Test for end of buffer
+      IF(IERR.NE.0)          GO TO 100     !Test for error
+      IF(BANTESTI(IG,                      !Test EXPEV(IX),EXPEV(IY)
+     &            EXPEV(IX),               !against banana-IG
+     &            EXPEV(IY)) GO TO 110     !Test for BAN-gate satisfied
+      GO TO 100                            !If no,  skip it
+C
+  110 CALL EVLISOUT(IDLST,DALST,NPAR)      !If yes, send to output
+      GO TO 100                            !Go back for next enent
+  200 RETURN                               !Return for next buffer
+      END
+TPF$
+SP1$
+SEC$.240  Lemor Routines which Unpack Events
+CY1$
+
+\bu\UNPACKL - Unpacks L001, L002 & L003 Buffers\\
+BLP$
+The data format is interpreted as (L001, L002 or L003) depending
+on that specified by the user at run time. The default format is
+\b\L003\\ since that is the one we are currently using in data
+acquisition.
+CY1$
+  100 CALL UNPACKL(
+     &           IBUF,   !I*2 - raw data buffer
+     &           NHW,    !I*4 - # of I*2 words in IBUF
+     &           MXID,   !I*4 - max-ID (dimension of IDLST, DALST, EXPEV) 
+     &           IDLST,  !I*4 - ID-list   for returned event
+     &           DALST,  !I*4 - Data-list for returned event
+     &           EXPEV,  !I*4 - expanded-event array
+     &           NPAR,   !I*4 - # of parameters in this event
+     &           DONE,   !C*4 - YES/NO - requests new IBUF
+     &           IERR)   !I*4 - 0 means OK, nonzero means error
+BLP$
+\bu\Important Note: \\In interest of speed,
+\b\UNPACKL\\ resets (to -1) only those elements of \b\EXPEV\\ which
+were set by the previous call (all elements are initially set to -1). 
+If the user sets other elements 
+in this array, it is her/his/its responsibility to reset these elements
+prior to subsequent calls to \b\UNPACKL\\.
+BLP$
+\bu\Important Note: \\In the interest of speed,
+\b\UNPACKL uses IDLST\\ to reset elements
+in \b\EXPEV\\ which were set in the previous unpack operation.
+Therefore, the user should \b\NOT\\ modify \b\IDLST\\.
+BLP$
+\bu\Important note:\\ Routine \b\UNPACKBB\\ resets elements in the 
+expanded array \b\EVBUF\\ to 0 (not -1).
+TPF$
+SP1$
+SEC$.240  Lemor Routines which Unpack Events (continued)
+CY1$
+
+\bu\UNPACKAA - Unpacks L003 Buffers to Single Events\\
+BLP$
+The L003 format used in the ORPHAS data acquisition system consists of pairs
+of 16-bit words.  The first word is the parameter ID and the second word is
+the parameter data.  The end-of-event is marked by a pair for which both
+the ID and the data are 'FFFF'X.  An event data buffer always has an
+integral number of events.
+BLP$
+UNPACKAA unpacks single events from a buffer.  Each call returns a single
+event in the EVBUF array.  When all events in the buffer have been processed,
+the alternate FORTRAN return is taken.
+BLP$
+UNPACKAA returns data in a two dimensional array.  The first element is the
+parameter ID and second is the parameter data.
+CY1$
+     CALL UNPACKAA(IBUF,NHW,EVBUF,NPARAM,EVSIZE,IERR,IEND)
+
+\b\call:\\   INTEGER*2  IBUF       - raw event data buffer
+        INTEGER*4  NHW        - number of INT*2 words in IBUF
+        INTEGER*4  EVSIZE     - Second dimension of array EVDAT
+
+\b\return:\\ INTEGER*4  EVBUF(2,*) - Event data. EVBUF(1,*) is the parameter ID
+        INTEGER*4  NPARAM     - Number of parameters in this event.
+        INTEGER*4  IERR       - 0 says OK. Nonzero says too many parameters
+
+        INTEGER*4  IEND       - 0 says more data - nonzero says end-of-buffer
+
+\b\NOTE: IEND has been implemented because gnu fortran doesn't support the
+alternate RETURN used in previous versions\\
+SP2$
+CY1$
+\bu\UNPACKBB - Unpacks L003 Buffers to Single Events\\
+BLP$
+UNPACKBB performs the same function as UNPACKAA.  The parameter ID is
+used as an index to the EVBUF array to get the parameter data.  The EVBUF
+is zero for parameters which were not present in the event.
+CY1$
+     CALL UNPACKBB(IBUF,NHW,IDBUF,EVBUF,MAXID,NPARAM,IERR,IEND)
+
+\b\call:\\   INTEGER*2  IBUF      - raw event data buffer
+        INTEGER*4  NHW       - number of INT*2 words in IBUF
+        INTEGER*4  MAXID     - Max ID. IDBUF and EVBUF must be dimensioned
+                               at least as great as MAXID
+
+\b\return:\\ INTEGER*4  IDBUF()   - List of IDs in this event
+        INTEGER*4  EVBUF(id) - Event data for parameter id
+        INTEGER*4  NPARAM    - Number of parameters in this event.
+        INTEGER*4  IERR      - 0 says OK. Nonzero says too many parameters.
+
+        INTEGER*4  IEND       - 0 says more data - nonzero says end-of-buffer
+                              - Also nonzero if L003 format error occurs
+
+\b\NOTE: IEND has been implemented because gnu fortran doesn't support the
+alternate RETURN used in previous versions\\
+TPF$
+SP1$
+SEC$.250  Lemor Routines which Output Events
+BLP$
+Two event output routines are available in "user" mode, namely; 
+\b\EVLISOUT & EVEXPOUT\\. Both routines can generate output streams
+in L001, L002 or L003 format (whichever is specified or defaulted).
+The calling sequences are:
+CYB$
+      CALL EVLISOUT(IDLST,  !I*4 array  - ID-list (from UNPACKL)
+     &              DALST,  !I*4 array  - data associated with ID-list
+     &              NPAR)   !I*4 scaler - number of IDs
+
+      CALL EVEXPOUT(EXPEV,  !I*4 array  - expanded event (from UNPACKL)
+     &              LO,     !I*4 array  - min parameter# to output
+     &              HI)     !I*4 scaler - max parameter# to output
+
+BLP$
+The default \b\lemor\\ contains the following \b\USERMOC\\ routine
+and uses routine \b\EVLISOUT\\ to output events.
+CY1$
+C$PROG USERMOC   - Default user modify-copy routine (USERMOC)
+C
+      SUBROUTINE USERMOC(IBUF,NHW)
+      IMPLICIT NONE
+C     ------------------------------------------------------------------
+      INTEGER*2    IBUF(*)
+      INTEGER*4    IDLST(2000),DALST(2000),EXPEV(2000)
+      INTEGER*4    NHW,MXID,NPAR,IERR
+      INTEGER*4    NWDS,IX,IY
+      CHARACTER*4  DONE
+      DATA         MXID/2000/
+C     ------------------------------------------------------------------
+C
+  100 CALL UNPACKL(
+     &           IBUF,   !I*2 - raw data buffer
+     &           NHW,    !I*4 - # of I*2 words in IBUF
+     &           MXID,   !I*4 - max-ID (dimension IDLST, DALST, EXPEV)
+     &           IDLST,  !I*4 - ID-list   for returned event
+     &           DALST,  !I*4 - Data-list for returned event
+     &           EXPEV,  !I*4 - expanded-event array
+     &           NPAR,   !I*4 - # of parameters in this event
+     &           DONE,   !C*4 - YES/NO - requests new IBUF
+     &           IERR)   !I*4 - 0 means OK, nonzero means error
+C
+C
+      IF(DONE.EQ.'YES ') GO TO 200
+      IF(IERR.NE.0) GO TO 100
+      CALL EVLISOUT(IDLST,DALST,NPAR)
+      GO TO 100
+  200 RETURN
+      END
+TPF$
+SEC$.260  Lemor Routine for Testing 1-D Gates
+BLP$
+Simple 1-D gating is supported in user-mode as follows:
+ODP$
+o......One or more 1-D gates are specified via the syntax:
+CYB$
+       GATE ID LO HI
+FIP$
+Where, \b\ID\\ is the gate ID# and \b\LO & HI\\ are the gate
+limits. The allowed range for \b\ID\\ is 1 to 1000. All
+quantities are \b\INTEGER*4\\.
+ODP$
+o......\b\LOGICAL FUNCTION GATTESTI(ID,IP)\\ is used to test
+the parameter \b\IP\\ against gate \b\ID\\. (Note: gates are inclusive)
+CYB$
+       GATTESTI is .TRUE.  if gate is satisfied
+       GATTESTI is .FALSE. otherwise
+ODP$
+o......Gates may be redefined - no warning is given.
+ODP$
+o......There is no check on gate limits.
+ODP$
+o......Gates must be on the same basis (scale) as the parameter being
+tested.
+ODP$
+o......Gates may be specified interactively, or read from a file (see
+SEC#020 and SEC#040 for relavant commands).
+
+SEC$.270  Lemor Routine for Testing 2-D Gated (bananas)
+BLP$
+After the appropriate ban-files have been read in, 
+logocal function \b\BANTESTI\\ may be used by routine \b\USERMOC\\ to test
+X and Y parameters against individual bananas.
+CYB$
+      LOGICAL FUNCTION BANTESTI(IG,IX,IY)
+C
+      INTEGER*4 IG,IX,IY
+BLP$
+\b\BANTESTI\\ references
+bananas via ID-numbers IG. If the the IX,IY point is contained within the
+specified banana, the value of the function is .TRUE., otherwise it .FALSE.
+In NG or IG do not exist, .FALSE. is returned. There are no error messages.
+SP1$
+BLP$
+After the appropriate ban-files have been read in, 
+logical function \b\BANTESTN\\ may be used by routine \b\USERMOC\\ to test
+X and Y parameters against individual bananas.
+CYB$
+      LOGICAL FUNCTION BANTESTN(NG,IX,IY)
+C
+      INTEGER*4 NG,IX,IY
+BLP$
+\b\BANTESTN\\ references bananas via sequence numbers NG.
+If the the IX,IY point is contained within the
+specified banana, the value of the function is .TRUE., otherwise it .FALSE.
+In NG or IG do not exist, .FALSE. is returned. There are no error messages.
+TPF$
+SP2$
+SEC$.300  Logical Units and COMMON Blocks
+CYB$
+\b\lemor\\ may use some or all of the following logical unit assignments:
+===========================================================================
+LU#     USE
+
+  5     VDT INPUT
+  6     VDT OUTPUT
+  7     LIST FILE/DEV
+  8     HELP-FILE, MIL-FILE, TEX-FILE, ETC. CLOSED AFTER USE
+
+ 10     CMD-FILE
+ 11     INPUT    TAPE/FILE
+ 12     OUTPUT-1 TAPE/FILE
+ 13     OUTPUT-2 TAPE
+ 14     OUTPUT-3 TAPE
+ 15     INPUT    LDF-FILE
+ 16     OUTPUT   LDF-FILE
+ 17     OUTPUT   RECLOG-FILE
+===========================================================================
+
+
+
+
+
+\b\lemor\\ uses the following labeled COMMON blocks:
+===========================================================================
+COMMON/FFGA/
+COMMON/FFGB/
+COMMON/FFGC/
+COMMON/FFGD/
+COMMON/FFGE/
+COMMON/LLL/
+COMMON/LM01/ thru COMMON/LM50/
+COMMON/ML01/
+COMMON/ML02/
+===========================================================================
+BLP$
+The user should not attempt to use any of these logical units or COMMON
+block labels.
+CHP$U310  Processing UDFs - Linux Version Only!
+TPF$
+SP1$
+SEC$.310  Processing of User Defined Files - UDFs - Linux Version Only!
+BLP$
+Support is provided for the processing of non-scandard event data files.
+Such files might be generated via simulations or from some other source.
+I will call such files User Defined Files or just \b\UDFs\\. 
+CY1$
+The commands:
+CY1$
+\b\UDF filename\\      ;Opens the \b\UDF\\ for sequential access reading
+                  ;and sets flags for \b\UDF\\ processing
+
+\b\UDF filename RECL\\ ;Opens the \b\UDF\\ for direct access reading with
+                  ;record length = \b\RECL\\
+                  ;and sets flags for \b\UDF\\ processing
+BLP$
+A number of special routines are brought into play. Depending on specific
+requirements, one or more of these routines must be customized by the user.
+There are three routines that may need to be customized. These are:
+ODP$
+\b\UDFOPEN\\ which opens the \b\UDF\\ for the type of access required for
+reading (sequential, direct, etc). The default version opens the file as
+a formatted (ASCII) file to be read sequentially.
+ODP$
+\b\UDFHAN\\ processes the positioning commands \b\REW, FR, & BR\\
+which provides for REWIND, BACK-RECORD and FORWARD-RECORD operations.
+ODP$
+\b\UDFEVENT\\ reads the \b\UDF\\ and returns one event per call in the form
+of INTEGER*4 ID and DATA arrays. These event arrays are then used
+to build standard L003 buffers. This routine will most
+certainly need to be customized, however, it is probably the only one 
+which does.
+CY1$
+The archive for default routines are in \b\/usr/hhirf/lemorlib.a\\
+
+The source  for default routines are in \b\/tera/milner/DDgnu/Dlemorlib/\\ 
+BLP$
+In order to use the \b\UDF\\ support, the user must understand the structure
+of the \b\UDF\\ and be able to:
+ODP$
+o......Modify \b\UDFOPEN\\ to be compatible with the reading requirements,
+ODP$
+o......Modify \b\UDFEVENT\\ so as to read the \b\UDF\\ and return one
+event per call.
+BLP$
+The template (default) \b\UDF\\ support routines are internally documented and
+listed on subsequent pages.
+CHP$U310  Routine UDFOPEN - Linux Version Only!
+TPF$
+SP1$
+CY1$
+C$PROG UDFOPEN   - Opens Input UDF-Files for LEMOR
+C
+C     ******************************************************************
+C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 03/31/2005
+C     ******************************************************************
+C
+      SUBROUTINE UDFOPEN
+C
+      IMPLICIT NONE
+C
+C     ------------------------------------------------------------------
+      COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+      INTEGER*4   MSSG,NAMPROG,LOGUT,LOGUP
+      CHARACTER*4 LISFLG,MSGF
+      CHARACTER*112 CMSSG
+      EQUIVALENCE (CMSSG,MSSG)
+C     ------------------------------------------------------------------
+      COMMON/ML02/ IWDRAW(20)
+      INTEGER*4    IWDRAW
+C     ------------------------------------------------------------------
+      COMMON/LM20/ LUINF,LUOUF,INFOP,OUFOP
+      INTEGER*4    LUINF,LUOUF
+      CHARACTER*4              INFOP,OUFOP
+C     ------------------------------------------------------------------
+      COMMON/LM23/ INDIR(8192),OUDIR(8192),INTYP,OUTYP,INRECI,OURECI
+      INTEGER*4    INDIR,      OUDIR,                  INRECI,OURECI
+      CHARACTER*4                          INTYP,OUTYP
+C     ------------------------------------------------------------------
+      COMMON/LM33/ UDFNAM(20),UDFRECL,UDFNPAR,UDFRECI
+      INTEGER*4    UDFNAM,    UDFRECL,UDFNPAR,UDFRECI
+C     ------------------------------------------------------------------
+      COMMON/LM34/ NCEOF,LAUTO
+      INTEGER*4    NCEOF
+      CHARACTER*4        LAUTO
+C     ------------------------------------------------------------------
+      CHARACTER*80 CNAMF
+      EQUIVALENCE (CNAMF,UDFNAM)
+      INTEGER*4    RECLVALU,IOS,IERR
+C     ------------------------------------------------------------------
+      SAVE
+C     ------------------------------------------------------------------
+C     Process: UDF filename <RECL>     ;i.e. get UDFNAM & UDFRECL
+C     ------------------------------------------------------------------
+C
+      CALL UDFNAME(IWDRAW,UDFNAM,UDFRECL,IERR)
+C
+      IF(IERR.NE.0) GO TO 1000
+
+
+CEB$
+(continued on next page)
+TPF$
+SP1$
+CY1$
+C
+C     ------------------------------------------------------------------
+C     Open User-Defined-File for input
+C     ------------------------------------------------------------------
+C
+      CLOSE(UNIT=LUINF)               !Close input file if open
+      INTYP='    '                    !Reset input type
+      NCEOF=0                         !Reset contiguous EOF counter
+C
+      IF(UDFRECL.EQ.0) THEN           !Test for RECL specified
+      OPEN(UNIT      = LUINF,         !Otherwise,
+     &     FILE      = CNAMF,         !Open UDF for sequential access
+     &     STATUS    = 'OLD',
+     &     IOSTAT    = IOS)
+      GO TO 100                       !Go test status
+      ENDIF
+C
+      OPEN(UNIT      = LUINF,         !Otherwise,
+     &     FILE      = CNAMF,         !Open UDF for DIRECT access
+     &     ACCESS    = 'DIRECT',
+     &     RECL      = RECLVALU(UDFRECL),!with RECORD LENGTH = UDFRECL
+     &     STATUS    = 'OLD',
+     &     IOSTAT    = IOS)
+C
+  100 IF(IOS.NE.0) THEN               !Test OPEN status for good
+      CALL IOFERR(IOS)
+      GO TO 1000
+      ENDIF
+C
+      INTYP='UDF '                    !Set input type to UDF
+C
+      UDFRECI=1                       !Next rec# to be read
+C
+      UDFNPAR=0
+C
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Send error messages
+C     ------------------------------------------------------------------
+C
+ 1000 WRITE(CMSSG,1005)
+ 1005 FORMAT('UDFOPEN ERROR')
+      CALL MESSLOG(LOGUT,LOGUP)
+      RETURN
+      END
+CHP$U310  Routine UDFHAN - Linux Version Only!
+TPF$
+SP1$
+CY1$
+C$PROG UDFHAN    - Manages UDF-file position pointers for LEMOR
+C
+C     ******************************************************************
+C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 11/22/2004
+C     ******************************************************************
+C
+      SUBROUTINE UDFHAN(IERR)
+C
+      IMPLICIT NONE
+C
+C     ------------------------------------------------------------------
+      COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+      INTEGER*4   MSSG,NAMPROG,LOGUT,LOGUP
+      CHARACTER*4 LISFLG,MSGF
+      CHARACTER*112 CMSSG
+      EQUIVALENCE (CMSSG,MSSG)
+C     ------------------------------------------------------------------
+      COMMON/ML01/ IWD(20),LWD(2,40),ITYP(40),NF,NTER
+      INTEGER*4    IWD,    LWD,      ITYP,    NF,NTER
+C     ------------------------------------------------------------------
+      COMMON/LM20/ LUINF,LUOUF,INFOP,OUFOP
+      INTEGER*4    LUINF,LUOUF
+      CHARACTER*4              INFOP,OUFOP
+C     ------------------------------------------------------------------
+      COMMON/LM23/ INDIR(8192),OUDIR(8192),INTYP,OUTYP,INRECI,OURECI
+      INTEGER*4    INDIR,      OUDIR,                  INRECI,OURECI
+      CHARACTER*4                          INTYP,OUTYP
+C     ------------------------------------------------------------------
+      COMMON/LM33/ UDFNAM(20),UDFRECL,UDFNPAR,UDFRECI
+      INTEGER*4    UDFNAM,    UDFRECL,UDFNPAR,UDFRECI
+C     ------------------------------------------------------------------
+      COMMON/LM34/ NCEOF,LAUTO
+      INTEGER*4    NCEOF
+      CHARACTER*4        LAUTO
+C     ------------------------------------------------------------------
+      INTEGER*4    IERR,KIND,NUM,NV,N
+      REAL*4       XV
+      CHARACTER*4  KMD
+      EQUIVALENCE (KMD,LWD(1,1))
+C     ------------------------------------------------------------------
+      SAVE
+C     ------------------------------------------------------------------
+C     LUINF    =  Logical unit# for UDF-file
+C
+C     INTYP    = '    ', TAPE, FILE = input type
+C
+C     UDFRECI  =  Current rec# pointer for input file if DIRECT access
+C                 Otherwise just keeps track of position but not used
+C     ------------------------------------------------------------------
+C
+      IERR=0
+C
+      CALL MILV(LWD(1,2),NV,XV,KIND,IERR)
+      IF(IERR.NE.0) GO TO 1000
+      NUM=NV
+      IF(NUM.LE.0) NUM=1
+C
+      IF(INTYP.NE.'UDF ') GO TO 1000
+
+CEB$
+(continued on next page)
+TPF$
+SP1$
+CY1$
+C
+      IF(KMD.EQ.'RWI ') GO TO 100
+      IF(KMD.EQ.'BRI ') GO TO 150
+      IF(KMD.EQ.'FRI ') GO TO 200
+C
+      GO TO 1000
+C
+C     ------------------------------------------------------------------
+C     Process REW  -  Rewind input file
+C     ------------------------------------------------------------------
+C
+  100 REWIND LUINF               !For SEQUENTIAL access only
+      NCEOF=0                    !Reset contiguous EOF counter
+      UDFRECI=1                  !Next REC# to be read for DIRECT access
+      UDFNPAR=0
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Process BR   -  Backup record/s on input file
+C     ------------------------------------------------------------------
+C
+  150 DO 160 N=1,NUM
+      BACKSPACE LUINF            !For SEQUENTIAL access only
+      UDFRECI=UDFRECI-1
+      IF(UDFRECI.LT.1) THEN
+      UDFRECI=1
+      UDFNPAR=0
+      RETURN
+      ENDIF
+  160 CONTINUE
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Process FR   -  Forward record/s on input file
+C     ------------------------------------------------------------------
+C
+  200 DO 210 N=1,NUM
+      READ(LUINF,205)KIND         !For SEQUENTIAL access only
+  205 FORMAT(A4)
+      UDFRECI=UDFRECI+1
+      UDFNPAR=0
+  210 CONTINUE
+      RETURN
+C
+C     ------------------------------------------------------------------
+C     Send error messages
+C     ------------------------------------------------------------------
+C
+ 1000 IERR=1
+      RETURN
+      END
+CHP$U310  Routine UDFEVENT - Linux Version Only!
+TPF$
+SP1$
+CY1$
+C$PROG UDFEVENT  - Reads & returns one event from example UDF-file 
+C
+C     ******************************************************************
+C     BY W.T. MILNER AT HRIBF - LAST MODIFIED 11/28/2004
+C     ******************************************************************
+C
+      SUBROUTINE UDFEVENT(MXID,PID,DAT,NP,IERR)
+C
+      IMPLICIT NONE
+C
+C     ------------------------------------------------------------------
+      COMMON/LM23/ INDIR(8192),OUDIR(8192),INTYP,OUTYP,INRECI,OURECI
+      INTEGER*4    INDIR,      OUDIR,                  INRECI,OURECI
+      CHARACTER*4                          INTYP,OUTYP
+C     ------------------------------------------------------------------
+      COMMON/LM20/ LUINF,LUOUF,INFOP,OUFOP
+      INTEGER*4    LUINF,LUOUF
+      CHARACTER*4              INFOP,OUFOP
+C     ------------------------------------------------------------------
+      COMMON/LM33/ UDFNAM(20),UDFRECL,UDFNPAR,UDFRECI
+      INTEGER*4    UDFNAM,    UDFRECL,UDFNPAR,UDFRECI
+C     ------------------------------------------------------------------
+      INTEGER*4    MXID,PID(*),DAT(*),BUF(2,8),NP,LU,IERR,I
+C
+      INTEGER*4    EOFTST,IOS
+C     ------------------------------------------------------------------
+      SAVE
+C     ------------------------------------------------------------------
+C
+      NP=0
+      IERR=0
+C
+  100 UDFRECI=UDFRECI+1
+C
+      IF(UDFRECL.EQ.0) THEN
+      READ(LUINF,110,ERR=200,END=300)BUF      !Read ASCII input line
+  110 FORMAT(16I5)
+      ENDIF
+C
+      IF(UDFRECL.GT.0) THEN
+      READ(LUINF,REC=UDFRECI,IOSTAT=IOS)BUF   !Read binary input line
+      IF(IOS.NE.0) GO TO 400
+      ENDIF
+C
+C
+      IF(BUF(1,1).EQ.0.AND.BUF(2,1).EQ.0) RETURN  !If 1st 2 wds 0, 
+C                                                 !then its end-event
+C
+  140 DO 150 I=1,8                            !Loop on buffer values
+      IF(BUF(1,I).EQ.0) GO TO 150             !If parm-ID 0, skip it
+      NP=NP+1                                 !Inc cntr
+      PID(NP)=BUF(1,I)                        !Save parm-ID
+      DAT(NP)=BUF(2,I)                        !Save data
+  150 CONTINUE
+      GO TO 100                               !Go read next record
+CEB$
+(continued on next page)
+TPF$
+SP1$
+CY1$
+C
+  200 WRITE(6,205)                            !Error return
+  205 FORMAT('Error reading UDF file')
+      IERR=5
+      RETURN
+C
+  300 WRITE(6,305)                            !EOF return
+  305 FORMAT('EOF reading UDF file')
+      IERR=999
+      RETURN
+C
+  400 IF(EOFTST(IOS).NE.0) THEN
+      WRITE(6,305)
+      IERR=999
+      RETURN
+      ENDIF
+C
+      WRITE(6,405)IOS
+  405 FORMAT('Error reading UDF, IOS =',I5)
+      IERR=5
+      RETURN
+      END
+QIT$

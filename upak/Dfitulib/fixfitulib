@@ -1,0 +1,6 @@
+sed -f ../fixword.sed <cmpgen.F >cmpgen.FF
+mv cmpgen.FF cmpgen.F
+sed -f ../fixword.sed <plotxylin.F >plotxylin.FF
+mv plotxylin.FF plotxylin.F
+sed -f ../fixword.sed <plotxysym.F >plotxysym.FF
+mv plotxysym.FF plotxysym.F

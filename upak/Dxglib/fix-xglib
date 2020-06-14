@@ -1,0 +1,17 @@
+sed -f fixword.sed <boxit.F >boxit.FF
+sed -f fixword.sed <doaxis.F >doaxis.FF
+sed -f fixword.sed <dracir.F >dracir.FF
+sed -f fixword.sed <getgco.F >getgco.FF
+sed -f fixword.sed <lablman.F >lablman.FF
+sed -f fixword.sed <lablout.F >lablout.FF
+sed -f fixword.sed <markit1.F >markit1.FF
+sed -f fixword.sed <markit2.F >markit2.FF
+sed -f fixword.sed <markits.F >markits.FF
+sed -f fixword.sed <markum1.F >markum1.FF
+sed -f fixword.sed <newfig.F >newfig.FF
+sed -f fixword.sed <nucur.F >nucur.FF
+sed -f fixword.sed <plotxy.F >plotxy.FF
+sed -f fixword.sed <plotpix.F >plotpix.FF
+sed -f fixword.sed <plotxyl.F >plotxyl.FF
+sed -f fixword.sed <texout.F >texout.FF
+sed -f fixword.sed <xcomdef.F >xcomdef.FF

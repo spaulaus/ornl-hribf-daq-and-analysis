@@ -1,0 +1,17 @@
+17April2007
+
+This version of UPAK contains support for CYGWIN, MACOS X, 64-bit OS's.
+This support is arranged by modifying the Makefile at the top 
+of the directory tree.  CYGWIN and MAC OS X differences are inserted 
+where necessary using #ifdef statements in the Fortran and C source
+code.  Where the Fortran has these statements, the files are named
+xxx.F, using the capital 'F', which the GNU compilers interpret to
+run through the C-preprocessor. 
+
+
+It also has a new memory-mapped I/O routine for histogramming, 
+replacing the shared-memory system for histograms.  This means 
+you no longer need to reconfigure your kernel to have access 
+to histograms while you scan.  The support is automatic.
+
+Robert Varner

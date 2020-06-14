@@ -1,0 +1,166 @@
+   11-Sep-03 .......... U910  TXX - Text Formatting - WTM ........... PAGE   1
+ 
+ 
+                A TEXT FORMATING PROGRAM FOR LINE PRINTER OR LN03
+ 
+   Section  Contents
+ 
+       010  Introduction
+ 
+       020  Directives for Setup Which Contain Data
+ 
+       030  Directives for Setup Which Contain no Data
+ 
+       040  Directives for Processing text
+ 
+       050  Text Imbedded Directives for Bold & Underline
+ 
+       060  How to Use on VAX
+ 
+       070  How to Use on a DECstation or SPARCstation
+ 
+   U910.010  Introduction
+ 
+   TXX  manipulates  alphameric  material  to form centered and side headings,
+   single lines, and left and  right  justified  paragraphs  of  four  styles.
+   Pages  may be specified to be any length and any width up to 75 characters.
+   The input is typed starting in col. 1 and ending in any column  up  to  80.
+   No  word  should  be  broken  (continued  from one line to the next) in the
+   input text. Text formating is specified by the use  of  a  number  of  case
+   insensitive  directives.  The  first  line  processed by TXX must contain a
+   directive as must  the  last  line.  Only  the  first  4  characters  of  a
+   directive  line  (i.  e.  the  directive itself) is processed unless stated
+   otherwise in the following list. The following directives are recognized:
+ 
+   U910.020  Directives for Setup Which Contain Data
+ 
+    RPD$IIIJJJKKK
+ 
+          Says set page dimension to be III  characters  wide  and  JJJ  lines
+          long.  KKK  specifies  the  next  page number to use. If KKK is left
+          blank, the page number sequence is  unchanged.  The  default  values
+          are III=75, JJJ=56 and KKK=1.
+ 
+    RSH$IIJJ
+ 
+          Says  shift  pages  alternately  II  and  JJ  spaces  to  the  right
+          (starting with II) - default is II=JJ=3
+ 
+    RND$JJ  Sets indent or "outdent" to JJ spaces (default=7).
+ 
+    NPS$JJ  Sets # of blank lines after page label to JJ (default=0).
+ 
+    CHP$AAAA  Chapter Label
+ 
+          Says set chapter# to AAAA - the first 4 characters  following  CHP$.
+          AAAA  is inserted in the Section Labels as described below. AAAA and
+          Chapter Label are used in page labels.
+    
+   11-Sep-03 .......... U910  TXX - Text Formatting - WTM ........... PAGE   2
+ 
+ 
+   U910.020  Directives for Setup Which Contain Data (continued)
+ 
+    SEC$NUM  Section Label
+ 
+          Says replace the 4 characters SEC$ with Chapter# (AAAA).  and  print
+          the resulting line image in BOLD UNDERLINED characters.
+ 
+ 
+   U910.030  Directives for Setup Which Contain no Data
+ 
+    NAS$  Says turn OFF automatic spacing       (see Note-1)
+    ASP$  Says turn ON  automatic spacing       (default)
+    NPL$  Says turn OFF automatic page labeling (see Note-2)
+    PGL$  Says turn ON  automatic Page labeling (default)
+    TPF$  Says do top-of-form (page eject)      (see Note-2)
+    TOF$  Same as TPF$
+    TON$  Says process TOF$ & TPF$ directives   (default)
+    NOT$  Says ignore  TOF$ & TPF$ directives
+    SIN$  Says use single spaced printing       (default)
+    DBL$  Says use double spaced printing
+    SPN$  Says print N blank lines (N=1,9)
+    BON$  Turns BOLD      ON  for subsequent lines, paragraphs, etc.
+    BOF$  Turns BOLD      OFF for subsequent lines, paragraphs, etc.
+    UON$  Turns UNDERLINE ON  for subsequent lines, paragraphs, etc.
+    UOF$  Turns UNDERLINE OFF for subsequent lines, paragraphs, etc.
+    JON$  Turns right-justify of paragraphs ON  (default)
+    JOF$  Turns right-justify of paragraphs OFF
+    QIT$  Says end of all text - wrap it up and go home
+ 
+ 
+   U910.040  Directives for Processing text
+ 
+    CY1$  Says copy input lines to output lines unaltered
+    CYB$  Same as CY1$ except prints bold
+    COV$  Says copy input lines "verbatim" until COF$ encountered
+    COF$  Says turn off "verbatim" copy
+    CEN$  Says center contents of each input line on specified page
+    CEB$  Same as CEN$ except prints bold
+    INP$  Forms an    indented paragraph of following text
+    BLP$  Forms a        block paragraph of following text
+    ODP$  Forms an   outdented paragraph of following text
+    FIP$  Forms fully indented paragraph of following text
+   ------------------------------------------------------------------------
+ 
+   Note-1:  Text  processing  directives (CY1$ thru FIP$, above) automatically
+   insert one blank line unless otherwise requested by the NAS$ directive.
+ 
+   Note-2: The TPF$ (or TOF$) directive normally starts a new page and  labels
+   it  with the date, text from the CHP$ directive and a page number. The NPL$
+   directive turns off page labeling.
+    
+   11-Sep-03 .......... U910  TXX - Text Formatting - WTM ........... PAGE   3
+ 
+ 
+   U910.050  Text Imbedded Directives for Bold & Underline
+ 
+   \B\ or \b\    ;Turns BOLD      ON  within a line or paragraph
+ 
+   \U\ or \u\    ;Turns UNDERLINE ON  within a line or paragraph
+ 
+   \BU\ or \bu\  ;Turns BOLD and UNDERLINE ON
+ 
+   \UB\ or \ub\  ;Turns BOLD and UNDERLINE ON
+ 
+   \\            ;Turns both OFF (back to state specified by BON$,
+                 ;BOF$, UON$, UOF$, etc)
+ 
+ 
+   U910.060  How to Use on VAX
+ 
+   Create a text file, text.doc for example (the .doc  filename  extension  is
+   required). Don't forget to end with QIT$.
+ 
+   Type:  @U1:[MILNER]TXXL text   ;For automatic listing on LASER3
+ 
+          Processes  text.doc,  responding  to all directives including bold &
+          underline. A formatted file text.txx is produced and  submitted  for
+          print/delete on LASER3.
+ 
+   Type:  @U1:[MILNER]TXXP text   ;To generate text.txx
+ 
+          Processes  text.doc,  responding  to  all  directives  except bold &
+          underline. A formatted  file  text.tex  is  produced  which  can  be
+          printed on any printer or viewed on the screen, etc.
+ 
+ 
+ 
+ 
+   U910.070  How to Use on a DECstation or SPARCstation
+ 
+   Create  a  text  file, text.doc for example (the .doc filename extension is
+   required). Don't forget to end with QIT$. Assuming that  the  path  to  the
+   txx executable is appropriately defined:
+ 
+   Type: txx text X    ;To generate text.txx
+ 
+          Processes  text.doc,  responding  to all directives including bold &
+          underline. A formatted  file  text.txx  is  produced  which  can  be
+          printed on an LN03 laser printer, etc.
+ 
+   Type: txx text      ;To generate text.tex
+ 
+          Processes  text.doc,  responding  to  all  directives  except bold &
+          underline. A formatted  file  text.tex  is  produced  which  can  be
+          printed on any printer or viewed on the screen, etc.

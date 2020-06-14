@@ -1,0 +1,82 @@
+RPD$068066
+CHP$Beam-Particle Transit-Time - TRANT
+TPF$
+BLP$
+TRANT is a simple program which calculates transit-times and changes
+in transit-time due small changes in beam energy for a system of
+drift and acceleration regions such as found in a tandem accelerator.
+The input data for TRANT consists of two parts: The first defines the
+geometry of the system and the second specifies ions and energies
+for which calculations are to be done.
+CYB$
+Geometry Data ----------------------------------------------------
+BLP$
+The geometry is specified by up to 100 fixed-format entries of the
+following form:
+CY1$
+0000000001111111111222222222233333 ---- Col. Number
+1234567890123456789012345678901234
+LABEL       KIND ISTR FLG XM
+ODP$
+LABEL..is any label that you desire up to 8 characters in length.
+ODP$
+KIND...can take on one of the following names: DRIF denotes a drift
+region, IACC denotes an injector acceleration region, TACC denotes
+a tandem acceleration region.
+ODP$
+ISTR...can take on one of the following names: PRES denotes pre-strip
+region and POSS denotes post-strip region.
+ODP$
+FLG....is usually blank but if non-blank causes program to insert
+a line of **** preceding specified region.
+ODP$
+XM.....is the length of the region in meters.
+ODP$
+END....entered in the "label field" terminates the "geometry data".
+CYB$
+Ion Specification Data -------------------------------------------
+BLP$
+The remaining data are entered free-form. The first two entries defined
+should really be computed by the program or belong in the Geometry
+section but that's not how it is.
+CY1$
+TANL = X   ;Specify active acceleration length X(meters) for tandem
+INJL = X   ;Specify active acceleration length X(meters) for injector
+E0   = X   ;Specify ion energy X(MeV) after extraction
+           ;That is a zero following the E not an OH
+VINJ = X   ;Specify injector voltage X(MV)
+VTAN = X   ;Specify tandem terminal voltage X(MV)
+AMU  = X   ;Specify ion mass X(amu)
+Q    = X   ;Specify post stripper charge state X
+GO         ;Says do the calculation
+BLP$
+Only those quantities which are to be changed need to be entered
+for sucessive calculations "GOs".
+CEN$
+(see next page for definition of output quantities)
+TPF$
+CYB$
+Definition of Output Quantities ----------------------------------
+BLP$
+The quantities AMU, E0, VINJ, VTAN & Q are printed at the top of the
+page. The columns labeled REGION, ---TYPE---, and XL(M) reproduce the
+geometry input data. The remaining columns are defined as follows:
+RND$09
+ODP$
+E(MeV)...gives the beam energy (in MeV) at the entrance (beginning) to
+the region specified.
+ODP$
+T(NS)....is the transit-time (in nanoseconds) to the beginning of the
+region being defined.
+ODP$
+KV/NS....is the number of keV that the energy of a beam particle must
+be changed in order that the arrival time at the "target" (end of the
+last region specified) is shifted by 1 nanosecond. This is the useful
+quantity.
+ODP$
+DKV4.....is just 4 times KV/NS.
+ODP$
+DKV125...is just 125 times KV/NS.
+ODP$
+DKV4/Q...is just DKV4 divided by Q.
+QIT$

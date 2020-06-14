@@ -1,0 +1,94 @@
+   02-Feb-02 ...... U640  STOPI (UNIX & VMS versions) -  WTM ........ PAGE   1
+ 
+ 
+                    STOPPING POWER OF ANY ION IN ANY ELEMENT
+ 
+   STOPI  calculates tables of stopping power vs ion energy for any ion in any
+   naturally occurring elemental target. It's main feature  is  ease  of  use.
+   For  stopping powers, energy loss and ranges in compounds and mixtures, see
+   program "STOPX" by T. C. Awes - SEC# U630.
+ 
+   STOPI uses the formulas and coefficients  given  by  J.  F.  Ziegler  in  -
+   Stopping  and  Ranges  of Ions in Matter, Vols 3 & 5, Pergamon Press, 1980.
+   However, Ziegler uses somewhat more  elaborate  procedures  in  calculating
+   his final "curves" than are used here.
+ 
+                         BRIEF DESCRIPTION OF THE METHOD
+ 
+   The  nuclear stopping power (col labeled - SNUC) is calculated from Formula
+   16 given in Vol 5.
+ 
+   The electronic stopping power is  calculated  by  two  methods.  The  first
+   method (col labeled - SE(EFF-Q)) is calculated from a formula of the form:
+ 
+   S(HI)=S(P)*(ZEFHI/ZEFP)**2
+ 
+   Where  S(HI)  denotes  the  stopping power of the ion of interest, S(P) the
+   stopping power of protons in the same medium at the same ion  velocity  and
+   (ZEFHI/ZEFP)  the  ratio  of  the fractional effective charge of the ion to
+   that of a proton at the same velocity. The stopping  power  of  protons  is
+   defined  in  terms  of  12  coefficients for each of the 92 target elements
+   (given in Table 2 of Vol 3). The associated formulas are given in Table  1,
+   Page  16,  Vol  3. The fractional effective charge ratio is calculated from
+   Formula 13, Vol 5.
+ 
+   Above an ion energy of 1.5 Mev/AMU, the electronic stopping power  is  also
+   calculated  using  the  so  called High-Energy formula given in Formula 18,
+   Vol 5. Results are listed in the col labeled SE(HE-FORM).
+ 
+   Well, it turns out that the effective charge formulas seem to  work  pretty
+   well  over  the  range  0.2 to 100.0 Mev/AMU. Above about 0.5 Mev/AMU, this
+   formula reproduces Ziegler's result about as  well  as  you  can  read  his
+   curves.  There is some deviation below 0.5 Mev/AMU which may be as large as
+   10 to 15% at 0.2 Mev/AMU although the  agreement  is  usually  better  than
+   that.  Below 0.2 Mev/AMU - your guess is as good as mine. Results below 0.5
+   Mev/AMU are flagged with ????  Just  to  remind  you  that  agreement  with
+   Zieglers curves is not perfect.
+ 
+   ---------------------------------------------------------------------------
+   Type:  stopi              ;To start if stopi is defined in your
+                             ;.login, .cshrc or login.com files, otherwise:
+ 
+   Type:  /usr/hhirf/stopi   ;To start execution on a HHIRF DECstation
+   or
+   Type   /home/upak/stopi   ;To start execution on a SPARCstation
+   or
+   Type: @U1:[MILNER]STOPI   ;To start execution on the HHIRF VAX
+   ---------------------------------------------------------------------------
+ 
+                          (continued on the next page)
+    
+   02-Feb-02 ...... U640  STOPI (UNIX & VMS versions) -  WTM ........ PAGE   2
+ 
+ 
+ 
+   List of STOPI Commands
+ 
+   ---------------------------------------------------------------------------
+ 
+   COMMAND                - MEANING
+ 
+   HELP                   - Gets this list again
+ 
+   CON                    - Directs output to terminal (default)
+ 
+                            (here you get an abreviated output)
+ 
+   PR                     - Directs output to stopi.log on DECstation
+ 
+                          - Directs output to STOPI.PRT on VAX
+ 
+   PROJ TARG              - Computes S(E) for preset list of energies
+ 
+   PROJ TARG EMIN,EMAX,DE - Does it for specified energy list
+ 
+                          - all energies are in Mev
+ 
+ 
+   EXAMPLE:
+ 
+ 
+   32S 120SN 10,200,5     - Says 32S IN 120Sn - E=10,200,5 Mev
+ 
+   ---------------------------------------------------------------------------
+ 

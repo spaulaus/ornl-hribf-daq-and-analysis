@@ -1,0 +1,206 @@
+   02-Feb-02 ....... U520  BANCO (UNIX & VMS versions) - WTM ........ PAGE   1
+ 
+ 
+ 
+             BANCO  - Copies ban-files to/from Edit Compatible Form
+ 
+   ban-files  (2-D  gate  files)  were  originally  implemented  on  the HHIRF
+   Perkin-Elmer computer and designed to be created and modified by  means  of
+   an  interactive  graphics  program  (RIP).  ban-file  support routines were
+   designed to read and write such files by means of direct access.  It  turns
+   out  that  files  created  by  the  VAX or UNIX editors can not be accessed
+   directly.
+ 
+   Since at some future date I or someone else may  wish  to  produce  VAX  or
+   UNIX  software which supports interactive graphic creation and modification
+   of ban-files, I don't want to give up this direct access file structure.
+ 
+   For now you can do the following:
+ 
+   (1)....Use the VAX or UNIX editor to create a normal EDIT  file  (bed-file)
+          named filnam.bed. Where, filnam denotes any legal filename prefix.
+ 
+   (2)....Then  use program BANCO to read this bed-file and produce a directly
+          accessible ban-file (filnam.ban).
+ 
+   (3)....You can also use BANCO to translate ban-files to bed-files.
+ 
+   ---------------------------------------------------------------------------
+ 
+   Type:  banco              ;To start execution with banco defined in
+                             ;your .login, .cshrc or login.com files
+                             ;Otherwise,
+ 
+   Type:  /usr/hhirf/banco   ;To start execution on a HHIRF DECstation
+   or
+   Type   /home/upak/banco   ;To start execution on a SPARCstation
+   or
+   Type: @U1:[MILNER]BANCO   ;To start execution on the HHIRF VAX
+ 
+   ---------------------------------------------------------------------------
+    
+   02-Feb-02 ....... U520  BANCO (UNIX & VMS versions) - WTM ........ PAGE   2
+ 
+ 
+                             HOW TO CREATE BED FILES
+ 
+   (1)....Turn to SEC# 270.20 of the 1987 HHIRF Computer Handbook.
+ 
+   (2)....For each 2-D  gate  (Banana),  enter  an  INP-line,  a  TIT-line,  a
+          GATE-line  and  as  many  CXY-lines  as  needed. Note that 63 is the
+          maximum number of X,Y coordinates.
+ 
+          Some entries on these lines are not important and were  included  in
+          the  ban-file  for  reference only. Let us be thorough and take it a
+          line at a time.
+ 
+   INP FILENAME IH,IB,DG,NP --------------------------------------------------
+ 
+   INP
+ 
+   Starting in col-1, enter the ASCII characters INP followed by at least  one
+   blank.
+ 
+   FILENAME
+ 
+   For  reference only - but you must enter some ASCII string with no imbedded
+   blanks. DUMMY is OK.
+ 
+   INP FILENAME IH,IB,DG,NP (continued)---------------------------------------
+ 
+   IH
+ 
+   For reference only - but you must enter some integer. 0 is OK.
+ 
+   IB
+ 
+   IMPORTANT - This the Banana ID-number.  It  must  be  unique  for  a  given
+   ban-file and may contain no more than 5 digits.
+ 
+   DG
+ 
+   Do not enter - projection angle for RIP.
+ 
+   NP
+ 
+   Do not enter - number of X,Y coordinates (will be computed).
+ 
+   TIT TITLE -----------------------------------------------------------------
+ 
+   TIT
+ 
+   Starting  in col-1, enter the ASCII characters TIT followed by at least one
+   blank.
+ 
+   TITLE
+ 
+   For reference only - enter anything that you wish.
+    
+   02-Feb-02 ....... U520  BANCO (UNIX & VMS versions) - WTM ........ PAGE   3
+ 
+ 
+   GATE IPX,IPY,LXD,LXG,LYD,LYG,NUPM,IAUX,JAUX -------------------------------
+ 
+   GATE
+ 
+   Starting in col-1, enter the ASCII characters GATE  followed  by  at  least
+   one blank.
+ 
+   IPX
+ 
+   For  reference  only - X-parameter number for histogram from which gate was
+   defined. You must enter some integer.
+ 
+   IPY
+ 
+   For reference only - Y-parameter number for histogram from which  gate  was
+   defined. You must enter some integer.
+ 
+   GATE IPX,IPY,LXD,LXG,LYD,LYG,NUPM,IAUX,JAUX (continued)--------------------
+ 
+   LXD
+ 
+   For reference only - you may enter the same number as for LXG below.
+ 
+   LXG
+ 
+   IMPORTANT  - specifies the X-dimension of the histogram from which gate was
+   derived. Used by CHIL in scaling X-test-parameter to match 2-D gate.
+ 
+   LYD
+ 
+   For reference only - you may enter the same number as for LYG below.
+ 
+   LYG
+ 
+   IMPORTANT - specifies the Y-dimension of the histogram from which gate  was
+   derived. Used by CHIL in scaling 2-D gate to match Y-test-parameter.
+ 
+   NUPM,IAUX,JAUX
+ 
+   Used  in pre-CHIL days - no need to enter unless you have a need for direct
+   processing of ban-files in a USERSUB.
+ 
+   CXY X,Y X,Y X,Y .. --------------------------------------------------------
+ 
+   Starting in col-1 of  each  such  line,  enter  the  ASCII  characters  CXY
+   followed  by  at  least  one blank. On the remainder of the line, enter the
+   X,Y coordinates of the 2-D gate in clockwise order.
+ 
+   A given CXY-line must contain an integer number  of  X,Y  pairs.  That  is,
+   don't try to split an X,Y pair from one line to the next.
+ 
+ 
+                 (See next page for bed- and ban-file examples)
+    
+   02-Feb-02 ....... U520  BANCO (UNIX & VMS versions) - WTM ........ PAGE   4
+ 
+ 
+ 
+   This is what a bed-file looks like ----------------------------------------
+ 
+   INP RINX.HIS  1,1
+   TIT THIS IS A TITLE
+   GATE 0,0,2048,256,2048,256
+   CXY 9,85 43,58 80,46 118,37 194,28 194,20 146,23
+   CXY 89,33 50,45 22,60 3,78
+   INP RINX.HIS  1,2
+   TIT THIS IS TITLE NUMBER 2
+   GATE 0,0,2048,256,2048,256
+   CXY 9,125 30,100 60,85 100,70 136,60 180,50 180,40
+   CXY 122,50 85,60 61,70 31,85 12,100 2,115
+ 
+   This is what the corresponding ban-file looks like ------------------------
+ 
+      1   2   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   INP RINX.HIS                                  1   1   0  11
+   TIT THIS IS A TITLE
+   GATE  0   0    2048     256    2048     256   0   0   0
+   CXY   9  85  43  58  80  46 118  37 194  28 194  20 146  23
+   CXY  89  33  50  45  22  60   3  78
+   CXY
+   CXY
+   CXY
+   CXY
+   CXY
+   CXY
+   CXY
+   INP RINX.HIS                                  1   2   0  13
+   TIT THIS IS TITLE NUMBER 2
+   GATE  0   0    2048     256    2048     256   0   0   0
+   CXY   9 125  30 100  60  85 100  70 136  60 180  50 180  40
+   CXY 122  50  85  60  61  70  31  85  12 100   2 115
+   CXY
+   CXY
+   CXY
+   CXY
+   CXY
+   CXY
+   CXY
+ 
+   Note  that some spaces have been removed from the ban-file listing in order
+   to make it fit on a 70-col wide page.

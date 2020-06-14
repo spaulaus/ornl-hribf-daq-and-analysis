@@ -1,0 +1,181 @@
+$$$$CON  - For help Contents
+Type: h data  for input data format
+Type: h gen   for general setup commands
+Type: h lin   for linear fitting commands
+Type: h nlin  for non-linear fitting commands
+Type: h spli  for spline fitting commands
+Type: h vfn   for explaniation of "variables in filenames"
+Type: h loop  for loop execution and symbol definition 
+$$$$DATA - For input data format
+===========================================================================
+Input data format
+
+DATA             ;Introduces Y vs X DATA-SET
+X  Y <YERR>      ;Up to 500 DATA-SET entries
+X  Y <YERR>
+.
+.
+ENDA             ;Ends DATA-SET
+
+DATA             ;Introduces Y vs X DATA-SET             
+X  Y <YERR>      ;Up to 500 entries (X,Y values)
+X  Y <YERR>      ;YERR is optional
+.
+.             
+ENDA             ;Ends this   DATA-SET
+$$$$GEN  - General setup commands
+============================================================================
+Commands - general - related to Spline, Linear & non-Linear fitting
+
+H                Displays directory to on-line help
+
+LON              Says record all commands on log-file - fitu.log
+LOF              Says only record output  on log-file 
+
+END              Ends program
+
+CMD  filnam      Open and process commands from filnam.cmd
+CMD  filnam.ext  Open and process commands from filnam.ext
+
+IN   filename    Open new data file (full filename required)
+
+CSUN             Says set uncertainties to be counting statistics
+ABUN             Says data-set uncertainties are in absolute units
+PCUN             Says data-set uncertainties are in %
+ALUN UVAL        Says set all uncertainties to UVAL(%)
+USUN UVAL        Says set unspecified uncertainties to UVAL(%)
+MULU FAC         Says multply all given uncertainties by FAC
+
+XMM  XLO,XHI     Display X-range min & max
+XMM              Display X-range defined by data
+
+YMM  YLO,YHI     Display Y-range min & max
+YMM              Display Y-range defined by data
+
+LIN              Set display to be linear
+LOG              Set display to be log (in the Y-direction)
+
+STAT             Displays/logs some setup parameters
+
+UCOM STAT        Displays/logs status provided by USERCMP
+
+WIN  ID          Specify window ID for next display of fit results
+
+REVV             Reverses Video (black-to-white, white-to-black)
+                 You must do a FIG, then the REVV, and another FIG
+                 for it to take effect.
+
+FIG  N           Execute a standard "FIG" - i.e. like damm
+
+CLR              Clears all FIGed windows
+
+XON              Says X-server (graphic display)   available (default)
+XOF              Says X-server (graphic display) unavailable
+$$$$LIN  - Linear fitting commands
+===========================================================================
+Commands related to linear fitting
+
+LINX             Set to use FUNCS of X - F(X)      DFLT
+LOGX             Set to use FUNCS of Log(X) - F(Log(X))
+LINY             Set to fit Y to F(X) or F(LOG(X)) DFLT
+LOGY             Set to fit Log(Y) to F(X) or F(Log(X))
+
+XLIM XMIN,XMAX   Set fit-limits in terms of X-values
+ILIM IMIN,IMAX   Set fit-limits in terms of index-I
+
+NUFU             Says new Function (i.e sets #TERMS=0)
+XPOW E1,E2..     Exponent list for Pwr-series terms
+LPOL J1,J2..     Ordinal-list for Legendre poly terms
+
+TABL XLO,XHI,DX  Specs for computed Y vs X table
+HFMT,DFMT        Table header & data formats (see SEC#070)
+
+*                A * in col-1 of a command line results in the full
+                 line being copied to log-file as a comment
+
+FIT   ID         Fits set# ID 
+FITU  ID         Same as above but UNWEIGHTED
+                 (if ID is omitted, previously entered ID is used)
+$$$$NLIN - Non-linear fitting commands
+===========================================================================
+Commands related to non-linear fitting
+
+UCOM STAT        Displays/logs status provided by USERCMP
+
+TOF  VN          Says turn fit-variable VN OFF
+TON  VN          Says turn fit-variable VN ON 
+
+UCOM FUNK FID    Says select function# FID (in \b\USERFOX\\) for fitting
+
+UCOM CPOS CID    Allows adjustable coefficient-CID to be positive only
+UCOM CPOM CID    Allows adjustable coefficient-CID to be pos or neg
+                 (overrides default set in USERCMP until next UCOM FUNK
+
+SKPI I J K ...   Says skip entry ordinals I J K in computing sum RESQ
+SKPI             Says remove all skips    
+
+NITF NIT         Sets # of iterations for coefficients for best fit 
+                 to NIT (default = 20, allowed values are 1 to 100)
+
+NITE NIT         Sets # of iterations for coefficient uncertainty estimate
+                 to NIT (default = 10, allowed values are 1 to 100)
+
+GO   ID          Do a     non-linear fit on data set# ID
+GOMO ID          Continue non-linear fit of data set# ID
+                 (if ID is omitted, previously entered ID is used)
+$$$$SPLI - For spline fitting commands
+===========================================================================
+Commands related to spline fitting
+
+S    VAL         Set smoothing parameter to VAL (default: VAL=NDAT)
+
+EPS  VAL         Set tolerance on parameter S   (default: VAL=SQRT(2/NDAT))
+
+SIG  VAL         Set tension parameter SIGMA    (default: VAL=1.0)
+
+SFIT ID          Request a spline fit to data set no. ID
+
+SVAL X           Request spline interpolated value at abcissa X
+
+SVAL X1 X2 DX    Request spline interpolated values for:
+                 (X = X1 to X2 in steps of DX)
+
+SSTAT            Requests display/log of spline parameters
+
+$$$$VFN  - For explaniation of "variables in filenames"
+===========================================================================
+One symbol (integer variable) may be incorporated in a FILENAME
+specification as the following examples illustrate:
+
+
+SYM=3
+IN FIL"SYM".DAT  ;Opens FIL3.DAT for input 
+
+I=0 
+LOOP 3
+I=I+1
+IN  FIL"I".DAT   ;Opens (in succession)  FIL1.DAT, FIL2.DAT, FIL3.DAT
+.   
+.   
+ENDLOOP
+
+$$$$LOOP - For loop execution and symbol definition 
+===========================================================================
+Commands related to LOOP execution and SYMBOL definition
+
+SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                 - symbols M, N, O, P, Q, R, S are reserved
+                 - expression syntax is same as in CHIL
+                 - no imbedded blanks are allowed in expressions
+                 - symbols may contain up to 4 characters (5-8 ignored)
+    
+DSYM             - Displays list of currently defined sumbols & values
+    
+LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+CMD  ....        - Nesting supported
+CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+ENDL             - Defines end-of-loop
+                 - KILL (entered before ENDL) kills LOOP
+                 - Ctrl/C - aborts loop-in-progress
+                 - opening of CMD-file within a LOOP not allowed
+

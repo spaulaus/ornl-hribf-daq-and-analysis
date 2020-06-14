@@ -1,0 +1,91 @@
+RPD$075066001
+CHP$U630  STOPX (UNIX & VMS versions) - AWES
+TPF$
+CEB$
+STOPPING POWER - ENERGY LOSS - RANGE
+BLP$
+STOPX calculates stopping powers, energy loss in finite samples and
+ranges for ions in elements, compounds and mixtures.
+The formulas and parameters of J. F. Ziegler (given in
+The Stopping and Ranges of Ions in Matter, Vols 3 & 5,
+Pergamon Press, 1980.)
+are used to calculate stopping powers which are integrated for
+energy-loss and range calculations.
+STOPX is a "prompting" program which requires little or no additional
+documentation. A list of the STOPX commands are given below.
+All input may be entered in either upper or lower case.
+CY1$
+---------------------------------------------------------------------------
+CMD   LIST         MEANING
+
+PROJ  P1,P2,P3,... Define stoppee. PI = element or Z.
+
+EA    E1,E2,E3,... Define energy/nucleon of stoppee.
+                   (increasing order unless E3=INCR.)
+
+DEDX               Calc. stopping power Mev/(mg/cm**2)
+
+RNGE               Calc. range mg/cm**2
+
+ELOS               Calc. E-loss in a series of absorbers
+
+LP                 Assign output to \b\stopx.log\\ on DECstation
+                   Assign output to \b\STOPX.PRT\\ on VAX
+
+CON                Assign output to console (default)
+
+END                Exit (ends program)
+
+FILE               Assign output file for energy losses.
+
+ABSB               Define absorbers (prompted for each absorber)
+---------------------------------------------------------------------------
+Legal absorber declarations have the form:
+ELEMENT MIXTURE  ["GAS" PRES] THICKNESS
+For example:
+
+.1*(C 1H4)+.9*40AR GAS 500. -30.  - Gas mix of 10% Methane & 90% Argon
+                                  - Pressure = 500 torr
+                                  - Thickness = 30cm
+
+28SI  3.5                         - Silicon target
+                                  - Thickness = 3.5mg/cm**2
+
+Note: A "negative" thickness is taken to be in units of cm.
+      A "positive" thichness is taken to be in units on mg/cm**2.
+---------------------------------------------------------------------------
+
+Type:  stopx             ;To start with \b\stopx\\ defined in your .login,
+                         ;.cshrc, or login.com files, otherwise,
+Type:  /usr/hhirf/stopx  ;To start execution on a HHIRF DECstation  or
+Type:  /home/upak/stopx  ;To start execution on a SPARCstation      or
+Type: @U1:[MILNER]STOPX  ;To start execution on the HHIRF VAX
+Type:  help              ;and then try to figure out what to do.
+CEB$
+(See next page for comments by W. T. Milner)
+TPF$
+SP2$
+CEB$
+Comments by W. T. Milner
+DBL$
+BLP$
+On a number of occasions I have been asked questions concerning the
+syntax of solid absorber definitions - namely, whether the element mix
+should be entered as mg/cm**2 or as elemental concentrations.
+Relative elemental concentrations are the appropriate values to enter.
+Also, the program does not distinguish between compounds and mixtures.
+Note: that for solid Silicon Dioxide, all entries in the list shown below
+give the same results: 
+CYB$
+1.0*(28si 16o2)                1.0 - thickness is 1.0 mg/cm**2
+1.0*(28si 16o 16o)             1.0
+1.0*28si + 1.0*16o2            1.0
+1.0*28si + 1.0*16o + 1.0*16o   1.0
+100*(28si 16o2)                1.0
+100*28si + 100*16o2            1.0
+100*28si + 100*16o + 100*16o   1.0
+BLP$
+It is probably best to always give solid thickness in terms of mg/cm**2
+since the program doesn't "know" the density of all elements and certainly
+not that of compounds and mixtures.
+QIT$

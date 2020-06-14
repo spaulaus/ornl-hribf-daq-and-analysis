@@ -1,0 +1,161 @@
+RPD$075066001
+CHP$U660  CHARGE (UNIX & VMS versions) - SAYER
+TPF$
+CEB$
+
+EQUILIBRIUM CHARGE STATE DISTRIBUTIONS
+BLP$
+CHARGE is an interactive program for prediction of equilibrium
+charge state distributions in carbon foil and dilute gaseous
+strippers. The predictions are based on semi-empirical
+formulas developed previously (1,2) for the most probable
+charge  Q0,  width  RHO,  and skewness  EPS as functions of
+projectile atomic number Z  and velocity  Bc. The assumed
+distribution was of the form:
+CY1$
+                               2
+                         -0.5 t / (1 + EPS*t)
+           F(Q) = F(Q0) e       
+where
+           F(Q) = intensity for charge Q
+             t  =  (Q - Q0)/RHO
+            RHO = width
+            EPS = asymmetry parameter
+
+A summary of the stripping formulas is given on page 2.
+BLP$
+If the target Z is input, the ionization is computed from the
+carbon formulas on page 2 and then corrected for target Z dependence
+(ref 3).  The correction is about 2-5% for Ni and 5-10% for Au.
+CYB$
+Type:  /usr/hhirf/charge   ;To start execution on a HHIRF DECstation
+Type:  /home/upak/charge   ;To start execution on a SPARCstation 
+Type:  @U1:[MILNER]CHARGE  ;To start execution on the HHIRF VAX
+BLP$
+You will be prompted for the projectile atomic number, mass,
+minimum energy, and maximum energy.   The maximum energy may be
+omitted if predictions for only one projectile energy are desired.
+The results will be output to your terminal and to \b\charge.log
+if lon\\ is requested. For example:
+CY1$
+orph20>\b\charge\\
+
+Enter projectile  Z, A, (target Z) --------->\b\ 12 24\\
+
+Enter MIN and MAX projectile energy in MeV ->\b\ 20 200\\
+
+Do another case ?  Y or N ------------------>\b\ n\\
+BLP$
+produces the output shown on page 3.   Note that the requested energy
+range of 20 to 200 MeV was truncated because the range of the
+semi-empirical formula for the most probable charge was exceeded.
+CY1$
+---------------------------------------------------------------------------
+ODP$
+(1)....R. O. Sayer, Revue de Physique Appliquee 12, 1543 (1977).
+ODP$
+(2)....R. O. Sayer and L. B. Maddox, "Predictions of Equilibrium
+Charge State Distributions:  A Charge State Handbook,"
+Internal Lab Memo, 1978.
+ODP$
+(3)....K. Shima, T. Ishihara, and T. Mikumo, Nucl. Inst. Meth. 200,
+605 (1982).
+TPF$
+CEN$
+\b\Semi-Empirical Stripping Formulas (Carbon Foils)\\
+[ iZ = most probable charge,  B = v/c ]
+CYB$
+For  Z  =  6  thru  15  ...................................................
+CY1$ 
+                               -0.421  0.890
+                        -55.8 Z       B              (0.15 < i < 0.95)
+               i = 1 - e                                               
+
+                         0.51          0.20
+             RHO = 0.38 Z    (i(1 - i))         
+
+             EPS = 0                            
+CYB$
+For  Z  greater than  15  ................................................
+CY1$
+                                    -0.380  0.860
+                             -47.3 Z       B         (0.15 < i < 0.95)
+               i = 1 - 1.03 e                                            
+
+                         0.45          0.26
+             RHO = 0.48 Z    (i(1 - i))             
+
+         EPS/RHO = 0.0007 Z  -  0.7
+ 
+                 
+CEN$
+\b\Semi-Empirical Stripping Formulas (Dilute gases)\\
+[ iZ = most probable charge,  B = v/c ]
+CYB$
+For  Z  greater than  5  ..................................................
+CY1$
+                         0.55          0.27
+             RHO = 0.35 Z    (i(1 - i))    
+
+         EPS/RHO = 0.17 + 0.0012 Z  -  3.3 B
+CYB$
+For  Z  =  6  thru  15  ...................................................
+CY1$
+                                    -0.530  0.992
+                             -49.5 Z       B         (0.03 < i < 0.07)
+               i = 1 - 1.02 e                                       
+
+                                    -0.530  0.992
+                             -86.8 Z       B         (0.07 < i < 0.90)
+               i = 1 - 1.08 e                                  
+CYB$
+For  Z  greater than  15  .................................................
+CY1$
+                                    -0.506  0.996
+                             -49.5 Z       B         (0.03 < i < 0.07)
+               i = 1 - 1.02 e                                       
+
+                                    -0.506  0.996
+                             -80.1 Z       B         (0.07 < i < 0.90)
+               i = 1 - 1.08 e                                       
+TPF$
+CYB$
+
+Equilibrium Charge State Predictions for Mg- 24 Ions in: CARBON  FOIL
+CY1$
+  E =  20.0  38.0  56.0  74.0  92.0 110.0 128.0 146.0 164.0 MeV
+E/A =  0.83  1.58  2.33  3.08  3.83  4.58  5.33  6.08  6.83
+ Q0 =   8.3   9.5  10.1  10.5  10.8  11.0  11.2  11.3  11.4
+RHO =  0.98  0.93  0.89  0.85  0.82  0.79  0.77  0.75  0.73
+EPS =  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+QAVG=   8.3   9.5  10.1  10.5  10.8  11.0  11.2  11.3  11.4
+
+Q = 5  0.14
+    6  2.65  0.04
+    7 17.13  1.23  0.09
+    8 39.04 12.10  2.61  0.58  0.14  0.04  0.01
+    9 31.30 37.54 20.30  9.44  4.32  2.02  0.97  0.48  0.24
+   10  8.83 36.68 44.48 38.65 29.94 22.24 16.30 11.95  8.79
+   11  0.88 11.28 27.49 40.08 47.22 50.20 50.57 49.44 47.52
+   12  0.03  1.09  4.79 10.52 16.96 23.25 29.00 34.12 38.63
+
+CYB$
+Equilibrium Charge State Predictions for Mg- 24 Ions in: DILUTE GASES
+CY1$
+  E =  20.0  38.0  56.0  74.0  92.0 110.0 128.0 146.0 164.0 182.0 MeV
+E/A =  0.83  1.58  2.33  3.08  3.83  4.58  5.33  6.08  6.83  7.58
+ Q0 =   7.3   8.8   9.6  10.1  10.5  10.8  11.0  11.1  11.2  11.4
+RHO =  0.93  0.89  0.84  0.80  0.76  0.72  0.69  0.66  0.64  0.61
+EPS =  0.04 -0.01 -0.04 -0.07 -0.09 -0.10 -0.12 -0.13 -0.14 -0.14
+QAVG=   7.3   8.7   9.5  10.0  10.4  10.6  10.8  11.0  11.1  11.2
+
+Q = 4  0.03
+    5  1.57
+    6 15.95  0.39  0.02
+    7 40.95  6.46  0.71  0.12  0.03
+    8 31.82 31.32  9.14  2.51  0.80  0.30  0.13  0.06  0.03  0.02
+    9  8.69 43.38 37.67 20.51 10.22  5.21  2.80  1.58  0.93  0.57
+   10  0.94 16.67 41.85 49.58 43.36 33.64 25.03 18.44 13.65 10.20
+   11  0.05  1.72 10.19 25.52 40.95 51.75 57.26 58.76 57.72 55.27
+   12        0.05  0.42  1.77  4.62  9.05 14.63 20.87 27.29 33.60
+QIT$

@@ -1,0 +1,235 @@
+   20-Jul-04 ......... U950  Creating and Using DVDs & CDs .......... PAGE   1
+ 
+ 
+   Sec Page Contents
+ 
+   010   1  Creation & Use of DVDs & CDs for Data Processing - Outline
+ 
+   020   2  Creation       of DVDs & CDs for Data Processing - Details
+ 
+   030   4  Use            of DVDs & CDs for Data Processing - Details
+ 
+ 
+   U950.010  Creation & Use of DVDs & CDs for Data Processing - Outline
+ 
+   To Create a DVD or CD
+ 
+   Insert a DVD or CD into the DVD drive (bottom - labeled)
+ 
+   Follow steps 1 through 5 of the next section
+ 
+ 
+   To use the DVD or CD in program scanor
+ 
+   Insert the DVD or CD in the DVD drive (bottom - labeled)
+   or
+   Insert the CD in the CD drive         (top  - unlabeled)
+   and Type:
+ 
+   mount /dev/cdrom0              ;If using CD  drive (unlabeled - top)
+ 
+   mount /dev/cdrom1              ;If using DVD drive (labeled - bottom)
+ 
+ 
+   To open a file in  program scanor, Type:
+ 
+   file /mnt/cdrom0/filename.ldf  ;if using CD  drive (top)
+ 
+   file /mnt/cdrom1/filename.ldf  ;if using DVD drive (bottom)
+ 
+   ===========================================================================
+   Note: You cannot "punch out" a disk without dismounting it.
+   Note: A mounted DVD or CD is readable by all.
+   ===========================================================================
+       WARNING - FOUR WAYS YOU CAN SCREW THINGS OP WITHOUT REALLY TRYING!!
+ 
+   (1)  Execute  a  creation  process  using  the Gnome window manager without
+   disabling the magicdev tool. It will hang the system at the end of  writing
+   the DVD and you will need to get a root person to fix it.
+ 
+   (2)  Kill  the  creation  process before it is finished and you will need a
+   root person to un-hang the DVD writing system.
+ 
+   (3) Log off without dismounting the DVD or CD and nobody else but you or  a
+   root person can dismount it.
+ 
+   (4)  Tell the system that you are going to create a DVD but insert CD media
+   into the drive. It may run out of space and hang the system.
+ 
+   ===========================================================================
+ 
+       See also:   http://www.phy.ornl.gov/local/computer   and it's links
+ 
+                                It has PICTURES!
+    
+   20-Jul-04 ......... U950  Creating and Using DVDs & CDs .......... PAGE   2
+ 
+ 
+   U950.020  Creation of DVDs & CDs for Data Processing - Details
+ 
+   We presume that you have written your data to an LDF format event  file  on
+   disk,  and  now you need to preserve it in a permanent form. We use DVD for
+   long-term storage of event data.
+ 
+   A recording process consists of the following steps in order:
+ 
+   (1) Start the application
+ 
+   The application is started by  calling:  /usr/local/bin/DvdIoHandler  which
+   brings up the graphical user interface to the DVD recording software.
+ 
+   (2) Create a container file system to temporally hold files to be stored
+ 
+   A  screen  will  present  itself.   You can select to create a CD or a DVD,
+   either  will  be  written  with  the  UDF  file  format.  The  choice  here
+   determines  the size of the container file system created and thus how much
+   data you can write to the CD or DVD. Once you  made  you  selection,  press
+   the  Create button to create the container file system. The programm cannot
+   be terminated during the time the container file system is  created,  hence
+   the Exit button will become unavailable.
+ 
+   While  the container file system is created, you can monitor the process in
+   the progress bar in the bottom of  the  window.  Once  the  container  file
+   system  is  created,  a  new  window  will appear that allows you to select
+   files.
+ 
+   (3) Add files - create a list of files to be copied to container file
+ 
+   You may select files that you want to record on DVD or  CD.  In  this  step
+   the  files  are  not  actually copied, they are just collected. You may add
+   files or directories using the Add button in  the  screen  presented.   The
+   files  and directories will be displayed in tree form.  The available space
+   will be listed in the progress bar at the bottom of  the  screen.  You  may
+   also delete previously selected files.
+ 
+   In  order  to add new files or directories press the Add button, which will
+   present you with a screen to  select.   Select  the  radio  button  labeled
+   Directory  if  you  want to add an entire directory. Press OK when you have
+   made your selection from this window.
+ 
+   (4) Copy files to the container file
+ 
+   Once you selected all the files you want to record on the DVD  or  the  CD,
+   you  may press either the Copy, Copy&Record or the Copy&Record&Exit button.
+   This will start the copying  process.   Depending  on  where  your  orignal
+   files  reside and how much data you are copying, this may take a while. The
+   progress bar at the bottom of the screen let's you know how many data  have
+   been copied.
+ 
+   (5) Record files to DVD or CD - copy from container file to DVD or CD
+ 
+   Once  all  files  are  copied,  the  recording  process  can  be started by
+   pressing the Record button. However, after the Record  button  is  pressed,
+   the  Exit  button  will become unavailable since terminating the program at
+   the recording stage will make the recorded DVD useless. Please to not  kill
+   the program during the recording stage!
+    
+   20-Jul-04 ......... U950  Creating and Using DVDs & CDs .......... PAGE   3
+ 
+ 
+   U950.020  Creation of DVDs & CDs for Data Processing - Details (continued)
+ 
+   If  a  recording  error  occurs,  you are informed by a pop-up window.  The
+   error may be due to missing recording media or other problems with the  DVD
+   Writer  itself.  Please  make  sure that the DVD Writer contains a writable
+   DVD or CD disk and try to record again.
+ 
+   If you selected the  Copy&Record  or  the  Copy&Record&Exit  button  and  a
+   record  error occurs, you will be given the opportunity to press the Record
+   button after the DVD Writer problem was  resolved.  The  program  will  NOT
+   exit.
+ 
+   Recording will take about 30min.
+ 
+   It  is easiest to use the GUI /usr/local/bin/DvdIoHandler to write the DVD.
+   Several steps may be combined, once the  container  file  system  has  been
+   created  and  the  desired  data  has  been selected. After these tasks are
+   completed you have to option to copy and record  in  one  step.  These  two
+   tasks  are  the most time intensive, since it may take to actually copy the
+   data from their  current  location  into  the  container  file  system.  In
+   addition,  recording  a  DVD  or  CD  will take about 30min. If you plan to
+   leave, select the  Copy&Record&Exit  button,  which  will  copy  the  data,
+   record them and exit the program.
+ 
+   Please  make sure to exit the program after you finish recording the DVD or
+   CD. This will clean up resources you use while copying and recording.
+ 
+   Once you started the DVD recording process, you are the  only  person  that
+   can  record  data  to  the  DVD  Writer. You may have up to three processes
+   simulataneously, however, only one process can record data. If you use  the
+   Copy&Record&Exit  or  the  Copy&Record you will be automatically limited to
+   one concurrent process.
+ 
+   Limitations and problems we have noted
+ 
+   (1)..The software we are using to make the UDF file system seems  to  crash
+        the  system under Linux kernels greater than 2.4.20-18.9.  The problem
+        occurs while copying the data to the container filesystem.
+ 
+   (2)..We have observed that if you use the Gnome  window  manager,  it  will
+        hang the system at the end of writing the DVD.  The solutions are:
+ 
+        (a) Switch to KDE or a lightweight window manager (e.g. TWM)
+ 
+        (b) Disable the magicdev tool which runs under Gnome.
+    
+   20-Jul-04 ............ U950  Using the DVDs and CDs .............. PAGE   4
+ 
+ 
+   U950.030  Use of DVDs & CDs for Data Processing - Details
+ 
+   The  files  stored on the disk have the same format and encodings as on the
+   original disk.  Please note that the data are BINARY,  and  that  the Intel
+   machines  on  which  we take data are little-endian.  If you read the disks
+   on a big-endian machine, it may be necessary to swap the bytes,  especially
+   in  histogram files.  Event files  will be swapped automatically by SCANOR,
+   at some loss of efficiency.  If you   need  to  byte-swap  use  the program
+   /usr/hhirf/swapo.
+ 
+   U950.032  Macintosh and Windows computers
+ 
+   Using  the  DVD  is as easy as inserting it into your DVD drive and waiting
+   for the system to mount it. You can then copy the files about as you wish.
+ 
+   U950.034  Linux computers
+ 
+   On Linux, ordinary users  logged in at the console can arrange to  mount CD
+   and  DVD  devices.  Some  window  managers, e.g. Gnome and KDE, under Linux
+   will try to mount the  DVD for  you,  then  popup  a  file  manager window.
+   Then you can manipulate the files as you wish.
+ 
+   Failing  that,  your system should be setup to permit you to mount the DVD.
+   If your /etc/fstab file has a line like:
+ 
+   /dev/cdrom1     /mnt/cdrom1      udf,iso9660 noauto,owner,kudzu,r o 0 0
+ 
+   Then you can mount the DVD by using a command like:
+ 
+   mount /dev/cdrom1
+ 
+   It seems that the default will be to mount the DVD  as   /mnt/cdrom1  which
+   can  be treated like an ordinary disk. To dismount the disk, use one of the
+   following commands:
+ 
+   umount /dev/cdrom1, or
+ 
+   eject /dev/cdrom1
+ 
+ 
+   U950.036  Other UNIX computers
+ 
+   Our experience with other UNIX systems,  especially  older  ones,  is  that
+   only  the  root  user  can mount DVD's. Thus you would have to arrange with
+   the sys admin to get root access, or copy all your data at  once  to  local
+   storage. The commands for mounting a CD or DVD vary substantially from UNIX
+   version to UNIX version, so please consult a local expert.
+ 
+   ==========================================================================
+   The website for this documentation will be found at:
+ 
+   http://www.phy.ornl.gov/local/computer
+ 
+   and the links to be found there.
+ 
+   The website has PICTURES as well as text!
+   ===========================================================================

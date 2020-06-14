@@ -1,0 +1,29 @@
+18,19d17
+<       CHARACTER*4        CLWD(2,40)
+<       EQUIVALENCE       (CLWD,LWD)
+42d39
+<       CHARACTER*4 NUBPC
+49d45
+<       CHARACTER*4 ITEX,    ITIT
+52d47
+<       CHARACTER*4 IBANF,IBAFF,IGATF,IGAFF
+55d49
+<       CHARACTER*4 NAMHIL,    LISKIN,         NOHIS
+58d51
+<       CHARACTER*4                  IREPACK,JREPACK
+62,63c55
+<       INTEGER*4    MSER(10),LINX(33)
+<       CHARACTER*4  OPLST(6)
+---
+>       INTEGER*4 MSER(10),LINX(33),OPLST(6)
+72,73d63
+<       CHARACTER*4  JOP
+< C
+175a166
+>      &     RECORDTYPE = 'FIXED',
+182a174
+>      &     RECORDTYPE = 'FIXED',
+213c205
+<       JOP=CLWD(1,N)                     !PICK UP OPTION
+---
+>       JOP=LWD(1,N)                      !PICK UP OPTION

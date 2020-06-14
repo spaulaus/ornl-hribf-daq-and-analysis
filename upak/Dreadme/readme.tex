@@ -1,0 +1,1115 @@
+   11-Sep-04 ..... U100  README - Directory to HRIBF Software ....... PAGE   1
+ 
+ 
+   Sec Page Contents
+ 
+   010   1  Introduction
+ 
+   020   2  Documentation List
+ 
+   030   6  Data Acquisition - Introduction
+ 
+   040   7  Data Acquisition - Block Diagram of System
+ 
+   050   8  Data Acquisition - List of Software Modules
+ 
+   060   9  Data Acquisition - List of Things to be Done
+ 
+   070  10  Data Acquisition - Brief Description of System Operation
+ 
+   080  12  Data Processing, Analysis and Display
+ 
+   090  13  HRIBF List Data Tape Structure
+ 
+   100  16  HRIBF List Data File Structure
+ 
+   110  17  HRIBF Histogram Tape and File Structures
+ 
+   120  19  UPAK - Software Xport
+ 
+   130  20  UPAK - Comments
+ 
+ 
+   U100.010  Introduction
+ 
+   The  HRIBF  facility  provides  a number of programs, software packages and
+   libraries which are intended to enable the  user  to  efficiently  acquire,
+   process  and  analyze  experimental  data.  These  software  tools are also
+   available for export. Documentation is avaliable in hardcopy form. See:
+ 
+   ORPHAS MANUAL   for data acquisition related software
+   ORPH UBOOK 2000 for data processing and general purpose software
+   ORPH XBOOK 2003 for the experts, the brave or the foolish
+ 
+   Most documents are also available online. You may print or  view  on-screen
+   the latest version of the document of your choice by using dodoc & viewdoc.
+   If you wish to use viewdoc, then your PATH must include /usr/local/bin.
+ 
+   dodoc...Prints  entire  documents  on  the printer of your choice. To get a
+          list of the available documents, just type dodoc.  Some  examples of
+          using dodoc & pdoc to print the document readme follow:
+ 
+          dodoc readme         ;Prints one-sided on default Postscript printer
+          dodoc readme ps04    ;Prints one-sided on printer ps04
+          dodoc readme double  ;Prints two-sided on  ps01 in Rm T-210
+ 
+          pdoc  readme         ;Prints one-sided on cp6000
+          pdoc  readme double  ;Prints two-sided on cp6000
+ 
+   viewdoc...Displays  the  document on-screen. To get a list of the available
+          documents, just type viewdoc.  With viewdoc you can select  pages to
+          print  or  print the entire document.  For example, to view the this
+          document readme, type
+ 
+          viewdoc readme
+    
+   11-Sep-04 ..... U100  README - Directory to HRIBF Software ....... PAGE   2
+ 
+ 
+   U100.020  Documentation List
+ 
+ 
+   Data Acquisition
+ 
+ 
+   The following are available in the ORPHAS Handbook & via dodoc & viewdoc
+ 
+ 
+   VMEsys-----VME front-end acquisition system - comprehensive
+ 
+   hhirf_adc--HHIRF ADC interface - comprehensive description
+ 
+   modu_setup-CAMAC module setup code - for many different module types
+ 
+   vmexxlib---Describes routines for read/write/setup of CAEN ADCs & TDCs
+ 
+   acqlib-----Describes data acquisition routine library for workstations
+ 
+   pacman-----Data acquisition manager - description, operation, etc
+ 
+   pacor------Physics Acquisition Compiler - Hi-level language for data acq
+ 
+   scad-------CAMAC scaler display (ASCII and soft-meter display)
+ 
+   scop-------CAMAC scaler display (for accelerator operator)
+ 
+   scat-------CAMAC scalers (how to copy to tape/file during data acq)
+ 
+   ddman------Digital Display Manager for beam profile displays
+ 
+    
+   11-Sep-04 ..... U100  README - Directory to HRIBF Software ....... PAGE   3
+ 
+ 
+   U100.020  Documentation List (continued)
+ 
+ 
+   Data processing, Display and Analysis
+ 
+ 
+   The following are available in the ORPH UBOOK 2000 & via dodoc & viewdoc
+ 
+ 
+   scanor-----Provides for user customized histogramming of list-data
+ 
+   lemor------Program to examine, copy, modify-copy list-data (tape or file)
+ 
+   damm-------Display, Analysis and Manipulation Module for histograms
+ 
+   chil-------Comprehensive Histogramming Language for tape/file scanning
+ 
+   tapes------Describes structure of HRIBF list-data tapes & files
+ 
+   swapo------Byte swaps HIS-, SPK- & LDF-files (in place)
+ 
+   asap-------Automatic Spectrum Analysis program
+ 
+   banco------Copies Ban-files to/from edit compatible form
+ 
+   bando------Provides for editing & modifying Ban-files
+ 
+   dvd--------Creation and use of DVDs & CDs in data archiving & processing
+ 
+ 
+ 
+   Control Systems
+ 
+ 
+   The following are available via dodoc & viewdoc
+ 
+ 
+   dcon-------DRS control system - user interface
+ 
+   stepit-----Stepping motor control for DRS target ladders
+ 
+   rcon-------RMS control system - user interface
+ 
+   hvln-------HV-control & LN-filling-control user interface for RMS
+ 
+ 
+ 
+   Libraries
+ 
+ 
+   The following are available via dodoc & viewdoc
+ 
+ 
+   lnflib-----Library of routines supporting LN-filling & HV-control on RMS
+ 
+   orphlib----General routine library for HRIBF user support
+ 
+   acqlib-----Describes data acquisition routine library for workstations
+ 
+   vmexxlib---Describes routines for read/write/setup of CAEN ADCs & TDCs
+ 
+    
+   11-Sep-04 ..... U100  README - Directory to HRIBF Software ....... PAGE   4
+ 
+ 
+   U100.020  Documentation List (continued)
+ 
+ 
+   Miscellaneous Utilities
+ 
+ 
+   The following are available in the ORPH UBOOK 2000 & via dodoc & viewdoc
+ 
+ 
+   baco-------Converts Concurrent "backup tapes" to "stu format"
+ 
+   charge-----Predicts equilibrium charge state distributions (gas & solid)
+ 
+   exab-------Exabyte exerciser
+ 
+   fex--------File examine program
+ 
+   fitu-------X,Y fitting via Spline, Linear & non-Linear LSQ (with display)
+ 
+   funkyfit---X,Y fitting via linear-least-squares method
+ 
+   formats----List data structure of HRIBF tapes and files (LDFs)
+ 
+   kineq------Kinematics & Q-values (relativistic & non-relavistic)
+ 
+   mep--------Describes energy calibration of HRIBF Tandem by time-of-flight
+ 
+   nuci-------Nuclear information program
+ 
+   stope------Stopping power calculations with    graphical display
+ 
+   stopi------Stopping power calculations with no graphical display
+ 
+   stopx------Stopping power and range calculations
+ 
+   stu--------Simple Transfer Utility for xfer of files between systems
+ 
+   txx--------Text formatting program
+ 
+   txxps------Converts output of program txx to postscript
+ 
+   upak-------Describes HRIBF UPAK, How to get it, tips on using it
+ 
+   upak.ftp---Describes available versions of UPAK and how to retrieve
+ 
+    
+   11-Sep-04 ..... U100  README - Directory to HRIBF Software ....... PAGE   5
+ 
+ 
+   U100.020  Documentation List (continued)
+ 
+   For the Experts only
+ 
+ 
+   The following are available in the ORPH XBOOK 2003
+ 
+ 
+   acqsetup---Setup of workstation and VME for data acquisition
+ 
+   alphahard--Alpha Power Supply CPU Board
+ 
+   multivme---Describes setup & use of multiple VME crates for data acq
+ 
+   trigger----Describes VME event trigger module used at HRIBF
+ 
+   lnf--------LN2 filling system - workstation setup
+ 
+   lnflib-----LN2 filling system - routine library
+ 
+   lnfutil----LN2 filling system - asorted utilities
+ 
+   rmslib-----RMS control system - routine library
+ 
+   morerms----RMS control system - routine library (more)
+ 
+   moredrs----DRS conrtol system - routine library
+ 
+   rmsigc-----RMS/DRS ion-gauge readout & control routine library
+ 
+   varian-----Varian - interactive readout & control
+ 
+   txxps------TXX to postscript converter
+ 
+   poblis-----Displays/logs tables generated by program pacor
+ 
+    
+   11-Sep-04 ........ U100  README - HRIBF Data Acquisition ......... PAGE   6
+ 
+ 
+   U100.030  Data Acquisition - Introduction
+ 
+ 
+   This document is intended to introduce the novice user to the  architecture
+ 
+   of  the  HRIBF data acquisition system and to serve as a directory to other
+ 
+   documents which will provide the details needed for a successful  operation
+ 
+   of the system.
+ 
+ 
+   This  document  is  not  to  be  viewed  as  a cookbook for preparation and
+ 
+   operation of the HRIBF data acquisition system. But it is hoped  that  this
+ 
+   document  will provide the new user with a better "feel" for how the system
+ 
+   operates and make the system seem less mysterious and arbitrary.
+ 
+    
+   11-Sep-04 ........ U100  README - HRIBF Data Acquisition ......... PAGE   7
+ 
+ 
+ 
+   U100.040  Data Acquisition - Block Diagram of System
+ 
+ 
+ 
+   The HRIBF Data Acquisition System consists of three major components:
+ 
+   (1)-A microprocessor controlled VME system with interfaces to  CAMAC,  Fera
+       and Fastbus data acquisition hardware.
+ 
+   (2)-A  Linux workstation connected to the VME system via a private ethernet
+       and connected to other facilities via a 100 megabit/sec LAN.
+ 
+   (3)-A large RAID file server connected to the  Linux  workstation  via  the
+       100 megabit/sec LAN.
+ 
+ 
+ 
+                VME                         LINUX              RAID
+                SYSTEM                      WORKSTATION        FILE SERVER
+               -----------------           ---------------    ---------------
+               |Microprocessor |           |             |    |             |
+               |               |           | modu_setup**|    | General     |
+     CAMAC     |Interface      |           |             |    | File        |
+   <---------->|Modules        |           | pacor**     |    | Storage     |
+               |               |           |             |    |             |
+     FERA      |Acquisition    |           | pacman      |    | Source code |
+   <---------->|Readout,       |           |             |    |             |
+               |Control &      |           | logger      |    | Executables |
+     FASTBUS   |Communication  |  PRIVATE  |             |    |             |
+   <---------->|Software       |<--------->| pftoipc     |    | LDFs        |
+               |               |  ETHERNET |             |    |             |
+     OTHER     |               |           | tape        |    | Histograms  |
+   <---------->|               |           |             |    |             |
+               |               |           | scanor      |    |             |
+               |               |           |             |    |             |
+     SYS BUSY  |               |           | damm        |    |             |
+   <-----------|               |           |             |    |             |
+               |               |           | scad        |    |             |
+     EVENT     |               |           |             |    |             |
+   ----------->|Trigger Module |           | scop        |    |             |
+     TRIGGER   |               |           |             |    |             |
+               |               |           |             |    |             |
+               -----------------           ---------------    ---------------
+                                                 |                   |
+                                                 |                   |
+                                                 |  100 megabit LAN  |
+                                      <-----------<----------------->-------->
+ 
+ 
+   ** Used in initialization phase only
+    
+   11-Sep-04 ........ U100  README - HRIBF Data Acquisition ......... PAGE   8
+ 
+ 
+   U100.050  Data Acquisition - List of Software Modules
+ 
+   ---------------------------------------------------------------------------
+   VME            Directly controls all front-end operations
+   Microprocessor Reads/writes CAMAC, Fera, Fastbus & other modules
+   Code           Detects event trigger
+                  Executes data readout as specified by pac program
+                  Forms data packets & sends to host
+                  Manages all communication with host workstation
+   ---------------------------------------------------------------------------
+   modu_setup     Provides for the setup of certain CAMAC modules
+                  which require initialization.
+                  See ORPHAS Tab-9 or Type: viewdoc modu_setup
+   ---------------------------------------------------------------------------
+   pacor          Compiles readout specification program (pac)
+                  Displays diagnostic information
+                  Loads specification table into VME microprocessor
+                  See ORPHAS Tab-2 or Type: viewdoc pacor
+   ---------------------------------------------------------------------------
+   pacman         Spawns other processes including logger & tape
+                  Provides user control of the data acqisition operation
+                  All control commands are entered into the pacman window
+                  Creates iconized labeled windows for damm & scanor for your
+                  convenience but you don't have to use them
+                  See ORPHAS Tab-4 or Type: viewdoc pacmanII
+   ---------------------------------------------------------------------------
+   logger         Displays/logs internally generated messages
+                  This is an "output process" only
+   ---------------------------------------------------------------------------
+   pftoipc        Runs in the background - no window
+                  Receives real time data buffers from VME system
+   ---------------------------------------------------------------------------
+   tape           Runs in the background - no window
+                  Writes list data to List Data Files (LDFs)
+                  It did write tape (hence the name) - but no more!
+   ---------------------------------------------------------------------------
+   scanor         Receives real time data buffers. User customized to:
+                  Generate 1-D & 2-D histograms in shared memory & on disk
+                  See ORPH UBOOK 2000 Tab-4 or Type: viewdoc scanor
+   ---------------------------------------------------------------------------
+   damm           General display, manipulation & fitting program
+                  Accesses histograms in shared memory from scanor
+                  Accesses histograms on disk from anywhere
+                  See ORPH UBOOK 2000 Tab-2 or Type: viewdoc damm
+   ---------------------------------------------------------------------------
+   scad           Generates numeric display of up to 240 CAMAC scalers and
+                  Generates graphic display of up to 8 CAMAC scalers
+                  See ORPHAS Tab-8 or Type: viewdoc scad
+   ---------------------------------------------------------------------------
+   scop           Generates graphic display of up to 8 CAMAC scalers and
+                  sends rate-data to EPICS (the accelerator control system)
+                  See ORPHAS Tab-8 or Type: viewdoc scop
+   ===========================================================================
+   If you do not have /usr/hhirf/ defined in your path, then you must type:
+ 
+   /usr/hhirf/viewdoc instead of just viewdoc
+   ===========================================================================
+    
+   11-Sep-04 ........ U100  README - HRIBF Data Acquisition ......... PAGE   9
+ 
+ 
+ 
+   U100.060  Data Acquisition - List of Things to be Done
+ 
+ 
+   o......Review the general setup requirements
+          (see ORPHAS Tab-5 or type: viewdoc VMEsys)
+ 
+ 
+   o......Review any special module setup requirements
+          (see ORPHAS Tab-9 or type: viewdoc modu_setup)
+ 
+   o......Review the general features of the data acwuisition manager pacman
+          (see ORPHAS tab-4 or type: viewdoc pacmanII)
+ 
+ 
+   o......Write a data acquisitation specification program (pac program)
+          (see ORPHAS Tab-2 or type: viewdoc pacor)
+ 
+ 
+   o......Produce a customized histogramming program (Customized scanor)
+          (see UBOOK 2000 Tab-4 or type: viewdoc scanor)
+ 
+ 
+   o......Create an initialization file for numeric display of CAMAC scalers
+          (see ORPHAS Tab-8 or type: viewdoc scad)
+ 
+ 
+   o......Create an initialization file for graphic display of CAMAC scalers
+          (see ORPHAS Tab-8 or type: viewdoc scad & viewdoc scop)
+ 
+ 
+   o......Review the features of general purpose display program damm
+          (see UBOOK 2000 Tab-2 or type: viewdoc damm)
+ 
+ 
+   ***************************************************************************
+   *                              IMPORTANT!!                                *
+   *                           BEFORE YOU START!!                            *
+   *                       YOU SHOULD DO THE FOLLOWING                       *
+   ***************************************************************************
+ 
+   Add the following lines to your .login file:
+ 
+   alias pacman /usr/acq/wks/pacman
+ 
+   set ignoreeof
+ 
+   In  your login window (from which you will run pacman), enter the following
+   command:
+ 
+   setenv VME vmex  ;where x=1,2,3... (i.e. define the vme system that you
+                    ;will be using) to be vme1, vme2, vme3, ....
+ 
+   ***************************************************************************
+   See pacmanII, Sec-30 for other suggested changes to .login, .cshrc & .twmrc
+   ***************************************************************************
+    
+   11-Sep-04 ........ U100  README - HRIBF Data Acquisition ......... PAGE  10
+ 
+ 
+   U100.070  Data Acquisition - Brief Description of System Operation
+ 
+   The following list of operations are intended to give the novice a  concept
+   of  how  the  system  works  and  is  not  intended  to  present a detailed
+   description   of  "everything  you  have  to  do".  All  of  the  following
+   operations are to be carried  out  on  the  data  acquisition  workstation.
+   First, the user creates (writes or modifies):
+ 
+   A customized histogramming program based on scanor - call it myscanor
+ 
+   A data acquisition specification program  - call it mydacq.pac
+ 
+   A CAMAC scaler display specification file - call it myscals.sca
+ 
+   Compile and test mydacq.pac by typing:=====================================
+ 
+        pacor mydacq
+ 
+   Compile and load mydacq into the VME microprocessor by typing:=============
+ 
+       setenv VME vmex    ;Specify the VME system (vme1, vme2, vme3...)
+ 
+       pacor mydacq L
+ 
+   Start pacman (acquisition control program) by typing:======================
+ 
+       setenv EXPT RIBxxx ;Identify your experiment (for DOE & OMB)
+ 
+       setenv VME vmex    ;Specify the VME system (vme1, vme2, vme3...)
+ 
+       pacman             ;This program manages the data acquisition process
+                          ;from the workstation side. It also creates windows
+                          ;starts 3 other processes logger, pftoipc & tape
+ 
+       startvme           ;Starts data acquisition (enables histogramming)
+       stopvme            ;Stops  data acquisition
+ 
+       trun bon           ;Starts recording to LDF - beam ON
+       trun boff          ;Starts recording to LDF - beam OFF
+ 
+       tstop              ;Stops  recording
+ 
+   Start myscanor (customized histogramming program) by typing:===============
+ 
+       myscanor myhis     ;Histograms will be stored on myhis.his
+       acq VMEx           ;Assign input to be from VMEx (x=1,2,3..)
+       go                 ;Start processing input list data
+ 
+   Start damm (display & analysis program) by typing:=========================
+ 
+       damm               ;Starts program damm
+       fig n              ;Define windows for display (n = 1 to 20)
+       in myhis.his       ;Opens histogram file for input - Actually uses the
+                          ;shared memory segment generated by myscanor
+       d id               ;Displays histogram number id
+    
+   11-Sep-04 ........ U100  README - HRIBF Data Acquisition ......... PAGE  11
+ 
+ 
+   U100.070  A Brief Description of System Operation (continued)
+ 
+   Start scad (CAMAC scaler display program) by typing:=======================
+ 
+        setenv VME vmex              ;Specify reading from vme1, vme2, vme3...
+ 
+        scad                         ;It prompts you for a file name
+        Enter filename->myscals.sca  ;Enter filename
+        run                          ;Start it going
+ 
+   ===========================================================================
+ 
+ 
+   o......The  VME  system  responds  to  event triggers inputted to a special
+          Trigger Module and subsequently reads out data as prescribed by  the
+          pre-loaded acquisition code (pac).
+ 
+   o......While  the readout is proceeding a "VME system busy" is asserted for
+          external use.
+ 
+   o......The data read is formed into ethernet packets and sent to  the  host
+          workstation.
+ 
+   o......A  process, pftoipc  running on the workstation collects packets and
+          generates standard data buffers which are made  available  to  other
+          processes  (such  as scanor & tape) running on the "data acquisition
+          platform".
+ 
+   o......Process tape writes data buffers to disk files (LDFs).
+ 
+   o......The   user   customized  histogramming  process  (based  on  scanor)
+          generates a number of 1-D and 2-D histograms  as  specified  by  the
+          customizing routines.
+ 
+   o......Histograms  are  generated  in a shared menory segment identified by
+          the association with a histogram file (.his file) on disk.
+ 
+   o......Program damm is used to access this memory segment and  display  the
+          histograms being generated by the (scanor based) process.
+ 
+   o......Program  scad  is  used  for  a  tabular display of up to 240  CAMAC
+          scalers at a display interval of 1 second or greater (default  is  5
+          sec).  scad  may  also  be  used  to display a list of up to 8 CAMAC
+          scalers graphically at a rate of up to 20 displays/sec. Each  scaler
+          rate  is  displayed as a software generated meter with either linear
+          or log scale.
+ 
+   o......Program scop is used to display up to 8 scalers graphically (as  for
+          scad  above)  and  to  send  the  rate data to the EPICS accelerator
+          control system for operator monitoring.
+    
+   11-Sep-04 ..... U100  README - Data Processing and Analysis ...... PAGE  12
+ 
+ 
+   U100.080  Data Processing, Analysis and Display
+ 
+ 
+   For information about:
+ 
+   List-data-Copying   -   see   lemor   (ORPH  Ubook  2000,  Sec#  U320)  for
+          tape-to-tape, tape-to-file, file-to-tape copy procedures.
+ 
+   List-Data-Preprocessing - see  lemor (ORPH Ubook  2000,  Sec#  U310)  for a
+          description of available preprocessing facilities.
+ 
+   Histogramming  -  see  scanor  (ORPH  Ubook  2000, Sec# U320) for list-data
+          histogramming from tapes and files.
+ 
+   Histogram-Display   -   see  damm  (ORPH  Ubook  2000,  Sec#  U300)  for  a
+          description of on-line (and off-line) 1-D & 2-D histogram display.
+ 
+   Histogram-Analysis   -  see  damm  (ORPH  Ubook  2000,  Sec#  U300)  for  a
+          description of histogram analysis (peak fitting,  summing,  gateing,
+          etc).
+ 
+   Byte-Swapping  -  see  swapo  (ORPH  Ubook, Sec# U540) for how to byte-swap
+          list-data files and histogram files.
+ 
+   (documentation is also available via dodoc and viewdoc)
+    
+   11-Sep-04 .... U100  README - HRIBF Tape and File Structure ...... PAGE  13
+ 
+ 
+   U100.090  HHIRF List Data Tape Structure
+ 
+   There are currently three list data structures supported  by  the  standard
+   HRIBF  processing  software  (i.e.  SCANOR,  LEMOR  and customized versions
+   thereof). These are:
+ 
+   L001 - Old externally   generated data
+ 
+   L002 - Old Perkin/Elmer generated data
+ 
+   L003 - Current HRIBF    generated data
+ 
+   These structures may be processed from either  8mm  tape  or  special  list
+   data  files  (LDFs).  See LEMOR SEC#310 for how to copy tapes to LDFs, LDFs
+   to tape, etc.
+ 
+   HHIRF List Data - L001 Tape Structure
+ 
+   L001 formatted list-data (often generated in external labs) consists of:
+ 
+   o......16-bit data words.
+ 
+   o......Fixed length data records which are no shorter than 2048  bytes  and
+          no longer than 32768 bytes.
+ 
+   o......A fixed number of parameters per event.
+ 
+   o......A  fixed  (integer)  number of events per record (no event splitting
+          across record boundries).
+ 
+   o......A number of data-record header-words may be specified which  are  to
+          be ignored during processing.
+ 
+   o......Header  records  of 256 bytes in length and structured as defined in
+          SEC#014 may be utilized for display, searches, etc.
+ 
+   o......All other records not of the specified data-record  length  will  be
+          ignored during processing.
+    
+   11-Sep-04 .... U100  README - HRIBF Tape and File Structure ...... PAGE  14
+ 
+ 
+   U100.090  HHIRF List Data Tape Structure (continued)
+ 
+   HHIRF List Data - L002 Tape Structure
+ 
+   The  L002  data  stream (from the old Concurrent system) consists of Header
+   records, Event Handler Source Code (EVS) records, Data records  and  Scaler
+   records - as illustrated below:
+ 
+   Header    record   ;256 bytes
+   EVS-file  record   ;1600 bytes
+    .
+   Data      record   ;8192 bytes
+   Data      record   ;8192 bytes
+    .          .
+   Scaler    record   ;6780 bytes
+   End-of-File        ;File mark
+   Header    record
+   Data      record
+    .          .
+    .          .
+   End-of-File        ;Double file-mark
+   End-of-File        ;ends all data on tape
+ 
+   L002  events  consist  of  parameter  ID flags followed by one or more data
+   words corresponding to sequential parameter IDs  - as illustrated below:
+ 
+   8000-hex + ID     ;Parameter ID
+   Data              ;for Parameter ID
+   Data              ;for Parameter ID+1
+    .
+   8000-hex + JD     ;Parameter JD
+   Data              ;for Parameter JD
+   Data              ;for Parameter JD+1
+    .
+   FFFF-hex          ;End-of-event
+ 
+   o......Events may be split across record boundries.
+   o......Data words cannot have the hi-order bit set.
+   o......All parameter IDs and data words are 16-bit.
+ 
+   ===========================================================================
+   Structure of the 256-byte header record
+   Header Word Number
+      16-BIT   32-BIT   # BYTES  CONTENTS                        TYPE
+     01 - 04  01 - 02         8  'HHIRF   '                      ASCII
+     05 - 08  03 - 04         8  'L002    '                      ASCII
+     09 - 16  05 - 08        16  'LIST DATA       '              ASCII
+     17 - 24  09 - 12        16  MO/DA/YR HR:MN                  ASCII
+     25 - 64  13 - 32        80  User Title                      ASCII
+     65 - 66       33         4  Header Number                   BINARY
+     67 - 70  34 - 35         8  Reserved (set to 0)             BINARY
+     71 - 72       36         4  # of Secondary Header Records   BINARY
+                   37         4  Record Length (bytes)           BINARY
+                   38         4  # Blocked Line Image Records    BINARY
+                   39         4  Record Length (bytes)           BINARY
+                   40         4  Parameters/Event (ref only)     BINARY
+                   41         4  Data Record Length (bytes)      BINARY
+              42 - 64            Reserved (set to 0)             BINARY
+    
+   11-Sep-04 .... U100  README - HRIBF Tape and File Structure ...... PAGE  15
+ 
+ 
+   U100.090  HRIBF List Data Tape Structure (continued)
+ 
+   HHIRF List Data - L003 Tape Structure
+ 
+   The L003 data stream (currently in use) may consist of:
+ 
+   Header    records - 256   bytes
+   PAC-file  records - 1600  bytes
+   Scaler    records - 32000 bytes
+   Dead-time records - 128   bytes
+   Data      records - 2048 to 32768 bytes (but not 32000 bytes)
+ 
+   A typical data stream might look like:
+ 
+   Header    record
+   PAC-file  record
+   PAC-file  record
+   Data      record
+   Data      record
+    .          .
+    .          .
+   Scaler    record
+   Data      record
+    .          .
+    .          .
+   Scaler    record
+   Dead-time record
+   End-of-File
+   Header    record
+   Data      record
+    .          .
+    .          .
+   End-of-File
+   End-of-File
+ 
+ 
+   L003 events consist of pairs of 16-bit numbers, the first of which  defines
+   the parameter ID and the second the data - as shown below.
+ 
+   8000-hex + ID     ;Parameter ID
+   Data              ;Parameter data
+   8000-hex + ID
+   Data
+   8000-hex + ID
+   Data
+     .
+     .
+   FFFF-hex          ;End-of-event word-1
+   FFFF-hex          ;End-of-event word-2
+ 
+ 
+   o......Events are not split across record boundries.
+ 
+   o......Unfilled records are padded with FFFF-hex.
+    
+   11-Sep-04 .... U100  README - HRIBF Tape and File Structure ...... PAGE  16
+ 
+ 
+   U100.100  HHIRF List Data File Structure
+ 
+   The  list  data  file  (LDF) ia a structured disk file for containing L001,
+   L002 or L003 data. It is processed as a direct  access  file  whose  record
+   length is 8194 32-bit words.
+ 
+   The General Record Structure is:
+   32-bit word  1       TYPE  - Record type (DIR,HEAD,PAC,SCAL,DEAD,DATA,EOF)
+                2       NFW   - number of 32-bit words of data
+                3-8194  DATA  - 8192 full-words (32768 bytes) data plus pads
+ 
+   Directory record structure
+   32-bit word  1       'DIR '  - type = Directory
+                2       8192    - full-word data size
+                3       8194    - full-word blocksize
+                4       NREC    - number of records written on file
+                5               - un-used
+                6       NHED    - number of header records written on file
+ 
+                7       HED-ID  - header ID number
+                8       RECN    - record number where header is written
+ 
+                9       HED-ID  - header ID number
+               10       RECN    - record number where header is written
+                .
+ 
+   Header record structure
+   32-bit word  1       'HEAD'  - type = header
+                2        64     - number of full-words of header
+                3-66            - header record - 256 bytes
+ 
+   PAC record structure
+   32-bit word  1       'PAC '  - type = PAC
+                2        NFW    - number of full-words of data
+                3-NFW+2         - PAC file records (up to 409 lines)
+ 
+   Scaler record structure
+   32-bit word  1       'SCAL'  - type = Scaler
+                2        NFW    - number of full-words of data
+                3-NFW+2         - Data for up to 400 scalers
+ 
+   Deadtime record structure
+   32-bit word  1       'DEAD'  - type = Deadtime
+                2        32     - 128 bytes of deadtime data
+                3-34            - Deadtime data
+ 
+   Data record structure
+   32-bit word  1       'DATA'  - type = Data
+                2        8192   - number of full-words of data
+                3-8194          - list data plus padding
+ 
+   EOF record structure
+   32-bit word  1       'EOF '  - type = EOF (End-of-File)
+                2        8192   - number of full-words of data
+                3-8194  'EOF '  - padded with EOFs
+    
+   11-Sep-04 .... U100  README - HRIBF Tape and File Structure ...... PAGE  17
+ 
+ 
+   U100.110  HRIBF Histogram Tape and File Structures
+ 
+   Program  STU  produces  histogram  tapes  for  transport  to other computer
+   systems. See SEC# U410 for STU operating instructions. If you  have  a  VAX
+   and  HHIRF  VAXPAK, STU is probably what you should use. If you have a Unix
+   or Linux system, then transfer should be via tar or ftp.
+ 
+   If STU is requested to output a HIS-file to tape,  it  writes  an  80  byte
+   ASCII  Title record, the associated DIR-file (or DRR-file) and the HIS-file
+   into one TAPE file. The Title record consists of the input filename  (words
+   1-19)  and  a byte-order flag BOF (word 20). BOF = DEC says tape byte order
+   is DEC compatible, BOF =  IBM  says  byte  order  is  IBM  compatible.  The
+   structure of such a tape file is shown below:
+ 
+   REC#  LENGTH(BYTES)  CONTENTS-----------------------------------------
+ 
+      1          80     FILNAM (76 bytes) & Byte-order-flag (4 bytes)
+      2         128     1st  DIR-file record
+      3         128     2nd  DIR-file record
+      -          -              -
+      -          -              -
+      M         128     M-1  DIR-file record
+      -          -              -
+      N         128     Last DIR-file record (N = NHIS+2 +(NHIS+31)/32)
+    N+1       16384     1ST  16KB of HIS-file
+    N+2       16384     2nd  16kb of HIS-file
+      -          -              -
+    N+I       16384     Ith  16KB of HIS-file
+      -          -              -
+                        End-of-File .....................................
+      1          80     FILNAM (76 bytes) & Byte-order-flag (4 bytes)
+      2         128     1st  DIR-file record
+      3         128     2nd  DIR-file record
+      -          -              -
+      -          -              -
+      M         128     M-1  DIR-file record
+      -          -              -
+      N         128     Last DIR-file record (N = NHIS+2 +(NHIS+31)/32)
+    N+1       16384     1ST  16KB of HIS-file
+    N+2       16384     2nd  16kb of HIS-file
+      -          -              -
+    N+I       16384     Ith  16KB of HIS-file
+      -          -              -
+                        End-of-File .....................................
+                        End-of-File .....................................
+ 
+                    (see next page for DIR-file definitions)
+    
+   11-Sep-04 .... U100  README - HRIBF Tape and File Structure ...... PAGE  18
+ 
+ 
+   U100.110  HHIRF Histogram Tape and File Structures (continued)
+ 
+   STRUCTURE OF DIR-FILE - FIRST RECORD (128 BYTES) ---------------------
+ 
+   JDIRF(1-3)   - 'HHIRFDIR0001'
+   JDIRF(4)     - # of histograms on HIS-file
+   JDIRF(5)     - # of half-words on HIS-file
+   JDIRF(7-12)  - YR,MO,DA,HR,MN,SC (date, time of CHIL run)
+   JDIRF(13-32) - Text (entered in CHIL via $TEX command)
+ 
+   STRUCTURE OF DIR-FILE - DIRECTORY ENTRY (128 BYTES) ------------------
+ 
+   IDIRH(1)     - Histogram dimensionality (max = 4)
+   IDIRH(2)     - Number of half-words per channel (1 or 2)
+   IDIRH(3-6)   - Histogram parm#'s (up to 4 parameters)
+   IDIRH(7-10)  - Length of raw    parameters (pwr of 2)
+   IDIRH(11-14) - Length of scaled parameters (pwr of 2)
+   IDIRH(15-18) - Min channel# list
+   IDIRH(19-22) - Max channel# list
+   IDIRF(12)    - Disk offset in half-words (1st word# minus 1)
+   IDIRF(13-15) - X-parm label
+   IDIRF(16-18) - Y-parm label
+   XDIRF(19-22) - Calibration constants (up to 4 floating numbers)
+   IDIRF(23-32) - Sub-title (40 bytes) (entered via CHIL $TIT cmd)
+ 
+   STRUCTURE OF DIR-FILE - ID-LIST (32 ID'S/RECORD) ---------------------
+ 
+   IDLST(1)     - ID number of 1st histogram defined
+   IDLST(2)     - ID number of 2nd histogram defined
+                -
+ 
+   Note:  JDIRF, IDIRF & IDLST are 32-bit integers: IDIRH is a 16-bit integer:
+   XDIRF is REAL*4. There is one directory entry for  each  histogram  on  the
+   file.
+ 
+   HHIRF Histogram Tapes - SPK-file Structure
+ 
+   STU  tape  SPK-files  consist  of an 80 byte Title record (same as that for
+   HIS-files, above) followed by as many 2048 byte binary records as  required
+   to  contain  the  complete  SPK-file  (i.e.  an  image of the disk file). A
+   file-mark separates successive tape files. The last tape file  is  followed
+   by a double file-mark.
+ 
+   If  you  don't have a VAX (and HHIRF VAXPAK), this record structure will be
+   a bitch to read - so I am not going to try to tell you how to do it.
+    
+   11-Sep-04 .............. U100  README - HRIBF UPAK ............... PAGE  19
+ 
+ 
+   U100.120  UPAK - Software Xport
+ 
+   Most of the general purpose  data  acquisition,  processing,  analysis  and
+   support software is available from the anonymous ftp site given below:
+ 
+   ftp://ftp.phy.ornl.gov/pub/upak
+ 
+   Click  on  README  and  you  will  see  a  list  of the currently available
+   packages. The list at the time of this writing is shown below.
+ 
+   mcsq-acq.tar.Z  :data acquisition libs & source, DEC/Compaq fortran, C
+   upak-osf.tar.Z  :Obsosete upak for DEC OSF workstations, DEC fortran
+   upakor-osf.tar.gz :Version for Compak TRU64, Compaq fortran
+   upak-sun.tar.gz  :Obsolete version of upak for SunOS 4.1.4, Sun f77
+   upak-ultrix-mips.tar.Z  :Version of upak for DECstations running Ultrix
+   upakor-linux-alpha.tar.gz :Linux running on Alpha CPU's, Compaq fortran
+   upak-macosx.tar.gz  :MacOSX, using Fink g77 and XFree86
+ 
+   In the Linux subdirectory (Linux/):
+ 
+   README-upak.txt: Information on installing the UPAK data analysis software
+   README-hribf-daq.txt: Information on installing the HRIBF acquisition
+   upakor-linux-pgf77-intel.tar.gz  :Linux running on Intel Pentium, pgf77
+   DvDController.tgz: A graphical interface for archiving data to DVD
+   hribf-daq-linux-src.tgz: Source code for the data acquisition system
+   hribf-daq.linux.tgz: Linux 9.0 runtime of the acquisition software
+   upak-linux-g77-src.tgz: Source of the UPAK software
+   upak-linux-g77-intel.tgz: Linux 9.0, Intel Pentium, g77 compiler
+ 
+   This software is distributed to our nuclear physics colleagues, whereis, asis.
+ 
+   *This is the latest release, G77 will likely become our standard release.
+ 
+   Questions?
+   Email varner@phy.ornl.gov
+   ---------------------------------------------------------------------
+ 
+   To obtain the files from the anonymous ftp site, use  the  ftp  command  on
+   your local system,
+ 
+   csh> ftp ftp.phy.ornl.gov
+   Username: anonymous
+   Password: (Enter your Email address)
+ 
+   ftp> cd pub/upak
+   ftp> bin
+   ftp> get upak-osf.tar.Z
+      (messages)
+   ftp> quit
+   csh> uncompress upak-osf.tar
+ 
+ 
+   The  tar  file  contains a directory, milner/, which is the source code for
+   all the upak software, plus a  bit.   The  directory  hhirf/  contains  the
+   binary  code  for  the  programs,  as  well  as  the  documentation  in the
+   hhirf/doc directory.
+    
+   11-Sep-04 .............. U100  README - HRIBF UPAK ............... PAGE  20
+ 
+ 
+   U100.130  UPAK - Comments
+ 
+   To:       UPAK users
+   From:     W. T. Milner
+   Subject:  Some Things About UPAK (Alpha version - revised)
+ 
+   Program scanor (which replaces scan and scanu)  and  program  lemor  (which
+   replaces  lemo)  have  a number of new features including the processing of
+   list-data-files. See the documentation on scanor and lemor for details.
+ 
+   UPAK contains two main directories /usr/users/milner/  &  /usr/hhirf/.  The
+   /hhirf/  directory  contains standard executables, template make-files, and
+   some run-time help-files plus a few other things.  The  /milner/  directory
+   contains  a  few  example  spk- and his-files, a .login file, a few example
+   data files, this document, and not much else.
+ 
+   Each program or routine library is contained in separate  sub-directory  of
+   the  /milner/ directory. All sub-directory names consist of an upper case D
+   followed   by   the   program   name   (/milner/Ddamm/    contains    damm,
+   /milner/Dscanor/  contains  scanor,  etc).   There   are   no   sub-   sub-
+   directories.  Typically,  such  a program sub-directory (/milner/Dprog/ for
+   example) will contain some or all of the following:
+ 
+   (1)....Source files specific to prog only.
+ 
+   (2)....prog.make - a make file (shows all required files and libraries).
+ 
+   (3)....prog.doc - a source document file  with  formatting  directives.  To
+          learn how to process doc-files, Read /usr/hhirf/doc/txx.tex.
+ 
+   (4)....prog.tex  -  a  formatted document file (ready for screen viewing or
+          printing on  any  device).  The  tex-files  may  only  be  found  in
+          directory /usr/hhirf/doc/.
+ 
+   (5)....prog.txx  -  a  formatted  document  file  (with escape sequences to
+          enable bold and undrelined printout on an LN03 compatible printer.
+ 
+   (6)....prog.hep - a run-time  interactive  help  file  (not  used  for  all
+          programs).  These  files  are  also  contained  in  the  /usr/hhirf/
+          directory.
+ 
+   (7)....Possibly some undocumented test programs, data files, etc.
+ 
+   Libraries sources for (lemorlib, scanorlib,  miliba,  milibb,  and  orphlib
+   are all contained in separate directories, Dlemorlib, .... Dorphlib.
+ 
+                                General Comments
+ 
+   A  simple  way  to  make  /UPAK/  executables  available  is to include the
+   following statement in your .cshrc or .login files.
+ 
+   setenv PATH "${PATH}:/usr/hhirf"
+ 
+   The UPAK tape is in TAR format.
+ 
+   See next page for a discussion of how to implement run-time help.
+    
+   11-Sep-04 .............. U100  README - HRIBF UPAK ............... PAGE  21
+ 
+ 
+   U100.070  UPAK - Comments (continued)
+ 
+   A number of programs utilize files  to  provide  for  run-time  help.  Some
+   examples are shown below:
+ 
+   Program       Associated Help File
+   damm          damm.hep
+   scanor        scanor.hep
+   lemor         lemor.hep
+ 
+   In  the initialization phase of all programs which use run-time help files,
+   an attempt is first made to open prog.hep where, prog denotes  the  program
+   name.   If   that   attempt   fails,   an   attempt   is   made   to   open
+   /usr/hhirf/prog.hep.  The  path part, /usr/hhirf/, is "built in" to routine
+   helpopen in library orphlib.a and the prog.hep  part  is  supplied  by  the
+   program  itself.  If  this attempt also fails, an attempt is made to open a
+   file named upak_help_path in the users  main  (login)  directory.  If  this
+   file  exists,  it  should  contain  (one line) the path to all files of the
+   type prog.hep (including beginning and ending  slashes)  as  shown  in  the
+   default example below.
+ 
+   /usr/hhirf/        ;Contents of the default upak_help_path
+                      ;This path name can contain 60 characters maximum
+ 
+   If  the  attempt to open upak_help_path fails or if the attempt to open the
+   specified path and file fails, then run-time help will not be available.
+ 
+                  Making Run-time Help Available on Your System
+ 
+   There are several ways to  do  this  and  the  one  that  you  choose  will
+   probably depend upon the resources available to you.
+ 
+   (1)....If  you  create  a directory /usr/hhirf/ and place all files of type
+          prog.hep   in  this  directory,  then  things  should  work  without
+          modification.
+ 
+   (2)....If  you  place  all  files  of  type  prog.hep  in  some  directory,
+          /home/myname/UPAK/  for  example, and create in your login directory
+          the file  named,  upak_help_path,  which  contains  the  path  name,
+          /home/myname/UPAK/, then run-time help will be available.
+ 
+   (3)....If  you  change  the  default  path  name  in  routine  helpopen  to
+          correspond to the actual path to files  of  the  type  prog.hep  and
+          remake  orphlib.a and then remake asap, damm, lemor, etc., then each
+          user will not  be  required  th  have  the  file  upak_help_path  in
+          his/her/it's login directory.
+ 
+   Method-3  is  quite  a  bit  more  trouble  since you will probably need to
+   change all the make-files, etc. and would have to repeat the  process  each
+   time  you receive a new version of UPAK. I would suggest either methods (1)
+   or (2).
+    
+   11-Sep-04 .............. U100  README - HRIBF UPAK ............... PAGE  22
+ 
+ 
+   U100.070  UPAK - Comments (continued)
+ 
+ 
+ 
+                                 IMPORTANT NOTE
+ 
+   In order for scanor and lemor to work on  the  Alpha,  you  must  have  the
+   "Real  Time  Kernal"  installed  - this is not automatic but is an optional
+   feature of the installation. This is used by the asychronous I/O, etc.
+ 
+                                     COMMENT
+ 
+   You can make the "input focus" and "window stacking"  work  better  (in  my
+   opinion) by adding the following to your .Xdefaults file:
+ 
+   Mwm*keyboardFocusPolicy:  pointer
+   Mwm*focusAutoRaise: False
+ 
+   This  causes  the  input  focus  to  follow  the  pointer  (doesn't require
+   clicking) and windows are not restacked unless you click on the banner.

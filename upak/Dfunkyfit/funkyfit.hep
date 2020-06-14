@@ -1,0 +1,100 @@
+$$$$CON  - FOR HELP CONTENTS
+Type: h VFN  for explaniation of "variables in filenames"
+Type: h LOOP for loop execution and symbol definition 
+Type: h FUN  for commands  for setting functional  form of fit     
+Type: h UNC  for commands  for setting uncertainties   
+Type: h RANG for cammands  for setting fit ranges       
+Type: h TAB  for commands which specify output table  formats 
+Type: h DAT  for a description of data  format  
+Type: h FIT  for FIT commands 
+Type: h FIL  for commands related to command-, data- and log-files          
+$$$$VFN -  For explaniation of "variables in filenames" .............. 
+One symbol (integer variable) may be incorporated in a FILENAME
+specification as the following examples illustrate:
+......................................................................
+SYM=3
+IN FIL"SYM".DAT   ;Opens FIL3.DAT for input 
+......................................................................
+I=0 
+LOOP 3
+I=I+1
+IN  FIL"I".DAT   ;Opens (in succession)  FIL1.DAT, FIL2.DAT, FIL3.DAT
+.   
+.   
+ENDLOOP
+......................................................................
+$$$$LOOP - For loop execution and symbol definition ..................
+Commands related to LOOP execution and SYMBOL definition .............
+SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                 - symbols M, N, O, P, Q, R, S are reserved
+                 - expression syntax is same as in CHIL
+                 - no imbedded blanks are allowed in expressions
+                 - symbols may contain up to 4 characters (5-8 ignored)
+    
+DSYM             - Displays list of currently defined sumbols & values
+    
+LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+CMD  ....        - Nesting supported
+CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+ENDL             - Defines end-of-loop
+                 - KILL (entered before ENDL) kills LOOP
+                 - Ctrl/C - aborts loop-in-progress
+                 - opening of CMD-file within a LOOP not allowed
+$$$$FUN  - For commands for setting functional form of fit ..........    
+LINX             Set to use FUNCS of X - F(X)      DFLT 
+LOGX             Set to use FUNCS of Log(X) - F(Log(X)) 
+LINY             Set to fit Y to F(X) or F(LOG(X)) DFLT 
+LOGY             Set to fit Log(Y) to F(X) or F(Log(X))
+     
+NUFU             Says new Function (i.e sets #TERMS=0)  
+XPOW E1,E2..     Exponent list for Pwr-series terms     
+LPOL J1,J2..     Ordinal-list for Legendre poly terms
+$$$$UNC  - For commands for setting uncertainties ...................  
+CSUN             Set UNCERT to counting statistics      
+ABUN             Says DATA-SET UNCERTS are absolute     
+PCUN             Says DATA-SET UNCERTS are in %         
+ALUN UVAL        Says set all UNCERTS to UVAL (in %)    
+USUN UVAL        Says set unspecified UNCERTS to UVAL(%)
+MULU FAC         Says mult all given UNCERT by FAC
+$$$$RANG - For cammands for setting fit ranges ......................      
+XLIM XMIN,XMAX   Set fit-limits in terms of X-values
+ 
+ILIM IMIN,IMAX   Set fit-limits in terms of index-I
+$$$$TAB  - For commands which specify output table formats ..........
+TABL XLO,XHI,DX  Specs for computed Y vs X table
+
+HFMT,DFMT        Table header & data formats (see 1987 HANDBOOK)
+ 
+*COMMENT         A * in col-1 of a command line will result in the
+                 full line being copied to the output file as a
+                 comment (no other action is taken)
+$$$$DAT  - For a description of data format ......................... 
+DATA             Introduces Y vs X DATA-SET             
+X  Y <YERR>      Up to 500 entries (X,Y values)
+X  Y <YERR>      YERR is optional
+.
+             
+ENDA             Ends this   DATA-SET
+DATA             Begins next DATA-SET
+X  Y
+X  Y
+.
+ENDA
+.
+$$$$FIT  - For FIT commands .........................................
+FIT  ID          Fits set# ID (ID = ordinal number on data file) 
+
+FIT              Fits data-set in memory (data entered interactively)
+
+FITU ID          Same as FIT ID but UNWEIGHTED
+ 
+FITU             Same as FIT    but UNWEIGHTED
+$$$$FIL  - For commands related to command-, data- and log-files          
+CMD  fil         Open & read commands from fil.cmd
+      
+IN   fil.ext     Open new data file (fil.ext) (can     use in LOOPs)
+ 
+DATF fil.ext     Open new data file (fil.ext) (can NOT use in LOOPs)
+ 
+LON              Says record all commands on log-file - funkyfit.log
+LOF              Says only record output  on log-file  

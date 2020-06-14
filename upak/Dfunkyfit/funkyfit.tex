@@ -1,0 +1,251 @@
+   02-Feb-02 ..... U620  FUNKYFIT (UNIX & VMS versions) - WTM ....... PAGE   1
+ 
+                      LINEAR-LEAST-SQUARES FITTING PROGRAM
+ 
+   SEC PAGE CONTENTS
+ 
+   010   1  INTRODUCTION
+ 
+   020   2  COMMANDS RELATED TO SYMBOLS AND LOOPS
+ 
+   030   3  COMMANDS RELATED TO FIT SETUP AND CONTROL
+ 
+   040   3  EXPANDED DEFINITION OF CERTAIN COMMANDS
+ 
+   050   5  DEFINITION OF SOME OUTPUT QUANTITIES
+ 
+   060  COMMENTS
+ 
+   U620.010  INTRODUCTION
+ 
+   FUNKYFIT  is  a  general purpose linear-least-squares fitting program which
+   fits sets of (X,Y) points to a linear combination of  up  to  20  algebraic
+   functions. Directives are used to choose one of the following forms for the
+   fit.
+ 
+                  J=N
+         Y(X) = SUM   B(J)*F(J,X)
+                  J=1
+ 
+                  J=N
+         Y(X) = SUM   B(J)*F(J,LOG(X))
+                  J=1
+ 
+                       J=N
+         LOG(Y(X)) = SUM   B(J)*F(J,X)
+                       J=1
+ 
+                       J=N
+         LOG(Y(X)) = SUM   B(J)*F(J,LOG(X))
+                       J=1
+ 
+   Where  N  is  the  no. of terms (functions of X) and F(J,X) denotes the Jth
+   function of X. B(J) denotes the Jth coefficient which is determined in  the
+   fit.  Experimental  and  calculated  values, coefficients, errors and CHISQ
+   values are listed. Although most of the  output  from  FUNKYFIT  should  be
+   self-explanatory, some quantities are defined in the last section.
+ 
+   ---------------------------------------------------------------------------
+   Type:  funkyfit            ;To start if funkyfit is defined in your
+                              ;.login, .cshrc or login.com files, otherwise:
+ 
+   Type:  /usr/hhirf/funkyfit ;To start on HRIBF DECstation or Alpha platforms
+   or
+   Type:  /home/upak/funkyfit ;To start execution on a SPARCstation
+   ---------------------------------------------------------------------------
+    
+   02-Feb-02 ..... U620  FUNKYFIT (UNIX & VMS versions) - WTM ....... PAGE   2
+ 
+ 
+ 
+   U620.020  COMMANDS RELATED TO FILENAME VARIABLES, SYMBOLS & LOOPS
+ 
+   Filname Variables
+ 
+   One  symbol  (integer  variable)  may  be  incorporated   in   a   FILENAME
+   specification as the following examples illustrate:
+ 
+   ...........................................................................
+   SYM=3
+   IN FIL"SYM".DAT   ;Opens FIL3.DAT for input
+   ...........................................................................
+   I=0
+   LOOP 3
+   I=I+1
+   IN  FIL"I".DAT   ;Opens (in succession)  FIL1.DAT, FIL2.DAT, FIL3.DAT
+   .
+   .
+   ENDLOOP
+ 
+   LOOP execution and symbol definition
+ 
+ 
+   Commands related to LOOP execution and SYMBOL definition
+ 
+   SYM = EXPRESSION - Define symbol (SYM) up to 100 symbols supported
+                    - symbols M, N, O, P, Q, R, S are reserved
+                    - expression syntax is same as in CHIL
+                    - no imbedded blanks are allowed in expressions
+                    - symbols may contain up to 4 characters (5-8 ignored)
+ 
+   DSYM             - Displays list of currently defined sumbols & values
+ 
+   LOOP N           - Starts LOOP (executed N-times) N=SYM or CONST
+   CMD  ....        - Nesting supported
+   CMD  ....        - # lines between 1st LOOP & matching ENDL = 100
+   ENDL             - Defines end-of-loop
+                    - KILL (entered before ENDL) kills LOOP
+                    - Ctrl/C - aborts loop-in-progress
+                    - opening of CMD-file within a LOOP not allowed
+    
+   02-Feb-02 ..... U620  FUNKYFIT (UNIX & VMS versions) - WTM ....... PAGE   3
+ 
+ 
+   U620.030  COMMANDS RELATED TO FIT SETUP AND CONTROL
+ 
+   CMD  Data-list   Definition or Action
+ 
+   LINX             Set to use FUNCS of X - F(X)      DFLT
+   LOGX             Set to use FUNCS of Log(X) - F(Log(X))
+   LINY             Set to fit Y to F(X) or F(LOG(X)) DFLT
+   LOGY             Set to fit Log(Y) to F(X) or F(Log(X))
+ 
+   CSUN             Set UNCERT to counting statistics
+   ABUN             Says DATA-SET UNCERTS are absolute
+   PCUN             Says DATA-SET UNCERTS are in %
+   ALUN UVAL        Says set all UNCERTS to UVAL (in %)
+   USUN UVAL        Says set unspecified UNCERTS to UVAL(%)
+   MULU FAC         Says mult all given UNCERT by FAC
+ 
+   XLIM XMIN,XMAX   Set fit-limits in terms of X-values
+   ILIM IMIN,IMAX   Set fit-limits in terms of index-I
+ 
+   NUFU             Says new Function (i.e sets #TERMS=0)
+   XPOW E1,E2..     Exponent list for Pwr-series terms
+   LPOL J1,J2..     Ordinal-list for Legendre poly terms
+ 
+   TABL XLO,XHI,DX  Specs for computed Y vs X table
+   HFMT,DFMT        Table header & data formats (see SEC#040)
+ 
+   *                A * in col-1 of a command line results in the full
+                    line being copied to log-file as a comment
+ 
+   DATA             Introduces Y vs X DATA-SET
+   X  Y <YERR>      Up to 500 DATA-SET entries
+   ENDA             Ends DATA-SET
+ 
+   FIT  <ID>        Fits set# ID (ID omitted says in core)
+   FITU <ID>        Same as above but UNWEIGHTED
+ 
+   CMD  filnam      Open and process commands from filnam.cmd
+   CMD  filnam.ext  Open and process commands from filnam.ext
+   IN   filename    Open new data file (full filename required)
+ 
+   H                Displays directory to on-line help
+ 
+   END              Ends program
+ 
+   U620.040  EXPANDED DEFINITION OF CERTAIN COMMANDS
+ 
+   TABL...XMIN,  XMAX,  DELX  (range  and  step-size  for  table  of values of
+          calculated Y vs X). TABL without subsequent list gets rid  of  table
+          request.
+ 
+   XLIM...XMIN,  XMAX  (range  of  fit limits on X - default is no limit) XLIM
+          without subsequent list gets rid of limit.
+ 
+                            (continued on next page)
+    
+   02-Feb-02 ..... U620  FUNKYFIT (UNIX & VMS versions) - WTM ....... PAGE   4
+ 
+ 
+   U620.040  EXPANDED DEFINITION OF CERTAIN COMMANDS (continued)
+ 
+   ILIM...ILO,IHI (range of fit limits on data point ordinals - default is  no
+          limit). ILIM without subsequent list gets rid of limit.
+ 
+   ALUN...Value(%) of uncertainty to be assigned to all data points.
+ 
+   USUN...Value(%)  of  uncertainty  to  be  assigned to all data points whose
+          uncertainty is not specified in the data set.
+ 
+   MULU...Number by which all given uncertainties are to be  multiplied  prior
+          to  computing  weights  (default  is  1.0).  Does  not effect values
+          specified by ALUN and USUN.
+ 
+   XPOW...List of powers-of-X to be included as terms in the  "fit  function".
+          For  example;  XPOW=0,1,2 says include the terms X**0, X**1 and X**2
+          (i.e. 1.0, X and X*X).
+ 
+   LPOL...List of legendre polynomial "ordinals". For example;  LPOL=2,4  says
+          include the terms P2(X) and P4(X).
+ 
+   HFMT...Heading  FORMAT for first line of table of calculated values of Y vs
+          X. This line contains 10 entries (0.0, DELX, 2*DELX - - -9*DELX).
+ 
+   DFMT...Data FORMAT for subsequent lines of table of calculated values of  Y
+          vs  X.  These  lines  contain  11  entries (X-value corresponding to
+          first Y-value and 10 Y-values).
+ 
+          Note- HFMT and DFMT are not free-form  entries.  These  labels  must
+          start  in column 1 and the actual format must follow immediately. No
+          other information can be included on this line. Examples  (also  the
+          defaults) are;
+ 
+   HFMT(1H ,10X,10F10.3/)
+ 
+   DFMT(1H ,11F10.3)
+ 
+   DATA...Introduces  a  list  of  (X,Y,U) or (X,Y) entries (i.e. a data set).
+          Here U denotes the uncertainty in Y. The first data point is on  the
+          line  following the DATA label. Data points are entered one-per-line
+          and up to 100 points are allowed. The data set  is  terminated  with
+          an  ENDA  directive  which must start in column 1. The ENDA line can
+          contain no other information.
+ 
+   FIT....IDN - says retrieve data set number IDN from  the  input  disk  file
+          and  carry out a fit as previously specified. If IDN is not entered,
+          it is assumed that the data set is already in memory  (either  typed
+          in  or  previously  retrieved  from  disk).  Only one data set is in
+          memory at any given time.
+ 
+   FITU...has the same meaning as  FIT  except  that  the  fit  is  unweighted
+          (actually all points are given equal weight - namely, unity).
+    
+   02-Feb-02 ..... U620  FUNKYFIT (UNIX & VMS versions) - WTM ....... PAGE   5
+ 
+ 
+ 
+   U620.050  DEFINITION OF SOME OUTPUT QUANTITIES
+ 
+   FIT-ERR(%)  gives  the calculated uncertainty in the associated coefficient
+          (determined in the fit) based on the quality of fit  (QFN)  and  the
+          scatter of the data points about the calculated values.
+ 
+   EST-ERR(%)  gives  the calculated uncertainty in the associated coefficient
+          based on the quality of fit and the  scatter  of  experimental  data
+          that  is  to  be expected based on the uncertainties assigned to the
+          data.
+ 
+   U620.060  COMMENTS
+ 
+   (1)....Unless you have a very  small  number  of  data  points  to  fit,  I
+          suggest  that you create a file (fil.dat for example) which contains
+          the data sets to be fitted. After the program is started,  open  the
+          file with the command - IN fil.dat
+ 
+   (2)....Note  that  the data file does not contain actual ID-number entries.
+          The IDN referred to in the FIT command is just  the  ordinal  number
+          of  the  data set in the file. This may not be the best way to do it
+          but that's the way it is.
+ 
+   (3)....If your fitting procedure will  involve  numerous  commands,  it  is
+          probably  best to create a command file (fil.cmd for example) rather
+          than entering them at run-time. If you have both  a  fil.dat  and  a
+          fil.cmd, then all you have to do is:
+ 
+   Type:  FUNKYFIT
+   Type:  IN   fil.dat
+   Type:  CMD  fil.cmd
+ 
+   And that's it.

@@ -1,0 +1,202 @@
+RPD$075066001
+CHP$U610  KINEQ (UNIX & VMS versions) - WTM
+TPF$
+CEB$
+KINEMATICS AND Q-VALUES - PROGRAM KINEQ
+BLP$
+KINEQ calculates kinematic quantities either relativistically or classically as
+a function of either lab energy of the projectile or lab angle of the
+outgoing particle.
+Q-values only may also be calculated.
+The different modes of operation are selected by means of "commands"
+(input one per line - starting in col-1).
+Use whatever commands are required to "set up" the desired
+"conditions" and then type "GO" to actually do it.
+CYB$
+All commands and element names may be typed in upper or lower case.
+CY1$
+---------------------------------------------------------------------------
+CMD  ASSOCIATED DATA     ;MEANING OR ACTION
+
+CMD  FIL                 ;Open and process commands from FIL.CMD
+CMD  FIL.EXT             ;Open and process commands from FIL.EXT
+
+HELP                     ;Displays this list again
+
+REL                      ;Specifies relativistic kinematics
+CLAS                     ;Specifies classical    kinematics
+Q                        ;Specifies Q-value calculations only
+
+LEV  ELEV                ;ELEV gives level-energy in Mev
+
+FUNA ELAB,AMIN,AMAX,DA   ;Says kinematics vs lab-angle  of outgoing
+FUNA                     ;Switch to "FUNA" & use previous data
+
+FUNE ALAB,EMIN,EMAX,DE   ;Says kinematics vs lab-energy of outgoing
+FUNE                     ;Switch to "FUNE" & use previous data
+                         ;ELAB,EMIN,EMAX & DE are in Mev
+                         ;ALAB,AMIN,AMAX & DA are in degrees
+
+TARG(PROJ,OUT)RES        ;Specifies reaction of interest
+TARG(PROJ,OUT)           ;Same as above but KINEQ computes RES
+
+STAT                     ;Displays current "conditions"
+
+GO                       ;DO IT for current conditions
+                         ;Output to \b\kineq.log\\ on DECstation
+                         ;Output to \b\KINEQ.PRT\\ on VAX
+
+GOS                      ;DO IT - output to screen (\b\for REL only\\)
+
+END                      ;Ends program
+---------------------------------------------------------------------------
+CYB$
+Type   kineq             ;To start with \b\kineq\\ defined in your .login,
+                         ;.cshrc or login.com files, otherwise:
+
+Type:  /usr/hhirf/kineq  ;To start execution on a HHIRF DECstation
+
+Type:  /home/upak/kineq  ;To start execution on a SPARCstation
+ 
+Type: @U1:[MILNER]KINEQ  ;To start execution on the HHIRF VAX
+TPF$
+SP2$
+CYB$
+For Q-values, type:
+CY1$
+>Q
+
+>TARG(PROJ,OUTGOING)RESIDUAL  or  TARG(PROJ,OUTGOING)
+                              or  TARG(PROJ)RESIDUAL  if they stick
+
+>GO
+
+CYB$
+For kinematic quantities vs angle, type:
+CY1$
+>REL  or  CLAS
+
+>LEV  ELEV
+
+>FUNA ELAB,AMIN,AMAX,DA
+
+>TARG(PROJ,OUTGOING)RESIDUAL  or  TARG(PROJ,OUTGOING)
+
+>GO
+
+Where,
+ELEV = The energy (Mev) of excited state (0 if ground state)
+ELAB = Lab energy (Mev) of projectile        - fixed value
+AMIN = Lab angle  (deg) of outgoing particle - minimum value
+AMAX = Lab angle  (deg) of outgoing particle - maximum value
+DELA = Lab angle  (deg) of outgoing particle - step size
+CYB$
+For Kinematic Quantities vs Lab-Energy, Type:
+CY1$
+>REL  or  CLAS
+
+>LEV  ELEV
+
+>FUNE ALAB,EMIN,EMAX,DE
+
+>TARG(PROJ,OUTGOING)RESIDUAL  or  TARG(PROJ,OUTGOING)
+
+>GO
+
+Where,
+ALAB = Lab angle  (deg) of outgoing particle - fixed value
+EMIN = Lab energy (Mev) of projectile        - minimum value
+EMAX = Lab energy (Mev) of projectile        - maximum value
+DELE = Lab energy (Mev) of projectile        - step size
+---------------------------------------------------------------------------
+CEN$
+* * * SEE NEXT PAGE FOR COMMENTS ON WRITING THE REACTION * * *
+
+* * * SEE NEXT PAGE FOR AN EXAMPLE * * *
+TPF$
+CEB$
+How to Write the Reaction - Other Comments
+BLP$
+The reaction is written in the usual way, however
+no imbedded blanks are allowed and at least one blank must follow the
+reaction field.
+For example, 12C(16O,4HE)24MG or C12(16O,HE4)MG24 are both acceptable.
+All particles except N (for neutron) must contain the mass number.
+The proton, deuteron, and triton are denoted by 1H, 2H, and 3H or by
+H1, H2, and H3.
+The reaction is decoded and "exact" nuclear masses are found by using
+recommended masses from 
+"The 1995 Update to the Atomic Mass Evaluation"  by G. Audi and 
+A. H. Wapstra,
+Nuclear Physics, Vol. A595 Vol 4, p.409-480, December 25, 1995
+or a set of mass formula coefficients due to G. T. Garvy
+et al, Rev. Mod. Phys., Vol. 41, No. 4, Part II (1969) Page S1.
+If the mass formula is involved the Q-value is flaged with ***.
+BLP$
+If only Q-values are to be calculated, there may be up to 7 outgoing particles
+or only a residual particle.
+Multiple outgoing particles
+must be written as a string of single particles seperated by commas.
+For example two alphas would be written as 4HE,4HE not 2HE4.
+The maximum reaction length is 40 characters.
+CYB$
+Example:   - Note: it types the ">" - you don't.
+DBL$
+CY1$
+>Q                              ;Specify Q-value calculation only
+>12C(16O,4HE)24MG               ;Enter reaction of interest
+>GO                             ;DO IT
+>REL                            ;Specify relativistic calculations
+>LEV 0.0                        ;Specify ground state
+>FUNA 150 10 90 2               ;Specify calculation vs lab-angle
+                                ;(enter ELAB,AMIN,AMAX,DA)
+>GO                             ;DO IT (Note: reaction already given)
+>FUNE 45 50 150 5               ;Specify calculation vs lab-energy
+                                ;(enter ALAB,EMIN,EMAX,DE)
+>GO                             ;DO IT
+>12C(16O,16O)                   ;Enter a new reaction
+>GO                             ;Do relativistic calc vs energy
+>FUNA                           ;Specify calculation vs lab-angle
+                                ;(using previous specifications)
+>GO                             ;DO IT
+>END                            ;Ends the program
+SIN$
+TPF$
+SP2$
+CEB$
+Definition of The Calculated Quantities
+BLP$
+The meaning of most of the calculated quantities should be clear from
+the labels.
+The relativistic kinematic routine calculates both solutions in those cases
+where there are two.
+The two solutions are labeled 1 and 2.
+ODP$
+E(MEV)...denotes the lab energy of the projectile.
+ODP$
+THLB-O,THCM-O...denote lab and center- of- mass angles (in degrees)
+for the outgoing particle.
+ODP$
+THLB-R,THCM-R...denote lab and center- of- mass angles (in degrees)
+for the residual nucleus.
+ODP$
+E(MEV)-O,E(MEV)-R...denote lab energies of the outgoing and residual
+particles.
+ODP$
+V-R...denotes the velocity (in cm/ns) of the residual particle.
+ODP$
+DWO/DWCM,DWR/DWCM...denotes the ratio of solid angle in the lab
+to that in the center- of- mass system for the outgoing and residual
+particles.
+ODP$
+SIGR(MB/STR)CM...denotes the Rutherford cross section (millibarns per
+steradian in the center-of-mass system) - calculated for "elastic"
+scattering as a function of angle, only.
+CEB$
+WARNING
+BLP$
+SIGR(MB/STR)CM is semi-relativistic only and is intended for practical
+and not theoretical (purist) use. If you are fussy about it, you
+should check to see how it is computed. Also, see 1987 Handbook,
+SEC# 520 RUTH.
+QIT$

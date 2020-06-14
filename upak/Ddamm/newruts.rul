@@ -1,0 +1,28 @@
+     1  CMPHGEN   - Sets up header for new histogram & makes it                 
+   426  CMPTDX    - Command processor for 2-D manipulation                      
+   661  COPAD     - Copies or adds one his-ID to another                        
+   910  DAMMMSG   - Displays message that you are using a new damm              
+   945  EXPANHIS  - Checks his-file for proper length & expands                 
+  1113  EXPANMAN  - Expands DRR- and HIS-files                                  
+  1400  FILOPEN   - Opens SPK, HIS & DRR files                                  
+  1540  HISMAN    - Processes requests for open/close of his & SHM              
+  1781  IOERR                                                                   
+  1794  NEWHIS    - Creates, Opens & Initializes new His- & DRR-files           
+  1900  NEWLOG    - Deletes and re-creates damm.log                             
+  1927  SETUMRAN  - Set all channels of IDO to randomized ICNT                  
+  2030  GRAN12                                                                  
+  2041  YESNO     - Prompts for a YES/NO response from user                     
+     1  CMPHGEN   - Sets up header for new histogram & makes it                 
+   426  CMPTDX    - Command processor for 2-D manipulation                      
+   661  COPAD     - Copies or adds one his-ID to another                        
+   910  DAMMMSG   - Displays message that you are using a new damm              
+   945  EXPANHIS  - Checks his-file for proper length & expands                 
+  1113  EXPANMAN  - Expands DRR- and HIS-files                                  
+  1400  FILOPEN   - Opens SPK, HIS & DRR files                                  
+  1540  HISMAN    - Processes requests for open/close of his & SHM              
+  1781  IOERR                                                                   
+  1794  NEWHIS    - Creates, Opens & Initializes new His- & DRR-files           
+  1900  NEWLOG    - Deletes and re-creates damm.log                             
+  1927  SETUMRAN  - Set all channels of IDO to randomized ICNT                  
+  2030  GRAN12                                                                  
+  2041  YESNO     - Prompts for a YES/NO response from user                     

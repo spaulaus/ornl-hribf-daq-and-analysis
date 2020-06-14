@@ -1,0 +1,27 @@
+Porting UPAK to gFortran - GNU fortran 95
+
+Robert Varner
+
+
+gFortran does not like many old extensions from pre-f77
+These first two represent most of the work in converting these routines to 
+compile.
+
+1) never assign character strings to non-character variables, even 
+   in DATA statements, previously accepted by G77.  The solution is 
+   generous equivalencing of CHARACTER and INTEGER arrays, then using
+   DATA statements to initialize the CHARACTER equivalent.
+
+2) Never use Hexadecimal data with the postfix X, as in 'ABAB'X.  Use only
+   the Fortran 77 and later version, Z'ABAB'.
+
+3) The error messages are different from what Bill was reporting.  In fact, 
+   Bill's error reporting was based on Microway Fortran, not G77, so I have
+   replaced his error routines in ORPHLIB with G77 routine and a gFortran
+   routine.  Unfortunately, gFortran is still changing the way it reports
+   errors.
+
+4) The runtime library in Gfortran is not complete enough until gcc 4.2.
+   Do not bother with gFortran, unless you have a 4.2 version or later.
+
+5) There are numerous small changes, but easy to fix.  

@@ -1,0 +1,261 @@
+C$PROG MILOUT
+      SUBROUTINE MILOUT
+C
+      INTEGER*2 GSID,GFOR,GSOR,GNOG,GLEN,MLEN,GAPO
+C
+      INTEGER*2 GXNX,GXLN
+C
+      INTEGER*2 BNID,BLEN
+C
+      INTEGER*4 GLOC,GXLOC,BLOC
+C
+      INTEGER*4 GATSEC
+C
+      COMMON/BBB/ BNID(880),BLEN(880),BLOC(880),MXBAN,NBAN
+C
+      COMMON/FFF/ LIST(2002),LPAR(2002),IPSP(2002),IPSI(2002),
+     &            MXPAR,NPAR,MINIP,MAXIP,LPARF
+C
+      COMMON/GGG/ GSID(128),GFOR(128),GSOR(128),GNOG(128),GLEN(128),
+     &GLOC(128),MLEN(128),MLOC(128),GAPO(128),NGSET
+C
+      COMMON/III/ GXNX(128),GXLN(128),GXLOC(128),NGXN
+C
+      COMMON/JJJ/ LIN,LOU,LU6,LER,NEREC,NSOL,LHLN,NERR
+C
+      COMMON/KKK/ MILF(262144),MILMF(32768),MILC,MILCF,NHWPC,NXDAD,Q,
+     &            NUBPC,IGATOF,IMAPOF,NGATL,NMAPL,MXGATL,MXMAPL
+C
+      COMMON/ZZZ/ JHPC(4096),LISTL,IREPACK,JREPACK(3)
+      CHARACTER*4                  IREPACK
+C
+      INTEGER*4    KBUF(64)
+      CHARACTER*4  CKBUF(64)
+      EQUIVALENCE (CKBUF,KBUF)
+C
+      INTEGER*2 MILH(524288)
+C
+      EQUIVALENCE (MILH(1),MILF(1))
+C
+      DATA LML/11/
+C
+      CHARACTER*4  MILTYP
+C
+      SAVE
+C
+C     **************************************************************
+C     OUTPUT "MIGHTY INSTRUCTION LIST" AND ASSOCIATED DATA
+C     **************************************************************
+C
+      NTRP=512
+      NSEC=(NXDAD+127)/128
+      NSEC=256*((NSEC+255)/256)
+      NBLK=NSEC/2
+      NTRH=NSEC/64
+      NUMY=(NXDAD+32767)/32768
+      NUMYP=NUMY+10
+C
+      WRITE(0,2)
+      WRITE(6,2)
+      NBYTES=512*NBLK
+      WRITE(0,6)NBYTES
+      WRITE(6,6)NBYTES
+CX    call flush(6)
+CX    call flush(0)
+C
+    2 FORMAT(1H )
+    4 FORMAT(1H ,'LOAD "SCAN" WITH  ',I6,' KB OF EXTRA SPACE'/)
+    6 FORMAT(1H ,'HIS-FILE REQUIRES ',I12,' BYTES'/)
+C
+      JHPSEC=(NUMY +255)/256
+      MILSEC=(MILC +127)/128
+      GATSEC=(NGATL+127)/128
+      MAPSEC=(NMAPL+127)/128
+C
+      KBUF(1)=NPAR
+      KBUF(2)=MINIP
+      KBUF(3)=MAXIP
+      KBUF(4)=LISTL
+      KBUF(5)=NTRH
+      KBUF(6)=NTRP
+      KBUF(7)=JHPSEC
+      KBUF(8)=MILSEC
+      KBUF(9)=GATSEC
+      KBUF(10)=MAPSEC
+      KBUF(11)=NUMY
+      KBUF(12)=IGATOF
+      KBUF(13)=IMAPOF
+      KBUF(14)=NGATL
+      KBUF(15)=NMAPL
+      KBUF(16)=NBAN
+      KBUF(17)=NGSET
+      KBUF(18)=NGXN
+      KBUF(19)=MILCF
+C
+      MILTYP='    '
+      IF(NXDAD.GT.0.AND.IREPACK.EQ.'NO  ') MILTYP='SCAN'
+      IF(NXDAD.LE.0.AND.IREPACK.EQ.'YES ') MILTYP='PRES'
+      IF(NXDAD.GT.0.AND.IREPACK.EQ.'YES ') MILTYP='BOTH'
+      CKBUF(20)=MILTYP
+      KBUF(21)=JREPACK(1)
+      KBUF(22)=JREPACK(2)
+      KBUF(23)=JREPACK(3)
+C
+      DO 10 I=24,64
+      KBUF(I)=0
+   10 CONTINUE
+C
+C     **************************************************************
+C     OUTPUT BLOCK CONTAINING ALL SCALER VALUES
+C     **************************************************************
+C
+      NREC=1
+C
+      WRITE(LML,REC=NREC,IOSTAT=IOS)KBUF
+      CALL IOERR(IOS)
+C
+      IF(NBAN.LE.0) GO TO 20                   !TST FOR BANANAS
+C
+C     **************************************************************
+C     OUTPUT BLOCKS CONTAINING BAN-SPECS
+C     **************************************************************
+C
+      NDO=(NBAN+127)/128
+      II=1
+      DO 12 I=1,NDO
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(BNID(J),J=II,II+127)
+      CALL IOERR(IOS)
+      II=II+128
+   12 CONTINUE
+C
+      II=1
+      DO 14 I=1,NDO
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(BLEN(J),J=II,II+127)
+      CALL IOERR(IOS)
+      II=II+128
+   14 CONTINUE
+C
+      NDO=2*NDO
+      II=1
+      DO 16 I=1,NDO
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(BLOC(J),J=II,II+63)
+      CALL IOERR(IOS)
+      II=II+64
+   16 CONTINUE
+C
+   20 IF(NGSET.LE.0) GO TO 30                  !TST FOR GATE-SETS
+C
+C     **************************************************************
+C     OUTPUT BLOCKS ASSOCIATED WITH GATE-SETS AND GATE-MAPS
+C     **************************************************************
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GSID
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GFOR
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GSOR
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GNOG
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GLEN
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(GLOC(K),K=1,64)
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(GLOC(K),K=65,128)
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)MLEN
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(MLOC(K),K=1,64)
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(MLOC(K),K=65,128)
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GAPO
+      CALL IOERR(IOS)
+C
+   30 IF(NGXN.LE.0) GO TO 40                   !TST FOR AUX GATE-SETS
+C
+C     **************************************************************
+C     OUTPUT AUX GATE-SET BLOCKS
+C     **************************************************************
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GXNX
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)GXLN
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(GXLOC(K),K=1,64)
+      CALL IOERR(IOS)
+C
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(GXLOC(K),K=65,128)
+      CALL IOERR(IOS)
+C
+C     **************************************************************
+C     OUTPUT #WD/CHAN ARRAY (JHPC), MIL, MIL GATE-REG, MIL MAP-REG
+C     **************************************************************
+C
+   40 DO 50 I=1,JHPSEC
+      IA=128*(I-1)+1
+      IB=IA+63
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(JHPC(K),K=IA,IB)
+      CALL IOERR(IOS)
+   50 CONTINUE
+C
+      IA=1
+      DO 60 I=1,MILSEC
+      IB=IA+63
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(MILF(K),K=IA,IB)
+      CALL IOERR(IOS)
+      IA=IA+64
+   60 CONTINUE
+C
+      IA=IGATOF+1
+      DO 70 I=1,GATSEC
+      IB=IA+127
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(MILH(K),K=IA,IB)
+      CALL IOERR(IOS)
+      IA=IA+128
+   70 CONTINUE
+C
+      IA=IMAPOF+1
+      DO 80 I=1,MAPSEC
+      IB=IA+127
+      NREC=NREC+1
+      WRITE(LML,REC=NREC,IOSTAT=IOS)(MILH(K),K=IA,IB)
+      CALL IOERR(IOS)
+      IA=IA+128
+   80 CONTINUE
+C
+      RETURN
+      END

@@ -1,0 +1,69 @@
+RPD$075066
+CHP$Adding Experimental Shapes to DAMM
+TPF$
+SP1$
+CEB$
+Things to do
+ODP$
+(1)....Define a file structure to contain the peak shapes.
+I would use the \b\spk-file\\ structure. You can record the
+relavant parameters (peak position, width, etc) in header words
+18 thru 22.  See \b\SPKIO & SPKMAN\\ documentation in sections
+in the \b\ORPHLIB or MILIB\\ sections of the handbook for management
+of such files.
+ODP$
+(2)....Each entry should contain: a peak position,
+a peak width, an ID number, and an array defining the peak
+shape. It will be convenient if all shapes are normalized
+to some fixed area.
+ODP$
+(3)....Write routines to support the storage and retrival
+of entries to/from this file.
+ODP$
+(4)....Add a command to routine \b\SAMRU\\ to open and read
+the shape file. See lines 105 and 155 of \b\SAMRU\\ for suggested 
+programming. You have to write routine \b\"SHAPRED"\\.
+ODP$
+(5)....Use the \b\PK command\\ to specify the desired shape
+IDs. Process one additional field 
+such that the format is:
+CYB$
+       PK  XP WIDTH  0  0  ID
+FIP$
+Note: the 0 fields are required as place keepers. See line 26
+of routine \b\PEAKADD\\ for suggested programming.
+FIP$
+At fitting time: KFUN(NPK) is set equal to LAT(J,5). I.E. the 
+shape ID gets saved into KFUN. This is already done - you don't
+have to do anything.
+FIP$
+Finally \b\KFUN(I)+1\\ gets passed to \b\SFUNK\\ which generates the
+components for the fit (currently gaussians, asymmetric 
+gaussians, etc) as IGO. Now, IGO is not currently being used so you
+can use IGO-1 as the shape ID. That is, IF(IGO-1.GT.0) call a routine
+to retrive the experimental shape by ID and transform it such that the
+peak position is located at \b\PAR(1)\\ and the "width" is as specified
+by \b\PAR(2)\\. See line 4 of \b\SFUNK\\ for suggested programming.
+You have to write routine \b\"SHAPFUN"\\.
+ODP$
+(6)....If you do this, all of the non-linear search should work
+without change.
+ODP$
+(7)....Modify \b\FITUM\\
+to detect if
+the peak is an experimental shape by testing \b\KFUN(I)\\ and
+if it is, calculate the peak area using the corresponding
+\b\BETA\\. If all shapes were pre-normalized to a fixed area, then 
+this fixed area and \b\BETA\\ is all you need to know to calculate the
+"best fit" area. See line 519 of \b\FITUM\\ for suggested programming.
+CYB$
+___________________________________________________________________________
+BLP$
+An alternate method for entering peaks, for which experimental shapes are
+to be used, is via the cursor mode.
+Here you would have to
+enter a 1-key command and then be prompted for the
+shape-ID to be used. The width recorded for the peak would be the "standard"
+one in this case. See handwritten notes at lines 28, 79 and 112 of routine
+CUSS (in module xsam.f) for suggested programming.
+QIT$

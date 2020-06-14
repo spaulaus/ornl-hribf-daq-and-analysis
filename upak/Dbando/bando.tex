@@ -1,0 +1,59 @@
+   02-Feb-02 ....... U530  BANDO (UNIX & VMS versions) - WTM ........ PAGE   1
+ 
+                      PROG TO EXAMINE AND MODIFIY BAN-FILES
+ 
+   Program  BANDO  provides for the examination and/or modification of certain
+   data contained in a ban-file. Some of it's features are:
+ 
+   (1)....An input ban-file may be opened for examination  or  copying  to  an
+          output file.
+ 
+   (2)....An  output  ban-file  may   be   opened   for   examination   and/or
+          modification. The output file cannot be the same as the input file.
+ 
+   (3)....ID-numbers on the output ban-file may be changed.
+ 
+   (4)....Bananas may be copied from the input- to the output-file.
+ 
+   (5)....Bananas may be deleted from the output file.
+ 
+   (6)....Bananas  in  the output file may be turned OFF. This sets the ID# in
+          the   directory   negative  and  changes  the  label-fields  of  all
+          entry-lines to OFF so that the entry will be ignored.
+ 
+   (7)....Bananas may be turned ON. Reverses the action taken in (6).
+ 
+   (8)....The numbers NUPM, IAUX & JAUX may be changed for specified IDs.
+ 
+   (9)....The X- & Y-parameters (IPX,IPY) may be changed for specified IDs.
+ 
+                 THE FOLLOWING LIST OF COMMANDS ARE WHAT YOU GET
+ 
+   COMMAND       - ACTION OR MEANING
+   IN   fil.ban  - Assign fil.ban for input
+   OU   fil.ban  - Assign fil.ban for output
+   NUOU fil.ban  - Create+Assign fil.ban for output
+   DDRI          - Display input  file directory
+   DDRO          - Display output file directory
+   DI   ID       - Display FFG # ID from input
+   DO   ID       - Display FFG # ID from output
+   IO   IDI,IDO  - Input IDI output as IDO
+   OFF  ID-LST   - Turn OFF ID-LST on output file
+   ON   ID-LST   - Turn  ON ID-LST on output file
+   DE   ID-LST   - Delete ID-LST from   output file
+   COPY ID-LST   - Copy ID-LST from input to output
+                 - ID-LST implies IDA,IDB,IDC.......
+   REN  IDA,IDB  - Rename IDA to IDB on output file
+   NUP  ID,I,J,K - Set NUPM..JAUX for ID on output
+   PXY  ID,IX,IY - Set IPX,IPY    for ID on output
+   HELP          - Gets this HELP-LIST again
+   END           - Terminates program
+ 
+   Type: bando               ;To start with bando defined in your
+                             ;.login, .cshrc or login.com files, otherwise,
+ 
+   Type: /usr/hhirf/bando    ;To start execution on a HHIRF DECstation
+   or
+   Type  /home/upak/bando    ;To start execution on a SPARCstation
+   or
+   Type: @U1:[MILNER]BANDO   ;To start execution on the HHIRF VAX

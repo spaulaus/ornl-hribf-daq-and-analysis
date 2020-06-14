@@ -1,0 +1,31 @@
+RPD$075066
+CHP$U540  Byte-Swapper for HIS, SPK & LDF Files
+TPF$
+CYB$
+\bu\Command List\\
+
+lon            - Turns logging to swapo.log ON              
+lof            - Turns logging to swapo.log OFF             
+                                                            
+test  name.spk - Tests name.spk for proper byte-order       
+swap  name.spk - Byte-swap name.spk                         
+                                                            
+test  name.his - Tests name.drr for proper byte-order       
+swap  name.his - Byte-swap name.drr & name.his              
+                                                            
+test  name.drr - Tests name.drr for proper byte-order       
+swap  name.drr - Byte-swap name.drr                         
+
+test  name.ldf - Tests name.ldf for proper byte-order
+swap  name.ldf - Byte-swap name.ldf
+                                                            
+end            - Ends program                               
+h              - Displays this list again                   
+
+\bu\Location of Executables\\
+
+/usr/hhirf/swapo                ;On Alphas & Linux platforms
+
+\bu\Note: Byte swapping is in place\\
+TPF$
+QIT$

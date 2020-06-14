@@ -1,0 +1,1948 @@
+RPD$075066001
+CHP$U700  Orphlib 
+TPF$
+SP1$
+CYB$
+Sec Page Contents
+
+100   2  INTRODUCTION 
+
+110   3  BANIN    - Ban-file Input Routine
+120   3  BANIO    - Ban-file I/O   Routine
+
+130   4  BUFI     - General Input  Routine
+140   4  BUFO     - General Output Routine
+
+150   5  CMDOPEN  - Command-file Opening Routine
+160   5  HELPMANU - Online Help Manager
+170   6  HELPOPEN - Help-file Opening Routine
+
+180   7  HISIN    - His-file Input Routine
+190   9  HISIO    - His-file Input/Output Routine
+200  11  HISMAN   - His-file Opening Routine
+
+210  12  SPKIO    - Spk-file Input/Output Routine
+220  14  SPKMAN   - Spk-file Opening Routine
+
+230  15  GREAD    - General Line Image Parser & Re-formatter
+240  16  MESSLOG  - Message Display & Logging Routine
+
+250  17  BILNAM   - Filename Builder
+260  18  FINAME   - Filename Finder
+270  18  GETNAM   - Filename Getter & Parser
+280  19  MKTAPNAM - Makes Legal Tape Name
+290  19  DETAB    - Fortran Source Detabber
+
+300  20  DFASCII  - Dfloating to ASCII Formatter
+310  20  FTASCII  - Floating  to ASCII Formatter
+320  20  ITASCII  - Integer   to ASCII Formatter
+
+330  21  GETAZ    - Gets Nuclear A & Z from ASCII Name
+340  22  MASSEX   - Nuclear Mass Excess Routine
+350  23  PFIND    - Peak Find Routine
+360  23  SMIN     - Gradient Search Routine
+370  23  ZSTOP    - Stopping Power Routine
+380  24  FIT3     - Fits Three X-Y Points to A Quadratic
+390  24  LOGB2    - Calculates Log/base-2 of Integer
+400  24  LOGAT2   - Calculates Log/base-2 of Integer Ratio
+
+410  25  Tape I/O Support Routines for DECstations
+
+420  28  Shared Histogram Memory Support Routines
+
+430  30  Histogram File Support Routines (low level)
+
+440  31  Error Message Routines
+
+450  32  ASCII Decoding Routines
+
+460  34  String Utilities
+
+470  37  Exabyte Status Routines
+
+480  38  Spline Fitting Routines
+
+490  41  Miscellaneous Routines
+TPF$
+SP2$
+SEC$.100  Introduction
+SP1$
+DBL$
+BLP$
+\b\Orphlib\\ contains the Unix versions of most to the routines contained
+in the VAX version of \b\MILIB\\ as well as some additional ones.
+BLP$
+Here I have briefly documented most of the routines contained in
+\b\orphlib\\. There are a few others but I
+think that the ones presented here are the only ones that may be
+of some general use.
+BLP$
+Many of the routines in \b\orphlib\\ use routines
+MESSLOG and COMMON/LLL/ for transferring, displaying and logging
+error messages. See SECT# U700.240 to find out how to initialize this
+common block and use MESSLOG for your own purposes.
+BLP$
+The routines documented here are available on DECstations running ULTRIX
+and Alphas running OSF/1.
+SIN$
+CHP$U700  Orphlib - General File Utilities
+TPF$
+SP1$
+SEC$.110  BANIN(LU,IBN,IX,JY,NP,KPAR,IERR,MSG)
+CY1$
+      SUBROUTINE BANIN(LU,IBN,IX,JY,NP,KPAR,IERR,MSG)
+C   
+      INTEGER*4 IWD(20),LWD(2,40),ITYP(40)
+C   
+      INTEGER*4 TIT(20),FIL(6),KPAR(9),MSG(10),IX(64),JY(64)
+C     **************************************************************
+C   
+C     LU   = LOGICAL UNIT # FOR BAN-FILE
+C     FIL  - CONTAINS .HIS-FILE NAME
+C     TIT  - CONTAINS TITLE
+C     IH   = HISTOGRAM ID #
+C     IBN  = BANANA    ID #
+C     DG   = PROJECTION AXIS IN DEGREES
+C     IX   - ARRAY CONTAINING X-COORDINATES
+C     JY   - ARRAY CONTAINING Y-COORDINATES
+C     NP   = # OF X,Y-POINTS
+C     NID  = # OF BANANAS ON FILE
+C     KPAR(I),I=1,9 - CONTAINS IPX,IPY,LXD,LXG,LYD,LYG,NUPM,IAUX,JAUX
+C     IERR = ERROR FLAG
+C     **************************************************************
+
+
+SEC$.120  BANIO(MO,LU,FIL,TIT,IH,IBN,DG,IX,JY,NP,NID,KPAR,MSG,
+CY1$
+      SUBROUTINE BANIO(MO,LU,FIL,TIT,IH,IBN,DG,IX,JY,NP,NID,KPAR,MSG,
+     ,IERR)
+C   
+      INTEGER*4 IWD(20),LWD(2,40),ITYP(40)
+C   
+      INTEGER*4 TIT(20),FIL(6),KPAR(9),MSG(7),IX(64),JY(64)
+C   
+      INTEGER*4 LINE(20),IDIR(880),MESS(7,14),IHTONP(6),DG
+C     ****************************************************************
+C     MO = 0   SAYS INIT THE BAN-FILE (ZERO DIRECTORY)
+C     MO = 1   SAYS READ IN BANANA (ID = IBN)
+C     MO = 2   SAYS STORE   BANANA (ID = IBN)
+C     MO = 3   SAYS REPLACE BANANA (ID = IBN)
+C     MO = 4   SAYS DELETE  BANANA (ID = IBN)
+C     MO = 5   SAYS RETURN  DIRECTORY IN ARRAY - IX
+C   
+C     LU   = LOGICAL UNIT # FOR BAN-FILE
+C     FIL  - CONTAINS .HIS-FILE NAME
+C     TIT  - CONTAINS TITLE
+C     IH   = HISTOGRAM ID #
+C     IBN  = BANANA    ID #
+C     DG   = PROJECTION AXIS IN DEGREES
+C     IX   - ARRAY CONTAINING X-COORDINATES
+C     JY   - ARRAY CONTAINING Y-COORDINATES
+C     NP   = # OF X,Y-POINTS
+C     NID  = # OF BANANAS ON FILE
+C     KPAR(I),I=1,9 - CONTAINS IPX,IPY,LXD,LXG,LYD,LYG,NUPM,IAUX,JAUX
+C     MSG  - ARRAY CONTAINING ERROR MESSAGE IF IERR.NE.0
+C     IERR = ERROR FLAG
+TPF$
+SP1$
+SEC$.130  BUFI(LU,IBUF,IREC,NBY,IERR)
+BLP$
+Routines BUFI and BUFO read and write disk files via SYSIO when used
+on the CONCURRENT machines and via QIO when used on the VAX. The
+purpose of these routines is to make programs which do disk I/O more
+portable. Use the following calls:
+CY1$
+       CALL BUFI(LU,IBUF,IREC,NBY,IERR)
+       CALL BUFO(LU,IBUF,IREC,NBY,IERR)
+BLP$
+Where, LU is the logical unit number (channel number for VAX case)
+to be read/written, IBUF is the data buffer (INTEGER*2 or INTEGER*4),
+NBY is the number of bytes to be read/written and IERR is an error
+flag. IERR = 0 if all OK, otherwise, a message is reported to the
+terminal and/or PRT-file via MESSLOG (see SECT# U700.240).
+SEC$.140  BUFO(LU,IBUF,IREC,NBY,IERR)
+TPF$
+SP1$
+SEC$.150  CMDOPEN  - OPENS CMD-FILES FOR INPUT
+BLP$
+CMDOPEN opens command files and switches logical units for the calling
+program. Input lines of the following forms are processed:
+CY1$
+CMD FILENAME.EXT                        ;Full filename specified
+CMD FILENAME                            ;Default extension .CMD used
+BLP$
+The calling program should dimension arrays as follows:
+CY1$
+       INTEGER*4 IWD(20),NAMF(20)
+          -
+       CALL CMDOPEN(IWD,NAMF,LCI,LIN,LCM,IERR)
+   
+IWD  - Contains command line described above
+   
+NAMF - Contains returned filename
+   
+LCI  = Logical unit for VDT (treminal) input
+   
+LIN  = Logical unit for command input subsequent to CMDOPEN call
+   
+LCM  = Logical unit for command file input
+   
+IERR = Error flag = 0 if no errors, otherwise, set to 1
+BLP$
+CMDOPEN first closes LCM and then attempts to process the input line
+IWD and re-open LCM. If successful, it sets LIN=LCM and returns.
+Otherwise, it reports error message via MESSLOG (see SECT# U700.240),
+sets LIN=LCI and returns.
+SP1$
+SEC$.160  HELPMANU(IWD,LU,IHELP,MAX,NDLINES,IHELPF)
+CY1$
+      SUBROUTINE HELPMANU(IWD,LU,IHELP,MAX,NDLINES,IHELPF)
+C   
+      COMMON/LLL/  MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+C
+      INTEGER*4 IWD(20),LWD(2,40),ITYP(40)
+C   
+      INTEGER*4 IHELP(20,*),IDIR(19,50),KEYLST(50),LOC(50)
+C
+      EQUIVALENCE (KMD,LWD)
+C
+      DATA NCALL,NKEY,L,KHELP/0,0,0,'NO  '/
+C
+      DATA IBELL/'07070707'X/
+C   
+C     **************************************************************
+C     HELP MANAGER - READS ASCII FILE ASSIGNED TO LU ON FIRST CALL
+C                  - AND BUILDS HELP-LIST WITH KEY-WORD DIRECTORY
+C                  - SUBSEQUENTLY DISPLAYS SUBSETS OF HELP-LIST
+C     **************************************************************
+TPF$
+SP1$
+SEC$.170  HELPOPEN(LU,NAME,IHEPF)
+CY1$
+      SUBROUTINE HELPOPEN(LU,NAME,IHEPF)
+C
+      BYTE          NAME(*)         !PATH/NAME SUPPLIED VIA ARG
+C
+C     ************************************************************
+C     THIS ROUTINE DEFINES THE PATH TO HELP-FILES AND OPENS A
+C     SPECIFIC HELP-FILE DEFINED BY "PASNAM"
+C
+C     TO CUSTOMIZE FOR YOUR LAB, CHANGE THE PATH NAME /usr/hhirf/
+C     TO THE PATH APPROPRIATE FOR YOUR HELP FILES
+C     ************************************************************
+C
+      IHEPF='NO  '               !SET SUCCESS-FLAG TO 'NO  '
+C
+TPF$
+SP1$
+SEC$.180  HISIN    - HIS-FILE INPUT ROUTINE
+BLP$
+HISIN returns a contigious block of data from a HIS-file (USER.HIS).
+The corresponding directory file USER.DIR (or USER.DRR) must also
+be present.
+The calling program must define two arrays - one for the data to be returned
+IDAT and one NDX(4) to contain the "indices" of the data being requested.
+In addition, it usually convenient to define a labeled common block
+COMMON/DIR/ in order to gain access to other directory information.
+BLP$
+Note:
+The indices of a multidimensional histogram have the same meaning as the indices
+of a FORTRAN array (i.e. the first index is advanced most rapidly, the second
+next most rapidly, etc.).
+The order of indexing is the same as that given in the CHIL program.
+All relevant definitions and the HISIN calling sequence is given
+below:
+CY1$
+      COMMON/DIR/KLOC(6),JHSP(4),LENG(4),ND,NHW,LENH,LENT,IOF,LDF,
+     &NHIS,LEND(4),LENS(4),MINC(4),MAXC(4),CONS(4),ITEX(20),
+     &ITIT(10),LABX(3),LABY(3),MSER(10),KFILT
+   
+      INTEGER*4 IDAT(8192),NDX(4)
+      INTEGER*2 JDAT(16384)
+      EQUIVALENCE(IDAT(1),JDAT(1))
+   
+      CALL HISIN(LUD,LUH,ID,NDX,NCH,IDAT,IERR)
+   
+KLOC(I),I=1,6  = Yr,Mo,Day,Hr,Min,Sec
+JHSP(I),I=1,4  = Histogram Parameters
+LENG(I),I=1,4  = Histogram Lengths - (MIXC(I)-MINC(I)+1)
+LEND(I),I=1,4  = Raw   -Data Lengths in Channels
+LENS(I),I=1,4  = Scaled-Data Lengths in Channels
+MINC(I),I=1,4  = MIN Channel# List
+MAXC(I),I=1,4  = MAX Channel# List
+CONS(I),I=1,4  = Calibration Constants
+ITEX(I),I=1,20 = TEXT  from $TEX CHIL-entry
+ITIT(I),I=1,10 = TITLE from $TIT CHIL-entry
+LABX(I),I=1,3  = X-parm Label if any
+LABY(I),I=1,3  = Y-parm Label if any
+ND   = Dimensionality of Histogram (# Parameters and # Lengths)
+NHW  = Number of Half-words/Channel
+LENH = Number of Half-words in this Histogram
+LENT = Not defined
+IOF  = Disk OFFSET of 1st wd of Histogram (1st WD # -1) (in half-wds)
+LDF  = Length of HIS-file in Half-words
+NHIS = Total number of Histograms on HIS-file
+LUD  - Is the Logical Unit assigned to DIR-file (or DRR-file)
+LUH  - Is the Logical Unit assigned to HIS-file (on CONCURRENT)
+LUH  - Is the Channel #    assigned to HIS-file (on VAX)
+ID   - Is the Histogram ID-# (HID from CHIL Program)
+NDX(I),I=1,ND gives the Indices of first Channel to be retrieved
+NCH  - Is the # of Channels to be returned
+IDAT - Is the Array in which to store the Data
+CEN$
+
+(continued on next page)
+TPF$
+SEC$.180  HISIN    - HIS-FILE INPUT ROUTINE (CONTINUED)
+CY1$
+IERR = 0 says everything is OK
+IERR = 1 says invalid value of ID (doesn't exist in Directory)
+IERR = 2 says invalid value of an Index (element of NDX)
+IERR = 3 says I/O Error reading in Directory
+IERR = 4 says I/O Error reading in Data
+IERR = 8 says LUD or LUH not open
+CEB$
+Examples
+BLP$
+To retrieve the first 256 channels of a single parameter histogram
+number 27 (ID=27) which was recorded with 32 bits/channel, write:
+CY1$
+      NDX(1)=1
+      CALL HISIN(LUD,LUH,27,NDX,256,IDAT,IERR)
+      CALL HISERR(IERR)                                ;Reports Errors
+BLP$
+To retrieve the second 4096 channels of a single parameter histogram
+(ID=12)
+(recorded at 16 bits/channel) into the half-word array JDAT
+(starting at half-word # 8193), write:
+CY1$
+      NDX(1)=4097
+      CALL HISIN(LUD,LUH,12,NDX,4096,JDAT(8193),IERR)
+      CALL HISERR(IERR)                                ;Reports errors
+BLP$
+To retrieve 512 channels of 16 bit data starting at index 1,13 of a
+two-dimensional histogram (ID=7), write:
+CY1$
+      NDX(1)=1
+      NDX(2)=13
+      CALL HISIN(LUD,LUH,7,NDX,512,JDAT,IERR)
+      CALL HISERR(IERR)                                ;Reports errors
+BLP$
+Note: If you are retrieving full-word data, you should call HISIN with
+a full-word array name or else make sure the array element that you
+specify is on a full word boundry.
+ISIN doesn't care but you will probably be in trouble if you don't do  this.
+If you don't know if it is going to be full- of half-word, specify a full-word
+boundry to HISIN.
+BLP$
+If HISIN is called with NCH=0, it will only return the directory block
+(i.e. update the contents of COMMON/DIR/).
+In this way you can find out ahead of time whether you are dealing with
+full- or half-word data, what the histogram dimensions are, etc.
+CEB$
+Important
+BLP$
+If you open a new HIS-file in your program (or switch HIS-files),
+you must call HISIN once with NH=0 - to re-initialize the directory.
+TPF$
+SP1$
+SEC$.190  HISIO    - HIS-FILE INPUT/OUTPUT ROUTINE
+BLP$
+HISIO is the basic routine used for reading and writing HIS-files.
+Routine HISIN is still used by many programs for reading HIS-files
+because it existed first but HISIO may be used exclusively if desired.
+In fact, HISIN calls HISIO.
+BLP$
+HISIO reads/writes a contigous block of the HIS-file to/from
+the array IDAT. On read, the associated directory entry (header) is
+also returned in an array IDIRF.
+The calling program should dimension arrays to receive the header
+(IDIRF), the data (IDAT) and any error message (MSER) as well as an
+index array (NDX) which specifies the first channel index to be
+returned. Of course, the data array can be as small or large as you
+like but it must be large enough to hold the number of channels that
+you request.
+CY1$
+       INTEGER*4 IDAT(8192)  ,IDIRF(32),MSER(10),NDX(4)
+       INTEGER*2 IDATH(16384),IDIRH(64)
+       DIMENSION XDIRF(32)
+       EQUIVALENCE (IDATH,IDAT),(IDIRH,IDIRF),(XDIRF,IDIRF)
+
+       SUBROUTINE HISIO(MODE,LUD,LUH,ID,NDX,NCH,IDIRF,IDAT,IERR,MSER)
+
+MODE = 'INIT' says new has been opened (ID-list is read in)
+MODE = 'DIR ' returns 1st NCH entries in ID-list in IDAT array
+MODE = 'READ' says read
+MODE = 'RITE' says write
+
+LUD  = Logical unit # from which directory is read
+LUH  = Logical unit # from which data is read (on CONCURRENT)
+LUH  = Channel #      from which data is read (on VAX)
+ID   = The histogram ID # to be partially or completely transferred
+
+NDX  - Contains indices of first histogram channel to be returned
+       If histogram dimension is ND, NDX(ND+1) thru NDX(4) are ignored
+       If used, NDX(I) must be .GT. MINC(I) and .LE. MAXC(I)+1
+       Set all elements of NDX to 1, to start transfer at 1st channel
+
+NCH  = # of channels of data to transfer (data may be full- or half-wd
+NCH  = 0 says return directory block (IDIRF) only
+
+IDIRF        - Contains the associated directory entry
+IDIRH(1)     - Histogram dimensionality - ND (max-ND = 4)
+IDIRH(2)     - Number of half-words per channel (1 or 2)
+IDIRH(3-6)   - Histogram parameter numbers (from CHIL program)
+IDIRH(7-10)  - Length of raw    parameters (pwr of 2) (from CHIL $LPR)
+IDIRH(11-14) - Length of scaled parameters (pwr of 2) (from CHIL L(..)
+IDIRH(15-18) - Min channel# list (MINC(I),I=1,4)
+IDIRH(19-22) - Max channel# list (MAXC(I),I=1,4)
+IDIRF(12)    - Disk offset if half-words (1st word# minus 1)
+IDIRF(13-15) - X-parm label (from CHIL $DIP)
+IDIRF(16-18) - Y-parm label (from CHIL $DIP)
+XDIRF(19-22) - Calibration constants (up to 4 floating numbers)
+IDIRF(23-32) - Sub-Title (40 bytes) (from CHIL $TIT)
+CEN$
+
+(continued on next page)
+TPF$
+SEC$.190  HISIO    - HIS-FILE INPUT/OUTPUT ROUTINE (continued)
+CY1$
+IDAT - Is an INTEGER*2 or INTEGER*4 array which receives data
+
+IERR - Is an INTEGER*4 error flag
+IERR = 1 says requested ID does not exist
+IERR = 2 says invalid channel#,s requested
+IERR = 3 says I/O error reading in directory
+IERR = 4 says I/O error reading in data
+IERR = 5 says I/O error writing out data
+IERR = 6 says illegal HISIO request mode
+
+MSER - Contains error message (shown above) if IERR is non-zero
+CEB$
+Comments and Discussion
+ODP$
+(1)....HISIO does not create any ID numbers or HIS-file space. The
+HIS-file and DIR-file (or DRR-file) must already exist.
+ODP$
+(2)....VAX users should use HISMAN (see SECT# U700.200) to open
+HIS- and DRR-files.
+ODP$
+(3)....VAX users should use HISMAN to close HIS- and DRR-files if it
+is required to close within a process.
+CEB$
+Something Important
+BLP$
+Each time HISIO is used to read/write a file different from
+the last one read or written, you must re-initialize it with a an
+INIT call as follows:
+CY1$
+       INIT='INIT'
+       CALL HISIO(MODE,LUD,LUH,IDM,IDM,IDM,IDIRF,IDM,IERR,MSER)
+BLP$
+IDM denotes an argument which is not interpreted in the INIT call.
+The first record from the directory file is returned in IDIRF. It's
+contents are as follows:
+CY1$
+IDIRF(1-3)   - 'HHIRFDIR0001'
+IDIRF(4)     - The number of histograms on HIS-file
+IDIRF(5)     - The number of half-words on HIS-file
+IDIRF(7-12)  - YR,MO,DA,HR,MN,SC (Date, Time of CHIL run)
+IDIRF(13-32) - Text (entered in CHIL via $TEX command)
+TPF$
+SP1$
+SEC$.200  HISMAN   - OPENS HIS-FILES FOR INPUT/OUTPUT
+BLP$
+HISMAN opens HIS- and DIR-files (DRR-files on the VAX) for subsequent
+input by routine HISIN or input/output by routine HISIO.
+Use as follows:
+CY1$
+       INTEGER*4 NAMF(20)
+          -
+       CALL HISMAN(MODE,NAMF,LUD,LUH,IACP,IERR)
+   
+MODE = 'CLOS' says close HIS- and DIR-files (or DRR-files) now open
+   
+MODE = 'OPEN' says open  HIS- and DIR-file (or DRR-file)
+   
+NAMF - Contains complete HIS-file name including disk-name & .HIS
+       (Examples: DRA1:MYFILE.HIS, PAK3:MYFILE.HIS, etc)
+   
+LUD  = Logical unit assigned to DIR-file (or DRR-file)
+   
+LUH  = (on CONCURRENT) logical unit number for HIS-file (you tell it)
+LUH  = (on VAX) channel number returned by HISMAN OPEN (it tells you)
+LUH  = (on VAX) previously returned channel number if CLOSE request
+   
+IACP = Access privilege ('RO  ' for read only, 'RW  ' for read/write)
+   
+IERR = Error flag = 0 for no errors, otherwise, set to 1
+BLP$
+HISMAN reports it's own error messages via MESSLOG (see SECT# U700.240).
+TPF$
+SP1$
+SEC$.210  SPKIO    - SPK-FILE I/O ROUTINE
+BLP$
+SPKIO is a routine which can read data from and add data to SPK-file.
+In order to use SPKIO, set up arrays and call SPKIO as follows:
+CY1$
+      INTEGER*4 IDAT(8192),IHED(32),NDX(4),ISTAT,DUM
+      EQUIVALENCE (ID,IHED(1)),(NCH,IHED(12))
+      DATA (NDX(I),I=1,4)/1,3*0/
+      DATA MAXH/64/
+
+      CALL SPKIO(MODE,LU,IDN,IHED,MAXH,IDAT,NDX,NCH,IERR)
+
+MODE = 0,1,2 says Initialize, Input, Output
+MODE = 3 says list    the Directory (on Logical Unit 6)
+MODE = 4 not used
+MODE = 5 says display the Directory (on Logical Unit 5)
+
+LU   = Logical Unit #
+IDN  = Requested ID #
+IHED - Array to contain Header
+MAXH = Maximum length of IHED in Half-words
+IDAT - Array to contain Data
+NDX  - Array to contain Indices of 1st Channel to Xfer
+NCH  = # of Channels to Xfer
+
+IERR = 0 says all OK
+IERR = 1 says requested ID not found
+IERR = 2 says invalid value of NDX
+IERR = 3 says Directory overflow (254 is Max #)
+IERR = 4 says I/O Error of some sort
+IERR = 5 says Illegal Request Mode
+IERR = 6 not used
+IERR = 7 says ID to be stored already in Directory
+IERR = 8 says File not open
+
+BLP$
+In order to read in a complete spectrum, first find out how long it is if you
+don't know or if you don't think your buffer can hold it all.
+To do this:
+CY1$
+      CALL SPKIO(1,LU,IDN,IHED,MAXH,IDAT,NDX,0,IERR)
+      CALL SPKERR(IERR)                              ;Reports errors
+
+Test NCH if you want to and then:
+
+      CALL SPKIO(1,LU,IDN,IHED,MAXH,IDAT,NDX,NCH,IERR)
+      CALL SPKERR(IERR)                              ;Reports errors
+CEN$
+
+(continued on next page)
+TPF$
+SP1$
+SEC$.210  SPKIO    - SPK-FILE I/O ROUTINE (CONTINUED)
+CY1$
+On return the header will contain the following quantities
+
+WORD#    CONTENTS
+    1    ID #
+2 - 4    Parameter Label (from HIS-file)
+5 - 7    Reserved for (Date - Time)
+    8    bytes/channel = 4                 (NO LONGER USED)
+    9    Header length (half words)
+   10    Data length (half words)          (NO LONGER USED)
+   11    Data dimensionality (# parms = 1) (NO LONGER USED)
+   12    Histogram Length (Max # Channels to be returned)
+   13    Length of Raw    Parameter (Pwr of 2)
+   14    Length of Scaled Parameter (Pwr of 2)
+   15    Data Record Blksize (bytes) for Mag Tapes
+         (0 implies one contiguous data record)
+   16    MIN non-zero Channel #
+   17    MAX non-zero Channel #
+18-20    Calibration Constants (up to 3)
+21-22    Reserved
+23-32    Title (40 bytes)
+BLP$
+In order to output a spectrum, set up the header with the quantities
+defined above and call SPKIO as follows.
+CY1$
+      CALL SPKIO(2,LU,DUM,IHED,DUM,IDAT,DUM,DUM,IERR)
+      CALL SPKERR(IERR)
+BLP$
+DUM denotes arguments which are not used. In the case of output,
+SPKIO gets most of it's information from the Header itself.
+BLP$
+Use routine SPKMAN to create and initialize a new SPK-file.
+See SECT# U700.220 for definitions of the SPKMAN arguments.
+CY1$
+      CALL SPKMAN(MODE,NAMF,LUS,IACP,IERR)
+BLP$
+Of course in all of this, you are supposed to check for errors and
+respond appropriately.
+TPF$
+SP1$
+SEC$.220  SPKMAN   - OPENS SPK-FILES FOR INPUT/OUTPUT
+BLP$
+SPKMAN opens (or creates and opens) SPK-files for subsequent input
+and output by routine SPKIO. Use as follows:
+CY1$
+       INTEGER*4 NAMF(20)
+          -
+       CALL SPKMAN(MODE,NAMF,LUS,IACP,IERR)
+
+MODE = 'OPEN' says open  SPK-file
+
+MODE = 'CREA' says create, initialize and open SPK-file
+
+NAMF - Contains complete SPK-file name (MYFILE.SPK for example)
+
+LUS  = Logical unit assigned to SPK-file
+
+IACP = Access privilege ('RO  ' for read only, 'RW  ' for read/write)
+
+IERR = Error flag = 0 for no errors, otherwise, set to 1
+BLP$
+SPKMAN reports it's own error messages via MESSLOG (see SECT# U700.240).
+TPF$
+SP1$
+SEC$.230  GREAD    - INPUT LINE RE-FORMATTER
+BLP$
+GREAD re-formats a line image of up to 80 characters in length
+in order that it may be decoded with fixed field formatting.
+The general features of GREAD are:
+ODP$
+(1)....Input fields are defined by the delimiters , ( ) = / BLANK
+as well as the beginning and end of the line.
+ODP$
+(2)....Numeric input fields are those starting with the digits (0 thru 9)
+or the characters + - .
+ODP$
+(3)....All other fields are considered to be non-numeric.
+ODP$
+(4)....In the output string, numeric fields are right justified in fields of 8
+and non-numerics are left justified in fields of 8.
+Field sizes can be changed with a special call to GREAD, see below.
+The calling sequence is:
+CY1$
+       CALL GREAD(IWD,LWD,ITYP,NF,IMIN,IMAX,NTER)   ;Where
+  
+       IWD.......is an array which contains the input string
+       LWD.......is an array which contains the output string
+       ITYP(I) = 1 says the Ith output field is non-numeric
+       ITYP(I) = 2 says the Ith output field is numeric
+       NF........gives the number of fields found
+       IMIN......is the first character in IWD to consider
+       IMAX......is the last  character in IWD to consider
+       NTER......Field overflow flag (should be 0)
+  
+To change the output field-width to NUWID, do the following:
+  
+       IMIN='SETW'
+       IMAX=NUWID
+       CALL GREAD(IWD,LWD,ITYP,NF,IMIN,IMAX,NTER)
+BLP$
+The calling program must define INTEGER*4 ARRAYS to contain the input
+and output strings IWD(20) & LWD(2,40) and the type list ITYP(40).
+BLP$
+Example: To re-format a free-form line image into a 4-character label
+field, 4 integer fields and 4 floating fields, do the following:
+CY1$
+      INTEGER*4 IWD(20),LWD(2,40),ITYP(40)
+      INTEGER*4 IVAL(4),FVAL(4)
+      READ(5,10)IWD
+   10 FORMAT(20A4)
+      IMIN=1
+      IMAX=80
+      CALL GREAD(IWD,LWD,ITYP,NF,IMIN,IMAX,NTER)
+      IF(NTER.NE.0) GO TO 50
+      DECODE(LWD,20)LABEL,IVAL,FVAL
+   20 FORMAT(A4,4X,4I8,4E8.0)
+      -
+C  50 CALL ERROR ROUTINE
+
+TPF$
+SP1$
+SEC$.240  MESSLOG  - MESSAGE DISPLAY/LOGGING ROUTINE
+BLP$
+MESSLOG is a routine which is used by many routines in ORPHLIB
+to display and/or log error messages etc. In order
+for MESSLOG to work, you must initialize COMMON/LLL/ as
+illustrated below:
+CY1$
+       COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+   
+       DO 10 I=1,28           ;Loop to blank message buffer
+       MSSG(I)='    '
+    10 CONTINUE
+       NAMPROG(1)='PROG'      ;Set 1st half of program name
+       NAMPROG(2)='NAME'      ;Set 2nd half of program name
+       LOGUT=6                ;Logical unit for terminal (display)
+       LOGUP=7                ;Logical unit for Log/Print file
+       LISFLG='LOF '          ;List flag = 'LOF ' says no Log output
+       LISFLG='LON '          ;List flag = 'LON ' says    Log output
+BLP$
+If you wish to use MESSLOG to display and/or log messages, ENCODE
+the desired message into array MSSG and call MESSLOG as follows:
+CY1$
+       CALL MESSLOG(LUT,LUP)
+   
+LUT = Logical unit number assigned to your terminal
+LUT = 0 says no display
+   
+LUP = Logical unit number assigned to your Log or Print file
+LUP = 0 says no Log output
+BLP$
+Log-file (or printer) output includes the date and time as well as the
+program name that you load into PROGNAM.
+CEB$
+CAUTION!!
+BLP$
+MESSLOG always sets MSSG to blank after each call. This is a great
+convenience but it means that you must load MSSG for each call to
+MESSLOG.
+CEB$
+
+Standard CHIL Based Programs Initialize COMMON/LLL/ & Support MESSLOG
+
+You Don't Have to do Anything Special to Use it
+CHP$U700  Orphlib - Text Formatting Routines
+TPF$
+SP1$
+SEC$.250  BILNAM   - Filename Builder
+BLP$
+BILNAM builds a filename from input lines of the following forms:
+CY1$
+CMD DISK:FILENAME.EXT<,NEW>      ;Full Device & filename specified
+CMD FILENAME.EXT<,NEW>           ;Full filename specified
+CMD FILENAME<,NEW>               ;Filename prefix only specified
+BLP$
+Where, CMD denotes a command field (something must be present) to
+be skipped over and <,NEW> denotes an optional field which may contain
+the ASCII characters NEW.
+The calling program must dimension arrays as follows:
+CY1$
+       INTEGER*4 IWD(20),NAMF(20),DSK(2)
+           -
+       CALL BILNAM(IWD,DSK,IEXT,NAMF,JEXT,LDOT,INEW,IERR)
+   
+IWD  - Contains input line to be processed
+   
+DSK  - Contains default Disk name (DRA1:, PAK3: etc)
+       (must be blank if not to be used)
+   
+IEXT - Contains default filename extension (.SPK, .CMD, etc)
+       (must be blank if not to be used)
+   
+NAMF - Contains returned filename
+   
+JEXT - Contains filename extension returned (that contained in NAMF)
+   
+LDOT = Location in NAMF of first character of extension (i.e. the .)
+       (location is on basis of byte#'s starting at 1)
+   
+INEW = 'NEW ' if the NEW-field was present, otherwise set to blank
+
+IERR = Error flag = 0 if no errors, otherwise set to 1
+BLP$
+IEXT, JEXT, LDOT, INEW and IERR are full-word integers. BILNAM reports
+it's own errors via MESSLOG (see SECT# U700.240).
+TPF$
+SP1$
+SEC$.260  FINAME - Filename Finder
+CY1$
+      SUBROUTINE FINAME(IWD,IA,IB,NAMFIL,IERR)
+C
+      INTEGER*4 MESS(13),NAMFIL(20),IWD(1)
+      CHARACTER*13 MSC
+C
+      EQUIVALENCE (MSC,MESS(1))
+C
+      DATA MSC/
+     &'SYNTAX ERROR RETRIEVING FILE-NAME                   '/
+C
+C     **************************************************************
+C     LOADS FIRST CONTIGUOUS BYTE-STRING (IA,IB) FROM IWD TO NAMFIL
+C     TERMINATES ON BLANK OR COMMA
+C     **************************************************************
+SP1$
+SEC$.270  GETNAM - Filename Getter & Parser
+CY1$
+C$PROG GETNAM
+      SUBROUTINE GETNAM(IWD,NAMFD,IEXT,LDOT,INEW,IERR)
+
+      COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+C
+      INTEGER*4 IWD(20),NAMFD(20)
+C
+      DATA IDOT,ICOM/'2E'X,'2C'X/
+C
+C     **************************************************************
+C     DECODES  -  CMD FILDEV<.EXT><,NEW>
+C     ON RETURN:  NAMFD CONTAINS - FILDEV<.EXT>
+C                 IEXT  CONTAINS - <.EXT>
+C                 INEW  CONTAINS - <NEW>
+C     **************************************************************
+TPF$
+SP1$
+SEC$.280  MKTAPNAM - Makes Legal Tape Name
+CY1$
+      SUBROUTINE MKTAPNAM(IBY,NAMBY)
+C
+      BYTE IBY(8),NAMBY(80)
+C
+      NAMBY(1)='/'
+      NAMBY(2)='d'
+      NAMBY(3)='e'
+      NAMBY(4)='v'
+      NAMBY(5)='/'
+      NAMBY(6)='n'
+C
+      N=6
+      DO 10 I=1,8
+      N=N+1
+      IF(IBY(I).EQ.'20'X) GO TO 20
+      IF(IBY(I).EQ.':')   GO TO 20
+      NAMBY(N)=IBY(I)
+   10 CONTINUE
+C
+   20 NAMBY(N)='h'
+      NAMBY(N+1)=0
+      RETURN
+      END
+
+SP1$
+SEC$.290  DETAB - Fortran Source Detabber
+CY1$
+C$PROG DETAB
+        SUBROUTINE DETAB(IBYTE,IIN,IOUT)
+C
+C     *************************************************************
+C       DETAB IS A ROUTINE TO REMOVE TABS FROM FORTRAN SOURCE CODE.
+C       IT ASSUMES THE DEC FORTRAN TAB CONVENTIONS. 
+C         1) A TAB IN COL. 1 IS REPLACED BY:
+C            1.1) 6 SPACES IF FOLLOWING CHARACTER IS ALPHABETIC.
+C            1.2) 5 SPACES IF FOLLOWING CHARACTER IS NUMERIC (THIS IS DEC'S 
+C                 CONTINUATION LINE CONVENTION).
+C         2) IF A TAB APPEARS IN ANY COL.<7 AND IS PRECEEDED BY NUMERIC
+C            CHARACTERS (I.E. A LABEL) IT (THE TAB) IS REPLACED BY SPACES
+C            SUCH THAT THE NEXT NON SPACE CHARACTER AFTER THE TAB APPEARS IN 
+C            COL. 7
+C         3)IF A TAB APPEARS IN COL.GE.7 IT IS REPLACED BY 1 SPACE.
+C       THUS:
+TPF$
+SP1$
+SEC$.300  DFASCII - Double Floating to ASCII Formatter
+CY1$
+      SUBROUTINE DFASCII(DV,ANUM,NPL)
+C
+      REAL*8 DV,TV,XV
+C
+      REAL*8 DMMAX(2,12)
+C
+      INTEGER*4 TMP(3),ANUM(3),STARS(3)
+C     ************************************************************
+C     ROUTINE TO DISPLAY A REAL*8 FLOATING NUMBER IN ASCII
+C     IN VARIOUS FORMATS (MAXIMIZING PRECISION OF DISPLAY FOR
+C     DISPLAY FIELDS OF 6 TO 12 CHARACTERS)
+C     DV      = REAL*8 NUMBER
+C     ANUM(3) = ASCII OUTPUT
+C     NPL     = NO. OF PLACES (CHARACTERS) 
+C     ************************************************************
+
+SP1$
+SEC$.310  FTASCII - Floating to ASCII Formatter
+CY1$
+      SUBROUTINE FTASCII(FV,ANUM,NPL)
+C
+      REAL*8 DV
+C
+      INTEGER*4 ANUM(3)
+C
+      DV=FV
+      CALL DFASCII(DV,ANUM,NPL)
+      RETURN
+      END
+
+SP1$
+SEC$.320  ITASCII - Integer to ASCII Formatter
+CY1$
+      SUBROUTINE ITASCII(IV,ANUM,NPL)
+C
+      REAL*8 DV
+C
+      INTEGER*4 ANUM(3)
+C
+      DV=IV
+      CALL DFASCII(DV,ANUM,NPL)
+      RETURN
+      END
+CHP$U700  Orphlib - Computation Utilities
+TPF$
+SEC$.330  GETAZ  -  Gets Nuclear A & Z from ASCII Name
+BLP$
+GETAZ decodes an ASCII string containing a nuclear name and returns
+the atomic- and mass-numbers assiciated with it. Use as follows:
+CY1$
+       CALL GETAZ(IWD,IA,IB,JA,JZ,IERR)
+
+IWD  - Is an INTEGER array containing the ASCII string to be scanned
+IA   = The first character number in IWD to scan
+IB   = The last  character number in IWD to scan
+JA   = Mass   number returned
+JZ   = Atomic number returned
+
+IERR = Error flag
+IERR = 0 says no errors
+IERR = 1 says too many digits
+IERR = 2 says too many letters
+IERR = 3 says name not found
+IERR = 4 says illegal characters
+The following nuclear names are recognized. All names must be upper
+case.
+CY1$
+H   HE  LI  BE  B   C   N   O   F   NE  NA  MG  AL  SI  P
+S   CL  AR  K   CA  SC  TI  V   CR  MN  FE  CO  NI  CU  ZN
+GA  GE  AS  SE  BR  KR  RB  SR  Y   ZR  NB  MO  TC  RU  RH
+PD  AG  CD  IN  SN  SB  TE  I   XE  CS  BA  LA  CE  PR  ND
+PM  SM  EU  GD  TB  DY  HO  ER  TM  YB  LU  HF  TA  W   RE
+OS  IR  PT  AU  HG  TL  PB  BI  PO  AT  RN  FR  RA  AC  TH
+PA  U   NP  PU  AM  CM  BK  CF  ES  FM
+TPF$
+SP2$
+SEC$.340  MASSEX - Nuclear Mass Excess Routine
+BLP$
+MASEX returns the nuclear mass excess in keV when supplied
+with the atomic- and mass-numbers of a nuclear particle.
+Use as follows:
+CY1$
+       REAL*8 EX,ER
+       CALL MASSEX(IZ,IA,EX,ER,ISOR,IERR)
+CY1$
+IZ.....Is the atomic number of the particle of interest.
+IA.....Is the mass number of the particle of interest.
+EX.....Is the nuclear mass excess in keV.
+ODP$
+ER.....Gives the uncertainty in EX (in keV).
+ER is set to 1000, 2000 or 5000 if EX is from beta systematics,
+Garvy's formula or Myers' formula, respectvely.
+This is rather arbitrary.
+CY1$
+ISOR = 1 Says values of EX and ER are from mass excess table.
+ISOR = 2 says EX was calculated using Garvy's mass formula.
+ISOR = 3 says EX from Myers' mass formula with shell correction
+ISOR = 4 says EX from Myers' mass formula (droplet model only)
+IERR = 0 always, but retained for historical reasons
+CEN$
+DISCUSSION
+BLP$
+First, an attempt is made to find the requested nucleus in
+Wapstra's mass table (see ref 1).
+If not found in Wapstra's table, an attenpt is made to use
+Garvey's mass formula (see ref 2).
+If requested nucleus is outside Garvey's range, a liguid drop
+formula is used (see refs 3 & 4)
+CEN$
+Range of Garvy's Mass Formula
+CY1$
+The neutron number must lie between 10 and 154 (inclusively)
+The proton  number must lie between  6 and 100 (inclusively)
+The mass    number must lie between 16 and 253 (inclusively)
+The neutron number must be greater than or equal to the proton number
+ODP$
+Ref-1..A.H. Wapstra and G. Audi, The 1983 Atomic Mass Evaulation (I),
+Atomic Mass Table, Nuclear Physics, Vol. A432 (1985). Obtained from
+the Nuclear Data Group (via C.E. Bemis) in 1986.
+ODP$
+Ref-2..A set of mass formula coefficients due to G.T. Garvy
+et al, Rev. Mod. Phys., Vol. 41, No. 4, Part II (1969) page S1.
+CY1$
+Ref-3..W.D. Myers, Droplet Model of Atomic Nuclei (Plenum,1977)
+       W.D. Myers and W.J. Swiatecki, Ann. Phys. 84, 186-210 (1974)
+       W.D. Myers and W.J. Swiatecki, Ark. Fys. 36(1967) 343-352
+       W.D. Myers and W.J. Swiatecki, N.P. 81 (1966) 1-60
+
+REF-4..Liquid drop routines written by Volker O. Rauch
+CEB$
+
+CAUTION!! - EX and ER are REAL*8
+TPF$
+SP1$
+SEC$.350  PFIND - Peak Find Routine
+BLP$
+PFIND is a routine for finding peaks in high resolution spectra
+with counting statistics. This routine is due to J. D. Larson.
+Use as follows:
+CY1$
+       CALL PFIND(IDAT,CHANX,PSIZE,N1,N2,IFWHM,SIGMA,MAXPK,NPK)
+   
+N1      = First channel index to scan
+N2      = Last  channel-index to scan
+MAXPK   = Maximun # of peaks allowed (dimension of CHANX & PSIZ)
+NPK     = Number of peaks found
+IFWHM   = Integer*4 fwhm estimate supplied by the calling program
+SIGMA   = REAL*4 peak detection threshold (STD DEV above background)
+IDAT(I) = INTEGER*4 data array to be scanned
+CHANX(I)= REAL*4 location of the Ith peak (index, not channel# basis)
+PSIZE(I)= REAL*4 rough estimate of peak area (may be WAY OFF!!)
+SP2$
+SEC$.360  SMIN  -  Gradient Search Routine
+BLP$
+SMIN adjusts the set of variables contained in an array X for the
+minimum value of a function FOX(X) which must be supplied by the user.
+Use as follows:
+CY1$
+       CALL SMIN(NV,KK,DEL,DELFAC,A,GUESS,X,FMIN)
+   
+NV       = Number of variables (values of X(I) to be adjusted)
+X(I)     = Are the variables to be adjusted
+A(I)     = Is the lower limit for X(I)
+A(I+NV)  = Is the upper limit for X(I)
+GUESS(I) = Is the starting value of X(I)
+DEL      = Starting step interval (works best if GUESS(I)=1.0)
+KK       = Number of times DEL is to be multiplied by DELFAC
+FMIN     = Value of function FOX(X) at minimum
+SP2$
+SEC$.370  ZSTOP  -  Stopping Power Routine
+BLP$
+ZSTOP computes the stopping power of any ion in any target element
+using the simple formulas and paramter tables given by J. F. Ziegler.
+ZSTOP does not exactly reproduce Ziegler's curves but it is probably
+close enough for most purposes - you should check it for your case.
+Use as follows:
+CY1$
+       CALL ZSTOP(AP,ZP,AT,ZT,EMEV,SN,SE,SEHE,IERR)
+
+AP   = Projectile atomic mass
+ZP   = Projectile atomic number
+AT   = Target     atomic mass
+ZT   = Target     Atomic number
+EMEV = Projectile energy (MeV)
+SN   = Nuclear    stopping power (MeV*cm**2)/mg
+SE   = Electronic stopping power (Mev*cm**2)/mg
+SEHE = Electronic stopping power (Mev*cm**2)/mg (high energy formula)
+IERR = Error flag (non-zero says something out of range)
+
+One usually takes the total stopping power to be SN + SE.
+TPF$
+SP2$
+SEC$.380  FIT3  -  Fits Three X-Y Points to A Quadratic
+BLP$
+FIT3 fits three X,Y-points to a quadratic and returns the Y-value
+at a specified X-value. Use as follows:
+CYB$
+       Y=FIT3(X1,X2,X3,Y1,Y2,Y3,X)
+BLP$
+Where, (X1,Y1), (X2,Y2) and (X3,Y3) denote the three points and X
+specifies the X-coordinate for which Y is to be evaluated.
+SP2$
+SEC$.390  LOGB2  -  Calculates Log/base-2 of Integer
+CY1$
+Use as follows:
+CYB$
+       LOGVAL=LOGB2(IA)
+BLP$
+This functions returns the Log/base-2 of the integer IA. If IA is not
+a powere-of-2, the value 0 is returned.
+SP2$
+SEC$.400  LOGAT2  -  Calculates Log/base-2 of an Integer Ratio
+CY1$
+Use as Follows:
+CYB$
+      LOGVAL=LOGRAT2(IA/IB)
+BLP$
+This functions returns the Log/base-2 of the ratio IA/IB. If IA/IB or
+IB/IA is a power-of-2, the correct value is returned. Otherwise
+the value returned is incorrect.
+CHP$U700  Orphlib - DECstation Tape I/O Routines
+TPF$
+SP1$
+SEC$.410  Tape I/O Support Routines for DECstations
+CYB$
+*GENERAL TAPE HANDLING ROUTINES*
+---------------------------------------------------------------------------
+IN ALL FOLLOWING ROUTINES:
+ierr   is an error return (==0 means OK)
+tlu    is an io descriptor ( a tape unit is assumed).
+buf    is an io buffer.
+nb_rd  is a byte count (no. of bytes read)
+nb_wt  is a byte count (no. of bytes written)
+nb_req is a byte count (no. of bytes requested in in IO operation.)
+tape   is a string giving the path to the tape unit being opened. 
+       IN THE CALLING PROGRAM THE ACTUAL ARGUMENT CORRESPONDING TO
+       TAPE MUST BE A NUMERIC TYPE. Make it an integer.
+---------------------------------------------------------------------------
+Use INTEGER*4 for ALL arguments and you can't go wrong.
+---------------------------------------------------------------------------
+Subroutine          Arguments/Description
+CYB$
+MT_OPENRO          (tape, tlu)
+CY1$
+                    Open tape(name), Read Only.
+CYB$
+MT_OPENRW          (tape, tlu)
+CY1$
+                    Open tape(name), Read & Write.
+CYB$
+MT_CLOSE           (tlu)
+CY1$
+                    Close tape (tlu).
+CYB$
+MT_CSE             (tlu, ierr)
+CY1$
+                    Clear "serious exception"
+CYB$
+MT_REW             (tlu, ierr)
+CY1$
+                    Rewind tape.
+CYB$
+MT_REWUL           (tlu, ierr) 
+CY1$                Rewind & unload tape.
+CYB$
+MT_FR              (tlu, nr, ierr)   
+CY1$
+                    Skip nr records forward.
+CYB$
+MT_BR              (tlu, nr, ierr)
+CY1$
+                    Skip nr records backward.
+CYB$
+MT_FF              (tlu, nr, ierr) 
+CY1$
+                    Skip nr files forward.
+CYB$
+MT_BF              (tlu, nr, ierr)
+CY1$
+                    Skip nr files backward.
+TPF$
+SP1$
+SEC$.410  Tape I/O Support Routines for DECstations (continued)
+CYB$
+
+Subroutine          Arguments/Description
+CYB$
+MT_READ            (tlu, buf, nby_req, nby_rd, ierr)
+CY1$             
+                    Read.  
+CYB$
+MT_WRITE           (tlu, buf, nby_req, nby_wt, ierr)
+CY1$
+                    Write.
+CYB$
+MT_GETSTATUS       (tlu, type, stat_r, err_r, resid, ierr)
+CY1$
+CYB$
+DEV_GETSTATUS      (tlu, type, stat_r, err_r, resid, ierr)
+CY1$
+CYB$
+MT_NB_OFF          (tlu, ierr)
+CY1$
+                    Turn off n-b io and wait for completion of any 
+                    outstanding requests.
+CYB$
+MT_NB_ON           (tlu, count, ierr)
+CY1$
+                    Turn on n-buffered (n-b) io. count is the number 
+                    of pending IO's to allow on this descriptor.
+CYB$
+MT_ND_ON           (tlu, ierr)
+CY1$
+                    Turn on non-blocking (n-d) io .
+CYB$
+MT_NBND_ON         (tlu, count, ierr)
+CY1$
+                    Turn on both n-b & n-d io .
+CYB$
+MT_WAIT            (tlu, buf, nb_rd, ierr)
+CY1$
+                    Wait for pending n-b IO.
+CYB$
+MT_WAITND          (tlu, buf, nb_rd, limit, ierr)    
+CY1$
+                    Wait for pending n-b & n-d IO.  limit is timeout 
+                    in milliseconds.
+CYB$
+MT_HOLDNB          (tlu, limit, ierr)    
+CY1$
+                    Uses the select system call to wait for an IO to be 
+                    possible on descriptor tlu.
+                    If only n-b reading is on, and MT_NB_ON was called with 
+                    count=1, then this amounts to a wait for io completion.
+                    ierr = 998 or 997 if the hold times out.
+                    ierr = 0 if io can be done on this descriptor.
+                    Note that the MT_HOLDNB routines do NOT actually complete 
+                    the IO. Their main function for me is to help me detect
+                    hangups. The MT_WAIT routine should be called after a 
+                    MT_HOLD type rotine returns to force IO completion.
+TPF$
+SP1$
+SEC$.410  Tape I/O Support Routines for DECstations (continued)
+CYB$
+
+Subroutine          Arguments/Description
+CYB$
+MT_R_HOLDNB        (tlu, limit, ierr)  
+CY1$
+                    Same as MT_HOLDNB but only checks on read operations. 
+CYB$
+MT_W_HOLDNB        (tlu, limit, ierr)  
+CY1$
+                    Same as MT_HOLDNB but only checks on write operations.
+CYB$
+MT_READW           (tlu, buf, nby_req, nby_rd, ierr)  
+CY1$
+                    Read(wait). Turns off n-b io first. 
+CYB$
+MT_WRITEW          (tlu, buf, nby_req, nby_wt, ierr) 
+CY1$
+                    Write(wait).  Turns off n-b io first. 
+CHP$U700  Orphlib - Shared Memory Routines
+TPF$
+SP1$
+SEC$.420  Shared Histogram Memory Support Routines 
+CYB$
+Use INTEGER*4 for ALL arguments and you can't go wrong.
+---------------------------------------------------------------------------
+CYB$
+Subroutine          Arguments/Description
+CYB$
+SHM_GET_HISSPACE   (NBYTES,IERR)
+CY1$
+                   Requests NBYTES of shared memory (IERR=0 if OK)
+CYB$
+SHM_OPEN          (SHMID,IERR)
+CY1$
+                   Actually assigns the address     (IERR=0 if OK)
+CYB$
+SHM_CLOSE         (SHMID,IERR)
+CY1$
+                   Deassigns the address.           (IERR=0 if OK)
+CYB$
+SHM_DELETE        (SHMID,IERR)
+CY1$
+                   Deletes (removed) segment SHMID  (IERR=0 if OK)
+CYB$
+MEM_ZOT_HW        (START_WORD, END_WORD)
+CY1$
+                   Zero specified half-word region of histogram memory.
+CYB$
+MEM_ZOT_FW        (START_WORD, END_WORD)
+CY1$
+                   Zero specified full-word region of histogram memory. 
+CYB$
+MEM_READ_HW       (BUF, NWN, NHW)
+CY1$
+                   Reads NHW half words of memory, starting at NWN into BUF
+CYB$
+MEM_GET_HISSPACE  (NBYTES,IERR)
+CY1$
+                   Requests NBYTES of memory        (IERR=0 if OK)
+CYB$
+MEM_ZERO_HISSPACE (NBYTES)
+CY1$
+                   Zeroes NBYTES of hisspace from the beginning.
+CYB$
+MEM_ADD1_FW       (IADDR)          
+CY1$
+                   Adds 1 to memory location corresponding to IADDR,
+                   treating hisspace as a full word array.
+CYB$
+MEM_ADD1_HW       (IADDR)
+CY1$
+                   Adds 1 to memory location corresponding to IADDR,
+                   treating hisspace as a half word array.
+CYB$
+MEM_ADDN_FW       (IADDR,N)
+CY1$
+                   Adds N to memory location corresponding to IADDR,
+                   treating hisspace as a full word array.
+TPF$
+SP1$
+SEC$.420  Shared Histogram Memory Support Routines (continued)
+CYB$
+Subroutine         Arguments/Description
+CYB$
+MEM_ADDN_HW       (IADDR,N)
+CY1$
+                   Adds N to memory location corresponding to IADDR,
+                   hisspace as a half word array.
+CYB$
+MEM_SET_VALUE_FW  (IADDR,VAL)
+CY1$
+                   Sets value VAL in IADDRth element of hisspace,
+                   treating hisspace as a full word array.
+CYB$
+MEM_SET_VALUE_HW  (IADDR,VAL)
+CY1$
+                   Sets value VAL in IADDRth element of hisspace,
+                   treating hisspace as a half word array.
+CYB$
+MEM_BUFI          (LU,IBUF,IREC,NBY,IERR)
+CY1$
+                   Reads from LU into hisspace - like BUFI into IBUF
+                   LU   = Unit (chan#) to read
+                   IBUF is a dummy arg for BUFI compatibility
+                   IREC = record# (RECL = 512 bytes) 1st rec = 1
+                   NBY  = # of bytes to xfer
+                   IERR = 0 if all OK
+CYB$
+MEM_BUFO          (LU,IBUF,IREC,NBY,IERR) 
+CY1$
+                   Writes from hisspace to LU - like BUFO from IBUF
+                   LU   = Unit (chan#) to read
+                   IBUF is a dummy arg for BUFO compatibility
+                   IREC = record# (RECL = 512 bytes) 1st rec = 1
+                   NBY  = # of bytes to xfer
+                   IERR = 0 if all OK
+CYB$
+SETMEMORY         (IADDR,VALUE,NBYTES) 
+CY1$
+                   Sets NBYTES of memory to the value in the low order 
+                   byte of VALUE starting at IADDR.
+CYB$
+COPYMEMORY        (DEST,SOURCE,NBYTES) 
+CY1$
+                   Moves NBYTES of data from SOURCE to DEST
+CYB$
+MEM_GET_VALUE_FW  (IADDR)  -  INTEGER*4 FUNCTION
+CY1$
+                   Gets value of IADDRth element of hisspace,
+                   treating hisspace as a full word array.
+CYB$
+MEM_GET_VALUE_HW  (IADDR)  -  INTEGER*2 FUNCTION
+CY1$
+                   Gets value of IADDRth element of hisspace,
+                   treating hisspace as a half word array.
+---------------------------------------------------------------------------
+BLP$
+Only the routines in this section have direct access to the memory 
+allocated to histogram storage, so calls to this package must be 
+made for access to channel values, incrementing, and I/O.
+CHP$U700  Orphlib - Histogram File Routines
+TPF$
+SP1$
+SEC$.430  Histogram File Support Routines (low level)
+CYB$
+Subroutine          Arguments/Description
+CYB$
+SYS_CREATE         (NAME, LU)
+CY1$
+                    Creates a file and assigns file descriptor
+                    NAME (I*4) - contains file-name
+                    LU   (I*4) - file descriptor; successful if LU >= 0
+CYB$
+HIS_OPENRO         (NAME, LU)
+CY1$
+                    Opens his-file for read-only & assigns file descriptor
+                    NAME (I*4) - contains file-name
+                    LU   (I*4) - file descriptor; successful if LU >= 0
+CYB$
+SYS_OPENRO         (NAME, LU)
+CY1$
+                    Opens a file for read-only & assigns file descriptor
+                    NAME (I*4) - contains file-name
+                    LU   (I*4) - file descriptor; successful if LU >= 0
+CYB$
+HIS_OPENRW         (NAME, LU)
+CY1$
+                    Opens his-file for read/write & assigns file descriptor
+                    NAME (I*4) - contains file-name
+                    LU   (I*4) - file descriptor; successful if LU >= 0
+CYB$
+SYS_OPENRW         (NAME, LU)
+CY1$
+                    Opens a file for read/write & assigns file descriptor
+                    NAME (I*4) - contains file-name
+                    LU   (I*4) - file descriptor; successful if LU >= 0
+CYB$
+SYS_CLOSE          (LU)
+CY1$
+                    Closes file associated with descriptor LU
+CYB$
+HIS_READ           (LUT, BUFFER, IBYT, NB_REQ, NB_GOT, IERR)
+CY1$
+                    Reads data from his-file into BUFFER
+                    LUT    (I*4) = file descriptor
+                    BUFFER (I*4 or I*2) = array to receive data
+                    IBYT   (I*4) = beginning at byte IBYT (1st byte# = 0)
+                    NB_REQ (I*4) = number of bytes requested
+                    NB_GOT (I*4) = number of bytes actually transfered
+                    IERR   (I*4) = 0 if successful, otherwise,
+                                   set to system global errno.
+CYB$
+HIS_WRITE          (LUT, BUFFER, IBYT, NB_REQ, NB_PUT, IERR)
+CY1$
+                    Writes data from BUFFER to his-file 
+                    LUT    (I*4) = file descriptor
+                    BUFFER (I*4 or I*2) = array from which data is xfered
+                    IBYT   (I*4) = beginning at byte IBYT (1st byte# = 0)
+                    NB_REQ (I*4) = number of bytes requested
+                    NB_GOT (I*4) = number of bytes actually transfered
+                    IERR   (I*4) = 0 if successful, otherwise,
+                                   set to system global errno.
+CHP$U700  Orphlib - Error Message Routines
+TPF$
+SP1$
+SEC$.440  Error Message Routines
+CYB$
+Subroutine          Arguments/Description
+CYB$
+HISERR             (IERR)
+CY1$
+                    HISERR may be called subsequent to a call to histogram
+                    input routine HISIN. Any error message will be reported
+                    via MESSLOG. Use as follows:
+
+                    CALL HISIN(......IERR)       ;Do HISIN call
+                    CALL HISERR(IERR)            ;Report any error message
+CYB$
+HISIO              (IERR,MSER)
+CY1$
+                    HISIOER may be called subsequent to a call to histogram
+                    I/O routine HISIO. Any error message will be reported 
+                    via MESSLOG and returned in array MSER as well.
+                    Use as follows:
+
+                    INTEGER*4 MSER(20)           ;Array to receive message
+                    CALL HISIO(......IERR,MSER)  ;Do HISIO call
+                    CALL HISIOER(IERR,MSER)      ;Report any error message
+CYB$
+IOFERR             (ISTAT)
+CY1$
+                    IOFERR may be called subsequent to and FORTRAN  OPEN 
+                    or I/O operation to report any error message via 
+                    MESSLOG. Use as follows:
+
+                    OPEN(.....IOSTAT=ISTAT)      ;Do an OPEN
+                    CALL IOFERR(ISTAT)           ;Report any error message
+CYB$
+IOSERR             (IERR)
+CY1$
+                    IOSERR may be called subsequent to any C  OPEN or I/O 
+                    operation to report any error message via MESSLOG.
+                    Use as follows:
+
+                    CALL HIS_READ(.....,IERR)     ;Read his-file
+                    CALL IOSERR(IERR)             ;Report any error message
+CYB$
+IOSMES             (IERR,MESG)
+CY1$
+                    IOSMES may be called subsequent to any C  OPEN or I/O 
+                    operation to return any error message. Use as follows:
+
+                    INTEGER*4 MESG(20)
+                    CALL IOSMES(IERR,MESG)        ;IERR contains sys err#
+                                                  ;MESG contains message
+CYB$
+SPKERR              (IERR)
+CY1$
+                     SPKERR may be called subsequent to a SPKIO call to 
+                     report any error via MESSLOG.
+                     Use as follows:
+
+                     CALL SPKIO(......IERR)        ;Do SPKIO call
+                     CALL SPKERR(IERR)             ;Report any error message
+CHP$U700  Orphlib - ASCII Decoding Routines
+TPF$
+SP1$
+SEC$.450  ASCII Decoding Routines
+SP1$
+CYB$
+Subroutine          Arguments/Description
+CYB$
+HEXVAL             (IWD, IV, IERR)
+CY1$
+                    Decodes an ASCII hex integer (right justified in a
+                    field of 8 bytes as produced by GREAD).
+                    IWD(2)  (I*4) = array containing string to be decoded
+                    IV      (I*4) = value returned
+                    IERR    (I*4) = 0 if all OK, otherwise = 1
+CYB$
+IVALU              (IWD, IV, IERR)
+CY1$
+                    Decodes an ASCII integer (right justified in a field 
+                    of 8 bytes as produced by GREAD).
+                    IWD(2)  (I*4) = Array containing string to be decoded
+                    IV      (I*4) = Integer value returned
+                    IERR    (I*4) = 0 if all OK, otherwise = 1
+CYB$
+LIMIV              (IWD, ILO, IHI, IV, IERR)
+CY1$
+                    Decodes an ASCII integer (right justified in a field
+                    of 8 bytes as produced by GREAD).
+                    IWD(2)  (I*4) = Array containing string to be decoded
+                    ILO     (I*4) = Smallest value to be accepted
+                    IHI     (I*4) = Largest  value to be accepted
+                    IV      (I*4) = Value returned (if error, IV unchanged)
+                    IERR    (I*4) = 0 says no errors
+                                  = 1 says syntax error
+                                  = 2 says value .LT.ILO  or  .GT.IHI
+CYB$
+LIMXV              (IWD, XLO, XHI, XV, IERR)
+CY1$
+                    Decodes an ASCII floating# (right justified in a field
+                    of 8 bytes as produced by GREAD).
+                    IWD(2)  (I*4) = Array containing string to be decoded
+                    XLO     (I*4) = Smallest value to be accepted
+                    XHI     (R*4) = Largest  value to be accepted
+                    XV      (R*4) = Value returned (if error, IV unchanged)
+                    IERR    (I*4) = 0 says no errors
+                                  = 1 says syntax error
+                                  = 2 says value .LT.XLO  or  .GT.XHI
+CYB$
+MILV               (IWD, IV, XV, KIND, IERR)
+CY1$
+                    MILV returns legal fixed and floating values from an 
+                    ASCII number (right justified in a field of 8 bytes as
+                    produced by GREAD).
+                    IWD(2)  (I*4) = Array containing string to be decoded
+                    IV      (I*4) = Integer  value returned
+                    XV      (R*4) = Floating value returned
+                    KIND    (I*4) = 1 says ASCII source was integer  form
+                                    2 says ASCII source was floating form
+                    IERR    (I*4) = 0 says no errors
+                                  = 1 says syntax error (IV & XV unchanged)
+TPF$
+SP1$
+SEC$.450  ASCII Decoding Routines (continued)
+CYB$
+
+Subroutine          Arguments/Description
+CYB$
+MILV3              (IWD, IV, XV, KIND, IERR)
+CY1$
+                    MILV3 returns legal fixed and floating values from an 
+                    ASCII number (right justified in a field of 12 bytes as
+                    produced by GREAD with field width set to 12).
+                    IWD(3)  (I*4) = Array containing string to be decoded
+                    IV      (I*4) = Integer  value returned
+                    XV      (R*4) = Floating value returned
+                    KIND    (I*4) = 1 says ASCII source was integer  form
+                                    2 says ASCII source was floating form
+                    IERR    (I*4) = 0 says no errors
+                                  = 1 says syntax error (IV & XV unchanged)
+CHP$U700  Orphlib - String Utilities
+TPF$
+SP1$
+SEC$.460  String Utilities
+CYB$
+Subroutine          Arguments/Description
+CYB$
+STRAPPEND          (DEST, SCOR)  -  INTEGER*4 FUNCTION
+CY1$
+                    Appends SORC string to DEST string and returns number
+                    of characters discarded.
+                    DEST (C*) = destination string
+                    SCOR (C*) = source      string
+CYB$
+STRAPPNS           (DEST, SCOR)  -  INTEGER*4 FUNCTION
+CY1$
+                    Appends one blank character to DEST string and then
+                    appends SORC string to DEST string and returns no. of
+                    characters discarded.
+                    DEST (C*) = destination string
+                    SCOR (C*) = source      string
+CYB$
+STRLEN             (STRING)  -  INTEGER*4 FUNCTION
+CY1$
+                    Function returns the length on STRING
+                    STRING (C*) = character string to be measured
+CYB$
+STRUPPER           (STRING) 
+CY1$
+                    Converts STRING to upper-case
+CYB$
+STRLOWER           (STRING)
+CY1$
+                    Converts STRING to lower-case
+CYB$
+STRPARSE           (LINE, INDX, ITYP, NF, INEXT)
+CY1$
+                    Locates fields within the character string LINE
+                    LINE        (C*)  - contains character string
+                    INDEX(2,10) (I*4) - indices for start & end if field
+                    ITYP(10)    (I*4) - field-type array;  1/2 for alp/num
+                    NF          (I*4) = number of fields
+                    INEXT       (I*4) - if nonzero, more than 10 fields
+                                        and INEDX is character index for
+                                        continued parse
+TPF$
+SP1$
+SEC$.460  String Utilities (continued)
+CYB$
+Subroutine          Arguments/Description
+CYB$
+CASEUP             (IWD)
+CY1$
+                    Converts first 80 characters in IWD to upper case.
+                    IWD(20) (I*4) - line to be converted
+CYB$
+CASEUP1            (IWD)
+CY1$
+                    Converts first 4 characters in IWD to upper case.
+                    IWD (I*4) - line to be converted
+CYB$
+ILBYTE             (IWD, IWD, NB)
+CY1$
+                    ILBYTE is equivalent to old CONCURRENT routine.
+                    The UNIX version of this routine is given below.
+CY1$
+                    SUBROUTINE ILBYTE(IT,IBY,NB)
+                    BYTE IBY(1)
+                    IT=IBY(NB+1)
+                    RETURN
+                    END
+CYB$
+ISBYTE             (IWD, IWD, NB)
+CY1$
+                    ISBYTE is equivalent to old CONCURRENT routine.
+                    The UNIX version of this routine is given below.
+CY1$
+                    SUBROUTINE ISBYTE(IT,IBY,NB)
+                    BYTE IBY(1),IT(4)
+                    IBY(NB+1)=IT(1)
+                    RETURN
+                    END
+CYB$
+LODUP              (IWD, IA, IB, JBY, JA)
+CY1$
+                    LODUP loads bytes from one integer array to another.
+                    Bytes IA through IB are copied from IWD into JWD 
+                    starting at byte JA.
+                    Bytes are numbered starting at 1 not 0.
+CYB$
+SQUEZL             (IWD, IA, IB)
+CY1$
+                    SQUEZL removes blank bytes & squeezes non-blanks left.
+                    The maximum squeez range is 80 bytes.
+                    IWD is an integer array to be squeezed and IA - IB 
+                    define the range. Bytes are numbered starting at 1.
+TPF$
+SP1$
+SEC$.460  String Utilities (continued)
+CYB$
+Subroutine          Arguments/Description
+CYB$
+IFIND              (IWD, ITST, IA, IB)  -  INTEGER*4 FUNCTION
+CY1$
+                    IFIND returns the first location of a test-byte inthe 
+                    integer array IWD. Use as follows:
+CY1$
+                    LOC = IFIND(IWD,ITST,IA,IB)
+
+                    IWD  = Integer array to be searched
+                    ITST = INTEGER*4 word whose lo-order byte is test-byte
+                           (all other bytes must be zero)
+                    IA   = First byte in IWD to search (byte# start at 1)
+                    IB   = Last  byte in IWD to search
+                    LOC  = Location of test-byte if found (otherwise, LOC = 0)
+CYB$
+LEXT               (IWD, IA, IB)        -  INTEGER*4 FUNCTION
+CY1$
+                    LEXT returns location of last filename "extension"
+                    IWD (I*4) - contains array to be searched
+                    IA  (I*4) = first byte# to examine
+                    IB  (I*4) - last  byte# to examine
+                    On return LEXT gives location of 'dot' of .ext
+                    LEXT returns 0 if none found
+CYB$
+LSNB               (IWD, IA, IB)        -  INTEGER*4 FUNCTION
+CY1$
+                    LSNB returns the location of the last non-blank
+                    in IWD within a specified range.
+                    IWD (I*4) = Array to be searched
+                    IA  (I*4) = First byte# to test (byte# start at 1)
+                    IB  (I*4) = Last  byte# to test
+                    LSNB returns location of last non-blank if found 
+                    (otherwise, LSNB returns  0)
+CYB$
+NXBL               (IWD, IA, IB)        -  INTEGER*4 FUNCTION
+CY1$
+                    NXBL returns the location of the next blank 
+                    in IWD within a specified range. 
+
+                    IWD (I*4) = Array to be searched
+                    IA  (I*4) = First byte# to test (byte# start at 1)
+                    IB  (I*4) = Last  byte# to test
+                    NXBL returns location of next blank if found 
+                    (otherwise, NXBL returns 0)
+CYB$
+NXNB               (IWD, IA, IB)        -  INTEGER*4 FUNCTION
+CY1$
+                    NXNB returns the location of the next non-blank in
+                    IWD within a specified range.
+                    IWD (I*4) = Array to be searched
+                    IA  (I*4) = First byte# to test (byte# start at 1)
+                    IB  (I*4) = Last  byte# to test
+                    NXNB returns location of next non-blank if found 
+                    (otherwise, NXNB returns 0)
+
+PD$075066
+CHP$U700  Orphlib - Exabyte Status Routines
+TPF$
+SP1$
+SEC$.470  Exabyte Status Routines
+BLP$
+Under normal circumstances, the following routine \b\EXABSTAT\\ is the
+only routine that should be needed.
+CYB$
+Subroutine          Arguments/Description
+CYB$
+EXABSTAT           (MODE, LTC, TMBU, TMBR RATE, NER, IERR)
+CY1$
+                    General EXABYTE status routine - uses routines above
+                    MODE (I*4) = 1 says display/log EXABYTE status information
+                    MODE (I*4) = 2 says return      EXABYTE status insormation
+                    LCT  (I*4) = Tape Channel#        (supplied by you)
+                    TMBU (R*4) = Total Megabytes Used (returned to you)
+                    TMBR (R*4) = Total Megabytes Left (returned to you)
+                    RATE (R*4) = #errors/megabyte     (returned to you)
+                    NER  (I*4) = Number of errors     (returned to you)
+
+---------------------------------------------------------------------------
+BLP$
+The following routines are called by \b\EXABSTAT\\.
+CYB$
+Subroutine          Arguments/Description
+CYB$
+CAM_OPEN           (CLU)
+CY1$
+                    Open CAM device for direct access to EXABYTE functions
+                    CLU (I*4)   = CAM  unit# (returned to you)
+CYB$
+CAM_CLOSE          (CLU)
+CY1$
+                    Close CAM device.
+CYB$
+MT_INFO            (LCT, CTLR, ID, IERR)
+CY1$
+                    Gets EXABYTE interface info
+                    LCT  (I*4) = tape device chan# (supplied by you)
+                    CTLR (I*4) = SCSI controller#  (returned to you)
+                    ID   (I*4) = SCSI ID           (returned to you)
+                    IERR (I*4) = 0 says OK
+CYB$
+MT_CAP             (CLU, CTLR, ID, ISIZE, IERR)
+CY1$
+                    Gets EXABYTE total capacity
+                    ISIZE (I*4) = total capacity in KB
+CYB$
+MT_STX             (CLU, CTLR, ID, NREM, NERR, IERR)
+CY1$
+                    Gets EXABYTE internal info.
+                    NREM (I*4)  = # of KB remaining on tape
+                    NERR (I*4)  = # of errors recorded
+CHP$U700  Orphlib - Spline Fitting Routines
+TPF$
+SP2$
+SEC$.480  Spline Fitting Routines
+CYB$                                                                            
+===========================================================================
+C
+      SUBROUTINE CURVS (N,X,Y,D,ISW,S,EPS,YS,YSP,SIGMA,TEMP,IERR)
+C   
+      INTEGER*4  N,ISW,IERR
+C
+      REAL*4     X(N),Y(N),D(N),S,EPS,YS(N),YSP(N),SIGMA,TEMP(N,9)
+C   
+===========================================================================
+From Fitpack -- August 31, 1981                                                 
+Coded by A. K. Cline and R. J. Renka                                            
+Department of Computer Sciences                                                 
+University of Texas at Austin                                                   
+===========================================================================     
+BLP$
+This subroutine determines the parameters necessary to                    
+compute a smoothing spline under tension. For a given                     
+increasing sequence of abscissae (X(I)),I=1,N) and                 
+associated ordinates (Y(I)),I=1,N) the function                   
+determined minimizes the summation from (I=1,N-1) of                   
+the square of the second derivative of F plus SIGMA
+squared times the difference of the first derivative of F                 
+and (F(X(I+1))-F(X(I)))/(X(I+1)-X(I)) squared, over all                   
+functions F with two continuous derivatives such that the                 
+summation of the square of (F(X(I))-Y(I))/D(I) is less                    
+than or equal to a given constant S, where (D(I)),I=1,N)
+are a given set of observation weights. The                        
+function determined is a spline under tension with third                  
+derivative discontinuities at (X(I)),I=2,N-1). for                 
+actual computation of points on the curve it is necessary                 
+to call the function CURV2. The determination of the curve                
+is performed by subroutine CURVSS, the subroutine CURVS                  
+only decomposes the workspace for CURVSS.                                 
+CEB$
+ON INPUT
+ODP$
+N......is the number of values to be smoothed (N.GE.2).                  
+ODP$
+X......is an array of the N increasing abscissae of the                  
+values to be smoothed.                                                    
+ODP$
+Y......is an array of the N ordinates of the values to be                
+smoothed, (i.e. Y(K) is the functional value                             
+corresponding to X(K) ).                                                  
+ODP$
+D......is a parameter containing the observation weights.                
+This may either be an array of length N or a scalar                       
+(interpreted as a constant). The value of D                               
+corresponding to the observation (X(K),Y(K)) should                       
+be an approximation to the standard deviation of error.                   
+ODP$
+ISW....contains a switch indicating whether the parameter                
+D is to be considered a vector or a scalar,                               
+CY1$
+       ISW = 0 if D is an array of length N,                                 
+       ISW = 1 if D is a scalar.                                             
+ODP$
+S......contains the value controlling the smoothing. This                
+must be non-negative. For S equal to zero, the                            
+subroutine does interpolation, larger values lead to                      
+smoother funtions. If parameter D contains standard                       
+deviation estimates, a reasonable value for S is                          
+FLOAT(N).                                                              
+TPF$
+SP2$
+SEC$.480  Spline Fitting Routines (continued)
+ODP$
+EPS....contains a tolerance on the relative precision to                 
+which S is to be interpreted. This must be greater than                   
+or equal to zero and less than or equal to one. A
+reasonable value for EPS is SQRT(2.0/FLOAT(N)).                            
+ODP$
+YS.....is an array of length at least N.                                 
+ODP$
+YSP....is an array of length at least N.                                 
+ODP$
+SIGMA..contains the tension factor. This value indicates                 
+the degree to which the first derivative part of the                      
+smoothing functional is emphasized. If SIGMA is nearly                    
+zero (e.g. .001) the resulting curve is approximately a                  
+cubic spline. If SIGMA is large (e.g. 50.) the                           
+resulting curve is nearly a polygonal line. If SIGMA                     
+equals zero a cubic spline results. A standard value for                  
+SIGMA is approximately 1.
+ODP$
+TEMP...is an array of length at least 9*N which is used                  
+for scratch storage.                                                      
+CEB$
+ON OUTPUT
+ODP$
+YS.....contains the smoothed ordinate values.                            
+ODP$
+YSP....contains the values of the second derivative of the               
+smoothed curve at the given nodes.                                        
+ODP$
+IERR...contains an error flag,                                           
+CY1$
+       IERR = 0 for normal return,                                            
+            = 1 if N is less than 2,                                          
+            = 2 if S is negative,                                             
+            = 3 if EPS is negative or greater than one,                       
+            = 4 if X-values are not strictly increasing,                      
+            = 5 if a D-value is non-positive.                                 
+CY1$
+N, X, Y, D, ISW, S, EPS, and SIGMA are unaltered.                         
+
+This subroutine references package modules CURVSS, TERMS and SNHCSH.
+TPF$
+SP2$
+SEC$.480  Spline Fitting Routines (continued)
+CYB$
+===========================================================================     
+C
+      FUNCTION CURV2 (T,N,X,Y,YP,SIGMA)
+C   
+      INTEGER*4  N
+C
+      REAL*4     T,X(N),Y(N),YP(N),SIGMA
+C
+===========================================================================
+BLP$                                                                            
+This function interpolates a curve at a given point                             
+using a spline under tension. The subroutine CURVS should                       
+be called earlier to determine certain necessary                                
+parameters.                                                                     
+CEB$                                                                            
+ON INPUT
+ODP$                                                                            
+T......contains a real value to be mapped onto the interpolating curve.
+ODP$                                                                            
+N......contains the number of points which were specified to                    
+determine the curve.                                                            
+ODP$                                                                            
+X & Y..are arrays containing the abscissae and                                  
+ordinates, respectively, of the specified points.                               
+ODP$                                                                            
+YP.....is an array of second derivative values of the curve                     
+at the nodes.                                                                   
+ODP$                                                                            
+SIGMA..contains the tension factor (its sign is ignored).                       
+CYB$                                                                            
+===========================================================================
+The parameters N, X, Y, YP, and SIGMA should be input unaltered from the 
+output of CURVS
+===========================================================================
+CEB$                                                                            
+ON OUTPUT
+ODP$                                                                            
+CURV2..contains the interpolated value.                                         
+BLP$$                                                                            
+None of the input parameters are altered.                                       
+this function references package modules INTRVL and                             
+SNHCSH.                                                                         
+CHP$U700  Orphlib - Miscellaneous Routines
+TPF$
+SP1$
+SEC$.490  Miscellaneous Routines
+CYB$
+Subroutine          Arguments/Description
+CYB$
+FLOATUNS           (INTVAL)  -  REAL*8 FUNCTION
+CY1$
+                    Receives INTEGER*4 INTVAL and returns REAL*8 value
+
+CYB$
+GETHOME            (HOME_NAME, LEN)
+CY1$
+                    Returns name of home directory
+                    HOME_NAME (C*80) = name of home directory (returned)
+                    LEN              = length of string       (returned
+
+CYB$
+SECSENS70          (NSECS)
+CY1$
+                    Returns # of seconds since fixed time in 1970
+                    NSECS (I*4) = # seconds elapsed (returned)
+
+CYB$
+SHARED_WIPE
+CY1$
+                    Removes all un-attached shared-memory segments in your
+                    directory
+
+CYB$
+TIMESTAMP          (DAT_TIME)
+CY1$
+                    Returns date and time in ASCII
+                    DAT_TIME (C*20) = string containing date and time
+
+CYB$
+WINSIZE            (ROWS, COLS, IERR)
+CY1$
+                    Returns size of currently defined screen
+                    COLS (I*4) = Number of character positions on a line
+                    ROWS (I*4) = Number of lines
+                    IERR (I*4) = 0 means OK, -1 means error in getting 
+                                  scree- size.  If IERR = -1, COLS is set
+                                  to 80 and ROWS is set to 24.
+
+CYB$
+CTCNIT
+CY1$
+                    Initializes Ctrl/C interrupt handler such that typing
+                    Ctrl/C generates a non-blank message flag \b\MSGF\\
+                    in COMMON/LLL/.
+
+CYB$
+WAIT               (ITIME, IUNIT, ISTAT)
+CY1$
+                    A call to WAIT causes your program to suspend execution
+                    for the specified time.
+                    ITIME (I*4) = Number of time units to wait
+                    IUNIT (I*4) = Unit type = 1 denotes miliseconds
+                                              2    "    seconds
+                                              3    "    minutes
+                                              4    "    hours
+                    ISTAT (I*4) = Status of call, 0 says OK
+QIT$
