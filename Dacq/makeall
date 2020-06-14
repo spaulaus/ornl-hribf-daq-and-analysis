@@ -1,0 +1,9 @@
+#!/bin/csh -f
+make -f vmelib.make
+make -f cnaf.make
+make -f fifo.make
+make -f ipberr.make
+make -f camerr.make
+make -f docnaf.make
+#make -f modu_setup.make
+make -f m_setup.make

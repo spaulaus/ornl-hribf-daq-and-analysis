@@ -1,0 +1,573 @@
+RPD$075059001
+NPS$01
+RSH$0505
+CHP$2010  DRS/RMS Ion-Gauge readout and control functions
+TPF$
+SP1$
+CY1$
+  SECTION   ROUTINE             FUNCTION
+
+    010     Introduction
+
+    020   IGC_COMMAND       - Set controller parameters
+    030   IGC_STATUS        - Read controller status
+    040   IGC_PRESSURE      - Read a pressure gauge
+    050   IGC_EMISSION      - Read or set IG emission parameters and status
+    060   IGC_DEGAS         - Turn IG degas on or off and get degas status
+    070   IGC_SENSITIVITY   - Read or set IG sensitivity
+    080   IGC_GASCORRECTION - Read or set IG gas correction factor
+    090   IGC_SETPOINT      - Read or set set points 
+    100   IGC_AUTO          - Set Auto turn on
+    110   IGC_HARDWARE      - Display controller hardware configuration
+    120   IGC_TYPE          - Return controller and gauge types
+    130   IGC_ERROR         - Convert error code to ASCII string
+
+    140   FORTRAN include file /usr/users/mcsq/Drms/igc_params.for
+
+SEC$.010  Introduction
+SIN$
+BLP$
+This document describes a set of FORTRAN callable routines which
+provide readout and control of the Ion-Gauge Controllers used
+in the DRS and RMS. 
+BLP$
+The DRS hardware configuration is:
+CY1$
+
+     Controller 1 is    VARIAN:  4 Convectrons;  3 Ion gauges
+     Controller 2 is    VARIAN:  4 Convectrons;  3 Ion gauges
+     Controller 3 is    VARIAN:  8 Convectrons;  1 Ion gauges
+
+BLP$
+The DRS hardware configuration is:
+CY1$
+
+     Controller 1 is    VARIAN:  4 Convectrons;  2 Ion gauges
+     Controller 2 is    VARIAN:  4 Convectrons;  2 Ion gauges
+     Controller 3 is    VARIAN:  4 Convectrons;  2 Ion gauges
+     Controller 4 is    VARIAN:  4 Convectrons;  2 Ion gauges
+     Controller 5 is GRANVILLE:  2 Convectrons;  2 Ion gauges
+
+BLP$
+All routines in this package use physical addressing.  The controller
+is specified as a number between 1 and 5.  The gauge within the
+controller is specified by a number between 1 and 9 for the Varian controllers
+and between 1 and 4 for the Granville-Phillips controller.
+BLP$
+A new routine, IGC_TPYE, may be used to determine the controller
+type and the gauge type for aspecified controller number and gauge
+number.
+BLP$
+In this document thermocouples are referred to as TC and Bayard_Alpert
+gauges are referred to as IG.
+BLP$
+Not all functions are implemented for the Granville-Phillips controller.
+Those unimplemented functions return an error code.
+BLP$
+Most of the FORTRAN callable routines require specification of
+the function to be performed.  In the routine descriptions below,
+mnemonics are used for the function codes.  These mnemonics are
+defined in a FORTRAN include file(See Section 140).
+BLP$
+Further information on the Varian Multi-Gauge controller is available
+in Varian Vacuum Products Manual No. 6999-08-091.
+BLP$
+FORTRAN codes which call any of these subroutines must include
+\b\/usr/users/mcsq/Drms/rmslib.a\\ in the list of libraries to be linked
+with your code.
+BLP$
+SEC$.020   IGC_COMMAND - Set controller parameters
+SIN$
+BLP$
+This function executes commands which apply to a controller.  The command
+may affect some or all gauges for that controller.  For example, setting
+the units of pressure readout applies to all gauges whereas setting
+the TC update rate to fast applies only to thermocouple gauges.
+BLP$
+The function to be performed is specified by the call argument FUNC. 
+The available functions are:
+INP$
+1).. IG_TORR - Set pressure readout units to torr
+INP$
+2).. IG_MBAR - Set pressure readout units to mbar
+INP$
+3).. IG_PASCAL - Set pressure readout units to Pascal
+INP$
+4).. IG_TC_SLOW - Set TC update rate to slow \b\(Varian only)\\
+INP$
+5).. IG_TC_FAST - Set TC update rate to fast \b\(Varian only)\\
+INP$
+6).. IG_LOCK - Lock the local keypad \b\(Varian only)\\
+INP$
+7).. IG_UNLOCK - Unlock the local keypad  \b\(Varian only)\\
+INP$
+8).. IG_PARTIAL_LOCK - Partially lock the local keypad \b\(Varian only)\\
+INP$
+9).. IG_DEFAULT - Set controller to factory defaults
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_COMMAND(CTRL,FUNC,IERR)
+where:
+         CTRL   - INT*4 - Controller number
+         FUNC   - INT*4 - Function code
+return:
+         IERR   - INT*4 - Returned status of call.  Zero means OK
+                          and nonzero means an error.
+BLP$
+SEC$.030   IGC_STATUS - Read controller status
+SIN$
+BLP$
+IGC_STATUS returns the status of a controller.  The current status
+of parameters set by the IGC_COMMAND function may be read.  In addition,
+the hardware configuration of the controller may be read.
+BLP$
+The parameter to be read is specified by the call argument FUNC. 
+The status is returned in the integer*4 array STAT.
+The available status requests are:
+FIP$
+1).. IG_UNITS - Read pressure readout units.  Only STAT(1) is valid and
+codes are: 0 = torr, 1 = mbar and 2 = Pascal. \b\(Varian only)\\
+FIP$
+2).. IG_KEY_LOCK - Read status of the keypad.  Only STAT(1) is valid and
+the codes are: 0 = unlocked, 1 = locked and 2 = partially locked.
+\b\(Varian only)\\
+FIP$
+3).. IG_TC_RATE - Read TC update rate.  Only STAT(1) is valid and the
+codes are: 0 = slow and 1 = fast.  \b\(Varian only)\\
+FIP$
+4).. IG_SOFTWARE - Read the Varian software revision.  The revision code
+is returned in STAT(1) and STAT(2).  If STAT(1) = 2 and STAT(2) = 6,
+the software revision is P2.6  \b\(Varian only)\\
+FIP$
+5).. IG_FIG - Read the hardware configuration of the Varian controller.
+There are five plug-in slots in the controller.  A card code is returned
+for each slot with STAT(1) corresponding to the left card slot as viewed
+from the front of the controller chassis.  The card codes are(hexadecimal):
+CY1$
+             10H - UHV Card
+             20H - Broad Range BA Card
+             30H - BA Card
+             38H - Cold Cathode Card
+             40H - TC Card
+             42H - Convectron Card
+             4CH - CDG Card
+             50H - Set Point Card
+             60H - Remote I/O Card
+             FEH - Empty Slot
+
+\b\(Varian only)\\
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_STATUS(CTRL,FUNC,STAT,IERR)
+where:
+         CTRL   - INT*4 - Controller number
+         FUNC   - INT*4 - Function code
+return:
+         STAT(5)- INT*4 - Status return array.
+         IERR   - INT*4 - Returned status of call.  Zero means OK
+                          and nonzero means an error.
+BLP$
+SEC$.040   IGC_PRESSURE - Read a pressure gauge
+SIN$
+BLP$
+IGC_PRESSURE returns the pressure reading of the specified controller and
+gauge.  The routine IGC_STATUS may be used to determine the pressure units.
+If the specified gauge is an IG and the emission is off, the pressure
+readout is 0.000E+0.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_PRESSURE(CTRL,GAUGE,PRESS,IERR)
+where:
+         CTRL   - INT*4  - Controller number
+         GAUGE  - INT*4  - Gauge number
+returns:
+         PRESS  - REAL*4 - Gauge pressure reading
+         IERR   - INT*4  - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+BLP$
+SEC$.050   IGC_EMISSION - Read or set IG emission parameters and status
+SIN$
+BLP$
+IGC_EMISSION  applies only to IGs.  Use with a TC will return an error
+code.  The function to be performed is specified by the call argument
+FUNC.  Functions include reading emission status, read or set emission
+current and turn emission on or off.  The code for FUNC are:
+FIP$
+1).. IG_OFF - Turn emission off.
+FIP$
+2).. IG_ON - Turn emission on.
+FIP$
+3).. IG_ON2 - Turn on filament number 2. \b\(Varian only)\\
+FIP$
+4).. IG_STATUS - Read emission status.  The status is returned in STAT and
+the codes are: 0 = OFF, 1 = ON and 2 = ON2.
+FIP$
+5).. IG_READ - Read the emission current.  The current reading is returned
+in CUR.
+FIP$
+6).. IG_SET - Set the emission current.  The current value is specified in
+the argument CUR and may be any value between 0.01 and 9.99 mA in 0.01 mA
+increments.  The Granville-Phillips allows on four settings for emission
+current: 1, 2, 4, and 10.  The emission specified will be converted to
+one of the allowed values.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_EMISSION(CTRL,GAUGE,FUNC,STAT,CUR,IERR)
+where:
+         CTRL   - INT*4  - Controller number
+         GAUGE  - INT*4  - Gauge number
+         FUNC   - INT*4  - Function code
+         CUR    - REAL*4 - Emission current if set current function
+return:
+         STAT   - INT*4  - Status if read emission status function
+         CUR    - REAL*4 - Emission current if read current function
+         IERR   - INT*4  - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+BLP$
+SEC$.060   IGC_DEGAS - Turn IG degas on or off and get degas status
+SIN$
+BLP$
+IGC_DEGAS applies only to IGs.  Use with a TC will return an error code.
+Furthermore, only one IG per controller may have degas turned on at any time.
+The function to be performed is specified by the call argument FUNC.
+Functions are:
+FIP$
+1).. IG_OFF - Turn degas off.
+FIP$
+2).. IG_ON - Turn degas on.
+FIP$
+3).. IG_STATUS - Read degas status.  The status is returned in STAT and
+the codes are: 0 = OFF and 1 = ON.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_DEGAS(CTRL,GAUGE,FUNC,STAT,IERR)
+where:
+         CTRL   - INT*4 - Controller number
+         GAUGE  - INT*4 - Gauge number
+         FUNC   - INT*4 - Function code
+return:
+         STAT   - INT*4 - Status if read degas status function
+         IERR   - INT*4 - Returned status of call.  Zero means OK
+                          and nonzero means an error.
+BLP$
+SEC$.070   IGC_SENSITIVITY - Read or set IG sensitivity
+SIN$
+BLP$
+IGC_SENSITIVITY applies only to IGs.  Use with a TC will return an error code.
+The sensitivity by read or set.  The function to be performed is specified
+by the call argument FUNC.  Functions are:
+FIP$
+1).. IG_READ - Read sensitivity of the specified gauge.  The value is
+returned in the argument SEN.
+FIP$
+2).. IG_SET - Set the sensitivity of the specified gauge.  The value is
+specified by the call argument SEN.  The specified sensitivity must be
+between 0.1 and 99.9.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_SENSITIVITY(CTRL,GAUGE,FUNC,SEN,IERR)
+where:
+         CTRL   - INT*4  - Controller number
+         GAUGE  - INT*4  - Gauge number
+         FUNC   - INT*4  - Function code
+         SEN    - REAL*4 - Sensitivity if set function
+return:
+         SEN    - REAL*4 - Sensitivity if read function
+         IERR   - INT*4  - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+BLP$
+SEC$.080   IGC_GASCORRECTION - Read or set gas correction factor
+SIN$
+BLP$
+This is an unimplemented function for Granville-Phillips controllers
+and a call to this routine will return an error code.
+BLP$
+IGC_GASCORRECTION applies only to IGs.  Use with a TC will return an error
+code.  The gas correction factor by read or set.  The function to be
+performed is specified by the call argument FUNC.  Functions are:
+FIP$
+1).. IG_READ - Read gas correction factor of the specified gauge.  The value is
+returned in the argument FACTOR.
+FIP$
+2).. IG_SET - Set the sensitivity of the specified gauge.  The value is
+specified by the call argument FACTOR.  The correction must be between
+0.01 and 9.99.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_GASCORRECTION(CTRL,GAUGE,FUNC,FACTOR,IERR)
+where:
+         CTRL   - INT*4  - Controller number
+         GAUGE  - INT*4  - Gauge number
+         FUNC   - INT*4  - Function code
+         FACTOR - REAL*4 - Gas correction factor if set function
+return:
+         FACTOR - REAL*4 - Gas correction factor if read function
+         IERR   - INT*4  - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+BLP$
+SEC$.090   IGC_SETPOINT - Read or set set points
+SIN$
+BLP$
+This is an unimplemented function for Granville-Phillips controllers
+and a call to this routine will return an error code.
+BLP$
+There are 8 set point relays numbered 1 thru 8.  Any set point
+relay may be assigned to one and only one gauge.  Multiple set point relays
+may be assigned to a single gauge.  Using IGC_SETPOINT, you may assign
+a set point relay to a gauge, set the activation pressure, or read
+status of the set point relay.  The function to be performed is specified
+by the call argument FNUC.  Functions are:
+FIP$
+1).. IG_STATUS - Read a bit pattern of the activated set point relays.
+The relay status is returned in SETPT.  There is one bit for each relay
+with the least significant bit corresponding the set point number 1.
+If a bit is a one, the relay is energized.
+FIP$
+2).. IG_ASSIGNED - Read a bit pattern of the set point relays assigned
+to the specified gauge.
+FIP$
+3).. IG_SET_THRESHOLD - Set the threshold pressure for a set point relay.
+The call arguments SETPT and PRESS specify the set point number and
+pressure.  The set point hysteresis pressure will be set to 1.10 times PRESS.
+A subsequent call using function IG_SET_HYSTERESIS will change only
+the hysteresis pressure.  Setting the threshold pressure to 0.0 de-assigns
+the set point relay.
+FIP$
+4).. IG_SET_HYSTERESIS - Set the hysteresis pressure.  A call using function
+IG_SET_THRESHOLD should precede this call.
+FIP$
+5).. IG_READ_THRESHOLD - Read the threshold pressure for the specified
+set point relay.  The call argument SETPT specifies the set point number and
+the pressure is returned in the argument PRESS.
+FIP$
+6).. IG_READ_HYSTERESIS - Read the hysteresis pressure for the specified
+set point relay.  The call argument SETPT specifies the set point number and
+the pressure is returned in the argument PRESS.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_SETPOINT(CTRL,GAUGE,FUNC,SETPT,PRESS,IERR)
+where:
+         CTRL   - INT*4  - Controller number
+         GAUGE  - INT*4  - Gauge number (See note below)
+         FUNC   - INT*4  - Function code
+         SETPT  - INT*4  - Set point number
+         PRESS  - REAL*4 - Pressure value if set function
+return:
+         SETPT  - INT*4  - Set point status
+         PRESS  - REAL*4 - Pressure value if read function
+         IERR   - INT*4  - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+BLP$
+NOTE:  The call argument GAUGE is used only for the functions
+IG_SET_THRESHOLD and IG_SET_HYSTERESIS.  However, GAUGE must be a valid
+gauge number for ALL calls.
+BLP$
+SEC$.100   IGC_AUTO - Set Auto turn on
+SIN$
+BLP$
+This is an unimplemented function for Granville-Phillips controllers
+and a call to this routine will return an error code.
+BLP$
+Using IGC_AUTO, you may program the Varian controller to automatically turn on
+an IG emission when the specified TC pressure is below the set point pressure.
+The call arguments GAUGE and TC specify the IG and the controlling TC.  The
+argument FUNC specifies the function to be performed.  Functions are:
+FIP$
+1).. IG_READ - Read the auto on setup.  The control TC and pressure are
+returned in the arguments TC and Press.  If TC is zero, the auto on feature
+for the specified IG is disabled.
+FIP$
+2).. IG_SET - Enable auto on.  The arguments TC and PRESS specify the 
+control thermocouple and the turn on pressure.  The turn on pressure
+must be between 1.0e-3 and 5.0e-3 torr.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_AUTO(CTRL,GAUGE,FUNC,TC,PRESS,IERR)
+where:
+         CTRL   - INT*4  - Controller number
+         GAUGE  - INT*4  - Gauge number
+         FUNC   - INT*4  - Function code
+         TC     - INT*4  - Thermocouple used to turn on IG
+         PRESS  - REAL*4 - Pressure for turn on
+return:
+         TC     - INT*4  - Thermocouple used to turn on IG
+         PRESS  - REAL*4 - Pressure for turn on
+         IERR   - INT*4  - Returned status of call.  Zero means OK
+                           and nonzero means an error.
+BLP$
+SEC$.110   IGC_HARDWARE - Display controller hardware configuration
+SIN$
+BLP$
+This is an unimplemented function for Granville-Phillips controllers
+and a call to this routine will return an error code.
+BLP$
+IGC_HARDWARE displays the hardware configuration on the standard output
+device.  The IGC_STATUS routine with the function IG_FIG will return
+the coded hardware configuration in an array.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_HARDWARE(CTRL,IERR)
+where:
+         CTRL   - INT*4 - Controller number
+return:
+         IERR   - INT*4 - Returned status of call.  Zero means OK
+                          and nonzero means an error.
+BLP$
+Example output:
+CY1$
+Hardware configuration of Varian Controller #1
+  Slot 1:  TC Card
+  Slot 2:  Empty Slot
+  Slot 3:  Broad Range BA Card
+  Slot 4:  Broad Range BA Card
+  Slot 5:  Set Point Card
+
+BLP$
+SEC$.120   IGC_TYPE - Return controller and gauge types
+SIN$
+BLP$
+IGC_TYPE returns the controller type and the gauge type for the
+specified controller number and gauge number.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+      CALL IGC_TYPE(CTRL,GAUGE,CTRL_TYPE,GAUGE_TPYE)
+
+where:   CTRL   - INT*4 - Controller number
+         GAUGE  - INT*4 - Gauge number
+returns:
+         CTRL_TYPE  - INT*4 -  0 = Varian, 1 = Granville-Phillips
+                              -1 = Nonexistent
+         GAUGE_TYPE - INT*4 -  0 = Thermocouple/Convectron
+                               1 = ion gauge
+                              -1 = Nonexistent
+
+BLP$
+SEC$.130   IGC_ERROR - Convert error code to ASCII string
+SIN$
+BLP$
+Routines in this package may return a nonzero error code.  This routine
+will convert the error code to an ASCII message.  The message is returned
+in the character variable STRING.  All messages are of the form
+CY1$
+Error = NUM: Message text
+BLP$
+where NUM is the numerical error code.  If NUM is positive, the error
+came from the controller.  Negative error codes are from workstation
+or VME software.
+BLP$
+FORTRAN call syntax and arguments are:
+CY1$
+       CALL IGC_ERROR(ERROR,STRING)
+where:
+         ERROR  - INT*4 - Error code return by a routine in this package
+return:
+         STRING - CHARACTER*(*)  -  ASCII message for this error code.
+BLP$
+Example message returned in STRING:
+CY1$
+Error = -8: Ion Gauge Controller not responding
+SEC$.140  FORTRAN include file /usr/users/mcsq/Drms/igc_params.for
+SIN$
+BLP$
+Show below is a partial listing of the file
+igc_params.for.  All the function code
+mnemonics and return error codes are defined.  
+CY1$
+
+   parameter  (IG_VARIAN = 0)    !Varian controller
+   parameter  (IG_GRANNY = 1)    !Granville-Phillips controller
+*
+*   Function code definitions for call to Varian Ion Gauge controller
+*   routines
+*
+   parameter  (IG_OFF = 0)       !Set OFF
+   parameter  (IG_ON = 1)        !Set ON
+   parameter  (IG_ON2 = 2)       !Turn on filament #2
+   parameter  (IG_STATUS = 3)    !Get status
+   parameter  (IG_READ = 4)      !Read parameter
+   parameter  (IG_SET = 5)       !Set parameter
+   parameter  (IG_FIG = 6)       !Get hardware configuration
+   parameter  (IG_SOFTWARE = 7)  !Get Varian software revision
+   parameter  (IG_UNITS = 8)     !Get pressure measurement units
+   parameter  (IG_EMISSION = 9)  !Get emission status
+   parameter  (IG_DEGAS = 10)    !Get degas status
+   parameter  (IG_TC_RATE = 11)  !Get TC update rate
+   parameter  (IG_KEY_LOCK = 12) !Get keypad status
+   parameter  (IG_DEFAULT = 13)  !Reset controller to defaults
+   parameter  (IG_TORR = 14)     !Set pressure units to Torr
+   parameter  (IG_MBAR = 15)     !Set pressure units to mbar
+   parameter  (IG_PASCAL = 16)   !Set pressure units to Pascal
+   parameter  (IG_LOCK = 17)     !Lock keypad
+   parameter  (IG_UNLOCK = 18)   !Unlock keypad
+   parameter  (IG_PARTIAL_LOCK = 19) !Partial lock of keypad
+   parameter  (IG_TC_SLOW = 20)  !Set TC update rate to slow
+   parameter  (IG_TC_FAST = 21)  !Set TC update rate to fast
+   parameter  (IG_ASSIGNED = 22) !Get assigned set points
+   parameter  (IG_SET_THRESHOLD = 23)   !Set threshold pressure
+   parameter  (IG_SET_HYSTERESIS = 24)  !Set hysteresis pressure
+   parameter  (IG_READ_THRESHOLD = 25)  !Read threshold pressure
+   parameter  (IG_READ_HYSTERESIS = 26) !Read hysteresis pressure
+*
+*  Error code generated by ion gauge controller routines
+*
+   parameter  (IG_ERR_TIMEOUT = -1)    !Ethernet receive timeout
+   parameter  (IG_ERR_TRANSMIT = -2)   !Ethernet transmit timeout
+   parameter  (IG_ERR_ETHEROPEN = -3)  !Ethernet packet filter open failure
+   parameter  (IG_ERR_UNKNFUNC = -4)   !Unknow function code
+   parameter  (IG_ERR_CONTROLLER = -5) !Illegal controller specified
+   parameter  (IG_ERR_GAUGE = -6)      !Illegal gauge specified
+   parameter  (IG_ERR_NONEXIST = -7)   !VME hardware no available
+   parameter  (IG_ERR_NORESPOND = -8)  !Varian controller not responding
+   parameter  (IG_ERR_SERIALIO = -9)   !Controller I/O error
+   parameter  (IG_ERR_UNIMP  = 1000)   !Unimplemented function
+
+*
+*  Error codes generated by Varian Multi-Gauge Controller
+*
+   parameter  (IG_ERR_VAR_E01 = 'e01'x) !Illegal control board combo
+   parameter  (IG_ERR_VAR_E02 = 'e02'x) !Sudden pressure rise
+   parameter  (IG_ERR_VAR_E03 = 'e03'x) !No cur or measurement signal
+   parameter  (IG_ERR_VAR_E04 = 'e04'x) !Filament overcurrent
+   parameter  (IG_ERR_VAR_E05 = 'e05'x) !Filament undercurrent
+   parameter  (IG_ERR_VAR_E06 = 'e06'x) !Grid voltage low
+   parameter  (IG_ERR_VAR_E07 = 'e07'x) !Controller overtemperature
+   parameter  (IG_ERR_VAR_E08 = 'e08'x) !Board logic failure
+   parameter  (IG_ERR_VAR_E09 = 'e09'x) !Overpressure for Ion Gauge
+   parameter  (IG_ERR_VAR_E11 = 'e11'x) !Plug-in board power supply failure
+   parameter  (IG_ERR_VAR_E12 = 'e12'x) !Underpressure
+   parameter  (IG_ERR_VAR_E13 = 'e13'x) !insufficient current
+   parameter  (IG_ERR_VAR_E14 = 'e14'x) !Invalid keypad function
+   parameter  (IG_ERR_VAR_E15 = 'e15'x) !Negative CDG input
+   parameter  (IG_ERR_VAR_EFF = 'eff'x) !Invalid controller command
+*
+*  Error codes generated by Granville-Phillips Controller
+*
+   parameter  (IG_ERR_GP_1  = 1001)  !FCN NOT VAILD
+   parameter  (IG_ERR_GP_2  = 1002)  !INPUT NUMBER OUT OF RANGE
+   parameter  (IG_ERR_GP_3  = 1003)  !GAUGE ASSIGNMENT INVALID
+   parameter  (IG_ERR_GP_4  = 1004)  !DIGIT FORMAT NOT RIGHT
+   parameter  (IG_ERR_GP_5  = 1005)  !UNRECOGNIZED CHARACTER
+   parameter  (IG_ERR_GP_6  = 1006)  !PC CHANNEL NOT INSTALLED
+   parameter  (IG_ERR_GP_7  = 1007)  !DEGAS NOT ENABLED
+   parameter  (IG_ERR_GP_8  = 1008)  !ON/OFF NOT ENABLED
+   parameter  (IG_ERR_GP_9  = 1009)  !TROUBLE IG1 GRID VOLTAGE OUT OF RANGE
+   parameter  (IG_ERR_GP_10 = 1010)  !TROUBLE IG2 GRID VOLTAGE OUT OF RANGE
+   parameter  (IG_ERR_GP_11 = 1011)  !TROUBLE KEY STUCK CLOSED
+   parameter  (IG_ERR_GP_12 = 1012)  !TROUBLE FILAMENT WARNING IG1
+   parameter  (IG_ERR_GP_13 = 1013)  !TROUBLE FILAMENT WARNING IG2
+   parameter  (IG_ERR_GP_14 = 1014)  !INPUT OVER RAN BUFFER
+   parameter  (IG_ERR_GP_15 = 1015)  !PARITY ERROR
+   parameter  (IG_ERR_GP_16 = 1016)  !FRAMING ERROR
+   parameter  (IG_ERR_GP_17 = 1017)  !OVERRUN ERROR
+QIT$

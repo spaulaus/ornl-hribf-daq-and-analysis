@@ -1,0 +1,64 @@
+#!/bin/csh -f
+if ($1 == "") then
+  echo ' '
+  echo 'Usage:  setup filename'
+  echo ' '
+  exit
+endif
+#
+#  If the VME processor will not speak to us, reboot it.
+#
+/usr/acq/vme/lt >& /dev/null
+set err = $status
+if ($err != 0) then
+  /usr/acq/vme/bootvme
+  set err = $status
+  if ($err != 0) then
+    echo "*** bootvme FAILED ***"
+    exit $err
+  endif
+  /usr/acq/vme/loadacq
+  set err = $status
+  if ($err != 0) then
+    echo "*** loadacq FAILED ***"
+    exit $err
+  endif
+endif
+#
+/usr/acq/vme/acq_run host >& /dev/null
+set err = $status
+if ($err != 0) then
+  /usr/acq/vme/loadacq
+  set err = $status
+  if ($err != 0) then
+    echo "*** loadacq FAILED ***"
+    exit $err
+  endif
+endif
+/usr/acq/vme/acq_run stop >& /dev/null
+set err = $status
+if ($err == 0) then
+   echo "****** WARNING:  VME acquisition has been stopped ******"
+endif
+#
+echo "Executing  modu_setup"
+/usr/acq/vme/modu_setup $1 $2
+set err = $status
+if ($err != 0) then
+  echo "*** modu_setup FAILED ***"
+  exit $err
+endif
+#
+#  Do initvme to finish setup
+#
+echo "Executing  initvme"
+/usr/acq/vme/acq_run init
+set err = $status
+if ($err != 0) then
+  echo "initvme has FAILED!  You MUST do the following:"
+  echo ""
+  echo "1) pac  userfile l"
+  echo ""
+  echo "2) initvme"
+  exit $err
+endif

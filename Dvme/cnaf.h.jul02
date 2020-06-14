@@ -1,0 +1,14 @@
+/*  cnaf.h    */
+/*  Include definitions widely useful to the cnaf server and client */
+struct cnafd {
+       short int C;
+       short int N;
+       short int A;
+       short int F;
+             int Data;
+} ;
+struct cnaf_buffer {
+       int count;
+       struct cnafd cnafs[123];
+} ;
+

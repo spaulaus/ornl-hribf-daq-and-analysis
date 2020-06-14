@@ -1,0 +1,4 @@
+#!/bin/csh -f
+/usr/acq/vme/kt localcnaf >& /dev/null
+echo "Load the VME processor CNAF program.  Uses Port 2"
+/usr/acq/vme/run /usr/acq/vme/localcnaf 128 2 2 63 1 2

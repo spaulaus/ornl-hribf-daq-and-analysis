@@ -1,0 +1,144 @@
+RPD$075059001
+NPS$01
+CHP$1030  - VMEXXLIB -
+TPF$
+SP1$
+CY1$
+  SECTION   ROUTINE             FUNCTION
+
+      010  INTRODUCTION
+
+      020  CAEN_ADC_READ  - Read thresholds for V785 ADC
+      030  CAEN_ADC_WRITE - Write thresholds for V785 ADC
+      040  CAEN_TDC_READ  - Read thresholds, range and mode for V775 TDC
+      050  CAEN_TDC_WRITE - Write thresholds, range and mode for V775 TDC
+      050  CAEN_ERROR     - Converts error number to ASCII string
+      070  Example routine to write one ADC
+
+BLP$
+SEC$.010 INTRODUCTION
+SIN$
+BLP$
+This document describes a set of FORTRAN callable routines for initialization
+of VME data acquisition modules.
+BLP$
+These routines are in the library - \b\usr/acq/vme/vmexxlib.a\\.
+BLP$
+SEC$.020 CAEN_ADC_READ - Read thresholds for V785 ADC
+SIN$
+BLP$
+CY1$
+ 
+  Call:   CALL CAEN_ADC_READ(ADCNUM,DAT,IERR)
+ 
+    call:
+           ADCNUM - INT*4   ADC number to write (1 thru 10)
+ 
+  return:
+           DAT(32)- INT*4   Array of threshold settings
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+ 
+SEC$.020 CAEN_ADC_WRITE - Write thresholds for V785 ADC
+SIN$
+BLP$
+CY1$
+
+  Call:   CALL CAEN_ADC_WRITE(ADCNUM,VAL,IERR)
+ 
+    call:
+           ADCNUM - INT*4   ADC number to write (1 thru 10)
+           VAL(32)- INT*4   Array of values to write to specified ADC
+  return:
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+
+SEC$.040 CAEN_TDC_READ - Read thresholds, range and mode for V775 TDC
+SIN$
+BLP$
+CY1$
+
+  Call:   CALL CAEN_TDC_READ(TDCNUM,DAT,RANGE,MODE,IERR)
+ 
+    call:
+           TDCNUM - INT*4   TDC number to write (1 thru 10)
+ 
+  return:
+           DAT(32)- INT*4  Array
+           RANGE  _ INT*4   TDC range
+           MODE   _ INT*4   Mode.  0 means common start
+                                   1 means common stop
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+
+SEC$.050 CAEN_TDC_WRITE - Write thresholds, range and mode for V775 ADC
+SIN$
+BLP$
+CY1$
+
+  Call:   CALL CAEN_TDC_WRITE(TDCNUM,VAL,RANGE,MODE,IERR)
+ 
+    call:
+           TDCNUM - INT*4   TDC number to write (1 thru 10)
+           VAL(32)- INT*4   Array of values to write to specified TDC
+           RANGE  _ INT*4   TDC range
+           MODE   _ INT*4   Mode.  0 means common start
+                                   1 means common stop
+  return:
+           IERR   - INT*4 - Returned status of call.  Zero means OK
+                            and nonzero means an error.
+
+SEC$.060 CAEN_ERROR - Converts error number to ASCII string
+SIN$
+BLP$
+CY1$
+
+  Call:   CALL CAEN_ERROR(ERROR,STRING)
+ 
+  where:
+            INT*4  ERROR - Error code return by a routine in this package
+  return:
+            CHARACTER*(*)  -  ASCII message for this error code.
+
+SEC$.070 Example routine to write one ADC
+SIN$
+BLP$
+CY1$
+File:  /tera/mcsq/Dvme3/caenw.f
+
+      implicit none
+
+      integer*4 i,ierr,strlen
+      integer*4 dat(32),adcnum
+      character*80 errmsg
+
+      do i=1,32
+       dat(i) = 0
+      enddo
+      type 1000
+1000  format('ADC number ? ',$)
+      accept 1010,adcnum
+1010  format(i)
+      call caen_adc_write(adcnum,dat,ierr)
+      if (ierr .ne. 0) then
+         call caen_error(ierr,errmsg)
+         type 9010,errmsg(1:strlen(errmsg))
+9010     format('*** ',a,' ***')
+      endif
+*
+      end
+
+File:  /tera/mcsq/Dvme3/caenw.make
+
+FFLAGS= -O2
+#
+DIRA= /usr/hhirf/
+DIRB= /tera/mcsq/Dvme3/
+DIRC= /tera/mcsq/Dacq/
+#
+LIBS= $(DIRA)orphlib.a $(DIRB)vmexxlib.a $(DIRC)vmelib.a
+caenw: caenw.f $(LIBS) $(INCS)
+        f77 $(FFLAGS) caenw.f $(LIBS) -o caenw
+
+~
+QIT$

@@ -1,0 +1,64 @@
+      CONT                                                           112   112
+      KIFN  GLAT                 1       775                         112   112
+      READ  ADC1                25                                   115   115
+      READ  ADC3                25                                   116   116
+      READ  ADC3                26                                   117   117
+      CNAF         2            15         0        16     0377H     119   119
+L1    CONT             3                                             124   135
+      IFN   GLAT                 1     0ACFH  GOTO      NEXT         127   138
+      IFU   PAT                  1  GOTO      :2                     128   139
+      READ  ADC1                 1                                   129   140
+      READ  ADC2                 1                                   130   141
+      READ  TDC1                 1                                   131   142
+      READ  TDC2                 1                                   132   143
+:1    CONT                                                           133   144
+:2    CONT                                                           134   145
+      IFN   GLAT                 2     0ACFH  GOTO      NEXT         127   148
+      IFU   PAT                  2  GOTO      :4                     128   149
+      READ  ADC1                 2                                   129   150
+      READ  ADC2                 2                                   130   151
+      READ  TDC1                 2                                   131   152
+      READ  TDC2                 2                                   132   153
+:3    CONT                                                           133   154
+:4    CONT                                                           134   155
+      IFN   GLAT                 3     0ACFH  GOTO      NEXT         127   158
+      IFU   PAT                  3  GOTO      :6                     128   159
+      READ  ADC1                 3                                   129   160
+      READ  ADC2                 3                                   130   161
+      READ  TDC1                 3                                   131   162
+      READ  TDC2                 3                                   132   163
+:5    CONT                                                           133   164
+:6    CONT                                                           134   165
+NEXT  CONT                                                           136   167
+L2    CONT             3                                             139   180
+      IFN   GLAT                 1  12345678  GOTO      QUIT         142   183
+      IFU   PAT                 11  GOTO      :7                     143   184
+      READ  ADC1                 1                                   144   185
+      READ  ADC2                 1                                   145   186
+      READ  TDC1                 1                                   146   187
+      READ  TDC2                 1                                   147   188
+:7    CONT                                                           148   189
+      IFN   GLAT                 2  12345678  GOTO      QUIT         142   192
+      IFU   PAT                 12  GOTO      :8                     143   193
+      READ  ADC1                 2                                   144   194
+      READ  ADC2                 2                                   145   195
+      READ  TDC1                 2                                   146   196
+      READ  TDC2                 2                                   147   197
+:8    CONT                                                           148   198
+      IFN   GLAT                 3  12345678  GOTO      QUIT         142   201
+      IFU   PAT                 13  GOTO      :9                     143   202
+      READ  ADC1                 3                                   144   203
+      READ  ADC2                 3                                   145   204
+      READ  TDC1                 3                                   146   205
+      READ  TDC2                 3                                   147   206
+:9    CONT                                                           148   207
+      IFA   GLAT                 1  12345678  GOTO      X1           152   211
+      GOTO  QUIT                                                     153   212
+X1    CONT                                                           154   213
+      READ  ADC3                 1                                   154   213
+      READ  TDC3                 1                                   155   214
+      GOTO  QUIT                                                     156   215
+X2    CONT                                                           158   217
+      READ  ADC3                 4                                   158   217
+      READ  TDC3                 4                                   159   218
+QUIT  CONT                                                           160   219

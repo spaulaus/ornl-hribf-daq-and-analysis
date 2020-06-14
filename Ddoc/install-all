@@ -1,0 +1,20 @@
+install -o hhirf acqsetup.doc /usr/hhirf/vme/doc
+install -o hhirf adc.doc /usr/hhirf/vme/doc
+install -o hhirf alphahard.doc /usr/hhirf/vme/doc
+install -o hhirf countd.doc /usr/hhirf/vme/doc
+install -o hhirf hhirf_adc.ps /usr/hhirf/vme/doc
+install -o hhirf modu_setup.doc /usr/hhirf/vme/doc
+install -o hhirf multivme.doc /usr/hhirf/vme/doc
+install -o hhirf trigger.ps /usr/hhirf/vme/doc
+#install -o hhirf txxps.doc /usr/hhirf/vme/doc
+install -o hhirf VMEsys.doc /usr/hhirf/vme/doc
+install -o hhirf VMEterm.doc /usr/hhirf/vme/doc
+install -o hhirf vmexxlib.doc /usr/hhirf/vme/doc
+#
+#  hhirf/wks/doc
+install -o hhirf acqlib.doc /usr/hhirf/wks/doc
+install -o hhirf aiolib.doc /usr/hhirf/wks/doc
+install -o hhirf mclib.doc /usr/hhirf/wks/doc
+install -o hhirf modu_setup.doc /usr/hhirf/wks/doc
+install -o hhirf pacmanII.doc /usr/hhirf/wks/doc
+ 

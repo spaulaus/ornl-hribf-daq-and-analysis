@@ -1,0 +1,1 @@
+install -o hhirf -p scad scad.hep /usr/acq/wks

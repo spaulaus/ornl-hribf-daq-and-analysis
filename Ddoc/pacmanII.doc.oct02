@@ -1,0 +1,1401 @@
+RPD$075059001
+NPS$01
+CHP$PACMAN II - ORPHAS Acquisition Manager
+TPF$
+SP1$
+CY1$
+Sec Page               Function
+
+010   1  Introduction
+
+020   1  Getting Started - Things you MUST do
+030   2  Editing your .login, .cshrc and .twmrc files
+040   3  Location of Important Files
+050   4  PACMAN Configuration File
+060   7  PACMAN Run-time Help File
+070   7  Running PACMAN
+080   9  Histogramming Tasks
+090  10  Control of VME Front-End Processor
+100  12  TAPE Commands
+110  14  Miscellaneous Commands
+120  15  System Status Commands
+130  17  Testing VME/DECstation Connection
+140  19  What to Do if PACMAN Refuses to RUN
+150  20  How to Exit PACMAN
+160  20  Run-time Help Text
+170  23  Built-in command list
+180  24  How to Reboot the DECstation
+190  25  How to Access On-Line Documentation
+SEC$.010 Introduction
+SIN$
+BLP$
+PACMAN is an executive which controls all processes necessary to run the
+data acquisition system and write event data to tape.
+It initially loads all processes required and continually
+monitors those processes throughout data acquisition. If any essential
+process terminates, the user is notified of what corrective action
+is required. The commands to PACMAN fall into 4 categories:
+ODP$
+1).. VME Front-end processor control
+ODP$
+2).. Tape control
+ODP$
+3).. System status and test
+ODP$
+4).. USER commands defined in a configuration file
+BLP$
+Throughout this document examples of screen output will be reproduced.
+In these examples, user input will be in Bold print.
+BLP$
+SEC$.020 Getting Started - Things YOU need to do.
+CY1$
+    1).. Setup your VME System .......................................
+
+         see Section 040 of VME Front-End System document
+         see document file - \b\/usr/hhirf/vme/doc/VMEsys.doc\\
+
+    2).. Configure the VME/DECstation system .........................
+
+         see Section 070 of VME Front-End System document
+         see document file - \b\/usr/hhirf/vme/doc/VMEsys.doc\\
+
+    3).. Edit your \b\.login, .cshrc and .twmrc\\ files ...................
+
+         see Section 040
+
+    4).. Prepare your PAC program ....................................
+
+         PAC user documentation
+         see document file - \b\/usr/hhirf/doc/pac.doc\\
+
+    5).. [optional] Make a PACMAN configuration file .................
+
+         see Section 050
+
+    6).. [optional] Make a custom run-time help file .................
+
+         see Section 060
+
+    7).. Start PACMAN and start data acquisition .....................
+
+         see Section 070
+
+    8).. Start your histogram tasks ...................................
+
+         see Section 080
+BLP$
+SEC$.030 
+BLP$
+The changes here involve three files located in your home directory.
+These files are \b\ .login, .cshrc\\ and \b\.twmrc.\\
+BLP$
+\B\Your .login file ......................................\\
+BLP$
+Edit your .login file and add the following two lines:
+CYB$
+      set ignoreeof
+      alias pacman "/usr/acq/wks/pacman \!*"
+BLP$
+ORNL is in the US Eastern time zone and by default our workstations
+use Eastern time.  If you are working elsewhere, it may be convenient
+to use local time.  For example, in the Central time zone, you
+would add the following statement in your \b\.login\\ file:
+CYB$
+      setenv TZ ":/etc/zoneinfo/US/Central"
+BLP$
+\B\Your .cshrc file ......................................\\
+BLP$
+It is recommended that the following statement be added in your
+\b\.cshrc\\ file:
+CY1$
+      \B\set ignoreeof\\
+BLP$
+\B\Your .twmrc file ......................................\\
+BLP$
+If you do not have a .twmrc file, then copy one from \b\/usr/users/dacq\\
+to your account and you are finished. Just type the command:
+CY1$
+      \B\cp /usr/users/dacq/.twmrc .\\
+BLP$
+Otherwise, you need to edit your .twmrc file. Edit the .twmrc and
+search for a line which says
+CY1$
+       \b\menu "defops"\\
+BLP$
+Below this line you may see lines which begin with
+CY1$
+       \b\"Kill"\\
+       \b\"Lock"\\
+  and
+       \b\"Exit"\\
+BLP$
+Delete these three lines.
+BLP$
+The next changes have to do with printers for screen dumps.  If your
+are working at ORNL, no changes are needed.  If you are not at ORNL and
+have a printer attached to the workstation, do the following changes.
+Search for a line which says
+CY1$
+       \b\menu "xdump"\\
+BLP$
+This is the screen dump menu and at least the following two lines
+are needed:
+CYB$
+       "PRINT "              !"xdpr -device ps -frame &"
+       "PRINT reverse image" !"xdpr -device ps -frame -rv &"
+BLP$
+In addition I recommend deleting any lines in the xdump menu which are
+specific to ORNL.
+BLP$
+For the changes you have just made to take effect, you must logout
+and then login at the console.
+SEC$.040 Location of Important Files
+BLP$
+You may start PACMAN in any directory you wish.  However, there are
+two files which PACMAN processes will access or create if necessary.
+These files will ALWAYS be in your home directory (i.e. login directory).
+The files are \b\orphas.vme\\ and \b\pacman.fig\\.
+BLP$
+\B\orphas.vme? ...........................................\\
+BLP$
+The default acquisition log file is \b\orphas.vme\\.  However, if you
+defined the environment variable VME when configuring the VME/DECstation,
+the log file has a different name(see Section 070 of the VME Front-End System
+document).  For example, if you added the statement
+CY1$
+       setenv VME vme2
+BLP$
+to your \b\.login\\ file, the log file name will be \b\orphas.vme2\\.
+BLP$
+If the log file does not exist in your home directory, PACMAN will
+create it.  Otherwise, PACMAN appends to the existing file.  Each entry
+has the name of the process which originated the message, a time stamp and
+a message.  Most of the commands to PACMAN are logged.  The log file
+is a fairly complete record of what has been done.
+BLP$
+Remember, the log file is ALWAYS in your home directory.
+BLP$
+\B\pacman.fig ............................................\\
+BLP$
+This your custom PACMAN configuration file.  PACMAN expects this file
+to be in your home directory unless you specify a path and file name
+on the command line invoking PACMAN.  If there is no \b\pacman.fig\\
+in your home directory and no file is specified on the pacman
+command line, the default configuration file is \b\/usr/acq/wks/pacman.fig\\.
+BLP$
+SEC$.050 PACMAN Configuration File
+BLP$
+Several PACMAN parameters may be customized by making your own configuration
+file.  This section describes those parameters you may specify.
+BLP$
+The syntax rules are very simple.  Each statement type is identified
+by a keyword.  First level keywords must be the first word on a line and
+must be upper case.  If a statement requires more than one line, there
+must be a left curly bracket on the first line and a right curly bracket
+at the end of the last line.
+BLP$
+The statement $USER_CMD allows a second level of keywords which must be lower
+case and keywords are separated by semicolons.
+BLP$
+\B\$BANNER ...............................................\\
+BLP$
+This is the PACMAN startup banner.  If not present in your configuration
+file, the default is identical to that shown below in the listing of
+\b\/usr/acq/wks/pacman.fig\\.
+BLP$
+\B\$BUFFER_SIZE ..........................................\\
+BLP$
+This parameter defines the size of event data buffers in bytes.
+The buffer size should be a power of 2 and in the range
+of 2048 thru 32768.  Note that this parameter also determines the
+tape record size.  When scanning tapes, you MUST specify the record size
+in SCANU if it is different than 8192.
+BLP$
+If this parameter is not present in the configuration file, the 
+default is 32768.
+BLP$
+\B\$LOG_INTERVAL .........................................\\
+BLP$
+The acquisition system writes rate information to the log file periodically.
+This parameter is the time interval in seconds.  For example,
+CY1$
+      $LOG_INTERVAL 600
+BLP$
+means to log the data rates every 10 minutes.
+BLP$
+If the parameter is not present in your configuration file, the
+default is 300.
+BLP$
+\B\$USER_PFTOIPC .........................................\\
+BLP$
+The acquisition system process which receives data from the VME system is
+pftoipc (Packet Filter to Interprocess Communication).  This process receives
+ethernet packets from the VME and builds event data buffers in shared
+memory.  All other processes get event data from shared memory.
+BLP$
+The default process is \b\/usr/acq/wks/pftoipc\\.  The user may provide
+a custom process to replace pftoipc.  If you have a custom process, you
+need to define it in your configuration file.  The statement
+CY1$
+     $USER_PFTOIPC  /usr/users/myacq/mypftoipc
+BLP$
+means that the process \b\/usr/users/myacq/mypftoipc\\ is to be used
+instead of the default.
+BLP$
+\B\$HELP_FILE ............................................\\
+BLP$
+If you have a custom help file, you need to define it in your configuration
+file.  The statement,
+CY1$
+     $HELP_FILE  /usr/users/mcsq/my.help
+BLP$
+means that the file \b\/usr/users/mcsq/my.help\\ will be read as the help
+file instead of the default \b\/usr/acq/wks/pacman.fig\\.
+BLP$
+\B\$WINDOW ...............................................\\
+BLP$
+While it is quite easy to create new \u\xterm\\ windows, there are some
+drawbacks.  Usually all windows have the same name and
+the position of the Icon is selected by the XWindow manager.  Sometimes it
+is convenient for a window to have a unique name associated with the
+task usually performed in that window.  The $WINDOW statement allows you
+to specify a window to be created when PACMAN starts.  For example, the
+statement
+CY1$
+    $WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32-0+10 #-41-38
+       -sb -ls -iconic }
+BLP$
+creates a window named SCAN.  The position of the window and the Icon
+are specified.  Also, the window starts as an Icon.
+See the manual pages \u\X\\ and \u\xterm\\ for additional information.
+BLP$
+Windows may not have the same name as an existing command.  A command
+by the same name as the window will be added to PACMAN.  This command
+is available to recreate the window should you accidentally delete it.
+BLP$
+\B\$USER_CMD .............................................\\
+BLP$
+Typically users have hardware specific codes to set high voltages,
+discriminator thresholds, etc.  You may elect to run these codes in
+temporary windows from PACMAN.  The statement $USER_CMD may be used to
+define the code to be executed and the default directory while the code
+executes.  For example, the statement
+CY1$
+    $USER_CMD { dmon = /usr/bin/X11/xterm -geometry 80x50+10+10 -sb -e
+       /usr/acq/wks/dmon }
+BLP$
+creates a PACMAN command \u\dmon\\.  When you type \u\dmon\\ in the PACMAN
+window, a temporary window is created and the code \b\/usr/acq/wks/dmon\\
+begins execution in that window.  When \b\dmon\\ terminates, the temporary
+window is deleted and you return to PACMAN.
+CYB$
+     NOTE:  PACMAN will not accept additional commands until
+            a user defined command terminates.
+BLP$
+There are two additional command statements valid only within a $USER_CMD
+statement.
+These are second level commands which begin with a $ and MUST be lower case.
+Commands within the $USER_CMD statement MUST be separated by semicolons.
+CYB$
+   $stopvme; ........................
+BLP$
+Often, hardware setup codes require that acquisition in the VME front-end
+system be stopped.  This statement directs PACMAN to do a STOPVME command
+prior to running your code.
+CYB$
+   $cd directory; ...................
+BLP$
+This statement specifies the default directory while you code
+is executing.
+BLP$
+The following example shows the usage of these second level commands.  Note
+the semicolons at the end of the second and third lines.  They are essential!
+CY1$
+    $USER_CMD { mycode = /usr/bin/X11/xterm -geometry 80x50+10+10 -sb -e
+                         ~myname/setup/mycode;
+       $stopvme;
+       $cd ~myname/setup }
+BLP$
+\B\$ALIAS ................................................\\
+BLP$
+If you don't like the command mnemonics we have chosen, you may assign a new
+name to any existing command using the $ALIAS statement.  However, the
+new name MUST be unique.  Furthermore, the log file entries retain
+the original command name.  For example, the statement
+CY1$
+      $ALIAS  go  trun
+BLP$
+defines \u\go\\ to mean the same thing of the built-in command \u\trun\\.
+BLP$
+The following is a listing of the default configuration file,
+\b\/usr/acq/wks/pacman.fig\\.
+CY1$
+  ---------------------------------------------------------------------
+
+$BANNER {
+****************************************************************************
+*                                ORPHAS                                    *
+*                                                                          *
+*                               pacman II                                  *
+*                      Physics Acquisition Manager                         *
+*                                                                          *
+*                         Welcome to Tennessee                             *
+*                        Jack Daniel's Country                             *
+****************************************************************************}
+$BUFFER_SIZE 8192
+$LOG_INTERVAL 300
+$HELP_FILE  /usr/acq/wks/pacman.hep
+
+$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32-0+10 #-41-38
+-sb -ls -iconic }
+
+$WINDOW {
+damm =  /usr/bin/X11/xterm -geometry 80x32+10+400 #-45-20 -sb -ls
+-iconic  }
+
+$USER_CMD {
+dmon = 
+       /usr/bin/X11/xterm
+       -geometry
+       80x50+10+10
+       -sb
+       -e
+       /usr/acq/wks/dmon
+}
+
+  ---------------------------------------------------------------------
+BLP$
+SEC$.060 PACMAN Run-time Help File
+BLP$
+If you have a custom configuration file, you may wish to also make
+a custom help file.
+BLP$
+A line for which the first 4 characters are \b\$$$$\\, is the beginning
+of a Help topic.  All characters on the line following the \b\$$$$\\
+become an entry in the help directory which is displayed when you type
+\u\help\\.
+The 4 characters immediately following the \b\$$$$\\ must be unique.  These
+4 characters are the help topic.  Help topics may have trailing spaces
+but they may NOT have leading spaces.
+BLP$
+Lines following the help topic line are saved as is until another help
+topic line or the end-of-file is encountered.  What you see in the file
+is what you get on the screen.
+BLP$
+Section 160 has a complete listing of the default help file.
+BLP$
+SEC$.070 Running PACMAN
+BLP$
+Login at the console of the workstation. You probably
+have only one window. In that window, type
+CY1$
+      \B\pacman\\ [file.fig]
+ODP$
+\B\ NOTICE: It is important, for reasons I will not attempt to
+explain, that you do this in your login window. So, why don't you
+just humor the old fat man and do it my way?\\
+BLP$
+The \u\file.fig\\ argument on the command line is optional.
+If the argument is present, it should be path and file name of a 
+configuration file.
+Note that all examples in this document assume use of the
+default configuration file - \b\/usr/acq/wks/pacman.fig\\.
+BLP$
+After about 5 seconds, PACMAN should be started and initialized. At the
+bottom left of the screen is a long 10 line window. Every message appearing
+in this window is written to the log file - \b\orphas.vme? in your home
+directory\\. At the bottom right of the screen there are two icons, \b\DAMM,\\
+and \b\SCAN\\.
+Nothing is running in either of these windows. These were created and
+named for functions you are likely to use. The size and position of these
+windows may be changed as a you would any other window. There are no
+restrictions on what you may run in these windows.
+BLP$
+In your PACMAN window, you will see the startup banner and a
+directory of the help available.
+CY1$
+  ---------------------------------------------------------------------
+
+Using configuration file: /usr/acq/wks/pacman.fig
+****************************************************************************
+*                                ORPHAS                                    *
+*                                                                          *
+*                               pacman II                                  *
+*                      Physics Acquisition Manager                         *
+*                                                                          *
+*                         Welcome to Tennessee                             *
+*                        Jack Daniel's Country                             *
+****************************************************************************
+TAPEOU->PID = 26301, Old Priority = 0, New Priority = -15
+PID = 26302, Old Priority = 0, New Priority = -10
+
+The latest PACMAN documentation is dated: Wed Jun 28 11:49:54 1995
+If your copy is older, discard it and print a new copy using the
+command -  prtdoc.
+
+Type: H VME  - For commands to control and get status of Front-End
+Type: H ACQ  - Commands related to data acquisition
+Type: H TAPE - For Tape control commands
+Type: H DISP - For commands which display Data-records
+Type: H STAT - Commands to display system status and test VME system
+Type: H MISC - Miscellaneous Commands
+Type: H EXIT - How to STOP the acquisition system
+Type: H CMDS - Command list
+Type: H NEW  - How to update Help messages
+pacman:
+
+  ---------------------------------------------------------------------
+BLP$
+These help topics contain information
+about commands that may be useful in your work. The help includes
+most of the commands available. In latter sections, we will explore
+the commands in greater detail.
+BLP$
+The remainder of this section is an example of what is needed to start
+acquisition to tape after all hardware setup is complete. The steps
+required are:
+INP$
+1).. Load VME acquisition software
+INP$
+2).. Compile and load the proper PAC file into the VME processor
+INP$
+3).. Setup the TAPEOU process to record the data stream on tape
+INP$
+4).. Start acquisition
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\loadacq\\
+Relink code - /usr/acq/vme/kill_acq
+Oasys 68000 Cross-Linker, version 5.11.
+Copyright (C) 1984,1985,1986,1987,1988,1989,1990,1991 XEL, Inc. All rights
+reserved.
+Delete the acquisition tasks in the VME processor
+
+Now load the acquisition tasks.  Any error messages here are BAD news.
+
+Acquisition system now loaded
+pacman: \b\pac dantst l\\
+#BYTES OBJECT CODE GENERATED =   33536
+CONSIDER YOURSELF LOADED WITH  33536  BYTES
+NO ERRORS
+TAPEOU->\b\hnum 1\\
+TAPEOU->pacman: \b\htit testing 1,2,3\\
+TAPEOU->pacman: \b\ou rmt0:\\
+pacman: #MB USED, #MB REMAINING:       0.0  4585.5
+
+TAPEOU->\b\trun\\
+pacman: PAC file: dantst                                    -       999001
+pacman:  1,2,3                                               -            1
+
+  ---------------------------------------------------------------------
+BLP$
+SEC$.080 Histogramming Tasks
+BLP$
+The acquisition system has a special version of Milner's \b\SCANU\\ which
+allows the input stream to be event data buffers received from the VME
+front-end system.  There is a new command which selects shared memory data
+buffers as input.  The command is
+CYB$
+     shm vme 
+BLP$
+This is the command if you are using the default VME processor.  If you
+have set the environment variable VME, the command is slightly different.
+For example, if you
+CY1$
+     setenv VME vme2
+BLP$
+then the command should be \u\shm vme2\\.
+BLP$
+See the SCANU documentation for details on making a histogramming task -
+\b\/usr/hhirf/doc/scanu.doc\\.  The user must supply at least two
+subroutines, HISSUB and DRRSUB.  The routine DRRSUB creates the
+required histograms.  HISSUB receives buffers of event data and builds
+the histograms.  Each buffer of event data may contain multiple events
+but there is always and integral number of events in the buffer.  There
+are two routines in \b\/usr/acq/wks/acqlib.a\\ for unpacking single
+events from the buffer.  Both routines return a single event per call
+until the buffer is empty at which time the alternate FORTRAN return is
+taken.  The routines differ only in the way the data for the single event
+are stored.  See \b\/usr/acq/acqlib.doc\\ for a description of these
+routines, UNPACKAA and UNPACKBB.
+BLP$
+There are special libraries which must be linked with an acquisition
+histogramming task.  The file \b\/usr/acq/wks/scanuv.make\\ is a prototype
+make file.  You need to change all occurrences of \u\myscan\\ to the
+name of your histogramming task.  A listing of \b\scanuv.make\\ follows:
+CY1$
+  ---------------------------------------------------------------------
+
+DIRA=  /usr/hhirf/
+DIRB=  /usr/acq/wks
+
+OBJS= $(DIRB)scanuv.o $(DIRA)bansup2.o myscan.o
+LIBS= $(DIRB)scanuvlib.a $(DIRA)scanulib.a $(DIRB)acqlib.a $(DIRA)orphlib.a\
+      $(DIRB)ipclib.a
+
+myscan: $(OBJS) $(LIBS)
+	f77 -O4 $(OBJS) $(LIBS) -o myscan
+  ---------------------------------------------------------------------
+BLP$
+SEC$.090 Control of VME Front-End Processor
+BLP$
+From the PACMAN window you can do everything you need to do with
+the VME front-end processor. You can boot the VME processor, load
+the VME acquisition code, compile and load your PAC program, initialize
+the VME acquisition system, start VME acquisition, stop VME acquisition
+and get get the acquisition status of the VME system.
+BLP$
+\B\BOOTVME ...............................................\\
+BLP$
+This command loads the code for a minimal operating system into the
+VME processor. After the basic operating system is loaded, the
+workstation can communicate directly with hardware such as FASTBUS
+and CAMAC. This operating system must be loaded and functional before
+using your setup codes which directly access CAMAC or FASTBUS.
+BLP$
+You may ask when do I need to boot the VME system? The most obvious time
+is after any time when power has been off in the VME crate. There
+are also various other hints. If your setup programs give \b\connection
+failure errors\\, it is a good hint that the VME operating system
+is not working. This can be checked with the \b\LT\\ command
+(see Section 120).
+BLP$
+Just remember that after \b\BOOTVME\\, there are several other things you
+must do in preparing to take data.
+BLP$
+\B\LOADACQ ...............................................\\
+BLP$
+Once the basic operating system is loaded(BOOTVME above), you can load
+the acquisition code into the VME processor. This is the code which
+decodes your readout instructions, responds to Event inputs, reads
+the specified hardware and sends event data to the workstation.
+This is a necessary but not sufficient step in starting data acquisition.
+BLP$
+\B\LOG your comments......................................\\
+BLP$
+The log file maintains a record of what has been done during data
+acquisition.  The LOG command provides a way for you to insert comments
+into the log file.  This line, including the keyword LOG, is written
+to the log file along with the date and time of day.
+BLP$
+\B\CD directory ..........................................\\
+BLP$
+Change PACMAN's working directory to the directory you specify. This
+applies only to the EDIT and PAC commands below. This is a convenient
+way to avoid typing complete paths for these two commands.
+BLP$
+\B\PWD ...................................................\\
+BLP$
+Show PACMAN's current working directory.
+BLP$
+\B\DIR [options]..........................................\\
+BLP$
+List the files in the current working directory.  Use this command just
+as you would use \b\ls\\ in a normal window.  In fact, you may type \b\ls\\
+instead of \b\dir\\.
+BLP$
+\B\EDIT filename .........................................\\
+BLP$
+This command creates a new window on top of your PACMAN window and starts
+a vi session on the specified file. When you exit your vi session,
+the window is deleted and you return to PACMAN. Note that PACMAN will
+NOT execute another command until you exit the vi session! Also, when
+you exit the vi session, an entry will be made in the log file show that
+the EDIT command has been used. NO, it does not indicate if changes
+were make in the PAC file! Sorry about that.
+BLP$
+\B\PAC filename [L] ......................................\\
+BLP$
+When satisfied with your PAC program, you need to compile and load
+the PAC into the VME processor. This command is identical to what
+you need to execute PAC in any other window.  See the PAC 
+documentation for details.
+BLP$
+If you specified the \b\L\\ option and PAC completed without errors,
+the following commands are also executed:
+INP$
+1)... STOPVME - Stops the VME Acquisition
+INP$
+2)... INITVME - Initialize the VME acquisition system
+BLP$
+If the INITVME command completes without error, 
+the next \b\TRUN\\ command will cause the PAC file to
+be written to tape.
+BLP$
+\B\INITVME ...............................................\\
+BLP$
+The VME acquisition system must initialized after a new PAC is
+loaded.  Since the PAC command now does this, you no longer need to
+do the INITVME command.  However, it does no harm.
+Note that you can
+NOT initialize the VME acquisition system if VME acquisition is
+running.
+BLP$
+The workstation which sends the INITVME command is the one which
+receives event data and messages from the VME system.
+BLP$
+Many errors are possible during the initialization of
+the VME(nonexistent CAMAC crates or FASTBUS modules etc. etc.).
+If there are errors, you will get an error message in the PACMAN window.
+However, additional information about the error(s) may be present in the
+logger window.
+BLP$
+\B\STARTVME ..............................................\\
+BLP$
+If the INITVME executed without error, you may now start the VME
+acquisition system. You must STARTVME if you want data sent
+to the workstation.  The TRUN command also starts VME acquisition.
+BLP$
+\B\STOPVME ...............................................\\
+BLP$
+Stop the VME acquisition. Readout by the VME processor stops and
+no more data are sent to the workstation.  TSTOP also stops VME acquisition.
+BLP$
+\B\STATVME ...............................................\\
+BLP$
+You may ask for the state of the VME acquisition system with this
+command. Possible responses are 1) not initialized, 2) running
+and 3) stopped. This status is reported only in the PACMAN window.
+BLP$
+\B\VMEHOST ...............................................\\
+BLP$
+Show the name of the workstation which receives event data and messaages
+form the VME system.  This the workstation from which the last
+INITVME command was issued.
+SEC$.100 TAPE Commands
+BLP$
+The process which records event data on tape is called TAPEOU.  This
+is stripped down version of LEMO.  It has a limited command set with
+some syntax differences.  There are many commands for positioning the
+output tape, examining input data and data on tape.  If you are a LEMO
+user, the main difference is that TAPEOU has only one output stream and
+commands don't now have an output stream specification. If you are not a 
+LEMO user, you should first read the LEMO documentation(See document file 
+\b\/usr/hhirf/doc/lemo.doc\\).  
+In any case,  the help topics ACQ, TAPE and DISP have a brief description of
+all commands.
+TAPEOU automatically writes an End-of-File and after every 10000 records.
+BLP$
+There are a few commands which are significantly different from LEMO.
+So, lets look at them.
+BLP$
+\b\OU RMTy: ..............................................\\
+BLP$
+You must select an output tape drive - rmt0: or rmt1:.  Presently,
+we have only one tape drive, rmt0, with the acquisition system but that
+subject to change.  So, just get used to specifying which one to use.
+BLP$
+\b\TRUN ..................................................\\
+BLP$
+This command starts recording event data on tape.  It is exactly equivalent
+to the command \b\copy\\ and you may use copy if you prefer.
+TRUN also starts the VME acquisition.
+BLP$
+If you have loaded a new PAC, the PAC file is written to tape.  The header
+number for PAC files begins with 999001 and is incremented after the
+file is written.  The header title is the PAC file name.
+Example PAC file header:
+CY1$
+      PAC file: /usr/orph22/users/mcsq/test.pac         999001
+BLP$
+You can recover a PAC file from tape by searching for the
+header number and then using the \b\STEX\\ command in \b\LEMO\\.
+BLP$
+\b\TCONT .................................................\\
+BLP$
+This command should be used when you are adding records to the last file.
+It is equivalent to the \b\cc\\ command.
+BLP$
+\b\TSTOP .................................................\\
+BLP$
+In LEMO, CTRL\C is used to stop writing to tape or display of data
+records.  PACMAN does not support this use of CTRL\C.  You should use
+the command \b\tstop\\ any time you would have used CTRL\C in LEMO.
+BLP$
+\b\SCAT ..................................................\\
+BLP$
+The SCAT commands control writing scaler data to tape.  For details,
+see the document \b\/usr/hhirf/doc/scat.doc\\.  For a list of commands,
+type \b\scat help\\.
+BLP$
+\b\STX ...................................................\\
+BLP$
+STX displays the tape position and the read error counter.  An example
+output is
+CY1$
+  ---------------------------------------------------------------------
+pacman: stx
+#MB USED, #MB REMAINING, READ ERRORS:   1912.7  2672.9    0
+TAPEOU->pacman:
+  ---------------------------------------------------------------------
+BLP$
+\b\AFON ..................................................\\
+BLP$
+Enables automatic file marks on the output tape.  A file mark is written
+on the output tape after every 10000 records.  This is the DEFAULT.
+BLP$
+\b\AFOF ..................................................\\
+BLP$
+Disables automatic file marks on the output tape.
+BLP$
+SEC$.110 Miscellaneous Commands
+BLP$
+\b\CMD and CMDF file .....................................\\
+BLP$
+Normally commands to PACMAN are input via the keyboard.  CMD or CMDF
+direct PACMAN to get commands from the specified file.  By default, the
+PACMAN appends \u\.cmd\\ to the \u\file\\ argument.  For example, the
+command
+CY1$
+     cmd  tape
+BLP$
+reads commands from the file \b\tape.cmd\\ in the current working directory.
+If there is a period in the argument \u\file\\, PACMAN does not append the
+\u\.cmd\\ and \u\file\\ is taken as the complete file name.  For example, the
+command
+CY1$
+     cmd  tape.xxx
+BLP$
+executes commands from the file \b\tape.xxx\\.
+BLP$
+\b\DATE and TIME .........................................\\
+BLP$
+Display the date and time.  DATE and TIME are identical.
+BLP$
+\b\DIR and LS ............................................\\
+BLP$
+List the files in the current working directory.  Use this command just
+as you would use \b\ls\\ in a normal window.  In fact, you may type \b\ls\\
+instead of \b\dir\\.
+BLP$
+\b\HUP ...................................................\\
+BLP$
+If your count rate is very low, it may take a long time to get a buffer
+of event data to be histogrammed.  The HUP command forces any event data
+in the VME processor to be sent to the workstation.  The workstation
+then pads the remainder of the current buffer with End-of-Events and
+passes the buffer to all processes getting event data from shared memory.
+BLP$
+\b\IPCS [options] ........................................\\
+BLP$
+IPCS displays the status of the interprocess communication facilities.
+See the manual page \u\ipcs\\ for a description of the options field.
+BLP$
+\b\KILL ALL ..............................................\\
+BLP$
+This is the command to terminate PACMAN and exit.  See Section 150
+for details.
+BLP$
+\b\LOG ...................................................\\
+BLP$
+The log file maintains a record of what has been done during data
+acquisition.  The LOG command provides a way for you to insert comments
+into the log file.  This line, including the keyword LOG, is written
+to the log file along with the date and time of day.
+BLP$
+\b\PRTDOC ................................................\\
+BLP$
+Use PRTDOC to print a copy of the PACMAN documentation.
+BLP$
+\b\PS [options] ..........................................\\
+BLP$
+PS displays the status of processes running in the workstation.
+See the manual page for \u\ps\\ for a description of the options field.
+BLP$
+\b\PWD ...................................................\\
+BLP$
+Show PACMAN's current working directory.
+BLP$
+\b\USERCONFIG ............................................\\
+BLP$
+The PACMAN parameters which may set from a configuration file may be
+displayed using the USERCONFIG command.  An example output follows:
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\userconfig\\
+***** Windows *****
+SCAN  /usr/bin/X11/xterm -n SCAN -geometry 80x32-0+10 #-41-38 -sb -ls -iconi
+DAMM  /usr/bin/X11/xterm -n DAMM -geometry 80x32+10+400 #-45-20 -sb -ls -ico
+
+
+***** Command Aliases *****
+
+***** User Commands *****
+Command: dmon
+       : /usr/bin/X11/xterm -geometry 80x50+10+10 -sb -e /usr/acq/wks/dmon
+
+Help file: /usr/acq/wks/pacman.hep
+Shared Memory buffer size (bytes): 8192
+Log Interval (seconds): 300
+pacman:
+
+  ---------------------------------------------------------------------
+BLP$
+SEC$.120 System Status Commands
+BLP$
+There may be rare occasions when you wonder is everything is working
+as you planned.  Well, here are a few sanity checks.  I will show a few 
+commands and what you should expect to see in the PACMAN window.
+Getting the expected response to these commands is a necessary but
+not sufficient condition to ensure that everything is working!
+BLP$
+\b\LT ....................................................\\
+BLP$
+This is a check of the VME system.  The response shown below assumes 
+that you have previously executed the BOOTVME and LOADACQ commands.
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\lt\\
+
+VME Processor: vme
+ID        Memory/Task    Size       Address      pc    evt1/evt2  pri/time
+ 0  T00           Task0    8    7000    9000  FF002CC4   97    0   64    1 W
+ 1  T01      Lan Driver   16    9000    D000      ACB0   56   64   70    1 W
+ 2  T02         Mem_mgr   76    D000   20000      FC2E    0    0   69    1 R
+ 3  M        Acq_Params  128   20000   40000
+ 4  T03          cnafxx   44   40000   4B000     4246C   -1    1   69    1 W
+ 5  T04          fastxx   44   4B000   56000     4D11E   -1    1   63    1 W
+ 6  T05       data_proc   44   56000   61000     58352   72    0   69    1 W
+ 7  T06          VMEacq  252   61000   A0000     663A2   -1    1   69    1 W
+ 8  T07          vmemon   46   A0000   AB800     A237E -128    0   69    1 W
+
+  ---------------------------------------------------------------------
+BLP$
+This is a list of the processes running in the VME processor.  The fact
+that you can get this list is a very good sign that the VME system is
+working.  Note that this list may at times have a different order and that
+additional processes may be loaded.  What is shown above is simply the
+minimum required.
+BLP$
+If the VME processor has gone belly up, the response, after about 15 seconds, 
+would be:
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\lt\\
+Connection failure, no acknowledgment - /usr/acq/vme/lt
+
+  ---------------------------------------------------------------------
+BLP$
+So what do I do now? Well, try BOOTVME followed by LOADACQ.  If these
+commands seem to work, try LT again.  If LT now works, you will need to
+load the PAC and STARTVME to resume data acquisition.
+BLP$
+The next thing to try is manually resetting the FORCE CPU-40.  Go to the
+VME crate and push the Reset switch. The Reset switch is the upper switch
+on the module front panel.  Now at the DECstation do BOOTVME, LOADACQ and
+LT again.  If LT works, you still need to load the PAC and STARTVME to
+resume data acquisition.
+BLP$
+If none of that works, you are in deep dodo.  Quit while you're ahead, call 
+for HELP and find something else to amuse yourself with until HELP arrives.
+BLP$
+\b\PS ....................................................\\
+BLP$
+This shows the processes in the workstation.  The response shown below
+only includes the essential processes.  Your list will most
+likely include many others.  Just check to see that the ones listed below
+are in your list.
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\ps\\
+  PID TT STAT   TIME COMMAND
+ 9431 p1 S      0:00 /usr/bin/X11/xterm -n LOGGER -geometry 116x10+0+705 #+970+
+ 9432 p1 S <    1:04 /usr/acq/wks/pftoipc -d vme
+ 9433 p1 I      0:00 /usr/acq/wks/femsg -d vme
+ 9434 p1 I <    0:00 /usr/acq/wks/tape vme
+ 9442 p2 S      0:00 /usr/acq/wks/logger vme
+
+  ---------------------------------------------------------------------
+BLP$
+If any of the processes above is not present, you have a problem.  The
+proper thing to do is KILL ALL in the PACMAN window and run PACMAN again.
+BLP$
+\B\STATVME ...............................................\\
+BLP$
+You may ask for the state of the VME acquisition system with this
+command. Possible responses are 1) not initialized, 2) running
+and 3) stopped. This status is reported only in the PACMAN window.
+BLP$
+\B\VMEHARDWARE ...........................................\\
+BLP$
+VMEHARDWARE dislays a list of the hardware modules the VME processor
+found when it was booted.  Compare the list of interface modules
+with what is physically installed in the VME crate. Example output follows:
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\vmehardware\\
+VME System Hardware Configuration
+
+    VME Processor Logical Name: vme
+VME Processor Ethernet Address: 00-80-42-00-29-79
+ Default Host Ethernet Address: 08-00-2b-24-e0-5b
+        Boot Multicast Address: 03-6d-63-73-71-00
+Available Interface Modules are:
+
+KSC 2917 -  CAMAC Interface Module
+LRS 1131 -  FASTBUS Interface Module
+CES 8170 -  FERA Readout Module
+TRIGGER  -  ORNL Trigger Module
+pacman: 
+
+  ---------------------------------------------------------------------
+
+BLP$
+\B\PWD ...................................................\\
+BLP$
+Show PACMAN's working directory.  This command can be used to check
+what directory you are in prior to using an \b\EDIT\\ or \b\PAC\\
+command.
+BLP$
+\B\DIR ...................................................\\
+BLP$
+List the files in the current working directory.
+SEC$.130 Testing VME/DECstation Connection
+BLP$
+You may load the VME processor with a code which generates an event
+stream.  Each event has 28 parameters.  The IDs are 1 thru 28.  Within
+an event the data for every parameter has the same value.  That data
+value is generated by a random number routine and has a range of 0 thru 1023.
+The command is
+BLP$
+\B\TESTVME ...............................................\\
+BLP$
+An example using TESTVME follows:
+CY1$
+  ---------------------------------------------------------------------
+
+pacman: \b\testvme\\
+*********************** WARNING ************************
+*  Normal Acquisition Codes in the VME processor are   *
+*  being replaced with test programs.  These test      *
+*  programs generate an event stream for testing the   *
+*  VME/DECstation connection.                          *
+*                                                      *
+* NOTE: When finished testing, your should execute the *
+*       the command - loadacq                          *
+*********************** WARNING ************************
+Delete the acquisition tasks in the VME processor
+
+Now load the VME/DECstation test programs.
+
+VME/DECstation test codes are now loaded.
+pacman: \b\initvme\\
+pacman: \b\startvme\\
+TAPEOU->\b\rdi\\
+RECORD, # BYTES READ =       1    8192    STAT =GOOD
+
+TAPEOU->\b\dev 1,256\\
+pacman: EVENT: Start word =    1 Number of parameters =  28
+   1  3CD;     2  3CD;     3  3CD;     4  3CD;     5  3CD;     6  3CD; 
+   7  3CD;     8  3CD;     9  3CD;    10  3CD;    11  3CD;    12  3CD; 
+  13  3CD;    14  3CD;    15  3CD;    16  3CD;    17  3CD;    18  3CD; 
+  19  3CD;    20  3CD;    21  3CD;    22  3CD;    23  3CD;    24  3CD; 
+  25  3CD;    26  3CD;    27  3CD;    28  3CD; 
+EVENT: Start word =   59 Number of parameters =  28
+   1   29;     2   29;     3   29;     4   29;     5   29;     6   29; 
+   7   29;     8   29;     9   29;    10   29;    11   29;    12   29; 
+  13   29;    14   29;    15   29;    16   29;    17   29;    18   29; 
+  19   29;    20   29;    21   29;    22   29;    23   29;    24   29; 
+  25   29;    26   29;    27   29;    28   29; 
+EVENT: Start word =  117 Number of parameters =  28
+   1   BC;     2   BC;     3   BC;     4   BC;     5   BC;     6   BC; 
+   7   BC;     8   BC;     9   BC;    10   BC;    11   BC;    12   BC; 
+  13   BC;    14   BC;    15   BC;    16   BC;    17   BC;    18   BC; 
+  19   BC;    20   BC;    21   BC;    22   BC;    23   BC;    24   BC; 
+  25   BC;    26   BC;    27   BC;    28   BC; 
+EVENT: Start word =  175 Number of parameters =  28
+   1  28C;     2  28C;     3  28C;     4  28C;     5  28C;     6  28C; 
+   7  28C;     8  28C;     9  28C;    10  28C;    11  28C;    12  28C; 
+  13  28C;    14  28C;    15  28C;    16  28C;    17  28C;    18  28C; 
+  19  28C;    20  28C;    21  28C;    22  28C;    23  28C;    24  28C; 
+  25  28C;    26  28C;    27  28C;    28  28C; 
+TAPEOU->
+
+  ---------------------------------------------------------------------
+SEC$.140 What to Do If PACMAN Refuses to RUN
+BLP$
+If you attempt to run PACMAN in a second window or some other user
+is running PACMAN using the same VME processor, it will refuse your request.
+You will get a list
+of the processes and be informed that PACMAN is already running.
+CY1$
+  ---------------------------------------------------------------------
+
+orph38> \b\pacman\\
+ 9429 p1 I      0:26 /usr/acq/wks/pacman
+ 9432 p1 S <    1:04 /usr/acq/wks/pftoipc -d vme
+ 9433 p1 I      0:00 /usr/acq/wks/femsg -d vme
+ 9434 p1 I <    0:00 /usr/acq/wks/tape vme
+ 9442 p2 S      0:00 /usr/acq/wks/logger vme
+pacman is already running!!
+orph38>
+
+  ---------------------------------------------------------------------
+BLP$
+It is also possible that all of PACMAN's essential processes do not terminate
+when you exit PACMAN.  In this case, you will get a list of one or more
+processes which must be terminated before PACMAN can run again.  
+ODP$
+ NOTE: The
+DAMM and  SCAN  windows are NOT essential processes.
+PACMAN never terminates these but does recognize their presence on start up.
+BLP$
+The following is an example:
+CY1$
+  ---------------------------------------------------------------------
+
+orph38> \b\pacman\\
+ 9434 p1 I      0:00 /usr/acq/wks/tape vme
+
+One or more of pacman's processes are already running
+orph38>
+
+  ---------------------------------------------------------------------
+BLP$
+In this example, you need to kill process with PID 9434.  The first attempt
+should be:
+CYB$
+       kill 9434
+BLP$
+Now either try to run PACMAN again or use the \b\ps\\ command to see if the
+process is gone.  If the process is still present, the following should
+terminate it:
+CYB$
+       kill -9 9434
+BLP$
+SEC$.150 How to Exit PACMAN
+BLP$
+After several hectic days and sleepless nights,  the experiment is over
+and it is now time to shutdown everything, pack and go catch our plane.
+How do you stop PACMAN?  The command is
+BLP$
+\b\KILL ALL ......(this one MUST be upper case)...........\\
+BLP$
+If you were writing event data to tape, two End-of-Files(EOF) will be written
+on tape.  Then the tape is positioned between the two EOFs. All of PACMANs 
+resources will be released and all of it's processes are terminated.
+PACMAN will exit and you will get a system prompt.
+BLP$
+There are circumstances when PACMAN will prompt you to use the
+KILL ALL command and then run PACMAN again.  What can I say, it is
+good advice.
+BLP$
+SEC$.160 Run-time Help Text - /usr/acq/wks/pacman.hep
+CY1$
+$$$$SCAT - For Scaler-to-Tape related commands
+Commands used to control scaler dumps to the data tape ------------
+SCAT  filename      ;Initializes SCAT from filename
+
+SCAT  ON            ;Dumps scalers before EOF only
+SCAT  ON  CLR       ;Dumps scalers before EOF & clears post dump
+SCAT  ON  TSEC      ;Dumps scalers every TSEC & before EOF
+SCAT  ON  TSEC  CLR ;Dumps scalers every TSEC & before EOF & clears
+SCAT  OFF           ;Disables scaler dumps
+
+SCAT  NORT          ;Normalize count rates to internal clock
+SCAT  NORS          ;Normalize count rates as specified by snit-file
+SCAT  UNOR          ;Count rates un-normalized
+
+SCAT  STAT          ;Displays/logs setup status
+SCAT  HELP          ;Display on-line help
+SCAT  H             ;Display on-line help
+
+SCAT  LERR ON       ;Turns error display/logging ON
+SCAT  LERR OFF      ;Turns error display/logging OFF
+
+SCAT  ZERR          ;Zeros error counters
+SCAT  ZDUM          ;Zeros scaler dump counter
+SCAT  ZERO          ;Zeros all scalers
+$$$$VME  - For commands to control and get status of Front-End
+COMMANDS TO THE FRONT-END VME PROCESSOR ..............................
+BOOTVME    - Reboot the VME processor
+LOADACQ    - Download code for the data acquisition system to VME processor
+
+INITVME    - Initialize the acquisition software.  MUST be done after PAC.
+STARTVME   - Start acquisition in the VME processor
+STOPVME    - Stop acquisition in the VME processor
+STATVME    - Show status of acquisition in VME processor
+
+VMEHOST    - Show workstation which receives event data
+PACFILE    - SHow name of PAC file
+
+PAC file l - Compile and load your front-end acquisition code.
+EDIT file  - Edit user front-end acquisition code (vi editor).
+
+CD dir     - Change directory to dir.  Useful if set to directory of your
+             xxx.pac files.  If so set, you need not specify the directory
+             path for PAC and EDIT commands.
+PWD        - Show current working directory.
+DIR        - List the files in the current working directory.
+$$$$ACQ  - Commands related to data acquisition
+ACQUISITION COMMANDS .................................................
+OU rmty   - Specifies Tape (rmt0 or rmt1) for OUTPUT
+
+HTIT      - Set title for output header generated by TAPEOU
+HNUM      - Set next header number for output header
+HOUT      - Write locally generated header
+
+EOF       - Write EOF on OUTPUT
+
+LOG mess  - Insert comments into log file
+
+TRUN      - To START writing the Acquisition Data Stream to tape
+TCONT     - To Continue writing the Acquisition Data Stream to tape
+TSTOP     - To STOP writing the Acquisition Data Stream to tape
+
+HUP       - Histogram update.  Useful for very low rate acquisition.
+
+ZBUF      - Clear all shared memory buffers.
+$$$$TAPE - For Tape control commands
+TAPE CONTROL COMMANDS ................................................
+OU1 rmty: - Specifies Tape (rmt0: or rmt1:) for OUTPUT
+
+RDI  N    - Read    N records from Data Stream
+RDO  N    - Read    N records from OUTPUT
+FRO  N    - Forward N records on   OUTPUT
+BRO  N    - Backup  N records on   OUTPUT
+FFO  N    - Forward N files   on   OUTPUT
+BFO  N    - Backup  N files   on   OUTPUT
+RWO       - Rewind           OUTPUT
+BTO       - Go to bottom of  OUTPUT (to DBL-EOF, backup 1 EOF)
+
+CLO       - Close            OUTPUT
+ULO       - Unload and close OUTPUT
+
+STX       - Display tape position and error counter
+
+AFON      - Enable automatic file mark after 10000 records (DEFAULT)
+AFOF      - Disable automatic file mark
+$$$$DISP - For commands which display Data-records
+COMMANDS FOR READING & DISPLAY OF DATA-RECORDS .......................
+RDI  N    - Read    N records from Data Stream
+RDO  N    - Read    N records from OUTPUT
+
+PEV IA,IB - Print   16-bit word IA thru IB in EVENT format
+DEV IA,IB - Display 16-bit word IA thru IB in EVENT format
+
+PZ  IA,IB - Print   16-bit word IA thru IB in HEX   format
+DZ  IA,IB - Display 16-bit word IA thru IB in HEX   format
+
+PA  IA,IB - Print   16-bit word IA thru IB in ASCII format
+DA  IA,IB - Display 16-bit word IA thru IB in ASCII format
+
+PI  IA,IB - Print   16-bit word IA thru IB in INT*2 format
+DI  IA,IB - Display 16-bit word IA thru IB in INT*2 format
+
+PIF IA,IB - Print   32-bit word IA thru IB in INT*4 format
+DIF IA,IB - Display 32-bit word IA thru IB in INT*4 format
+$$$$STAT - Commands to display system status and test VME system
+COMMANDS TO SHOW STATUS AND TEST SYSTEM..................................
+USERCONFIG- Display commands and parameters from the configuration
+            file.
+
+TESTVME   - Download code to the VME processor which generates a data
+            stream.  This is a fixed pattern of 28 parameters/event.
+            IDs are 0 thru 27.  Parameter values are all the same but
+            the value increments after each event (range = 0 thru 4095).
+
+LT        - List processes in the VME processor.  If this gives no
+            error, the VME processor is alive and kicking.
+
+STATVME   - Show status of acquisition in the VME processor.
+
+PS        - Lists your processes in the DECStation.
+PWD       - Show current working directory.
+DIR       - List the files in the current working directory.
+
+VMEHARDWARE - Show hardware installed in the VME crate
+$$$$MISC - Miscellaneous Commands
+MISCELLANEOUS COMMANDS ..................................................
+CMD file  - Get PACMAN commands from file.cmd
+
+LOG mess  - Write message to acquisition log file
+
+DATE      - Show date and time of day
+
+TIME      - Same as DATE
+
+IPCS opts - Show status of system IPC resources
+
+LS        - Show directory
+
+DIR       - Same as LS
+
+PRTDOC    - Print PACMAN user document
+
+PWD       - Show current working directory
+$$$$EXIT - How to STOP the acquisition system
+HOW TO EXIT PACMAN ......................................................
+
+KILL ALL  - STOP all acquisition.  This terminates all acquisition
+            processes in the DECStation.  To run acquisition again
+            you must run pacman again.  If tape output is running,
+            two EOFs are written and then the tape is positioned
+            between the two EOFs.
+
+            WARNING:  This command MUST be upper case!
+$$$$CMDS - Command list
+
+VME commands:
+    bootvme       cd             edit          initvme
+    kt            lt             loadacq       pac
+    pacc          pacfile        startvme      statvme
+    stopvme       testvme        vi            vmehost
+    vmehardware
+
+Help commands:
+    911           end            exit          newf
+    h             help           quit
+
+Miscellaneous commands:
+    cmd           cmdf           date          dir
+    hup           ipcs           kill          log
+    ls            prtdoc         ps            pwd
+    time          userconfig     zbuf
+
+Tape commands:
+    afof          afon           bfo           bro
+    bto           clo            da            dev
+    di            dif            dz            eof
+    ffo           fro            hnum          hout
+    htit          ou             ou1           ulo
+    pa            pev            pi            pif
+    psav          pz             rdi           rdo
+    rwo           scat           stx           tcont
+    trun          tstop
+$$$$NEW  - How to update Help messages
+HOW TO UPDATE YOUR HELP MESSAGES.........................................
+
+NEWF - Help file may be revised when acquisition is running.  This
+       command will replace the current help with the revised version.
+$$$$NEW  - How to update Help messages
+HOW TO UPDATE YOUR HELP MESSAGES.........................................
+
+NEWF - Help file may be revised when acquisition is running.  This
+       command will replace the current help with the revised version.
+BLP$
+SEC$.170 Built-in Command List
+BLP$
+This section lists all of PACMAN's built-in commands.  User defined commands
+and windows may NOT be identical to any of these commands.
+CY1$
+VME commands:
+    bootvme       cd             edit          initvme
+    kt            lt             loadacq       pac
+    pacc          pacfile        startvme      statvme
+    stopvme       testvme        vi            vmehost
+    vmehardware
+
+Help commands:
+    911           end            exit          newf
+    h             help           quit
+
+Miscellaneous commands:
+    cmd           cmdf           date          dir
+    hup           ipcs           kill          log
+    ls            prtdoc         ps            pwd
+    time          userconfig     zbuf
+
+Tape commands:
+    afon          afon           bfo           bro
+    bto           clo            da            dev
+    di            dif            dz            eof
+    ffo           fro            hnum          hout
+    htit          ou             ou1           ulo
+    pa            pev            pi            pif
+    psav          pz             rdi           rdo
+    rwo           scat           stx           tcont
+    trun          tstop
+BLP$
+SEC$.180 How to Reboot the DECstation
+BLP$
+Since all else has failed, it is time to reboot the DECstation.
+BLP$
+First of all, try to find a window were the workstation seems to respond
+to your keyboard input.  If you find such a window, type the following
+commands(your input is in bold type):
+CY1$
+      \b\su root\\
+      Password:\b\riefdebu\\
+      # \b\shutdown -r now\\
+BLP$
+Note that the workstation does NOT echo the password!
+BLP$
+If this is working, you should see immediate changes on the console screen.
+In about 15 seconds the screen should have a white foreground and black
+background.  The whole reboot process takes about 6 minutes.  There will be
+lots of output to the screen during this process.  At the
+end you should see the XWindow login prompt.
+BLP$
+If the above procedure doesn't seem to work, the next step is to halt the
+workstation using a Halt switch on the rear panel.  The figure following this
+section shows the location of the switch.  Note that it is difficult to reach
+the switch due to cables and ethernet adapters.  Press and release the Halt
+switch.  Very soon you should see the console prompt at the bottom left of
+the screen(white on black background).  At the prompt, type the following
+command:
+CY1$
+      >> \b\boot\\
+BLP$
+The boot process will take about 6 minutes.  If the Xwindow login prompt
+does not appear within this time, it is worth repeating the procedure
+using the Halt switch one and only one more time!
+BLP$
+If all of this has failed, it is now time to go back to the motel,
+take a couple of shots of good whiskey, and call DEC Field Service in
+the morning.
+BLP$
+SEC$.190 How to Access On-Line Documentation
+BLP$
+Almost all documents covering data acquisition and analysis are available
+on-line.  These are in the following three directories:
+INP$
+1).. \b\/usr/hhirf/doc\\    -  Data analysis
+INP$
+2).. \b\/usr/hhirf/wks/doc\\ - Data acquisition
+INP$
+3).. \b\/usr/hhirf/vme/doc\\ - VME acquisition system
+BLP$
+The \b\.doc\\ files in these directories are document files and are
+inputs to \b\txx\\ text formating code.  There are three output formats
+available.
+INP$
+1).. Plain ASCII file   - Suitable for viewing with a text editor
+INP$
+2).. LN03 file - May be printed on a DEC LN03 printer or compatible
+INP$
+3).. Postscript Printer output
+BLP$
+Plain ASCII files can be viewed with your favorite editor and printed
+on almost any printer.  To get a plain ASCII file for this document,
+type
+CYB$
+   /usr/hhirf/txx /usr/hhirf/wks/doc/pacmanII
+BLP$
+The output file is in your current working directory and is
+\b\pacmanII.tex\\.  Many documents are already available in this format
+in the document directories.
+BLP$
+To produce a file for a LN03 or compatible printer, type
+CYB$
+   /usr/hhirf/txx /usr/hhirf/wks/doc/pacmanII x
+BLP$
+The output is file \b\pacmanII.txx\\ which must be queued to the
+printer to get a hard copy.  The output file is in your current working
+directory.
+BLP$
+Finally, if you have a Postscript printer, type
+CYB$
+   /usr/hhirf/dodoc pacmanII
+BLP$
+The output is queued to the default Postscript printer.  However,  two
+temporary files, \b\pacmanII.txx\\ and \b\pacmanII.ps\\, are created in your
+current working directory.  These files are deleted after the print
+request is queued.
+QIT$

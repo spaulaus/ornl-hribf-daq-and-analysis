@@ -1,0 +1,20 @@
+#! /bin/csh
+if ($1 == "hhirf" || $1 == "HHIRF") then
+   setenv  CFLAGS '-O2 -DHHIRF'
+else
+   setenv  CFLAGS '-O2'
+endif
+make -f acqcleanup.make
+make -f acqlib.make
+make -f datamon.make
+make -f dmon.make
+make -f extract.make
+make -f femsg.make
+make -f ipcmon.make
+make -f logger.make
+make -f logscan.make
+make -f pacman.make
+make -f pftoipc.make
+make -f rmpftoipc.make
+make -f shmdidle.make
+make -f shmspy.make

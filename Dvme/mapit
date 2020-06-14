@@ -1,0 +1,17 @@
+#!/bin/csh -f
+#
+#
+#
+if ($1 == "") then
+  echo "Usage:  mapit code address(hex)"
+  exit
+endif
+if ($2 == "") then
+  echo "Need load address in hex"
+  exit
+endif
+/usr/oasys2/l68 $1-o1:x$2,$1,=$1.bin
+rm -f $1.run
+/tera/mcsq/Dlinux/Dvme/map68 $1
+rm -f $1.map
+exit

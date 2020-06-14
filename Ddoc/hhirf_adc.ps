@@ -1,0 +1,678 @@
+%!PS-Adobe-3.0
+%%Creator: enscript
+%%For: orph38.phy.ornl.gov:mcsq (jim mcconnell)
+%%Title: stdin
+%%CreationDate: Mon Jun 24 22:58:42 1996
+%%DocumentNeededResources: font Courier-Bold Courier
+%%Pages: (atend)
+%%BeginProlog
+% Start of enscript.pro -- prolog for text file translator
+% Copyright (c) 1984,1985,1987 Adobe Systems Incorporated. All Rights Reserved. 
+% GOVERNMENT END USERS: See Notice file in TranScript library directory
+% -- probably /usr/lib/ps/Notice
+% RCSID: $Header: /disks/hobo/vp6/snichols/rel4.0/src/transcript/lib/RCS/enscript.pro,v 4.0 1992/08/21 15:38:20 snichols Exp $
+/$enscript 50 dict def $enscript begin
+/S/show load def
+/bd { bind def } bind def
+/X{exch 0 rmoveto S} bd
+/Y{exch 0 exch rmoveto S} bd
+/B{3 1 roll moveto S} bd
+/F{$fd exch get setfont} def
+/U{1440 mul}def
+/UP{U 72 div}def
+/StartPage{/svpg save def .05 dup scale} bd
+/EndPage{svpg restore showpage} bd
+/DoPreFeed{/statusdict where{pop
+ statusdict/prefeed known{statusdict exch/prefeed exch put 0}if}if pop} bd
+/SetUpFonts
+ {dup/$fd exch array def{findfont exch scalefont $fd 3 1 roll put}repeat}def
+/InitGaudy{/Columns exch def
+ /ftD /Times-Bold findfont 12 UP scalefont def
+ /ftF /Times-Roman findfont 14 UP scalefont def
+ /ftP /Helvetica-Bold findfont 30 UP scalefont def} bd
+/LB{/pts exch UP def /charcolor exch def /boxcolor exch def /font exch def
+ /label exch def /dy exch def /dx exch def /lly exch def /llx exch def
+ gsave boxcolor setgray
+ llx lly moveto dx 0 rlineto 0 dy rlineto dx neg 0 rlineto closepath fill
+ /lines label length def
+ /yp lly dy add dy lines pts mul sub 2 div sub pts .85 mul sub def
+ font setfont charcolor setgray
+ label {dup stringwidth pop 2 div llx dx 2 div add exch sub yp moveto show
+   /yp yp pts sub def}forall grestore} bd
+/Gaudy{/plength exch def /BarLength exch def /hy exch def /hx exch def
+ /Page exch def /Date exch def  /File exch def /Comment exch def
+ hx hy  BarLength 144 sub .25 U [File] ftF .97 0 14 LB
+ hx hy 360 add BarLength 144 sub .25 U [Comment] ftF 1 0 14 LB
+ hx hy 1 U .5 U Date ftD .7 0 12 LB
+ BarLength 1080 sub hy 1 U .5 U [Page] ftP .7 1 30 LB
+ 2 1 Columns {1 sub plength Columns div mul 172.80 sub hy moveto 0 0 hy sub rlineto
+ stroke}for } bd
+/Landscape { 90 rotate 0 exch translate } bd
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+1    200.000 /Courier-Bold
+%%IncludeResource: font Courier
+0    200.000 /Courier
+2 SetUpFonts
+%%EndSetup
+%%Page: ? 1
+StartPage
+1 F
+900 15260 (                      Mon Jun 24 22:58:42 1996        1)B
+0 F
+5100 14820(HHIRF ADC INTERFACE)B
+2100 14160(_)B
+-120(I  _)X
+-120(H_)X
+-120(A_)X
+-120(R_)X
+-120(D_)X
+-120(W_)X
+-120(A_)X
+-120(R_)X
+-120(E)X
+2100 13720(The ADC interface consists of a single width CAMAC module and a 5  1/4)B
+2100 13500(inch  rack mount chassis.  These are connected via a 40 conductor flat)B
+2100 13280(cable whose length should not exceed 10 meters.)B
+2100 12840(_)B
+-120(I._)X
+-120(1  _)X
+-120(R_)X
+-120(a_)X
+-120(c_)X
+-120(k _)X
+-120(M_)X
+-120(o_)X
+-120(u_)X
+-120(n_)X
+-120(t _)X
+-120(C_)X
+-120(h_)X
+-120(a_)X
+-120(s_)X
+-120(s_)X
+-120(i_)X
+-120(s)X
+2100 12400(The rack mount chassis holds up to 16 ADC personality  cards.   Viewed)B
+2100 12180(from  the  rear,  there  are  16 slots numbered 1 thru 16 from left to)B
+2100 11960(right.  Personality cards are available for the following ADCs:)B
+3540 11520(1\) Canberra Model 8060 and Model 8080)B
+3540 11300(2\) Nuclear Data  ND581.)B
+2100 10860(There are two rows of indicators on the front panel - ADC ENABLED  and)B
+2100 10640(ADC ACTIVE.  The ADC ACTIVE is on when the following conditions exist:)B
+2340 10420(a\) The cable between the rack mount chassis and the CAMAC module)B
+2700 10200(is installed.)B
+2340 9980(b\) Both the rack mount chassis and the CAMAC crate are powered up.)B
+2340 9760(c\) The ADC is enabled - ADC ENABLE on.)B
+2340 9540(d\) The ADC is performing conversions and presenting data to the)B
+2700 9320(interface.)B
+2100 8880(If the conversion rate is greater than 5 per second, ADC  ACTIVE  will)B
+2100 8660(be on continuously.  Otherwise, it will flash at the conversion rate.)B
+2100 8220(The ADC ABORT input accepts slow NIM or TTL levels.   This  signal  is)B
+2100 8000(routed  to each ADC. Input impedance is > 2K ohms.  Maximum input vol-)B
+2100 7780(tage is +or- 15 volts.  Minimum pulse width is 250 nanoseconds.)B
+2100 7340(_)B
+-120(I._)X
+-120(2  _)X
+-120(C_)X
+-120(A_)X
+-120(M_)X
+-120(A_)X
+-120(C _)X
+-120(m_)X
+-120(o_)X
+-120(d_)X
+-120(u_)X
+-120(l_)X
+-120(e)X
+2100 6900(The CAMAC module contains a 16 bit data register for each  of  the  16)B
+2100 6680(possible  ADCs.   A  16  bit status register indicates which ADCs have)B
+2100 6460(vaild data available.  The module performs the following functions:)B
+2340 6240(a\) Read an ADC)B
+2340 6020(b\) Read and Reset an ADC)B
+2340 5800(c\) Read the status register)B
+2340 5580(d\) Enable/Disable ADCs)B
+2340 5360(e\) Enable/Disable LAMs)B
+2340 5140(f\) Test LAM status)B
+2340 4920(g\) Reset ADCs)B
+2100 4480(Two front panel indicators are provided. N indicates any module access)B
+2100 4260(from  the  CAMAC  dataway.   LAM  indicates  presence  of a LAM in the)B
+2100 4040(module.)B
+2100 3600(_)B
+-120(I_)X
+-120(I  _)X
+-120(C_)X
+-120(A_)X
+-120(M_)X
+-120(A_)X
+-120(C _)X
+-120(F_)X
+-120(u_)X
+-120(n_)X
+-120(c_)X
+-120(t_)X
+-120(i_)X
+-120(o_)X
+-120(n _)X
+-120(C_)X
+-120(o_)X
+-120(d_)X
+-120(e_)X
+-120(s)X
+2100 3160(For those commands which reference an ADC using a  CAMAC  sub-address,)B
+2100 2940(A\(0\)  corresponds  to  slot  1  and A\(15\) corresponds to slot 16.  For)B
+2100 2720(those commands which reference an  ADC  by  a  data  bit,  R1  and  W1)B
+2100 2500(correspond to slot 1 and R16 and W16 correspond to slot 16.  R1 and W1)B
+2100 2280(are the least significant CAMAC read and write lines.)B
+2100 1840(_)B
+-120(I_)X
+-120(I._)X
+-120(1 _)X
+-120(S_)X
+-120(t_)X
+-120(a_)X
+-120(t_)X
+-120(u_)X
+-120(s _)X
+-120(R_)X
+-120(e_)X
+-120(g_)X
+-120(i_)X
+-120(s_)X
+-120(t_)X
+-120(e_)X
+-120(r - _)X
+-120(F\(_)X
+-120(1\)_)X
+-120(A\(_)X
+-120(1_)X
+-120(2\))X
+2100 1400(The status register has a bit for each of the 16 possible  ADCs.   For)B
+2100 1180(each  status bit which is a "one", the corresponding ADC has completed)B
+2100 960(a conversion and its ADC data register contains the result of the  la-)B
+2100 740(test conversion.)B
+EndPage
+%%Page: ? 2
+StartPage
+1 F
+900 15260 (                      Mon Jun 24 22:58:42 1996        2)B
+0 F
+2100 14600(_)B
+-120(I_)X
+-120(I._)X
+-120(2 _)X
+-120(A_)X
+-120(D_)X
+-120(C _)X
+-120(D_)X
+-120(a_)X
+-120(t_)X
+-120(a _)X
+-120(R_)X
+-120(e_)X
+-120(g_)X
+-120(i_)X
+-120(s_)X
+-120(t_)X
+-120(e_)X
+-120(r_)X
+-120(s - _)X
+-120(F\(_)X
+-120(0\)_)X
+-120(A\(_)X
+-120(y\) _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(F\(_)X
+-120(2\)_)X
+-120(A\(_)X
+-120(y\))X
+2100 14160(There is a seperate data register for each of the  16  possible  ADCs.)B
+2100 13940(If  the  corresponding bit is the status register is a "one", Q =1 and)B
+2100 13720(the data are the result of the latest conversion.  If the  status  re-)B
+2100 13500(gister bit is a "zero", Q =0 and the data are zero.  The Canberra ADCs)B
+2100 13280(provide up to 13 data bits.  The 14th bit of the ADC data register  is)B
+2100 13060(the INVALID bit from the ADC.)B
+2100 12620(F\(0\) never resets the status bit nor the ADC.  F\(2\)  resets  both  the)B
+2100 12400(status  bit  and the ADC if Q =1.  If Q =0, neither the status bit nor)B
+2100 12180(the ADC is reset.)B
+2100 11740(_)B
+-120(I_)X
+-120(I._)X
+-120(3  _)X
+-120(E_)X
+-120(n_)X
+-120(a_)X
+-120(b_)X
+-120(l_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(D_)X
+-120(i_)X
+-120(s_)X
+-120(a_)X
+-120(b_)X
+-120(l_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(A_)X
+-120(D_)X
+-120(C_)X
+-120(s - _)X
+-120(F\(_)X
+-120(1_)X
+-120(7\)_)X
+-120(A\(_)X
+-120(0\))X
+2100 11300(The data word for this function has a "one" for all ADCs to be enabled)B
+2100 11080(and a "zero" for all ADCs to be disabled.  This command is executed in)B
+2100 10860(two steps.  First, ALL ADCs are disabled, then the selected  ones  are)B
+2100 10640(enabled.   It is essential that ALL ADCs be reset following F\(17\)A\(0\).)B
+2100 10420(Use of F\(9\)A\(0\) is recommended.)B
+2100 9980(_)B
+-120(I_)X
+-120(I._)X
+-120(4 _)X
+-120(R_)X
+-120(e_)X
+-120(s_)X
+-120(e_)X
+-120(t_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(A_)X
+-120(D_)X
+-120(C_)X
+-120(s _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(s_)X
+-120(t_)X
+-120(a_)X
+-120(t_)X
+-120(u_)X
+-120(s _)X
+-120(b_)X
+-120(i_)X
+-120(t_)X
+-120(s - _)X
+-120(F\(_)X
+-120(9\)_)X
+-120(A\(_)X
+-120(0\) _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(F\(_)X
+-120(2_)X
+-120(3\)_)X
+-120(A\(_)X
+-120(0\))X
+2100 9540(In addition to the read and reset function \( F\(2\)A\(y\) \),  these  func-)B
+2100 9320(tions  reset  all  ADCs  and  status  bits or selected ones.  F\(9\)A\(0\))B
+2100 9100(resets ALL ADCs and their status bits.  For  the  function  F\(23\)A\(0\),)B
+2100 8880(the data word contains a "one" for all ADCs to be reset.)B
+2100 8440(_)B
+-120(I_)X
+-120(I._)X
+-120(5 _)X
+-120(S_)X
+-120(t_)X
+-120(a_)X
+-120(t_)X
+-120(u_)X
+-120(s _)X
+-120(t_)X
+-120(e_)X
+-120(s_)X
+-120(t_)X
+-120(i_)X
+-120(n_)X
+-120(g - _)X
+-120(F\(_)X
+-120(2_)X
+-120(7\)_)X
+-120(A\(_)X
+-120(1_)X
+-120(5\), _)X
+-120(F\(_)X
+-120(2_)X
+-120(7\)_)X
+-120(A\(_)X
+-120(1\) _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(F\(_)X
+-120(2_)X
+-120(7\)_)X
+-120(A\(_)X
+-120(0\))X
+2100 8000(These functions test conditions which can cause a  LAM,  but  are  in-)B
+2100 7780(dependent of the Enable/Disable for the LAM.)B
+2220 7340(F\(27\)A\(15\) - Q =1 if no ADC is busy.  For purposes of this test,)B
+3780 7120(busy is defined as the time interval between the ADC)B
+3780 6900(going busy and ADC data available in the CAMAC module.)B
+3780 6680(For this test to be useful, it is essential that all)B
+3780 6460(disabled ADCs are reset following F\(17\)A\(0\).)B
+2220 6020(F\(27\)A\(0\)  - Q =1 if LAM1 status is true.  LAM1 status becomes true)B
+3780 5800(when all ADCs go not busy.  LAM1 goes false only when)B
+3780 5580(all ADCs having data available have been reset.)B
+2220 5140(F\(27\)A\(1\)  - Q =1 if LAM2 status is true.  LAM2 status is the OR of)B
+3780 4920(all bits in the ADC status register and hence will be)B
+3780 4700(true any time one or more ADCs have data available.)B
+2100 4260(_)B
+-120(I_)X
+-120(I._)X
+-120(6   _)X
+-120(L_)X
+-120(A_)X
+-120(M _)X
+-120(e_)X
+-120(n_)X
+-120(a_)X
+-120(b_)X
+-120(l_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(d_)X
+-120(i_)X
+-120(s_)X
+-120(a_)X
+-120(b_)X
+-120(l_)X
+-120(i_)X
+-120(n_)X
+-120(g - _)X
+-120(F\(_)X
+-120(1_)X
+-120(7\)_)X
+-120(A\(_)X
+-120(1_)X
+-120(3\))X
+2100 3820(The data word bits W1 and W2 determine the Enable/Disable condition of)B
+2100 3600(LAM1 and LAM2 respectively.  A "one" enables the LAM and a "zero" dis-)B
+2100 3380(ables.  Note: Enabling or disabling the LAMs does not change  the  LAM)B
+2100 3160(status bits.)B
+2100 2720(_)B
+-120(I_)X
+-120(I._)X
+-120(7  _)X
+-120(C, _)X
+-120(Z _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(I_)X
+-120(n_)X
+-120(h_)X
+-120(i_)X
+-120(b_)X
+-120(i_)X
+-120(t)X
+2460 2280(C - Resets all ADCs, all ADC status bits and LAM1 status.  This is)B
+2940 2060(identical to F\(9\)A\(0\).)B
+2460 1620(Z - In addition to the functions performed by C, LAM1 and LAM2 are)B
+2940 1400(disabled and all ADCs are disabled.)B
+2100 960(The module does not use Inhibit in any way.)B
+EndPage
+%%Page: ? 3
+StartPage
+1 F
+900 15260 (                      Mon Jun 24 22:58:42 1996        3)B
+0 F
+2100 14820(_)B
+-120(I_)X
+-120(I._)X
+-120(8  _)X
+-120(H_)X
+-120(a_)X
+-120(r_)X
+-120(d_)X
+-120(w_)X
+-120(a_)X
+-120(r_)X
+-120(e _)X
+-120(t_)X
+-120(e_)X
+-120(s_)X
+-120(t - _)X
+-120(F\(_)X
+-120(1_)X
+-120(6\)_)X
+-120(A\(_)X
+-120(y\))X
+2100 14380(This function simulates data transfer from ADCs to the module.  Except)B
+2100 14160(for LAM1, all features of the CAMAC module can be verified independent)B
+2100 13940(of the ADCs.  It is recommended, however, that  the  cable  connecting)B
+2100 13720(the CAMAC module and the rack mount chassis be disconnected.)B
+2100 13060(_)B
+-120(I_)X
+-120(I_)X
+-120(I   _)X
+-120(P_)X
+-120(r_)X
+-120(o_)X
+-120(g_)X
+-120(r_)X
+-120(a_)X
+-120(m_)X
+-120(m_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(c_)X
+-120(o_)X
+-120(n_)X
+-120(s_)X
+-120(i_)X
+-120(d_)X
+-120(e_)X
+-120(r_)X
+-120(a_)X
+-120(t_)X
+-120(i_)X
+-120(o_)X
+-120(n_)X
+-120(s)X
+2100 12620(III.1  Enabling ADCs)B
+2100 12180(It is recommended that F\(17\)A\(0\) be followed by F\(9\)A\(0\).)B
+2100 11740(_)B
+-120(I_)X
+-120(I_)X
+-120(I._)X
+-120(2  _)X
+-120(R_)X
+-120(e_)X
+-120(a_)X
+-120(d_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(r_)X
+-120(e_)X
+-120(s_)X
+-120(e_)X
+-120(t_)X
+-120(i_)X
+-120(n_)X
+-120(g _)X
+-120(A_)X
+-120(D_)X
+-120(C_)X
+-120(s)X
+2100 11300(Each ADC having data available must be reset after reading  the  data.)B
+2100 11080(F\(2\)  resets  the  ADC immediately after reading the data.  If F\(0\) is)B
+2100 10860(used to read the ADC, it must be followed by a reset.)B
+2100 10420(_)B
+-120(I_)X
+-120(I_)X
+-120(I._)X
+-120(3  _)X
+-120(L_)X
+-120(A_)X
+-120(M _)X
+-120(p_)X
+-120(r_)X
+-120(o_)X
+-120(g_)X
+-120(r_)X
+-120(a_)X
+-120(m_)X
+-120(m_)X
+-120(i_)X
+-120(n_)X
+-120(g)X
+2100 9980(Two LAM sources are provided.  LAM1 occurs only after  all  busy  ADCs)B
+2100 9760(have  finished  conversion.  LAM2 occurs whenever any ADC has finished)B
+2100 9540(conversion.)B
+2100 9100(LAM1 is intended for use when two or more ADC are  operated  in  coin-)B
+2100 8880(cidence.  If this is used, the following proceedure is recommended:)B
+2340 8660(a\) F\(1\)A\(12\) - save data for use in reseting the ADCs.)B
+2340 8440(b\) Read those ADCs having data available.)B
+2340 8220(c\) F\(23\)A\(0\) with data from step a above.)B
+2100 7780(_)B
+-120(I_)X
+-120(V   _)X
+-120(C_)X
+-120(a_)X
+-120(r_)X
+-120(e _)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(F_)X
+-120(e_)X
+-120(e_)X
+-120(d_)X
+-120(i_)X
+-120(n_)X
+-120(g)X
+2100 7340(This equipment has already  been  subjected  to  shock  and  vibration)B
+2100 7120(tests.   All cables have been tested for tensile strength.  No further)B
+2100 6900(such testing is deemed necessary.)B
+2100 6460(No water, oil or mud is required for proper  operation.   Any  or  any)B
+2100 6240(combination  of  the  above  should  be  considered detrimental to the)B
+2100 6020(wellbeing of the equipment.)B
+2100 5580(This equipment is guaranteed not to function properly in vacuum.)B
+EndPage
+%%Page: ? 4
+StartPage
+1 F
+900 15260 (                      Mon Jun 24 22:58:42 1996        4)B
+0 F
+5100 14160(_)B
+-120(H_)X
+-120(H_)X
+-120(I_)X
+-120(R_)X
+-120(F _)X
+-120(A_)X
+-120(D_)X
+-120(C _)X
+-120(I_)X
+-120(n_)X
+-120(t_)X
+-120(e_)X
+-120(r_)X
+-120(f_)X
+-120(a_)X
+-120(c_)X
+-120(e)X
+4980 13940(_)B
+-120(C_)X
+-120(A_)X
+-120(M_)X
+-120(A_)X
+-120(C _)X
+-120(C_)X
+-120(o_)X
+-120(m_)X
+-120(m_)X
+-120(a_)X
+-120(n_)X
+-120(d _)X
+-120(S_)X
+-120(u_)X
+-120(m_)X
+-120(m_)X
+-120(a_)X
+-120(r_)X
+-120(y)X
+2100 13500(y = ADC number and is 0 thru 15)B
+2100 13280(CAMAC X=1 for all valid commands.)B
+2100 12840(F\(0\)A\(y\)  -  Read ADC\(y\).  Q=1 if ADC\(y\) status bit = 1.  If Q=0,)B
+3660 12620(then ADC data are zero. Does not reset ADC\(y\) nor ADC\(y\))B
+3660 12400(status bit.)B
+2100 11960(F\(1\)A\(12\) -  Read ADC status register.  One bit for each of 16 ADCs.)B
+3660 11740(If the status bit for ADC\(y\) = 1, then ADC\(y\) has completed)B
+3660 11520(a conversion cycle and ADC\(y\) data is available.)B
+2100 11080(F\(2\)A\(y\)  -  Read and Clear ADC\(y\).  Q=1 if ADC\(y\) status bit = 1.)B
+3660 10860(If Q=0, then ADC\(y\) data are zero.  Resets ADC\(y\) and)B
+3660 10640(ADC\(y\) status bit only if Q=1.)B
+2100 10200(F\(9\)A\(0\)  -  Reset all ADCs, reset the ADC status register, and clear LAM1.)B
+2100 9760(F\(16\)A\(y\) -  Writes ADC\(y\) data register from CAMAC dataway and sets)B
+3660 9540(ADC\(y\) status bit.  Hardware test purposes only. NOTE: Q=0.)B
+2100 9100(F\(17\)A\(0\) -  Write ADC enable register.  One bit for each of 16 ADCs.)B
+2100 8660(F\(17\)A\(13\)-  Write LAM mask register.  Two LAMs are provided.  LAM1 is)B
+3660 8440(generated when all enabled ADCs have finished conversion)B
+3660 8220(and data are valid.  LAM2 is generated when any ADC data)B
+3660 8000(is ready.  LAM1 is cleared by reseting all ready ADCs.)B
+3660 7780(LAM2 will be asserted any time it is enabled and the ADC)B
+3660 7560(status register is not zero.)B
+2100 7120(F\(23\)A\(0\) -  Selectively reset ADCs and their status bits.)B
+2100 6680(F\(27\)A\(0\) -  Test for LAM1 status.  Tests the condition which would)B
+3660 6460(generate LAM1.  Test is independent of the Enable/Disable)B
+3660 6240(condition of LAM1.)B
+2100 5800(F\(27\)A\(1\) -  Test for LAM2 status \(i.e. ADC status register not zero\).)B
+3660 5580(Test is independent of the Enable/Disable condition of LAM2.)B
+2100 5140(F\(27\)A\(15\)-  Test for all enabled ADCs not Busy.  Either all ADCs have)B
+3660 4920(completed conversion and data are available or no conversion)B
+3660 4700(has been initiated for any enabled ADC.)B
+2100 4260(Z.S2      -  Disables LAMs, disable all ADCs, reset all ADCs, reset ADC)B
+3660 4040(status register, and clear LAM1.)B
+2100 3600(C.S2      -  Reset all ADCs, reset the ADC status register, and clear LAM1.)B
+2100 2940(INHIBIT   -  Module does not use INHIBIT in any way.)B
+EndPage
+%%Page: ? 5
+StartPage
+1 F
+900 15260 (                      Mon Jun 24 22:58:42 1996        5)B
+0 F
+4860 13940(Important Notice to User)B
+2460 13500(All statements, technical information and recommendations contained)B
+2100 13280(herein  are based on tests we believe to be reliable, but the accuracy)B
+2100 13060(or completeness thereof is not guaranteed, and the following  is  made)B
+2100 12840(in lieu of all warranties expressed or implied:)B
+2460 12620(Our only obligation shall be to correct or replace any part of  the)B
+2100 12400(product  proven  to be defective.  We shall not be liable for any loss)B
+2100 12180(or damage, direct or consequential, arising out of the use or the ina-)B
+2100 11960(blitiy to use the product.  Before using, the User shall determine the)B
+2100 11740(suitability of the product for his intended use, and the User  assumes)B
+2100 11520(all risk and liability whatsoever in connection therewith.)B
+EndPage
+%%Page: ? 6
+StartPage
+1 F
+900 15260 (                      Mon Jun 24 22:58:42 1996        6)B
+0 F
+EndPage
+%%Trailer
+end
+%%Pages: 6

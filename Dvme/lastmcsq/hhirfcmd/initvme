@@ -1,0 +1,15 @@
+#!/bin/csh -f
+if ($1 != "") then
+   /usr/acq/vme/acq_run stopvme >& /dev/null
+   set err = $status
+   if ($err == 0) then
+      echo "****** WARNING:  VME acquisition has been stopped ******"
+   endif
+   /usr/acq/vme/modu_setup $1
+   set err = $status
+   if ($err != 0) then
+     echo "*** modu_setup  FAILED ***"
+     exit $err
+   endif
+endif
+/usr/acq/vme/acq_run init

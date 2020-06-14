@@ -1,0 +1,39 @@
+********************  Crate 1  *********************************
+*
+*
+*    PSAC  TDC
+*
+mt=phil_7186  c=1 n=15  ; using only first 8 channels
+data = ped
+        15    15    15    15    15    15    15    15
+        15    15    15    15    15    15    15    19
+data = low
+        16    16    16    16    16    16    16    16
+        16    16    16    16    16    16    16    18
+data = upper
+      4080  4080  4080  4080  4080  4080  4080  4080
+         0     0     0     0     0     0     0     0
+*
+*  setup up Recoil clock
+*
+mt=ue_clock c=1 n=18  data = mode mode_1
+*
+*  setup up Decay clock
+*
+mt=ue_clock c=1 n=22  data = mode mode_1
+*
+********************  Crate 2  *********************************
+*
+*   Recoil ADCs in Crate 2, slots 1 thru 10
+*
+mt=silena_4418  c=1 n=1-10
+*
+*                         Channel Number
+*               1      2      3      4      5      6      7      8
+*
+data=lower      0      0      0      0      0      0      0      0 ;millivolts
+data=upper  10000  10000  10000  10000  10000  10000  10000  10000 ;millivolts
+data=offset     0      0      0      0      0      0      0      0 ;channels
+data=common   375    ; 375 millivolts
+*
+*

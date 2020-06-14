@@ -1,0 +1,9 @@
+#!/bin/csh -f
+echo " "
+echo "Using  /usr/acq/vme/loadln"
+echo " "
+/usr/acq/vme/run /usr/acq/vme/stopln
+/usr/acq/vme/kt lnfxx >& /dev/null
+/usr/acq/vme/kt ln_alarm >& /dev/null
+/usr/acq/vme/run /usr/acq/vme/lnfxx
+/usr/acq/vme/run /usr/acq/vme/ln_alarm

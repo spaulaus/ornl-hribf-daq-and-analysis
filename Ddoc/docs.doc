@@ -1,0 +1,63 @@
+RPD$075059001
+NPS$01
+NPL$
+CHP$
+TPF$
+SP1$
+SIN$
+CYB$
+
+
+
+
+
+
+*******************************************************************************
+*        DOCUMENTS   DOCUMENTS   DOCUMENTS   DOCUMENTS   DOCUMENTS            *
+*******************************************************************************
+
+BLP$
+Some of you may know that there are documents available for almost all of the
+acquisition and data analysis codes.  There are notebooks containing
+many of the available documents in the RMS and DRS counting rooms.  In addition,
+some have personal notebooks which have been distributed to interested users
+over the years.  But NOW
+CEN$
+\b\SURPRISE   SURPRISE\\
+BLP$
+Most documents are available \b\online\\, 24 hours a day, 7 days a week.  No
+longer must you share dog-eared copies with colleagues.  You may print or
+view on-screen the very latest version of the document of your choice.
+BLP$
+There are two easy ways to access online documents: \b\dodoc\\ and
+\b\viewdoc\\.  To use \b\viewdoc\\, your \b\PATH\\ must include
+\b\/usr/local/bin\\.
+ODP$
+1) ...  \b\dodoc\\ - Print entire documents on the printer of your choice.
+To get a list of the available documents, just type \b\dodoc\\.  Some examples
+of using dodoc to print the document \b\damm\\ follow:
+CY1$
+          \b\dodoc damm\\            ;Print using the default Postscript printer
+
+          \b\dodoc damm ps04\\       ;Print using printer ps04
+
+          \b\dodoc damm double\\     ;Print two-sided using ps01 in Rm T-210
+
+ODP$
+2) ...  \b\viewdoc\\ - View the document on-screen.  Alphas use the code
+\b\gv\\.  DECStations use the code \b\ghostview\\.  To get a list of the
+available documents, just type \b\viewdoc\\.  With viewdoc you can select
+pages to print or print the entire document.  For example, to view the
+document for \b\damm\\, type
+CY1$
+          \b\viewdoc damm\\
+
+BLP$
+Well, we gave it our best shot but as the old saying goes: You can lead a 
+horse to water but you can't make him drink.
+CYB$
+
+*******************************************************************************
+*        DOCUMENTS   DOCUMENTS   DOCUMENTS   DOCUMENTS   DOCUMENTS            *
+*******************************************************************************
+QIT$

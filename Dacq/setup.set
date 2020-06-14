@@ -1,0 +1,93 @@
+mt=hhirf_adc crate=1 slot=1
+*
+*   Enable the first eight channels
+*
+data=enable 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0
+
+mt=lrs_3511 c=1 n=23
+ data = conversion 250
+ data = offset 0
+
+mt=lrs_4300 c=1 n=20
+data=ped
+ 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0
+
+*
+*  Enable all 16 channels
+*
+mt=lrs_4413 c 1 n 6 data = common  -30
+data=enable
+ 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1
+
+mt=lrs_4415a c=1 n=10
+data= mode normal
+*
+*  Enable all 16 channels
+*
+data=enable 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+mt=lrs_4416b c=1 n=11  data = com -25
+*
+*  Enable all 16 channels
+*
+data=enable 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+mt=lrs_4418  c=1 n=5 data = delay
+
+  0   0   0   0  60  60  60  60
+  0   0   0   0  60  60  60  60
+
+mt=phil_7106 c 1 n 7 data = common  -30
+*
+*  Enable all 16 channels
+*
+data=enable
+ 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1
+
+mt=phil_7186  c=1 n=14  ; Channels 9 thru 14 are disabled
+data = ped
+        15    15    15    15    15    15    15    15  ; channels 1 thru 8
+        15    15    15    15    15    15    15    15  ; channels 9 thru 16
+data = low
+        16    16    16    16    16    16    16    16
+        16    16    16    16    16    16    16    16
+data = upper
+      4080  4080  4080  4080  4080  4080  4080  4080
+         0     0     0     0     0     0  4080  4080
+
+mt=ue_clock c=1 n=12  data=mode mode_1
+
+mt=lrs_3377 c=1 n=13  data= common start
+                      data= maximum_time 10000
+mt=caen_775 tdc=1
+data = low
+        07    07    07    07    07    07    07    07  ;Inputs 0 thru 7
+        07    07    07    07    07    07    07    07  ;Inputs 8 thru 15
+        07    07    07    07    07    07    07    07  ;Inputs 16 thru 23
+        07    07    07    07    07    07    07    07  ;Inputs 24 thru 31
+data = com
+         start     ;Common start
+*
+data = maximum_time
+         240   ; 240 ns full scale
+*
+mt=caen_785 adc=5
+data = low
+        18    18    18    18    18    18    18    18   ;Inputs 0 thru 7
+        18    18    18    18    18    18    18    18
+        18    18    18    18    18    18    18    18
+        18    18    18    18    18    18    18    18   ;Inputs 24 thru 31
+
+mt=silena_4418  c=1 n=18
+*
+*                         Channel Number
+*               1      2      3      4      5      6      7      8
+*
+data=lower      0      0      0      0      0      0      0      0 ;millivolts
+data=upper  10000  10000  10000  10000  10000  10000  10000  10000 ;millivolts
+data=offset     0      0      0      0      0      0      0      0 ;channels
+data=common   375    ; 375 millivolts
+

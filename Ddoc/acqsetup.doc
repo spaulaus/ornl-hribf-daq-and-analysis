@@ -1,0 +1,437 @@
+RPD$075059001
+CHP$ACQS  - Setup of workstation and VME for acquisition
+NPS$01
+TPF$
+SP1$
+CY1$
+Sec Page     Contents
+
+000   1  Linux workstation software
+010   1  VMEterm window
+020   1  Preparing your VME processor bootstrap program - CPU-40
+030   2  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-40
+040   2  Initial setup of the VME processor - CPU-40
+050   2  Loading bootstrap code into the VME processor - CPU-40
+060   5  Initial setup of the VME processor - CPU-60
+070   6  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-60
+080   6  Loading bootstrap code into the VME processor - CPU-60
+
+BLP$
+Setup of the Linux workstation acquisition software is documented at
+
+SEC$.000  Linux workstation software
+BLP$
+Setup of the Linux workstation acquisition software is documented at
+
+   \b\http://www.phy.ornl.gov/local/computer/daq/daqsupport.shtml\\
+BLP$
+SEC$.010  VMEterm window
+BLP$
+Connect the first serial port on the workstation to the first
+serial port on the Force processor module. The cable connecting
+the workstation to the Force processor must include the RS-232
+signals RTS and CTS.  The cable must also be a "null modem".
+BLP$
+Open a window on the workstation and start \b\/usr/acq/vme/VMEterm\\.
+BLP$
+For additional information on VMEterm, see
+\b\/usr/hhirf/vme/doc/VMEterm\\.  Use \b\dodoc\\ to print a copy or
+\b\viewdoc\\ to view online.
+BLP$
+SEC$.020  Preparing your VME processor bootstrap program - CPU-40
+BLP$
+FORCE Computers should supply with the documentation the hardware ethernet
+address assigned to your VME processor module.  That hardware address
+should be put in the bootstrap code for the VME processor.  The file to
+be changed is in the directory \b\mcsq/Dlinux/Dvme\\.  The file is 
+\b\vme1_boot.s\\.  Edit this file and find the following line:
+CYB$
+LAN_ADDR        DC.B    $00,$80,$42,$00,$29,$79         ;Our address
+BLP$
+This file was prepared for a VME processor having an ethernet hardware
+address of  00-80-42-00-29-79.
+BLP$
+Change the address to that assigned to YOUR processor.
+BLP$
+Now you must assemble and link the program.  Use the makefile vme1_boot.make.
+CYB$
+   make -f vme1_boot.make
+BLP$
+If you have a second VME processor, you can use the file \b\vme2_boot.s\\
+for it's bootstrap.  This file is identical to vme1_boot.s except for the
+ethernet address.
+BLP$
+SEC$.030  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-40
+BLP$
+This file assigns names to physical ethernet addresses.  It is extremely
+important that names vme1 and vme2 be changed to reflect the actual
+physical ethernet addresses of YOUR VME processors.  Furthermore, the
+ethernet addresses you enter here MUST agree with those in the bootstrap
+files(SEC 020).  All workstation software uses this file to translate a
+name to a physical address.  The distribution file is:
+CY1$
+#  Host table for Oak Ridge PHysics VME based acquisition system
+#   Format-  hostname: address (hexadecimal)
+#   Text after # is ignored.
+vme1:   eth1 00-80-42-00-29-79
+vme2:   eth1 00-80-42-04-65-26
+vme20:  eth1 00-80-42-0d-03-62       #CPU-60
+BLP$
+Assuming you have two VME processor modules, vme1 should be assigned the
+physical address of the first processor and vme2 should be the physical
+address of the other.
+BLP$
+You must set the
+environment variable VME, to select a specific processor.  For example,
+CYB$
+      setenv VME vme2
+BLP$
+would cause all codes which communicate with the VME processor to use
+the physical address associated with the name vme2.
+BLP$
+SEC$.040  Initial setup of the VME processor - CPU-40
+BLP$
+Step one is to install the battery.  FORCE ships the module without
+the battery installed.  This is important because the bootstrap
+code will be stored in the battery backed RAM.
+BLP$
+Check all jumpers and switches to see that they are installed in their DEFAULT
+positions.  See FORCE documentation for the default settings.
+BLP$
+Install the VME processor in slot 1 and the Kinetics CAMAC interface in
+slot 2.  
+Turn on power to the VME crate.  Within approx. 45 seconds, you should
+get a banner and a prompt in the VMEterm window.
+BLP$
+Verify that the VME processor works and in particular that the VME interface
+works.  Using the VMEPROM, access registers in the Kinetics VME module
+to verify that the VME processor can access the VMEbus.
+BLP$
+SEC$.050  Loading bootstrap code into the VME processor - CPU-40
+BLP$
+You can load the bootstrap code using VMEterm.
+CY1$
+? \b\load vme1_boot.run\\
+Loading File: vme1_boot.run
+bp $b01,1
+
+? lo <1 ,,
+ 
+
+
+? 0300B547
+
+VMEPROM Error 50   Invalid file name
+
+? S9030000FC
+
+VMEPROM Error 50   Invalid file name
+
+? 
+? 
+BLP$
+The two "VMEPROM Error 50" messages are normal.
+Using
+VMEPROM, you can examine memory starting at address FFC10000 to see if
+the bootstrap code has been loaded.  If everything looks good, start the VME
+processor at address FFC10000.
+CYB$
+       go $ffc10000
+BLP$
+When you start the VME processor, you get a banner in the VMEterm window which
+includes:
+CYB$
+       VME Processor ready for download
+BLP$
+Connect the Ethernet between the workstation and the VME processor and
+login at the workstation console.  If the VME processor is working,
+it will be sending an ethernet packet to the workstation every 10 seconds.
+To test this type the following:
+CYB$
+      /usr/acq/vme/listen eth1
+BLP$
+You should get the following(with date, time and ethernet source address
+changes):
+CY1$
+daqdev2> /usr/acq/vme/listen eth1
+Device H/W address: 00:02:b3:96:b0:f1
+Interface flags = 0x1043
+Interface eth1 is UP
+Interface MTU = 1500
+*********************  Packet  *************************
+Time - Fri Oct 22 11:50:46 2004
+ Packet Length: 64
+Multicast 
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-04-65-26
+      Protocol: 4f-51
+ Buffer Length: 50
+  Ack: 0
+Order: 0
+  PID: 0
+56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V2.0 IPL Force C
+50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-40 : Ready fo
+72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+
+*********************  Packet  *************************
+Time - Fri Oct 22 11:50:56 2004
+ Packet Length: 64
+Multicast 
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-04-65-26
+      Protocol: 4f-51
+ Buffer Length: 50
+  Ack: 0
+Order: 0
+  PID: 0
+56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V2.0 IPL Force C
+50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-40 : Ready fo
+72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+
+daqdev2> 
+BLP$
+There are just a few more steps to setup the VME processor.  We need to 
+load a code \b\/usr/acq/vme/vme_listen\\ and then load and execute a code
+to make a backup copy of our bootstrap in the onboard flash EEPROM.
+The following should do all this:
+CY1$
+    1) Set the enviroment variable VME to the processor you
+       are using.  For example, if you are using vme2, type
+
+       \b\setenv VME vme2\\
+
+    2) Reset VME processor and type  \b\go $ffc10000\\
+
+    3) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/vme_listen\\
+
+       In the VMEterm window, you should get a message:
+
+       CPU-40 Loaded with VME_LISTEN
+
+    4) Reset VME processor and type  \b\go $ffc10000\\
+
+    5) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/sav_res\\
+
+       In the VMEterm window, you should get a message:
+
+       CPU-40 Loaded with SAV_RES
+
+    6) Reset VME processor and type  \b\go $80000\\
+
+    7) To copy to flash EEPROM, type:
+
+       \b\prog $100000 $ffc80000 0\\
+
+BLP$
+This last step takes a few seconds.  When finished you have a backup copy
+of the bootstrap.
+BLP$
+To restore the SRAM from the flash EEPROM,
+CYB$
+       go $ffc80000
+BLP$
+If you made it here successfully, things are going to be a lot easier
+from now on.  Happy days are here again!
+BLP$
+From now on we will use the ethernet for all communication with the VME
+processor.  To do this, change switch
+1 on the VME processor front panel from F to B and reset the processor.
+Now after reset, the processor will start at address ffc10000 and
+can be downloaded via ethernet.
+BLP$
+SEC$.060  Initial setup of the VME processor - CPU-60
+BLP$
+FORCE ships the module with battery backup for the SRAM disabled.  You
+MUST enable battery backup of the SRAM because the bootstrap code
+will be stored in SRAM.  To enable battery backup set the following
+switches to ON:
+CYB$
+         SW5 - 2    ON    Enable battery backup
+         SW5 - 3    ON    Enable RTC and SRAM
+BLP$
+In addition, it is recommended that you write proctect the System PROM.
+To do this switch to ON:
+CYB$
+         SW10 - 3   ON    Write proctect System PROM
+BLP$
+All other switches on the CPU-60 module should be set to OFF.  The front
+panel switches 1 and 2 should be set to F.
+BLP$
+Install the VME processor in slot 1 and the Kinetics CAMAC interface in
+slot 2.
+Turn on power to the VME crate.  Within approx. 45 seconds, you should
+get a banner and a prompt in the VMEterm window.
+BLP$
+Verify that the VME processor works and in particular that the VME interface
+works.  Using the VMEPROM, access registers in the Kinetics VME module
+to verify that the VME processor can access the VMEbus.
+BLP$
+There is a single bootstrap program for ALL CPU-60 processors.  FORCE
+now has the Ethernet address stored on-board.  The code is 
+\b\mcsq\Dlinux/Dvme\vme_boot60.s\\.
+BLP$
+However, you still need to determine the ethernet address for each
+CPU-60 so that the proper entry can be made in the ORPH_nodes.lst file(
+See SEC 070).
+BLP$
+To get the ethernet address, use the VMEPROM command
+CYB$
+      info
+BLP$
+SEC$.070  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-60
+BLP$
+This file assigns names to physical ethernet addresses.  It is extremely
+important that names vme1, vme2 and vme20 be changed to reflect the actual
+physical ethernet addresses of YOUR VME processors.  Furthermore, the
+ethernet addresses you enter here MUST agree with those stored on-board
+the VME module (See SEC 130).
+All workstation software uses this file to translate a
+name to a physical address.  CPU-60 modules MUST have names starting with
+vme20.  The distribution file is:
+CY1$
+#  Host table for Oak Ridge PHysics VME based acquisition system
+#   Format-  hostname: address (hexadecimal)
+#   Text after # is ignored.
+vme1:   eth1 00-80-42-00-29-79
+vme2:   eth1 00-80-42-04-65-26
+vme20:  eth1 00-80-42-0d-03-62       #CPU-60
+BLP$
+Assuming you have two VME processor modules, vme1 should be assigned the
+physical address of the first processor and vme2 should be the physical
+address of the other.
+BLP$
+You must set the
+environment variable VME, to select a specific processor.  For example,
+CYB$
+      setenv VME vme20
+BLP$
+would cause all codes which communicate with the VME processor to use
+the physical address associated with the name vme20.
+BLP$
+
+SEC$.080  Loading bootstrap code into the VME processor - CPU-60
+BLP$
+You can load the bootstrap code using VMEterm.
+Type
+CYB$
+       load vme_boot60.run
+BLP$
+The two "VMEPROM Error 50" messages are normal.
+Using
+VMEPROM, you can examine memory starting at address FFC08000 to see if
+the bootstrap code has been loaded.  If everything looks good, start the VME
+processor at address FFC08000.
+CYB$
+       go $ffc08000
+BLP$
+When you start the VME processor, you get a banner in the VMEterm window which
+includes:
+CYB$
+       VME Processor ready for download
+BLP$
+Connect the Ethernet between the workstation and the VME processor and
+login at the workstation console.  If the VME processor is working,
+it will be sending an ethernet packet to the workstation every 10 seconds.
+To test this, type the following:
+CYB$
+      /usr/acq/vme/listen eth1
+BLP$
+You should get the following(with date, time and ethernet source address
+changes):
+CY1$
+daqdev2> /usr/acq/vme/listen eth1
+Device H/W address: 00:02:b3:96:b0:f1
+Interface flags = 0x1043
+Interface eth1 is UP
+Interface MTU = 1500
+*********************  Packet  *************************
+Time - Fri Oct 22 11:50:46 2004
+ Packet Length: 64
+Multicast 
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-0d-03-62
+      Protocol: 4f-51
+ Buffer Length: 50
+  Ack: 0
+Order: 0
+  PID: 0
+56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V3.0 IPL Force C
+50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-60 : Ready fo
+72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+
+*********************  Packet  *************************
+Time - Fri Oct 22 11:50:56 2004
+ Packet Length: 64
+Multicast 
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-0d-03-62
+      Protocol: 4f-51
+ Buffer Length: 50
+  Ack: 0
+Order: 0
+  PID: 0
+56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V3.0 IPL Force C
+50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-60 : Ready fo
+72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+
+daqdev2> 
+BLP$
+There are just a few more steps to setup the VME processor.  We need to 
+load a code \b\/usr/acq/vme/vme_listen60\\ and then load and execute a code
+to make a backup copy of our bootstrap in the on-board flash EEPROM.
+The following should do all this:
+CY1$
+    1) Set the enviroment variable VME to the processor you
+       using.  For example, if you are using vme20, type
+
+       \b\setenv VME vme20\\
+
+    2) Reset VME processor and type  \b\go $ffc08000\\
+
+    3) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/vme_listen60\\
+
+       In the VMEterm window you should get a message:
+
+       CPU-60 Loaded with VME_LISTEN60
+
+    4) Reset VME processor and type  \b\go $ffc08000\\
+
+    5) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/sav_res60\\
+
+       In the VMEterm window you should get a message:
+
+       CPU-60 Loaded with SAV_RES60
+
+    6) Reset VME processor and type  \b\go $80000\\
+
+    7) To copy to flash EEPROM, execute the following two commands:
+
+       \b\ferase user_flash\\
+
+       \b\fprog user_flash,$100000\\
+
+BLP$
+This last step takes a few seconds.  When finished you have a backup copy
+of the bootstrap.
+BLP$
+To restore the SRAM from the flash EEPROM,
+CYB$
+       go $ffc80000
+BLP$
+If you made it here successfully, things are going to be a lot easier
+from now on.  Happy days are here again!
+BLP$
+From now on we will use the ethernet for all communication with the VME
+processor.  To do this, change switch
+1 on the VME processor front panel from F to 7 and reset the processor.
+Now after reset, the processor will start at address ffc08000 and
+can be downloaded via ethernet.
+QIT$

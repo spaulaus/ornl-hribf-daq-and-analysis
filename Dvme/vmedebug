@@ -1,0 +1,12 @@
+#!/bin/csh -f
+/usr/acq/vme/kt vmebug >& /dev/null
+/usr/acq/vme/run /usr/acq/vme/vmebug
+set err = $status
+if ($err != 0) then
+  echo "${0}: Cannot load vmebug - Error Status = $err"
+  exit
+else
+  echo "VME debug routine loaded"
+endif
+/usr/acq/vme/debug
+/usr/acq/vme/kt vmebug >& /dev/null

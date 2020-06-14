@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# daq-hribf
+#
+#
+# chkconfig: 2345 99 00
+# description: daq-hribf performs startup functions for the 
+# HRIBF (aka HHIRF) data acquisition system.  Starts one instance
+# of the vmedII daemon, and waits to check that it works.  
+# On stopping, it kills all instances of the vmeIId.
+
+# Source function library.
+. /etc/init.d/functions
+
+# These files must exist before we can continue
+[ -f /usr/acq/etc/vmedII ] || exit 0
+[ -f /sbin/ifconfig ] || exit 0
+
+
+RETVAL=0
+
+umask 022
+
+#  Only start one daemon listener and activate the eth1 port
+start() {
+	echo -n $"Activate the second Ethernet port: "
+	/sbin/ifconfig eth2 up
+	[ "$?" -eq 0 ] && success $"Upping of eth1" ||
+			  failure $"Upping of eth1"
+	echo
+ 	echo -n $"Starting VME daemon:"
+	echo
+
+	/usr/acq/etc/vmedII;
+
+#     Here I check to see that the daemon did not immediately exit,
+#     often with "bind: address already in use"  
+	sleep 1; 
+	pid=`pidof vmedII`;
+	[ -n "$pid" ] && success $"Start of vmedII" ||
+			  failure $"Start of vmedII"
+	echo -n $"Started VME daemon:"
+	echo
+	
+}	
+stop() {
+	echo -n $"Stopping the VME daemon: "
+#   Stop any and all daemons listening or servicing connections
+	pid=`pidof vmedII`;
+	kill $pid ;
+	[ "$?" -eq 0 ] && success $"Stopping of vmedII" ||
+	                  failure $"Stopping of vmedII";
+	echo
+	echo -n $"Stopping the second Ethernet port: "
+	/sbin/ifconfig eth1 down 
+	[ "$?" -eq 0 ] && success $"Downing of eth1" ||
+		          failure $"Downing of eth1"
+	echo
+}
+restart() {
+	stop
+#   This pause seems to be necessary to let TCP clean up active ports
+	sleep 1
+	start
+}	
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	#restart
+	echo "Restart is not available."
+        echo "Make sure all running pacmen are stopped."
+	;;
+  *)
+	echo $"Usage: $0 {start|stop}"
+	exit 1
+esac
+
+exit $?
+
+
+
+

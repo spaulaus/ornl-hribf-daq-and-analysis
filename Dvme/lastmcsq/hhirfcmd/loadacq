@@ -1,0 +1,50 @@
+#!/bin/csh -f
+#
+#   Determine which VME processor is used for LN2 fill system
+#
+source /usr/acq/etc/VMECPUS
+if ($?VME != 0) then
+  if ($VME == $LN_VME) then
+    echo "Processor $LN_VME is not available for your use"
+    exit 99
+  endif
+endif
+/usr/acq/vme/run /usr/acq/vme/kill_acq
+set err = $status
+if ($err != 0) then
+  echo "${0}: Cannot Kill Acquisition System - Error Status = $err"
+  exit $err
+endif
+echo "Delete the acquisition tasks in the VME processor"
+/usr/acq/vme/kt testvme >& /dev/null
+/usr/acq/vme/kt VMEtest >& /dev/null
+/usr/acq/vme/kt VMEacq >& /dev/null
+/usr/acq/vme/kt DSSDacq >& /dev/null
+/usr/acq/vme/kt data_proc >& /dev/null
+/usr/acq/vme/kt vmemon >& /dev/null
+/usr/acq/vme/kt vmexx >& /dev/null
+echo " "
+echo "Now load the acquisition tasks.  Any error messages here are BAD news."
+/usr/acq/vme/run /usr/acq/vme/data_proc
+set err = $status
+if ($err != 0) then
+  echo "${0}: Unable to load task 'data_proc' - Error Status = $err"
+  exit $err
+endif
+/usr/acq/vme/run /usr/acq/vme/VMEacq 1536
+set err = $status
+if ($err != 0) then
+  echo "${0}: Unable to load task 'VMEacq' - Error Status = $err"
+  exit $err
+endif
+/usr/acq/vme/run /usr/acq/vme/vmemon
+set err = $status
+if ($err != 0) then
+  echo "${0}: Unable to load task 'vmemon' - Error Status = $err"
+  exit $err
+endif
+if (-e  /usr/acq/vme/vmexx.bin) then
+  /usr/acq/vme/run /usr/acq/vme/vmexx
+endif
+echo " "
+echo "Acquisition system now loaded"

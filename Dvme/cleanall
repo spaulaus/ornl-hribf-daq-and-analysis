@@ -1,0 +1,19 @@
+#!/bin/csh -f
+rm -f run
+rm -f vmeboot
+rm -f acq_run
+rm -f debug
+rm -f kt
+rm -f lt
+rm -f map68
+rm -f run
+rm -f setclock
+rm -f srload
+rm -f testvme
+rm -f view3982
+rm -f vmealloc
+rm -f vmeboot
+rm -f vmehardware
+rm -f vmeload
+rm -f vmereset
+rm -f vmexxlib.a

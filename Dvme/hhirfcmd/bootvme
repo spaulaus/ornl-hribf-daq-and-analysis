@@ -1,0 +1,116 @@
+#!/bin/csh -f
+onintr EXIT
+#
+# Define which VME processors have special use
+#
+source /usr/acq/etc/VMECPUS
+set drs = 0
+set rms = 0
+#
+#  Determine which processor is to be booted
+#
+if ($?VME == 0) then
+  echo "You MUST set the environment variable VME to the VME processor"
+  echo "you wish to boot.  Example:"
+  echo ""
+  echo "  setenv VME vme3"
+  echo ""
+  echo "bootvme aborted"
+  exit 99
+else if ($VME == $DRS_VME) then
+  set drs = 1
+else if ($VME == $LN_VME) then
+  echo "Processor $LN_VME is not available for your use"
+  echo "bootvme aborted"
+  set status = 99
+  exit 99
+else if ($VME == $RMS_VME) then
+  set rms = 1
+endif
+
+if ($drs == 1) then
+  echo "********** CAUTION ***** WARNING ***** CAUTION **********"
+  echo "*   This VME system is the control system for the DRS   *"
+  echo "*                                                       *"
+  echo "*                                                       *"
+  echo "********** CAUTION ***** WARNING ***** CAUTION **********"
+  echo " "
+  echo " To reboot the VME system, type  YES  followed by a"
+  echo " carriage return  (UPPER CASE YES).  To abort, type"
+  echo " a carriage return."
+  echo " "
+  echo -n ">>> "
+  set p = $<
+  if ($p != "YES") then
+    set status = 99
+    echo "bootvme aborted"
+    exit 99
+  endif
+else if ($rms == 1) then
+  echo "********** CAUTION ***** WARNING ***** CAUTION **********"
+  echo "*   This VME system is the control system for the RMS   *"
+  echo "*                                                       *"
+  echo "*                                                       *"
+  echo "********** CAUTION ***** WARNING ***** CAUTION **********"
+  echo " "
+  echo " To reboot the VME system, type  YES  followed by a"
+  echo " carriage return  (UPPER CASE YES).  To abort, type"
+  echo " a carriage return."
+  echo " "
+  echo -n ">>> "
+  set p = $<
+  if ($p != "YES") then
+    set status = 99
+    echo "bootvme aborted"
+    exit 99
+  endif
+else
+  echo "*********************** WARNING ************************"
+  echo "* The VME processor is being rebooted.                 *"
+  echo "*                                                      *"
+  echo "* To run data acquisition, YOU MUST execute three      *"
+  echo "* additional commands:                                 *"
+  echo "*   1)  loadacq                                        *"
+  echo "*   2)  pacor  userfile l                              *"
+  echo "*   3)  initvme                                        *"
+  echo "*********************** WARNING ************************"
+endif
+echo "Boot VME processor $VME"
+/usr/acq/vme/vmereset
+set err = $status
+if ($err != 0) then
+  exit $err
+endif
+echo "Reboot the VME processor"
+/usr/acq/vme/vmeboot
+set err = $status
+if ($err != 0) then
+  exit $err
+endif
+/usr/acq/vme/run /usr/acq/vme/bios
+set err = $status
+if ($err != 0) then
+  exit $err
+endif
+#
+#  DRS only
+#
+if ($drs == 1) then
+  /usr/acq/vme/run /usr/acq/vme/drsxx
+  set err = $status
+  if ($err != 0) then
+    exit $err
+  endif
+endif
+#
+#  RMS only
+#
+if ($rms == 1) then
+  /usr/acq/vme/run /usr/acq/vme/rmsxx
+  set err = $status
+  if ($err != 0) then
+    exit $err
+  endif
+endif
+#
+EXIT:

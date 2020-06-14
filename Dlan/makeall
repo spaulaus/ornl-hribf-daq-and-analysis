@@ -1,0 +1,5 @@
+#!/bin/csh -f
+make -f orph_pf.make
+make -f vmedII-v2.make
+make -f vmecpus.make
+make -f listen.make

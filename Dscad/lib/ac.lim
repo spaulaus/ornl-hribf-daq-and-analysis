@@ -1,0 +1,6 @@
+mxrc 30 128
+rlim Time.100 0 200
+rlim Ge.Trigs 0 10000
+rlim See.Trigs 0 2000
+tst
+

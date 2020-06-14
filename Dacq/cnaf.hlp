@@ -1,0 +1,16 @@
+
+  Commands requiring an argument. dec = decimal and hex = hexadecimal.
+
+ c dec - crate.  0 thru 7 and 10 thru 17
+ n dec - station number.  1 thru 31
+ a dec - subaddress.  0 thru 15
+ f dec - function.  0 thru 31
+ d hex - data.
+
+ x [n] - execute CNAF n times.  Default n is 1.
+ e     - execute CNAF and list.
+ l     - list CNAF, data, X and Q
+
+ end   - exit program
+ exit  - exit program
+ help  - this message

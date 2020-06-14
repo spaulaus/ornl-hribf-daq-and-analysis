@@ -1,0 +1,2 @@
+#!/bin/csh -f
+/usr/acq/vme/acq_run start

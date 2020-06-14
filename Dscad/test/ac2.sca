@@ -1,0 +1,28 @@
+#Time, Live-Time, etc -------------
+Time.100   1 16  0 -2 ; NOR 100
+Live.Time  1 16  1
+Integrator 1 16  2
+Live.Int   1 16  3
+
+Clean01..S3     1  6 3 0 ECL
+Clean02..S2     1  6 2 0 ECL
+Clean03..S8     1  6 1 0 ECL
+Clean04.S10     1  6 0 0 ECL
+Clean05..S1     1  6 7 0 ECL
+Clean06..S4     1  6 6 0 ECL
+Clean07..S7     1  6 5 0 ECL
+Clean08..S0     1  6 4 0 ECL
+Clean09..S5     1  6 11 0 ECL
+Clean10..S6     1  6 10 0 ECL
+Clean11..N5     1  6 9 0 ECL
+Clean12..N6     1  6 8 0 ECL
+Clean13..N8     1  6 15 0 ECL
+Clean14..N0     1  6 14 0 ECL
+Clean15..N4     1  6 13 0 ECL
+Clean16.N10     1  6 12 0 ECL
+Clean16..N7     1  6 31 0 ECL
+Clean18..N2     1  6 30 0 ECL
+Clean19..N3     1  6 29 0 ECL
+Clean20..N1     1  6 28 0 ECL
+#computed scalers -------------------------
+$END

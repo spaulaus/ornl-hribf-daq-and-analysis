@@ -1,0 +1,312 @@
+.nr PO 0.5i
+.nr LL 6.5i
+.po 10
+.ll 70
+.ce
+HHIRF ADC INTERFACE
+.sp 2
+.nf
+.ul
+I  HARDWARE
+.sp 1
+.fi
+The ADC interface consists of a single width CAMAC module and a 5 1/4
+inch rack mount chassis.  These are connected via a 40 conductor flat cable
+whose length should not exceed 10 meters.
+.sp 1
+.nf
+.ul
+I.1  Rack Mount Chassis
+.sp 1
+.fi
+The rack mount chassis holds up to 16 ADC personality cards.  Viewed
+from the rear, there are 16 slots numbered 1 thru 16 from left to right.
+Personality cards are available for the following ADCs:
+.nf
+.sp 1
+            1) Canberra Model 8060 and Model 8080
+            2) Nuclear Data  ND581.
+.br
+.sp 1
+.fi
+There are two rows of indicators on the front panel - ADC ENABLED
+and ADC ACTIVE.
+The ADC ACTIVE is on when the following conditions exist:
+.nf
+  a) The cable between the rack mount chassis and the CAMAC module
+     is installed.
+  b) Both the rack mount chassis and the CAMAC crate are powered up.
+  c) The ADC is enabled - ADC ENABLE on.
+  d) The ADC is performing conversions and presenting data to the
+     interface.
+.sp 1
+.fi
+If the conversion rate is greater than 5 per second, ADC ACTIVE will be
+on continuously.  Otherwise, it will flash at the conversion rate.
+.br
+.sp 1
+The ADC ABORT input accepts slow NIM or TTL levels.  This signal
+is routed to each ADC. Input impedance is > 2K ohms.  Maximum input
+voltage is +or- 15 volts.  Minimum pulse width is 250 nanoseconds.
+.sp 1
+.nf
+.ul
+I.2  CAMAC module
+.sp 1
+.fi
+The CAMAC module contains a 16 bit data register for each of the
+16 possible ADCs.  A 16 bit status register indicates which ADCs have
+vaild data available.  The module performs the following functions:
+.nf
+  a) Read an ADC
+  b) Read and Reset an ADC
+  c) Read the status register
+  d) Enable/Disable ADCs
+  e) Enable/Disable LAMs
+  f) Test LAM status
+  g) Reset ADCs
+.sp 1
+.fi
+Two front panel indicators are provided. N indicates any module access from
+the CAMAC dataway.  LAM indicates presence of a LAM in the module.
+.sp 1
+.nf
+.ul
+II  CAMAC Function Codes
+.sp 1
+.fi
+For those commands which reference an ADC using a CAMAC sub-address,
+A(0) corresponds to slot 1 and A(15) corresponds to slot 16.  For those
+commands which reference an ADC by a data bit, R1 and W1 correspond to
+slot 1 and R16 and W16 correspond to slot 16.  R1 and W1 are the least
+significant CAMAC read and write lines.
+.sp 1
+.nf
+.ul
+II.1 Status Register - F(1)A(12)
+.sp 1
+.fi
+The status register has a bit for each of the 16 possible ADCs.  For
+each status bit which is a "one", the corresponding ADC has completed
+a conversion and its ADC data register contains the result of the latest
+conversion.
+.sp 1
+.nf
+.ul
+II.2 ADC Data Registers - F(0)A(y) and F(2)A(y)
+.sp 1
+.fi
+There is a seperate data register for each of the 16 possible ADCs.  If
+the corresponding bit is the status register is a "one", Q =1 and the data
+are the result of the latest conversion.  If the status register bit is a
+"zero", Q =0 and the data are zero.  The Canberra ADCs provide up to 13 data
+bits.  The 14th bit of the ADC data register is the INVALID bit from the ADC.
+.br
+.sp 1
+F(0) never resets the status bit nor the ADC.  F(2) resets both the status
+bit and the ADC if Q =1.  If Q =0, neither the status bit nor the ADC is
+reset.
+.sp 1
+.nf
+.ul
+II.3  Enabling and Disabling ADCs - F(17)A(0)
+.sp 1
+.fi
+The data word for this function has a "one" for all ADCs to be enabled
+and a "zero" for all ADCs to be disabled.  This command is executed in
+two steps.  First, ALL ADCs are disabled, then the selected ones are enabled.
+It is essential that ALL ADCs be reset following F(17)A(0).  Use of F(9)A(0)
+is recommended.
+.sp 1
+.nf
+.ul
+II.4 Reseting ADCs and status bits - F(9)A(0) and F(23)A(0)
+.sp 1
+.fi
+In addition to the read and reset function ( F(2)A(y) ), these
+functions reset all ADCs and status bits or selected ones.  F(9)A(0) resets
+ALL ADCs and their status bits.  For the function F(23)A(0), the data word
+contains a "one" for all ADCs to be reset.
+.sp 1
+.nf
+.ul
+II.5 Status testing - F(27)A(15), F(27)A(1) and F(27)A(0)
+.sp 1
+.fi
+These functions test conditions which can cause a LAM, but are independent
+of the Enable/Disable for the LAM.
+.sp 1
+.nf
+ F(27)A(15) - Q =1 if no ADC is busy.  For purposes of this test,
+              busy is defined as the time interval between the ADC
+              going busy and ADC data available in the CAMAC module.
+              For this test to be useful, it is essential that all
+              disabled ADCs are reset following F(17)A(0).
+
+ F(27)A(0)  - Q =1 if LAM1 status is true.  LAM1 status becomes true
+              when all ADCs go not busy.  LAM1 goes false only when
+              all ADCs having data available have been reset.
+
+ F(27)A(1)  - Q =1 if LAM2 status is true.  LAM2 status is the OR of
+              all bits in the ADC status register and hence will be
+              true any time one or more ADCs have data available.
+.sp 1
+.nf
+.ul
+II.6   LAM enabling and disabling - F(17)A(13)
+.sp 1
+.fi
+The data word bits W1 and W2 determine the Enable/Disable condition
+of LAM1 and LAM2 respectively.  A "one" enables the LAM and a "zero"
+disables.  Note: Enabling or disabling the LAMs does not change the LAM
+status bits.
+.sp 1
+.nf
+.ul
+II.7  C, Z and Inhibit
+.sp 1
+.nf
+   C - Resets all ADCs, all ADC status bits and LAM1 status.  This is
+       identical to F(9)A(0).
+
+   Z - In addition to the functions performed by C, LAM1 and LAM2 are
+       disabled and all ADCs are disabled.
+.sp 1
+The module does not use Inhibit in any way.
+.sp 1
+.nf
+.ul
+II.8  Hardware test - F(16)A(y)
+.sp 1
+.fi
+This function simulates data transfer from ADCs to the module.
+Except for LAM1, all features of the CAMAC module can be verified independent
+of the ADCs.  It is recommended, however, that the cable connecting the CAMAC
+module and the rack mount chassis be disconnected.
+.sp 2
+.nf
+.ul
+III   Programming considerations
+.sp 1
+.nf
+III.1  Enabling ADCs
+.sp 1
+.fi
+It is recommended that F(17)A(0) be followed by F(9)A(0).
+.sp 1
+.nf
+.ul
+III.2  Reading and reseting ADCs
+.sp 1
+.fi
+Each ADC having data available must be reset after reading the data.
+F(2) resets the ADC immediately after reading the data.  If F(0) is used to
+read the ADC, it must be followed by a reset.
+.sp 1
+.nf
+.ul
+III.3  LAM programming
+.sp 1
+.fi
+Two LAM sources are provided.  LAM1 occurs only after all busy ADCs
+have finished conversion.  LAM2 occurs whenever any ADC has finished
+conversion.
+.br
+.sp 1
+LAM1 is intended for use when two or more ADC are operated in coin-
+cidence.  If this is used, the following proceedure is recommended:
+.nf
+  a) F(1)A(12) - save data for use in reseting the ADCs.
+  b) Read those ADCs having data available.
+  c) F(23)A(0) with data from step a above.
+.sp 1
+.nf
+.ul
+IV   Care and Feeding
+.sp 1
+.fi
+This equipment has already been subjected to shock and vibration tests.
+All cables have been tested for tensile strength.  No further such testing
+is deemed necessary.
+.br
+.sp 1
+No water, oil or mud is required for proper operation.  Any or any
+combination of the above should be considered detrimental to the wellbeing
+of the equipment.
+.br
+.sp 1
+This equipment is guaranteed not to function properly in vacuum.
+.bp
+.ce
+.ul
+HHIRF ADC Interface
+.ce
+.ul
+CAMAC Command Summary
+.sp 1
+.nf
+y = ADC number and is 0 thru 15
+CAMAC X=1 for all valid commands.
+
+F(0)A(y)  -  Read ADC(y).  Q=1 if ADC(y) status bit = 1.  If Q=0,
+             then ADC data are zero. Does not reset ADC(y) nor ADC(y)
+             status bit.
+
+F(1)A(12) -  Read ADC status register.  One bit for each of 16 ADCs.
+             If the status bit for ADC(y) = 1, then ADC(y) has completed
+             a conversion cycle and ADC(y) data is available.
+
+F(2)A(y)  -  Read and Clear ADC(y).  Q=1 if ADC(y) status bit = 1.
+             If Q=0, then ADC(y) data are zero.  Resets ADC(y) and
+             ADC(y) status bit only if Q=1.
+
+F(9)A(0)  -  Reset all ADCs, reset the ADC status register, and clear LAM1.
+
+F(16)A(y) -  Writes ADC(y) data register from CAMAC dataway and sets
+             ADC(y) status bit.  Hardware test purposes only. NOTE: Q=0.
+
+F(17)A(0) -  Write ADC enable register.  One bit for each of 16 ADCs.
+
+F(17)A(13)-  Write LAM mask register.  Two LAMs are provided.  LAM1 is
+             generated when all enabled ADCs have finished conversion
+             and data are valid.  LAM2 is generated when any ADC data
+             is ready.  LAM1 is cleared by reseting all ready ADCs.
+             LAM2 will be asserted any time it is enabled and the ADC
+             status register is not zero.
+
+F(23)A(0) -  Selectively reset ADCs and their status bits.
+
+F(27)A(0) -  Test for LAM1 status.  Tests the condition which would
+             generate LAM1.  Test is independent of the Enable/Disable
+             condition of LAM1.
+
+F(27)A(1) -  Test for LAM2 status (i.e. ADC status register not zero).
+             Test is independent of the Enable/Disable condition of LAM2.
+
+F(27)A(15)-  Test for all enabled ADCs not Busy.  Either all ADCs have
+             completed conversion and data are available or no conversion
+             has been initiated for any enabled ADC.
+
+Z.S2      -  Disables LAMs, disable all ADCs, reset all ADCs, reset ADC
+             status register, and clear LAM1.
+
+C.S2      -  Reset all ADCs, reset the ADC status register, and clear LAM1.
+
+
+INHIBIT   -  Module does not use INHIBIT in any way.
+.bp
+.ce
+Important Notice to User
+.sp 1
+.fi
+   All statements, technical information and recommendations contained herein
+are based on tests we believe to be reliable, but the accuracy or completeness
+thereof is not guaranteed, and the following is made in lieu of all warranties
+expressed or implied:
+   Our only obligation shall be to correct or replace any part of the product
+proven to be defective.  We shall not be liable for any loss or damage,
+direct or consequential, arising out of the use or the inablitiy to use
+the product.  Before using, the User shall determine the suitability of
+the product for his intended use, and the User assumes all risk and liability
+whatsoever in connection therewith.
+

@@ -1,0 +1,165 @@
+#!/bin/csh -f
+#
+#  Document printer for Analysis and Acquisition user documents.
+#  6/ 6/94  MCSQ
+#
+#  Get printer argument if specified.
+#
+set prt = ""
+set dbl = ""
+if ($2 != "") then
+  if ($2 == "double") then
+    set dbl = '-o sides=two-sided-long-edge'
+    set prt = "ps01"
+  else
+    set prt = $2
+  endif
+endif
+#
+#  First check for a file name on the command line
+#
+if ($1 == "" || $1 == "help") then
+  echo " "
+  echo 'Usage:   dodoc document_name [printer]'
+  echo " "
+  echo "You must specify a document_name.  The default PostScript printer is"
+  echo "used unless you specify a printer name.  If printer is 'double', do"
+  echo "two-sided print on ps01."
+  echo " "
+  goto list
+endif
+#
+#  Allow a file type only if it is ps or doc.
+#
+set fileext = $1:e
+set filename = $1
+if ($fileext == "doc") then
+  set filename = $1:r
+endif
+if ($fileext == "ps") then
+  set filename = $1:r
+endif
+#
+#  If no path is specified, look for the file.doc in the current working
+#  directory.  If not found, then search for either the file.ps or file.doc
+#  in the directories /usr/hhirf/doc, /usr/hhirf/vme/doc and /usr/hhirf/wks/doc.
+#
+if ($filename:h == $filename:t) then
+  if (-e $filename:h.doc) then
+    set filename = $cwd/$filename:t
+    cd
+    goto  txxprt
+  endif
+  cd
+  if (-e /usr/hhirf/doc/$filename:t.ps) then
+    set filename = "/usr/hhirf/doc/$filename:t"
+    goto psprt
+  endif
+  if (-e /usr/hhirf/doc/$filename:t.doc) then
+    set filename = "/usr/hhirf/doc/$filename:t"
+    goto txxprt
+  endif
+  if (-e /usr/hhirf/vme/doc/$filename:t.ps) then
+    set filename = "/usr/hhirf/vme/doc/$filename:t"
+    goto psprt
+  endif
+  if (-e /usr/hhirf/vme/doc/$filename:t.doc) then
+    set filename = "/usr/hhirf/vme/doc/$filename:t"
+    goto txxprt
+  endif
+  if (-e /usr/hhirf/wks/doc/$filename:t.ps) then
+    set filename = "/usr/hhirf/wks/doc/$filename:t"
+    goto psprt
+  endif
+  if (-e /usr/hhirf/wks/doc/$filename:t.doc) then
+    set filename = "/usr/hhirf/wks/doc/$filename:t"
+    goto txxprt
+  endif
+else
+#
+#  User specified a path.  Look for either a .ps or a .doc in that path.
+#
+  if (-e $filename.ps) then
+    set filename = $filename
+    goto psprt
+  endif
+  if (-e $filename.doc) then
+    set filename = $filename
+    goto txxprt
+  endif
+endif
+echo " "
+echo "Can't find document - $1"
+echo " "
+#
+list:
+echo "Available document files:"
+echo "** Files in /usr/hhirf/doc **"
+cd /usr/hhirf/doc
+ls *.doc
+ls *.ps
+echo " "
+echo "** Files in /usr/hhirf/vme/doc **"
+cd /usr/hhirf/vme/doc
+ls *.doc
+ls *.ps
+echo " "
+echo "** Files in /usr/hhirf/wks/doc **"
+cd /usr/hhirf/wks/doc
+ls *.doc
+ls *.ps
+echo " "
+exit
+#
+#  Print a .ps file
+#
+psprt:
+  if ($prt == "") then
+     echo "Printing document - $filename.ps - on default printer"
+  else
+     echo "Printing document - $filename.ps - on printer $prt"
+  endif
+  if ($dbl != "") then
+    lpr  -P$prt $dbl $filename.ps
+  else
+    if ($prt != "") then
+      lpr -P$prt $filename.ps
+    else
+      lpr $filename.ps
+    endif
+  endif
+  exit
+#
+#  Format and print a .doc file
+#
+txxprt:
+  if ($prt == "") then
+     echo "Printing document - $filename.ps - on default printer"
+  else
+     echo "Printing document - $filename.ps - on printer $prt"
+  endif
+  /usr/hhirf/txx   $filename "x"
+  set err = $status
+  if ($err != 0) then
+    if ($err == 9) then
+      echo 'You MUST run dodoc from YOUR directory\!'
+    endif
+    exit
+  endif
+  /usr/hhirf/txxps $filename:t
+  set err = $status
+  if ($err != 0) then
+    exit
+  endif
+  if ($dbl != "") then
+    lpr  -P$prt $dbl $filename:t.ps
+  else
+    if ($prt != "") then
+      lpr -P$prt $filename:t.ps
+    else
+      lpr $filename:t.ps
+    endif
+  endif
+  rm $filename:t.ps
+  rm $filename:t.txx
+exit

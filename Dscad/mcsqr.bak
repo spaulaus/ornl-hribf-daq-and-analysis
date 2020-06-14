@@ -1,0 +1,10 @@
+Dirty01.BHB     1  6 3 0 ECL
+struct1   SIS3820 1 1
+struct3   SIS3820 1 3
+struct6   SIS3820 1 6
+MASTER       1    16     00      
+PSACSUM     1    16     01      
+PSACLEFT    1    16     02      
+PSACRIGHT   1    16     03      
+$END
+

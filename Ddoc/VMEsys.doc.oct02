@@ -1,0 +1,1122 @@
+RPD$075059001
+NPS$01
+CHP$VME Front-End Acquisition System
+TPF$
+SP1$
+CY1$
+Sec Page Contents
+
+010   1  Introduction
+020   2  On the Road to Data Acquisition - Things YOU must do
+030   2  VME Hardware Setup
+040   5  Configuration of VME/DECstation
+050   7  Running the VME Acquisition
+060   9  FORTRAN Interface to CAMAC, FASTBUS and Acquisition Control
+070  10  Test and Status Routines
+080  16  VME Hardware Diagnostics
+090  18  What she'll do
+SEC$.010 Introduction
+SIN$
+CY1$
+************************************************************************
+
+                        Physics Division
+                  Oak Ridge National Laboratory
+
+                     Copyright(C) 1993-1994
+
+
+
+                    IMPORTANT NOTICE TO USER
+
+All statements, technical information and recommendations contained
+herein are based on tests we believe to be reliable, but the accuracy
+or completeness thereof is not guaranteed, and the following  is
+made in lieu of all warranties expressed or implied:
+
+Our only obligation shall be to correct or replace, at our convenience,
+any part of the product proven to be defective.  We shall not be liable
+for any loss or damage, direct or consequential, arising out of the
+use or the inability to use the product.  Before using, the USER shall
+determine the suitability of the product for his or her intended use,
+and the USER assumes all risk and liability whatsoever in connection
+therewith.
+
+************************************************************************
+BLP$
+Welcome to the first edition of VME Front-End Acquisition System
+user's manual.  This document is limited to installation, configuration,
+and operation of the VME Front-End Acquisition system.
+BLP$
+UNIX scripts and executables for the commands described herein are
+in the directory \b\/usr/hhirf\\ or \b\/usr/acq/vme\\.
+BLP$
+For documentation on \b\PAC\\, see file \b\/usr/hhirf/doc/pac.doc\\.
+This document is file \b\/usr/hhirf/vme/doc/VMEsys.doc\\.
+BLP$
+Throughout this document, examples of screen output will be reproduced.
+In these examples, user input will be in Bold print.
+BLP$
+SEC$.020 On the Road to Data Acquisition - Things you must do
+BLP$
+CY1$
+    1).. Setup your VME crate ........................................
+
+         see Section 030
+             User's manuals for the hardware interfaces
+
+    2).. Configure the VME/DECstation system .........................
+
+         see Section 040
+
+    3).. Load VME Acquisition software ...............................
+
+         see Section 050  -  LOADACQ command
+
+    4).. Prepare your PAC program ....................................
+
+         see file - \b\/usr/hhirf/doc/pac.doc\\ - PAC user documentation
+
+    5).. Compile and load your PAC ...................................
+
+         see file - \b\/usr/hhirf/doc/pac.doc\\ - PAC user documentation
+             Section 050  -  PAC command
+
+    6).. Initialize the VME Acquisition system .......................
+
+         see Section 050  -  INITVME command
+
+    7).. Run your custom hardware initialization procedures ..........
+
+         see Section 060  -  FORTRAN callable I/O routines
+
+         This is your ball of wax.
+
+    8).. Start the VME acquisition system .............................
+
+         see Section 050  -  STARTVME command
+
+    9).. You are now ready for data acquisition.  See the PACMAN document,
+         \b\/usr/hhirf/wks/doc/pacmanII.doc\\, for operating the workstation
+         acquisition software.
+BLP$
+SEC$.030 VME Hardware Setup
+BLP$
+This section covers the installation of the VME front-end system and
+its connection the DECstation.
+FIP$
+1...  Turn off power to the VME crate before inserting or removing
+VME modules.
+FIP$
+2...  Forced air cooling is required for the VME crate.  Some crates
+have built-in fan assemblies.  Others require a fan assembly mounted
+below the VME crate.
+FIP$
+3...  In a vertical VME card cage, slot 1 is the leftmost slot when viewing
+the front of the crate.  The Force SYS68K CPU-40/B4 processor module
+MUST be installed in slot 1.
+FIP$
+4...  When installing additional modules in the crate, there should
+be no empty slots to the left of any module.
+BLP$
+\B\................ VME Processor Module .................\\
+BLP$
+There are two hexadecimal switches labeled 1 and 2 on the front panel
+of the SYS68K CPU-40/B4 module.  Switch 1 should be set to B and switch
+2 should be set to F.  The setting of these switches control the 
+start up of the VME processor.  It is very important they be set a described
+above!
+BLP$
+The SYS68K CPU-40/B4 has 4 serial ports.  The 4 9-pin Micro DSUB connectors
+labeled 1 thru 4 on the front panel are these serial ports.
+Serial ports 2 and 4 are not currently used.  Serial port 1 is used by the 
+VMEPROM firmware.  Serial port 3 is used if you use the interactive CAMAC
+command program VMECNAF.
+BLP$
+It is not necessary to connect a terminal to any serial port.  If, however,
+a terminal is connected, the required terminal setup is:
+CYB$
+       9600 Baud, 8 bit characters, No parity, and 1 stop bit
+BLP$
+To connect the VME system to the DECstation you need two thin wire transceivers,
+two 50 ohm terminators, a 50 ohm coaxial cable.   Connect one transceiver to
+the SYS68K CPU-40/B4 front panel 15-pin AUI connector.  The other transceiver
+connects to the same type connector on the rear panel of the DECstation.
+There are two such connectors on the DECstation.  Connect the VME system to
+the one labeled \b\ln1\\.
+The cable connecting the DECstation to the VME module MUST be terminated
+at each end.
+CYB$
+  WARNING:  The SYS68K CPU-40/B VME processor module MUST
+            be installed in slot 1 of the VME crate.
+BLP$
+\B\............ KSC 2917 CAMAC Interface Module ...........\\
+BLP$
+It is recommended that the KSC 2917 module be installed in slot 2 of the
+VME crate.  The VME module controls up to 8 KSC 3922 CAMAC crate controllers.
+Use of 40 conductor twist-and-flat cable is recommended.  A terminator module
+should be connected to the bus output connector at the last KSC 3922.
+See the KSC 3922 manual for cabling details.
+BLP$
+The acquisition system will use a KSC 3982 List Sequencing Crate Controller if
+it is installed in slot 23 of CAMAC crate 0.  Installation requires a
+40 conductor ribbon cable connecting the KSC 3982 to the KSC 3922 on the rear
+of the modules and a LEMO cable from Grant Out on the KSC 3922 to Grant In
+on the KSC 3982.  See KSC 3922 and KSC 3982 manuals for more details.
+BLP$
+\B\........... LRS 1131 FASTBUS Interface Module ..........\\
+BLP$
+You need this module only if you have a FASTBUS system.  If present, use the
+special LeCroy cable to connect the VME module to the LRS 1821 FASTBUS
+Segment Manager/Interface.
+BLP$
+\B\........... CES 8170 High Speed Memory Module ..........\\
+BLP$
+If you have FERA type readout devices, install a CES 8170 in the VME crate.
+The CES 8170 connects to a LRS 4301 FERA Driver CAMAC module.  Three cables
+are required.  The data cable is a 34 conductor ribbon.  Use of twist-and-
+flat cable is recommended.  Two LEMO cables are required for the data
+transfer handshake signals.  Connect WSO on the LRS 4301 to WSI on the
+CES 8170.  Also, connect WAO on the CES 8170 to WAI on the LRS 4301.
+For instructions on connecting FERA readout devices to the LRS 4301, see the
+LRS 4301 manual and manuals for your particular CAMAC modules.
+BLP$
+\B\................. ORNL Trigger Module ..................\\
+BLP$
+A VME Event Trigger Module is needed for all setups.  The trigger module
+accepts an Event signal, generates a Busy output during readout, and
+a Clear signal a the end of readout.  Input and outputs are fast negative
+NIM and differential ECL.  See the VME Event Trigger Module document for
+additional information.
+BLP$
+\B\..................... SMOKE TEST ......................\\
+BLP$
+Now that you have installed all the VME interface modules needed, turn on
+power to the VME crate.  Make the sure the fan assembly is also on.
+After approx. 45 seconds, VME processor should be ready.  If you have a
+terminal attached to serial port 1, you should see a banner similar to
+the one below.
+CY1$
+****************************************************************************
+*                                                                          *
+*                          ornl Physics Division                           *
+*                                                                          *
+*                    VME Processor ready for download                      *
+*                                                                          *
+****************************************************************************
+
+******************************************************************
+*                                                                *
+*                        V M E P R O M                           *
+*                                                                *
+*          SYS68K/CPU-40     Version  2.74   09-Apr-91           *
+*                                                                *
+*           (c) FORCE Computers  and  Eyring Research            *
+*                                                                *
+******************************************************************
+
+?
+
+CYB$
+WARNING:  The VME processors do not always start up correctly if power
+          has been off more than 15 minutes.
+BLP$
+If you have a terminal connected to serial port 1 and do not get the
+banner within 1 minute, press and release the Reset switch on the front
+panel of the SYS68K CPU-40/B4 module.  The banner should now appear within
+approx. 5 seconds.
+BLP$
+If no terminal is connected,  press and release the Reset switch
+one minute after power on.
+
+SEC$.040 Configuration of VME/DECstation
+BLP$
+When initially setting up an acquisition system or after changing DECstation
+or VME processor, you must configure the system.  If there is a single 
+VME front-end system attached to the DECstation, the configuration procedure
+sets the default VME processor to be the one which is attached to the 
+DECstation.  The following example assumes the VME system has been setup
+as described in section 030.
+CYB$
+WARNING:  Running vmeconfig may take up to 40 seconds.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\unsetenv VME\\
+orph38> \b\/usr/acq/vme/vmeconfig\\
+Checking for available VME Processors
+Using processor: vme:    ln1 00-80-42-04-16-14
+
+Loading the VME operating system
+VME operating system is loaded.
+VME System Hardware Configuration
+
+    VME Processor Logical Name: vme
+VME Processor Ethernet Address: 00-80-42-04-16-14
+ Default Host Ethernet Address: 08-00-2b-24-e0-5b
+        Boot Multicast Address: 03-6d-63-73-71-00
+Available Interface Modules are:
+
+KSC 2917 -  CAMAC Interface Module
+LRS 1131 -  FASTBUS Interface Module
+CES 8170 -  FERA Readout Module
+TRIGGER  -  ORNL Trigger Module
+orph38>
+--------------------------------------------------------------------------
+BLP$
+You should verify that the list of Available Interface Modules agrees
+with the hardware installed in the VME crate.
+BLP$
+Next, you should examine your \b\.login\\ and \b\.cshrc\\ files.  Look for
+any statements of the form:
+CY1$
+    setenv VME vme?
+BLP$
+If there are any such statements, you should 
+INP$
+1)... Delete all such statements.
+INP$
+2)... Logout and login again.
+BLP$
+You have now completed the configuration procedure.
+BLP$
+Running \b\vmeconfig\\ will fail, as in the example below, if no VME 
+processor responds.  
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/vmeconfig\\
+Checking for available VME Processors
+********************* ERROR ****************************
+*                                                      *
+*  NO VME Processor has responded!                     *
+*                                                      *
+* Check hardware configuration and retry.              *
+*                                                      *
+********************* ERROR ****************************
+orph38>
+--------------------------------------------------------------------------
+BLP$
+There are many possible causes.  These include incorrect setup of the
+VME processor module, defective VME processor module, defective transceivers,
+etc., etc.  The following is a check list for the most likely problems.
+A more detailed diagnostic procedure is in section 080.
+FIP$
+1... The ethernet cable connecting the DECstation and the VME processor
+MUST be terminated at each end in 50 ohms.  It is advisable to measure
+the terminators, particularly if these are not specially make for ethernet
+use.  Also check the cable for broken braid or tarnished connectors.
+FIP$
+2... Make sure the fan assembly for the VME crate is operating.  The
+SYS68K CPU-40/B4 MUST have forced air cooling.
+FIP$
+3... Check the setting of the two hexadecimal switches on the front panel
+of the SYS68K CPU-40/B4.  Switch 1 should be set to B and switch 2 should be set
+to F.
+FIP$
+4... Press and release the Reset switch on the front panel of the
+SYS68K CPU-40/B4 module.  The VME processors do not always start up correctly
+if power has been off more than a few minutes.
+BLP$
+Now repeat the configuration procedure from the beginning. If the failure
+persists, see section 080 for additional diagnostics.
+BLP$
+If the DECstation is connected to more than one VME front-end system,
+running \b\vmeconfig\\ will list the VME processors which were found.
+You must then select the one you wish to use.  For example,
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/vmeconfig\\
+Checking for available VME Processors
+Multiple VME Processors responded!
+VME Processors responding are:
+
+Processor      Ethernet Address
+Name
+vme1:        ln1 00-80-42-00-29-79
+vme2:        ln1 00-80-42-04-16-14
+
+To select a processor for use, set the environment variable
+VME to the processor name.  For example,
+
+setenv VME vme2
+
+After setting the variable VME, run vmeconfig again.
+
+orph38>
+--------------------------------------------------------------------------
+BLP$
+To select the VME processor, you must set the environment variable VME to
+the processor name.  It is recommended that you add a statement in your
+\b\.login\\ file which sets the variable VME.  For example, to select
+processor vme1, add the following line in your \b\.login\\ file:
+CY1$
+   setenv VME vme1
+BLP$
+After adding the statement to the \b\.login\\ file, you need to logout and
+login again.  When the variable VME is set to the proper processor, you
+should run \b\vmeconfig\\ again.  Example:
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/vmeconfig\\
+Environment variable VME is set to vme1.
+Checking status of VME Processor vme1:
+VME System Hardware Configuration
+
+    VME Processor Logical Name: vme1
+VME Processor Ethernet Address: 00-80-42-00-29-79
+ Default Host Ethernet Address: 08-00-2b-24-e0-5b
+        Boot Multicast Address: 03-6d-63-73-71-00
+Available Interface Modules are:
+
+KSC 2917 -  CAMAC Interface Module
+LRS 1131 -  FASTBUS Interface Module
+CES 8170 -  FERA Readout Module
+TRIGGER  -  ORNL Trigger Module
+orph38>
+--------------------------------------------------------------------------
+BLP$
+If the list of Available Interface Modules agrees
+with the hardware installed in the VME crate, configuration is complete.
+
+SEC$.050 Running the VME Acquisition System
+BLP$
+If you are looking for just a few good commands, here they are.
+\b\PAC\\ is in the directory \b\/usr/hhirf\\.
+All other commands are in the directory \b\/usr/acq/vme\\.
+BLP$
+\B\BOOTVME ...............................................\\
+BLP$
+This command loads the code for a minimal operating system into the
+VME processor. After the basic operating system is loaded, the
+workstation can communicate directly with hardware such as FASTBUS
+and CAMAC.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/bootvme\\
+*********************** WARNING ************************
+* The VME processor is being rebooted.                 *
+*                                                      *
+* To run data acquisition, YOU MUST execute three      *
+* additional commands:                                 *
+*   1)  loadacq                                        *
+*   2)  pac  userfile l                                *
+*   3)  initvme                                        *
+*********************** WARNING ************************
+Reboot the VME processor
+Loading the VME operating system
+VME operating system is loaded.
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\TESTVME ...............................................\\
+BLP$
+Testvme loads the VME processor with a code which generates an event
+stream.  Each event has 28 parameters.  The IDs are 1 thru 28.  Within
+an event the data for every parameter has the same value.  That data
+value is incremented after each event and has a range of 0 thru 4095.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/testvme\\
+*********************** WARNING ************************
+*  Normal Acquisition Codes in the VME processor are   *
+*  being replaced with test programs.  These test      *
+*  programs generate an event stream for testing the   *
+*  VME/DECstation connection.                          *
+*                                                      *
+* NOTE: When finished testing, you should execute the  *
+*       the command - loadacq                          *
+*********************** WARNING ************************
+Delete the acquisition tasks in the VME processor
+
+Now load the VME/DECstation test programs.
+
+VME/DECstation test codes are now loaded.
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\LOADACQ ...............................................\\
+BLP$
+Once the basic operating system is loaded(BOOTVME above), you can load
+the acquisition code into the VME processor. This is the code which
+decodes your readout instructions, responds to Event inputs, reads
+the specified hardware and sends event data to the workstation.
+This is a necessary but not sufficient step in starting data acquisition.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/loadacq\\
+Relink code - /usr/acq/vme/kill_acq
+Oasys 68000 Cross-Linker, version 5.11.
+Copyright (C) 1984,1985,1986,1987,1988,1989,1990,1991 XEL, Inc. All rights reser
+ved.
+Delete the acquisition tasks in the VME processor
+
+Now load the acquisition tasks.  Any error messages here are BAD news.
+
+Acquisition system now loaded
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\PAC ...................................................\\
+BLP$
+\b\PAC\\ is a compiler which generates and loads tables of readout commands
+into the VME processor.  For detailed instructions, see
+\b\/usr/hhirf/doc/pac.doc\\.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/hhirf/pac test l\\
+#BYTES OBJECT CODE GENERATED =   16808
+CONSIDER YOURSELF LOADED WITH  16808  BYTES
+NO ERRORS
+orph38>
+--------------------------------------------------------------------------
+BLP$
+BLP$
+\B\INITVME ...............................................\\
+BLP$
+Currently, VME acquisition system does not recognize when you have
+loaded a new PAC. Therefore, you MUST tell it. Note that you can
+NOT initialize the VME acquisition system if VME acquisition is
+running. Many errors are possible during the initialization of
+the VME(nonexistent CAMAC crates or FASTBUS modules etc. etc.).
+Only the first detected error will be reported.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/initvme\\
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\STARTVME ..............................................\\
+BLP$
+If the INITVME executed without error, you may now start the VME
+acquisition system. You must STARTVME if you want data sent
+to the workstation.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/startvme\\
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\STOPVME ...............................................\\
+BLP$
+Stop the VME acquisition. Readout by the VME processor stops and
+no more data are sent to the workstation.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/stopvme\\
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\STATVME ...............................................\\
+BLP$
+You may ask for the state of the VME acquisition system with this
+command. Possible responses are 1) not initialized, 2) running
+and 3) stopped.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/statvme\\
+VME Acquisition is running
+orph38>
+--------------------------------------------------------------------------
+
+SEC$.060 FORTRAN Interface to CAMAC and FASTBUS
+BLP$
+This section describes FORTRAN callable routines for CAMAC, FASTBUS
+hardware I/O and control of the VME acquisition system.  The names and
+calling parameters of the CAMAC routines are identical to the Concurrent
+system and therefore, very minimal changes are required to
+convert a Concurrent program for use with the DECstation/VME system.
+BLP$
+For new programs, CAMACIO is recommended as a replacement for BHIO.  This
+is functionally equivalent but the routine name is a little more
+indicative of the function performed.
+BLP$
+Since the hardware interface to FASTBUS is substantially different
+on the DECstation/VME system, Concurrent programs for FASTBUS will
+require more changes.
+BLP$
+Two new routines are available - CAMLIST and FBLIST.  Whereas the basic
+routines do one CAMAC or FASTBUS operation per call, these routines
+process a list of operations.  This is much more efficient when
+large amounts of data must be transferred (i.e. loading pedestal
+data to the LRS 1821).
+BLP$
+Another new routine allows control of the front-end acquisition
+system.
+BLP$
+All routines described in this section are in the library
+CY1$
+       \b\/usr/acq/vme/vmelib.a\\
+BLP$
+Any of your FORTRAN programs which have calls to these routines
+must be linked with this library.  Of course, any of these routines
+may be called by C language programs.
+BLP$
+\B\...................... CAMAC I/O ......................\\
+BLP$
+The main CAMAC I/O routines on the Concurrent system were BHIO
+and CMCBSC.  These are implemented  here with the same names and
+calling parameters. While the syntax for calling these routines
+remains the same, the crate number parameter has a different range.
+On the Concurrent system the crate number could be 1 thru 63.  On
+the DECstation/VME system crate number should be in the range of
+0 thru 7.
+BLP$
+All CAMAC I/O routines return the status of the last operation.
+Normally the returned status should be zero.  The error codes
+are:
+CY1$
+      Code         Meaning
+        0       Normal return, X = 1 and Q = 1
+        1       X = 0 and Q = 1
+        2       X = 1 and Q = 0
+        3       X = 0 and Q = 0
+      '80'X     Timeout
+    'c004'X     Illegal crate number
+    'c005'X     Illegal module number
+    'c006'X     Illegal subaddress
+    'c009'X     Illegal function code
+    'a000'X     Crate off-line or nonexistent
+BLP$
+The file \b\/usr/acq/vme/cam_fast.for\\ is a FORTRAN include file
+which assigns mnemonics to the possible error codes returned by CAMAC
+and FASTBUS I/O routines.
+BLP$
+\B\BHIO ........................Concurrent Compatibility..\\
+CY1$
+       CALL BHIO(MODE,LU,C,N,A,F,DATA,NUM,STAT)
+  where
+         MODE  - integer*4, zero means 16-bit CAMAC transfers
+                         nonzero means 24-bit CAMAC transfers
+         LU    - Not referenced in DECstation/VME version
+         C     - integer*4, Crate number, 0 thru 7
+         N     - integer*4, CAMAC slot number
+         A     - integer*4, CAMAC Subaddress
+         F     - integer*4, CAMAC Function code
+         DATA  - integer*2 array for 16-bit CAMAC transfers
+                 integer*4 array for 24-bit CAMAC transfers
+         NUM   - integer*4, number of CAMAC data transfers
+         STAT  - integer*4, returned status of the last CAMAC cycle
+BLP$
+This routine executes CAMAC cycles to a single CNAF.  If the CAMAC function
+code is a read or a write, then NUM data transfers are executed.  If the
+value of STAT is nonzero, the routine IPBERR is called to report the
+CAMAC error.  There is a default IPBERR routine in the library 
+\b\/usr/acq/vme/vmelib.a\\.  The default routine always outputs the message
+to the STDERR.  An example error message:
+CY1$
+CAMAC Error - C,N,A,F =  1  1  0  0  Crate Off_Line
+BLP$
+If the user has a custom IPBERR routine, it will replace the one in the
+library provided the object file containing the routine occurs in the link list
+prior to the library.  The file \b\/usr/acq/vme/ipberr.f\\ is an example
+of a custom error routine.
+BLP$
+\B\CMCBSC ......................Concurrent Compatibility..\\
+CY1$
+       CALL CMCBSC(B,C,N,A,F,MODE,TMO,DATA,NUM,STAT)
+  where
+         B     - Not referenced in DECstation/VME version
+         C     - integer*4, Crate number, 0 thru 7
+         N     - integer*4, CAMAC slot number
+         A     - integer*4, CAMAC Subaddress
+         F     - integer*4, CAMAC Function code
+         TMO   - integer*4, timeout in seconds
+         MODE  - integer*4, zero means 16-bit CAMAC transfers
+                         nonzero means 24-bit CAMAC transfers
+         DATA  - integer*2 array for 16-bit CAMAC transfers
+                 integer*4 array for 24-bit CAMAC transfers
+         NUM   - integer*4, number of CAMAC data transfers
+         STAT  - integer*4, returned status of the CAMAC operation
+BLP$
+This routine is included strictly for Concurrent compatibility and
+is not recommended for new software.
+BLP$
+\B\CAMACIO................................................\\
+CY1$
+       CALL CAMACIO(MODE,C,N,A,F,DATA,NUM,STAT)
+  where
+         MODE  - integer*4, zero means 16-bit CAMAC transfers
+                         nonzero means 24-bit CAMAC transfers
+         C     - integer*4, Crate number, 0 thru 7
+         N     - integer*4, CAMAC slot number
+         A     - integer*4, CAMAC Subaddress
+         F     - integer*4, CAMAC Function code
+         DATA  - integer*2 array for 16-bit CAMAC transfers
+                 integer*4 array for 24-bit CAMAC transfers
+         NUM   - integer*4, number of CAMAC data transfers
+         STAT  - integer*4, returned status of the last CAMAC cycle
+BLP$
+This routine is recommended for new programs.  It is functionally
+equivalent to BHIO.  The CAMAC error handler routine is CAMERR.
+The user may provide a custom error handler by the same name.
+The file \b\/usr/acq/vme/camerr.f\\ is an example of a custom
+error routine.
+BLP$
+\B\CAMLIST ...............................................\\
+CY1$
+       CALL CAMLIST(C,N,A,F,MODE,DATA,NUM,STAT)
+  where
+         C     - integer*4 array, Crate number, 0 thru 7
+         N     - integer*4 array, CAMAC slot number
+         A     - integer*4 array, CAMAC Subaddress
+         F     - integer*4 array, CAMAC Function code
+         MODE  - integer*4, zero means 16-bit CAMAC transfers
+                         nonzero means 24-bit CAMAC transfers
+         DATA  - integer*2 array for 16-bit CAMAC transfers
+                 integer*4 array for 24-bit CAMAC transfers
+         NUM   - integer*4, number of CAMAC operations in list
+         STAT  - integer*4 array, returned status of the CAMAC operation
+BLP$
+All calling parameters, except MODE, are arrays.  Also the status of each
+CAMAC cycle is return in the STAT array.
+BLP$
+\B\..................... FASTBUS I/O .....................\\
+BLP$
+These routines assume that the FASTBUS system includes a LRS 1131
+VME module which connects to a LRS 1821 Segment Manager/Interface.
+BLP$
+ALL FASTBUS routines return a status which is normally zero.  A nonzero
+value indicates an error and the possible error codes are:
+CY1$
+      Code         Meaning
+      '80'X     Timeout
+    'c006'X     Illegal register
+    'a000'X     Device not available
+BLP$
+\B\FASTBUSIO .............................................\\
+CY1$
+       CALL FASTBUSIO(A,RW,DATA,NUM,STAT)
+  where
+         A     - integer*4, LRS1821 register number
+         RW    - integer*4, 0 means read, nonzero means write
+         DATA  - integer*2 array
+         NUM   - integer*4, number of data transfers
+         STAT  - integer*4, returned status
+BLP$
+This routine accesses a single register in the LRS 1821.  Multiple
+data transfers to/from the specified register are allowed.
+BLP$
+\B\FBLIST ................................................\\
+CY1$
+       CALL FBLIST(A,RW,DATA,NUM,STAT)
+  where
+         A     - integer*4 array, LRS1821 register
+         RW    - integer*4 array, 0 means read, nonzero means write
+         DATA  - integer*2 array
+         NUM   - integer*4, number of operations in list
+         STAT  - integer*4 array, returned status
+BLP$
+Typically operations to FASTBUS require a sequence of transfers to/from
+multiple registers in the LRS 1821.  All call parameters for this routine
+are arrays.  This allows many register transfer operations to sent
+to the front-end system in a single ethernet packet.  Use of this function
+will significantly reduce the time required to load the pedestal memory.
+BLP$
+\B\................. ACQUISITION CONTROL ..................\\
+BLP$
+The VME acquisition system recognizes several commands:
+initialize, start, stop and status.  This routine allows a user program
+to execute any command and get the status of the VME acquisition system.
+BLP$
+\B\FOR_ACQ_CTRL ...........................................\\
+CY1$
+       CALL FOR_ACQ_CTRL(STAT,COMMAND)
+  where
+         STAT    - integer*4, returned status
+         COMMAND - character*8, Command, MUST be lower case.
+                   Recognized Commands are:
+                    init
+                    start
+                    stop
+                    status
+BLP$
+The value of STAT depends on the command.  For init, start or stop, a negative
+value is an error code and zero means success.  For the status command,
+negative is an error code and positive is the encoded status of the VME
+acquisition system.
+BLP$
+The file \b\/usr/acq/vme/for_acq_ctrl.for\\ assigns mnemonics for the
+error codes and acquisition status.  This file may be included in your
+FORTRAN code.
+SEC$.070 Test and Status Routines
+BLP$
+BLP$
+\B\CNAF ..................................................\\
+BLP$
+CNAF is an interactive program for testing CAMAC hardware.  This is a direct
+descendant of the Concurrent program by the same name.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/cnaf\\
+ CNAF - DECstation/VME Data Acquisition System  CNT
+ Type HELP for list of commands
+
+>\b\help\\
+
+  Commands requiring an argument. dec = decimal and hex = hexadecimal.
+
+ c dec -  crate.   0 thru 7
+ n dec -  station number.   1 thru 31
+ a dec -  subaddress.   0 thru 15
+ f dec -  function.   0 thru 31
+ d hex -  data
+
+ x [n] - execute CNAF n times.  Default n is 1.
+ e     - execute CNAF and list.
+ l     - list CNAF, data, X and Q
+
+ end   - exit program
+ exit  - exit program
+ help  - this message
+
+>\b\c 0\\
+>\b\n 1\\
+>\b\f 0\\
+>\b\e\\
+ C= 0 N= 1 A= 0 F= 0 D=  F01F Q= 1 X= 1
+>
+--------------------------------------------------------------------------
+
+BLP$
+\B\VMECNAF ...............................................\\
+BLP$
+VMECNAF is very similar to the CNAF for the DECstation.  It, however, runs
+in the VME processor.  To use VMECNAF, you must connect a terminal to 
+serial port 3 of the VME processor.  The required terminal setup is:
+CYB$
+       9600 Baud, 8 bit characters, No parity, and 1 stop bit
+BLP$
+The code for the VME processor must be downloaded by the DECstation.
+To do this run \b\/usr/acq/vme/vmecnaf\\.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/vmecnaf\\
+Load the VME processor CNAF program.  Uses Port 3
+Relink code - /usr/acq/vme/localcnaf
+Oasys 68000 Cross-Linker, version 5.11.
+Copyright (C) 1984,1985,1986,1987,1988,1989,1990,1991 XEL, Inc. All rights
+reserved.
+orph38>
+--------------------------------------------------------------------------
+BLP$
+After the code is loaded, you should get a prompt on the terminal connected
+to port 3 of the VME processor.
+CY1$
+--------------------------------------------------------------------------
+VME local interactive CNAF
+
+
+cmd> \b\help\\
+ Commands requiring an argument. dec = decimal and hex = hexadecimal.
+ c dec - crate.
+ n dec - station number.
+ a dec - subaddress.
+ f dec - function.
+ d hex - write data
+
+ x [n] - execute CNAF n (decimal) times. Default n is 1.
+ e     - execute CNAF and list
+ l     - list CNAF, data, A and Q
+
+ h     - this message
+
+cmd> 
+--------------------------------------------------------------------------
+BLP$
+\B\FIFO ..................................................\\
+BLP$
+FIFO is a test routine which requires a Kinetic Systems 3841 FIFO Memory
+CAMAC Module.  This is a very good test for the ethernet connection to
+the VME system, the VME processor, the KSC 2917 CAMAC interface, and
+the KSC 3922 Crate Controller.  To exit the test, you must type CTRL C.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/fifo\\
+ Crate Number?\b\ 0\\
+ FIFO Slot?\b\ 2\\
+^Cforrtl: error: process interrupted (SIGINT)
+orph38>
+
+--------------------------------------------------------------------------
+BLP$
+\B\LT ....................................................\\
+BLP$
+LT lists the tasks and memory segment allocations in the VME processor.  The
+example below shows the status when all data acquisition software is loaded.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/lt\\
+
+VME Processor: vme1
+ ID        Memory/Task    Size       Address      pc    evt1/evt2  pri/time
+ 0  T00           Task0    8    7000    9000  FF002CD4   97    0   64    1 W
+ 1  T01      Lan Driver   16    9000    D000      ACEA   56   64   70    1 W
+ 2  T02         Mem_mgr   76    D000   20000      FD86    0    0   69    1 R
+ 3  M        Acq_Params  128   20000   40000
+ 4  T03          cnafxx   44   40000   4B000     42642   -1    1   69    1 W
+ 5  T04          fastxx   42   4B000   55800     4D2EA   -1    1   63    1 W
+ 6  T05       data_proc   44   87000   92000     89504   72    0   69    1 W
+ 7  T06          VMEacq  248   92000   D0000     96E90   -1    1   69    1 W
+orph38>
+--------------------------------------------------------------------------
+BLP$
+Use of LT is a good way to check the VME system.  If LT responds with
+a connection failure, the VME processor is belly up and must be rebooted.
+See BOOTVME in section 050.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/lt\\
+Connection failure, no acknowledgment - /usr/acq/vme/lt
+orph38>
+--------------------------------------------------------------------------
+BLP$
+\B\VMEHARDWARE ...........................................\\
+BLP$
+VMEHARDWARE displays a list of hardware modules in the VME system.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/vmehardware\\
+VME System Hardware Configuration
+
+    VME Processor Logical Name: vme1
+VME Processor Ethernet Address: 00-80-42-00-29-79
+ Default Host Ethernet Address: 08-00-2b-24-e0-5b
+        Boot Multicast Address: 03-6d-63-73-71-00
+Available Interface Modules are:
+
+KSC 2917 -  CAMAC Interface Module
+LRS 1131 -  FASTBUS Interface Module
+CES 8170 -  FERA Readout Module
+TRIGGER  -  ORNL Trigger Module
+orph38>
+--------------------------------------------------------------------------
+SEC$.080 VME Hardware Diagnostics
+BLP$
+The VME processor requires +5 Volts, +12 Volts and -12 Volts.  Check your
+VME crate power supply for presence of all three output voltages.
+BLP$
+When the VME processor is executing the boot loader, a special packet
+is sent every 10 seconds.  This test determines if the DECstation
+is receiving these packets.  The routine \b\/usr/acq/vme/listen\\
+is used to receive and display the packets.
+CY1$
+--------------------------------------------------------------------------
+orph38> \b\/usr/acq/vme/listen ln1 4f-51\\
+Device Type: Ethernet
+Device H/W address: 08-00-2b-24-e0-5b
+*********************  Packet  *************************
+StampLen=20 PacketLen=64  NumberDrop=0 Overflows=0
+Time - Fri May 21 13:02:38 1993
+ Multicast
+ Destination: 03-6d-63-73-71-00
+ Source: 00-80-42-00-29-79
+ Protocol: 4f-51
+Buffer Length:50
+00 00 00 00 00 00 49 50 4c 20 46 6f 72 63 65 20    ......IPL Force
+43 50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66    CPU-40 : Ready f
+6f 72 20 64 6f 77 6e 6c 6f 61 64 0d 00 ff 34 45    or download...4E
+42 39                                              B9
+^Corph38>
+
+--------------------------------------------------------------------------
+BLP$
+If the DECstation is receiving packets like the one above, the most
+likely problem is a defective transceiver.  There are two transceivers
+used; one connected to the rear of the DECstation and one  connected
+to the front of the SYS68K CPU-40B/4 VME processor module.  Replace
+one of them and retry the configure procedure in section 030.  If
+you still have a failure replace the other transceiver and try again.
+BLP$
+If no packets are being received by the DECstation, further tests of
+the VME processor are required.  Tests of the VME processor require
+a terminal connected to serial port 1.  The required setup for the
+terminal is:
+CYB$
+       9600 Baud, 8 bit characters, No parity, and 1 stop bit
+BLP$
+The boot loader code for the VME processor is stored in battery backed
+RAM.  There is a backup copy of the boot loader in EEPROM.  The
+procedure below restores the battery backed RAM from the EEPROM.
+FIP$
+1)... There are two hexadecimal switches on the front panel of the
+VME processor module.  In setup of the system, you should have set 
+switch 1 to B and switch 2 to F.  Now change switch 1 to F.
+FIP$
+2)... Press and release the Reset switch on the VME processor module.
+You should now get a banner similar to the example below on the
+terminal connected to serial port 1.
+CY1$
+******************************************************************
+*                                                                *
+*                        V M E P R O M                           *
+*                                                                *
+*          SYS68K/CPU-40     Version  2.74   09-Apr-91           *
+*                                                                *
+*           (c) FORCE Computers  and  Eyring Research            *
+*                                                                *
+******************************************************************
+
+?
+FIP$
+3)... At the ? prompt, type go $ffc80000.  The VME processor should respond
+with a line "Trap #0" followed by a dump of the 68040 registers.
+CY1$
+? \b\go $ffc80000\\
+Trap #0
+....
+....
+
+?
+FIP$
+4)... Change switch 1 back to B. Then press and release the Reset switch.
+Now you should get a banner on the terminal similar to that shown in section
+030.
+FIP$
+5)... At the DECstation, retry \b\vmeconfig\\.
+BLP$
+If the system still doesn't work, it is time to call for HELP and
+find something else to amuse yourself with until help arrives.
+BLP$
+SEC$.090 What she'll do
+BLP$
+Measurements of the event rate and readout time as a function of number of
+parameters and parameter type were made.
+The event generator was a pulser.  To determine the event rate
+, the pulser rate was increased until the front-end system begins losing
+events.
+The pulser trigged a NIM latch(Joerger Model GG Gate generator) which
+was the Event input to the VME system.  When readout completes, the VME system
+resets the NIM latch.  The reported readout time is the time the latch
+is asserted.
+The following table has the rates and readout times for CAMAC and FERA devices.
+CY1$
+Kbytes/   Packets/   Events/    Readout time   Parameter
+  Sec       Sec        Sec         usec          type
+
+193        132       24162          33          1 CAMAC
+267        184        9551          83          6 CAMAC
+285        198        8892          87          7 CAMAC
+302        210        8400          91          8 CAMAC
+335        230        6436         110         12 CAMAC
+249        306        4289         158         24 CAMAC
+462        347        3120         210         36 CAMAC
+
+192        131       24028          34          1 FERA
+465        323       11380          48          8 FERA
+573        402        8440          64         16 FERA
+647        446        4902          99         32 FERA
+
+BLP$
+CAMAC readout is presently considerably slower than FERA.  The CAMAC readout
+uses different methods depending on the number of parameters read.  If the
+number of parameters to be read is 6 or less, readout is strictly programmed
+I/O.  For 7 or more parameters, a KSC 3892 List Sequencer is used followed 
+by a DMA transfer from the KSC 3982 to the VME system.  The CAMAC readout
+times can be approximated as follows:
+CY1$
+For 6 or fewer parameters:
+
+    readout time (microseconds) = 23 + 10*n
+
+For 7 or more parameters:
+
+    readout time (microseconds) = 54 + 4.4*n
+
+BLP$
+FERA read times can be approximated:
+CY1$
+    readout time (microseconds) = 32 + 2*n
+BLP$
+The above approximations are valid only if reading a single type of hardware
+device.  When readout consists of a both type of devices, some
+operations can be done concurrently resulting in a faster readout than predicted
+from the above.  The following table shows readout times for varying numbers
+of CAMAC and FERA parameters.
+CY1$
+Readout time    Parameter types
+   usec
+
+  51           1 CAMAC +  1 FERA
+  57           1 CAMAC +  4 FERA
+ 114           6 CAMAC +  8 FERA
+ 130           6 CAMAC + 16 FERA
+ 119           7 CAMAC + 16 FERA
+ 102           8 CAMAC +  8 FERA
+ 118           8 CAMAC + 16 FERA
+ 155           8 CAMAC + 32 FERA
+ 112          12 CAMAC +  8 FERA
+ 126          12 CAMAC + 16 FERA
+ 215          36 CAMAC + 32 FERA
+
+BLP$
+Measurements were made of the CPU idle time and the event loss when recording
+on tape as a function of the data rate received from the VME front-end system.
+The CPU idle time was determined using the system command \b\vmstat\\.
+The event loss rate was determined by software counters which compare the
+number of events received and the number of events recorded on tape.
+BLP$
+The tape drive used was a TTI 8510.  These drives can operate at low density
+(2.3e9 byte capacity) or high density(4.5e9 byte capacity).
+BLP$
+The following tables show rates in Kbytes/sec.  One data parameter equals
+4 bytes.  The CPU idle is the percentage of the CPU available to the user
+during data acquisition.
+CY1$
+
+   TTI 8510 Low Density mode
+   8192 byte record size/shared memory buffer size
+
+Kbytes/   Packets/   %CPU Idle   %Loss
+  Sec       Sec        Tape
+
+100.5      69           82         --
+148.8     103           74         --
+198.5     137           66        2.9
+246.2     170           58        2.5
+299.5     206           51       13.4
+358.5     247           44       27.7
+403.3     278           38       35.7
+508.0     350           29       49.2
+
+CY1$
+   TTI 8510 High Density mode
+   8192 byte record size/shared memory buffer size
+
+Kbytes/   Packets/   %CPU Idle   %CPU Idle   %Loss
+  Sec       Sec       No Tape     Tape
+
+ 49.4      34          94          90         --
+100.8      70          89          82         --
+149.5     103          85          73        0.31
+199.5     137          79          65        0.31
+247.5     170          75          56        0.52
+300.6     207          71          49        5.8
+350.5     242          66          41       15.3
+400.6     276          61          36       25.9
+449.8     310          58          31       34.2
+512.2     353          52          26       43.4
+
+
+BLP$
+Notice that even in high density mode, the maximum data rate to tape is
+approximately 300 Kbytes/sec.  This is just one of the many special features
+of the TTI 8510 drives.  As seen below, the expected 500 Kbytes/sec rate
+can be achieved using large data records.
+CY1$
+
+   TTI 8510 High Density mode
+   32768 byte record size/shared memory buffer size
+
+Kbytes/   Packets/   %CPU Idle   %CPU Idle   %Loss
+  Sec       Sec       No Tape     Tape
+
+100.6      69          89          86         --
+148.4     102          85          80         --
+198.1     137          80          73         --
+247.9     170          76          66         --
+300.8     207          71          59         --
+351.0     242          66          52         --
+401.7     277          61          46         --
+449.5     310          57          38        0.99
+512.2     353          52          29        2.74
+
+QIT$

@@ -1,0 +1,694 @@
+RPD$075059001
+CHP$ACQS  - Setup of workstation and VME for acquisition
+NPS$01
+TPF$
+SP1$
+CY1$
+Sec Page     Contents
+
+010   1  Introduction
+020   1  Distribution tapes
+030   1  OASYS/Greenhills software
+040   1  VME and acquisition software
+050   2  Making packetfilter character special files
+060   2  Changes to /etc/rc.local
+070   3  TTY ports on workstation
+080   4  Special files for acquisition/VME software
+090   5  Preparing your VME processor bootstrap program - CPU-40
+100   5  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-40
+110   6  Initial setup of the VME processor - CPU-40
+120   6  Loading bootstrap code into the VME processor - CPU-40
+130   8  Initial setup of the VME processor - CPU-60
+140   9  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-60
+150  10  Loading bootstrap code into the VME processor - CPU-60
+160  12  Workstation acquisition software
+
+BLP$
+SEC$.020  Distribution tapes
+BLP$
+You should have two tapes from ORNL.  Both are in TAR format.  The first tape
+is W.T. Milner's Upak distribution.  See the upak document for installation
+of this.  This document is restricted to contents of the second tape and
+setup of the workstation and VME.
+BLP$
+SEC$.030  OASYS/Greenhills software
+BLP$
+Compiling, assembling and linking any code for the VME processor uses the OASYS
+software.  Also some workstation codes invoke parts of the OASYS system.
+All *.make files for VME software have a built-in path to the
+OASYS.  On our system, the OASYS in in the directory \b\/usr/oasys2\\.
+BLP$
+If you put the OASYS in some other directory, changes will be required
+in \b\mcsq/Dvme3\\.  You will need to search all *.make
+and *.c for references to \b\/usr/oasys2\\ and change appropriately.
+BLP$
+SEC$.040  VME and acquisition software
+BLP$
+The TAR tape has three (3) directories.  
+BLP$
+Most everything is in the directory \b\/usr/users/mcsq\\.  This is my login
+directory at ORNL.  There will be a great deal of stuff which is not
+useful to you but at least you should have everything required to compile
+and assemble any of the codes.  In the following, I try to list all 
+sub-directories with a brief description of the contents.
+BLP$
+A NOTE about by backup system:  By default all C language does have a name
+in the form:
+CY1$
+        name.c
+BLP$
+For many codes, you will find files such as name.c01, name.c02, etc.  These are
+all OLD versions of the code \b\name.c\\.  I always start will *.c01 and
+increase the number with each major revision.  Hence, *.c01 (or the smallest
+number found) is the oldest version.  I use the same system for other languages.
+For example, *.f, *.s and *.a for FORTRAN, assembly language and libraries.
+BLP$
+VME Software:
+ODP$
+Dvme3 .. VME processor codes and workstation codes for loading the VME
+processor.  Also workstation codes for configuration, status checking
+and debug.  Contains latest versions.  Most executables are also
+in the directory \b\/usr/acq/vme\\.
+ODP$
+Ddoc ... "Finished" documents.  Most are in Milner's \b\txx\\ format.
+The files *.ps are postscript files for some figures.
+ODP$
+Dlan ... Ethernet access routines.  The library
+\b\orph_pf.a\\ must be linked with all routines which access the VME system.
+BLP$
+WORKSTATION Software:
+ODP$
+Dacq ... FORTRAN callable routines for CAMAC and FASTBUS( vmelib.a ).
+Utilities and test routines for CAMAC and FASTBUS.
+ODP$
+Dshm ... Shared memory access routines for acquisition software.
+ODP$
+Dmclib . FORTRAN callable string processing routines.  Shared memory
+cleanup routine.
+ODP$
+Dupdate. A code and data files for updating disks on another acquisition
+machine.  Typically used prior to shipping a machine.  It compares the
+creation dates of my working versions with those on another machine.
+If different, the user can interactively update the file on the other
+machine.
+BLP$
+SEC$.050  Making packetfilter character special files
+BLP$
+Use MAKEDEV to create the character special files.  See the manual
+page 'packetfilter' for details.  Once these special files have been
+created, you MUST change the permissions so that ordinary folks can
+access then.  To do this, type
+CYB$
+     chmod 0666 /dev/pf/pfilt*
+BLP$
+SEC$.060  Changes to /etc/rc.local
+BLP$
+Some additions to your /etc/rc.local are required.  Look at
+\b\/usr/users/mcsq/rc.local\\ for an example.
+BLP$
+Statements to configure the packet filter must be added.  These are as follows:
+CYB$
+#    Configure packetfilter interface for Ethernet interfaces
+/usr/etc/pfconfig -backlog 32 ln0
+/usr/etc/pfconfig +promisc -backlog 32 ln1
+
+BLP$
+The ethernet interfaces must be started.  One way to do this is to start
+LAT.  The statement in rc.local  which does this is:
+CYB$
+if [ -f /etc/lcp ]; then
+        /etc/lcp -s \
+                 -g 127 \
+                 -n orph38 \
+                 -N "Physics Data Acquisition" \
+                 -V "Physics Data Acquisition" & echo -n ' lat' >/dev/console
+fi
+BLP$
+This starts LAT on both ethernet interfaces so you need to change the
+parameters for your installation.
+BLP$
+You must enable an ethernet multicast on the second(private) ethernet interface.
+The VME processor sends a multicast when it is ready to be booted.  The
+following addition to rc.local enables the workstation to receive that
+multicast:
+CYB$
+[ -f /usr/acq/etc/setmulti ] && {
+     /usr/acq/etc/setmulti ln1 ; echo -n 'Enable VME Multicast' >/dev/console
+}
+BLP$
+SEC$.070  TTY ports on workstation
+BLP$
+In order to get the VME processor off the ground and running, you need to
+be able to login to the workstation from external terminal.  This can be
+a terminal connected by a terminal server and LAT or a terminal connected 
+directly to one of the two serial line interfaces on the workstation.  An
+example /etc/ttys file which allows both ways is:
+CY1$
+orph38> type /etc/ttys
+# @(#)ttys      4.1 (ULTRIX) 7/2/90
+#
+#
+#
+# name  getty           type            status          comments
+#
+console "/etc/getty std.9600" vt100     off     secure  # console terminal
+tty00   "/etc/getty std.9600" vt100     on nomodem secure # direct connect tty
+tty01   "/etc/getty std.9600" vt100     off nomodem     # direct connect tty
+tty02   "/etc/getty std.9600" vt100     on nomodem      # LAT
+tty03   "/etc/getty std.9600" vt100     on nomodem      # LAT
+tty04   "/etc/getty std.9600" vt100     on nomodem      # LAT
+tty05   "/etc/getty std.9600" vt100     on nomodem      # LAT
+tty06   "/etc/getty std.9600" vt100     on nomodem      # LAT
+tty07   "/etc/getty std.9600" vt100     on nomodem      # LAT
+ttyd0   "/etc/getty std.9600" vt100     off shared secure # modem line
+ttyp0   none            network secure
+#xcons   "/usr/bin/X11/xcons 0 ttyp0" none on nomodem
+ttyp1   none            network
+ttyp2   none            network
+ttyp3   none            network
+ttyp4   none            network
+ttyp5   none            network
+ttyp6   none            network
+ttyp7   none            network
+ttyp8   none            network
+ttyp9   none            network
+ttypa   none            network
+ttypb   none            network
+ttypc   none            network
+ttypd   none            network
+ttype   none            network
+ttypf   none            network
+ttyq0   none            network
+ttyq1   none            network
+ttyq2   none            network
+ttyq3   none            network
+ttyq4   none            network
+ttyq5   none            network
+ttyq6   none            network
+ttyq7   none            network
+ttyq8   none            network
+ttyq9   none            network
+ttyqa   none            network
+ttyqb   none            network
+ttyqc   none            network
+ttyqd   none            network
+ttyqe   none            network
+ttyqf   none            network
+orph38>
+BLP$
+SEC$.080  Special files for acquisition/VME software
+BLP$
+There are some executable files which have special permissions and
+ownership.  The are executed by ordinary users but must have permission of
+root or hhirf.  The files are:
+CYB$
+    /usr/acq/etc/setmulti -  owner: root,  setuid permission
+
+    /usr/acq/etc/delmulti -  owner: root,  setuid permission
+   
+    /usr/acq/etc/acq_priority - owner: root, setuid permission
+
+    /usr/acq/vme/vmeconfig  - owner: hhirf, setuid permission
+
+    /usr/acq/vme/vmedefault - owner: hhirf, setuid permission
+BLP$
+These files as restored from a tar tape should be correct.  However,
+if you copy then to another directory, the setuid permission will be
+lost and MUST be restored using chmod(see manual page for chmod).  Also
+check ownership!
+BLP$
+SEC$.090  Preparing you VME processor bootstrap program - CPU-40
+BLP$
+FORCE Computers should supply with the documentation the hardware ethernet
+address assigned to your VME processor module.  That hardware address
+should be put in the bootstrap code for the VME processor.  The file to
+be changed is in the directory \b\mcsq/Dvme3\\.  The file is 
+\b\vme1_boot.s\\.  Edit this file and find the following line:
+CYB$
+LAN_ADDR        DC.B    $00,$80,$42,$00,$29,$79         ;Our address
+BLP$
+This file was prepared for a VME processor having an ethernet hardware
+address of  00-80-42-00-29-79.
+BLP$
+Change the address to that assigned to YOUR processor.
+BLP$
+Now you must assemble and link the program.  Use the makefile vme1_boot.make.
+CYB$
+   make -f vme1_boot.make
+BLP$
+If you have a second VME processor, you can use the file \b\vme2_boot.s\\
+for it's bootstrap.  This file is identical to vme1_boot.s except for the
+ethernet address.
+BLP$
+SEC$.100  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-40
+BLP$
+This file assigns names to physical ethernet addresses.  It is extremely
+important that names vme, vme1 and vme2 be changed to reflect the actual
+physical ethernet addresses of YOUR VME processors.  Furthermore, the
+ethernet addresses you enter here MUST agree with those in the bootstrap
+files(SEC 090).  All workstation software uses this file to translate a
+name to a physical address.  The distribution file is:
+CY1$
+#  Host table for Oak Ridge PHysics VME based acquisition system
+#   Format-  hostname: address (hexadecimal)
+#   Text after # is ignored.
+vme:    ln1 00-80-42-0d-03-62
+vme1:   ln1 00-80-42-00-29-79
+vme2:   ln1 00-80-42-04-16-14
+vme20:  ln1 00-80-42-0d-03-62    #CPU-60
+BLP$
+Assuming you have two VME processor modules, vme1 should be assigned the
+physical address of the first processor and vme2 should be the physical
+address of the other.  In addition, vme should be the same as vme1 or vme2.
+BLP$
+By default the workstation uses the name vme.  However, if you set the
+environment variable VME, you select a specific processor.  For example,
+CYB$
+      setenv VME vme2
+BLP$
+would cause all codes which communicate with the VME processor to use
+the physical address associated with the name vme2.
+BLP$
+SEC$.110  Initial setup of the VME processor - CPU-40
+BLP$
+Step one is to install the battery.  FORCE ships the module without
+the battery installed.  This is important because the bootstrap
+code will be stored in the battery backed RAM.
+BLP$
+Check all jumpers and switches to see that they are installed in their DEFAULT
+positions.  See FORCE documentation for the default settings.
+BLP$
+Install the VME processor in slot 1 and the Kinetics CAMAC interface in
+slot 2.  Attach a terminal to serial port 1 on the VME processor module.
+Turn on power to the VME crate.  Within approx. 45 seconds, you should
+get a banner and a prompt on the terminal.
+BLP$
+Verify that the VME processor works and in particular that the VME interface
+works.  Using the VMEPROM, access registers in the Kinetics VME module
+to verify that the VME processor can access the VMEbus.
+BLP$
+SEC$.120  Loading bootstrap code into the VME processor - CPU-40
+BLP$
+As noted in SEC 070, you must be able to login to the workstation via
+LAT/Terminal server or one of the serial ports on the workstation.
+BLP$
+Connect serial port 2 on the VME processor module to your terminal server or
+directly to the workstation.
+BLP$
+Press and release the Reset switch on the VME processor.  Then at the 
+prompt, type the following commands to VMEPROM:
+CYB$
+      bp $b02,1
+      tm 2
+BLP$
+With any luck, you should now be able to login to the workstation.  If not,
+check all the cabling and setup parameters for any terminal server.  The
+default settings for the VME processor are:
+CYB$
+      9600 Baud, 8-bit characters, no parity, 1 stop bit
+BLP$
+Once you are able to login and use the workstation, you're ready to
+download the bootstrap program.  While connected to the workstation, change
+to the directory where you prepared the bootstrap loader(see SEC 090) and type
+the following(Note: <ESC> means the escape key):
+CYB$
+     cat vme1_boot.run<ESC>
+BLP$
+The <ESC> at the end of the command above, causes a return to VMEPROM in 
+the VME processor.  Now we must command VMEPROM to accept the S-Record data
+the workstation will send.  Type the following exactly as shown(Note: 
+<CR> means the return key):
+CYB$
+     lo <2 ,,<CR>
+BLP$
+If all goes well, you should get a VMEPROM prompt in a few seconds.  Using
+VMEPROM, you can examine memory starting at address FFC10000 to see if
+the bootstrap code has been loaded.  If everything looks good, start the VME
+processor at address FFC10000.
+CYB$
+       go $ffc10000
+BLP$
+When you start the VME processor, you get a banner on the terminal which
+includes:
+CYB$
+       VME Processor ready for download
+BLP$
+Connect the Ethernet between the workstation and the VME processor and
+login at the workstation console.  If the VME processor is working,
+it will be sending an ethernet packet to the workstation every 10 seconds.
+To test this type the following:
+CYB$
+      /usr/acq/vme/listen ln1
+BLP$
+You should get the following(with date, time and ethernet source address
+changes):
+CY1$
+orph38> /usr/acq/vme/listen ln1
+Device Type: Ethernet
+Device H/W address: 08-00-2b-24-e0-5b
+*********************  Packet  *************************
+StampLen=20 PacketLen=64  NumberDrop=0 Overflows=0
+Time - Mon Mar 10 09:03:22 1997
+ Multicast
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-04-58-72
+      Protocol: 4f-51
+ Buffer Length: 50
+00 00 00 00 00 00 56 32 2e 30 20 49 50 4c 20 46    ......V2.0 IPL F
+6f 72 63 65 20 43 50 55 2d 34 30 20 3a 20 52 65    orce CPU-40 : Re
+61 64 79 20 66 6f 72 20 64 6f 77 6e 6c 6f 61 64    ady for download
+0d 00                                              ..
+*********************  Packet  *************************
+StampLen=20 PacketLen=64  NumberDrop=0 Overflows=0
+Time - Mon Mar 10 09:03:32 1997
+ Multicast
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-04-58-72
+      Protocol: 4f-51
+ Buffer Length: 50
+00 00 00 00 00 00 56 32 2e 30 20 49 50 4c 20 46    ......V2.0 IPL F
+6f 72 63 65 20 43 50 55 2d 34 30 20 3a 20 52 65    orce CPU-40 : Re
+61 64 79 20 66 6f 72 20 64 6f 77 6e 6c 6f 61 64    ady for download
+0d 00                                              ..
+^Corph38>
+BLP$
+There are just a few more steps to setup the VME processor.  We need to 
+load a code \b\/usr/acq/vme/vme_listen\\ and then load and execute a code
+to make a backup copy of our bootstrap in the onboard flash EEPROM.
+The following should do all this:
+CY1$
+    1) Set the enviroment variable VME to the processor you
+       using.  For example, if you are using vme2, type
+
+       \b\setenv VME vme2\\
+
+    2) Reset VME processor and type  \b\go $ffc10000\\
+
+    3) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/vme_listen\\
+
+       On the VME terminal you should get a message:
+
+       CPU-40 Loaded with VME_LISTEN
+
+    4) Reset VME processor and type  \b\go $ffc10000\\
+
+    5) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/sav_res\\
+
+       On the VME terminal you should get a message:
+
+       CPU-40 Loaded with SAV_RES
+
+    6) Reset VME processor and type  \b\go $80000\\
+
+    7) To copy to flash EEPROM, type:
+
+       \b\prog $100000 $ffc80000 0\\
+
+BLP$
+This last step takes a few seconds.  When finished you have a backup copy
+of the bootstrap.
+BLP$
+To restore the SRAM from the flash EEPROM,
+CYB$
+       go $ffc80000
+BLP$
+If you made it here successfully, things are going to be a lot easier
+from now on.  Happy days are here again!
+BLP$
+From now on we will use the ethernet for all communication with the VME
+processor.  To do this, change switch
+1 on the VME processor front panel from F to B and reset the processor.
+Now after reset, the processor will start at address ffc10000 and
+can be downloaded via ethernet.
+BLP$
+SEC$.130  Initial setup of the VME processor - CPU-60
+BLP$
+FORCE ships the module with battery backup for the SRAM disabled.  You
+MUST enable battery backup of the SRAM because the bootstrap code
+will be stored in SRAM.  To enable battery backup set the following
+switches to ON:
+CYB$
+         SW5 - 2    ON    Enable battery backup
+         SW5 - 3    ON    Enable RTC and SRAM
+BLP$
+In addition, it is recommended that you write proctect the System PROM.
+To do this switch to ON:
+CYB$
+         SW10 - 3   ON    Write proctect System PROM
+BLP$
+All other switches on the CPU-60 module should be set to OFF.  The front
+panel switches 1 and 2 should be set to F.
+BLP$
+Install the VME processor in slot 1 and the Kinetics CAMAC interface in
+slot 2.  Attach a terminal to serial port 1 on the VME processor module.
+Turn on power to the VME crate.  Within approx. 45 seconds, you should
+get a banner and a prompt on the terminal.
+BLP$
+Verify that the VME processor works and in particular that the VME interface
+works.  Using the VMEPROM, access registers in the Kinetics VME module
+to verify that the VME processor can access the VMEbus.
+BLP$
+There is a single bootstrap program for ALL CPU-60 processors.  FORCE
+now has the Ethernet address stored on-board.  The code is 
+\b\mcsq\Dvme3\vme_boot60.s\\.
+BLP$
+However, you still need to determine the ethernet address for each
+CPU-60 so that the proper entry can be made in the ORPH_nodes.lst file(
+See SEC 140).
+BLP$
+To get the ethernet address, use the VMEPROM command
+CYB$
+      info
+BLP$
+SEC$.140  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-60
+BLP$
+This file assigns names to physical ethernet addresses.  It is extremely
+important that names vme, vme1, vme2 and vme20 be changed to reflect the actual
+physical ethernet addresses of YOUR VME processors.  Furthermore, the
+ethernet addresses you enter here MUST agree with those stored on-board
+the VME module (See SEC 130).
+All workstation software uses this file to translate a
+name to a physical address.  CPU-60 modules MUST have names starting with
+vme20.  The distribution file is:
+CY1$
+#  Host table for Oak Ridge PHysics VME based acquisition system
+#   Format-  hostname: address (hexadecimal)
+#   Text after # is ignored.
+vme:    ln1 00-80-42-0d-03-62
+vme1:   ln1 00-80-42-00-29-79
+vme2:   ln1 00-80-42-04-16-14
+vme20:  ln1 00-80-42-0d-03-62    #CPU-60
+BLP$
+Assuming you have two VME processor modules, vme1 should be assigned the
+physical address of the first processor and vme2 should be the physical
+address of the other.  In addition, vme should be the same as vme1 or vme2.
+BLP$
+By default the workstation uses the name vme.  However, if you set the
+environment variable VME, you select a specific processor.  For example,
+CYB$
+      setenv VME vme2
+BLP$
+would cause all codes which communicate with the VME processor to use
+the physical address associated with the name vme2.
+BLP$
+
+SEC$.150  Loading bootstrap code into the VME processor - CPU-60
+BLP$
+As noted in SEC 070, you must be able to login to the workstation via
+LAT/Terminal server or one of the serial ports on the workstation.
+BLP$
+Connect serial port 2 on the VME processor module to your terminal server or
+directly to the workstation.
+BLP$
+Press and release the Reset switch on the VME processor.  Then at the 
+prompt, type the following commands to VMEPROM:
+CYB$
+      bp $b02,1
+      tm 2
+BLP$
+With any luck, you should now be able to login to the workstation.  If not,
+check all the cabling and setup parameters for any terminal server.  The
+default settings for the VME processor are:
+CYB$
+      9600 Baud, 8-bit characters, no parity, 1 stop bit
+BLP$
+Once you are able to login and use the workstation, you're ready to
+download the bootstrap program.  While connected to the workstation, change
+to the directory where you prepared the bootstrap loader(see SEC 140) and type
+the following(Note: <ESC> means the escape key):
+CYB$
+     cat vme_boot60.run<ESC>
+BLP$
+The <ESC> at the end of the command above, causes a return to VMEPROM in 
+the VME processor.  Now we must command VMEPROM to accept the S-Record data
+the workstation will send.  Type the following exactly as shown(Note: 
+<CR> means the return key):
+CYB$
+     lo <2 ,,<CR>
+BLP$
+If all goes well, you should get a VMEPROM prompt in a few seconds.  Using
+VMEPROM, you can examine memory starting at address FFC08000 to see if
+the bootstrap code has been loaded.  If everything looks good, start the VME
+processor at address FFC08000.
+CYB$
+       go $ffc08000
+BLP$
+When you start the VME processor, you get a banner on the terminal which
+includes:
+CYB$
+       VME Processor ready for download
+BLP$
+Connect the Ethernet between the workstation and the VME processor and
+login at the workstation console.  If the VME processor is working,
+it will be sending an ethernet packet to the workstation every 10 seconds.
+To test this, type the following:
+CYB$
+      /usr/acq/vme/listen ln1
+BLP$
+You should get the following(with date, time and ethernet source address
+changes):
+CY1$
+orph38> /usr/acq/vme/listen ln1
+Device Type: Ethernet
+Device H/W address: 08-00-2b-be-db-3d
+*********************  Packet  *************************
+StampLen=20 PacketLen=64  NumberDrop=0 Overflows=0 
+Time - Mon Mar 10 10:09:48 1997
+ Multicast
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-0d-03-62
+      Protocol: 4f-51
+ Buffer Length: 50
+00 00 00 00 00 00 56 33 2e 30 20 49 50 4c 20 46    ......V3.0 IPL F
+6f 72 63 65 20 43 50 55 2d 36 30 20 3a 20 52 65    orce CPU-60 : Re
+61 64 79 20 66 6f 72 20 64 6f 77 6e 6c 6f 61 64    ady for download
+0d 00                                              ..
+*********************  Packet  *************************
+StampLen=20 PacketLen=64  NumberDrop=0 Overflows=0 
+Time - Mon Mar 10 10:09:58 1997
+ Multicast
+   Destination: 03-6d-63-73-71-00
+        Source: 00-80-42-0d-03-62
+      Protocol: 4f-51
+ Buffer Length: 50
+00 00 00 00 00 00 56 33 2e 30 20 49 50 4c 20 46    ......V3.0 IPL F
+6f 72 63 65 20 43 50 55 2d 36 30 20 3a 20 52 65    orce CPU-60 : Re
+61 64 79 20 66 6f 72 20 64 6f 77 6e 6c 6f 61 64    ady for download
+0d 00                                              ..
+^Corph38>
+BLP$
+There are just a few more steps to setup the VME processor.  We need to 
+load a code \b\/usr/acq/vme/vme_listen60\\ and then load and execute a code
+to make a backup copy of our bootstrap in the on-board flash EEPROM.
+The following should do all this:
+CY1$
+    1) Set the enviroment variable VME to the processor you
+       using.  For example, if you are using vme20, type
+
+       \b\setenv VME vme20\\
+
+    2) Reset VME processor and type  \b\go $ffc08000\\
+
+    3) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/vme_listen60\\
+
+       On the VME terminal you should get a message:
+
+       CPU-60 Loaded with VME_LISTEN
+
+    4) Reset VME processor and type  \b\go $ffc08000\\
+
+    5) At the workstation type:
+
+       \b\/usr/acq/vme/srload /usr/acq/vme/sav_res60\\
+
+       On the VME terminal you should get a message:
+
+       CPU-60 Loaded with SAV_RES60
+
+    6) Reset VME processor and type  \b\go $80000\\
+
+    7) To copy to flash EEPROM, execute the following two commands:
+
+       \b\ferase user_flash\\
+
+       \b\fprog user_flash,$100000\\
+
+BLP$
+This last step takes a few seconds.  When finished you have a backup copy
+of the bootstrap.
+BLP$
+To restore the SRAM from the flash EEPROM,
+CYB$
+       go $ffc80000
+BLP$
+If you made it here successfully, things are going to be a lot easier
+from now on.  Happy days are here again!
+BLP$
+From now on we will use the ethernet for all communication with the VME
+processor.  To do this, change switch
+1 on the VME processor front panel from F to 7 and reset the processor.
+Now after reset, the processor will start at address ffc08000 and
+can be downloaded via ethernet.
+BLP$
+SEC$.160  Workstation acquisition software
+BLP$
+Experience with HILI has prompted several changes.  Also, all HILI specific
+things have been removed from pacman.
+The sources for this version are in the directory \b\Dacq\\.  Files are
+xpacman, xpftoipc, xlogger etc.  Improvements are:
+ODP$
+1)... pacman has been generalized.  A user can customize the acquisition
+system by a configuration file.  The configuration file allows definition
+of commands for his/her specific hardware.  Parameters such as tape record
+size can be specified.  User can also define a custom run-time help file.
+ODP$
+2)... A new shared memory buffering scheme provides improved  system
+performance.
+ODP$
+3)... On systems having more than one attached VME system, the user can
+select which VME system is used by defining the environment variable VME.
+ODP$
+4)... Multiple acquisitions may be run on a single workstation.  However,
+each acquisition MUST have exclusive use of a VME system(i.e. to run
+two acquisition, you must have two VME systems attached).  Also, each
+acquisition requires exclusive access to a tape drive if event data is
+written to tape.
+BLP$
+The executables in \b\/usr/acq/Dwks\\ are for this version of the acquisition
+system.
+BLP$
+The documentation for this version is not complete.  However,  the changes
+to \b\doc/pacman.tex\\ are summarized below:
+ODP$
+1).... The name of IPC resource set is derived from the VME processor name.
+If the environment variable VME is not defined, the default processor name
+is \b\vme\\.  To open input for a user histogram task(SCANU), you would use
+the command \b\shm vme\\.  If VME is defined as \b\vme2\\, the command
+would be \b\shm vme2\\.
+ODP$
+2).... The name of the log file is changed.  If VME is not defined,
+the log file is \b\orphas.vme\\.  If VME is defined as \b\vme2\\, the
+log file is \b\orphas.vme2\\.
+ODP$
+3).... The configuration file format will be provided in the new documentation.
+For now, follow the examples a) \b\/usr/acq/wks/pacman.fig\\ and b)
+\b\/usr/users/mcsq/hili.fig\\.  The default configuration file is
+\b\/usr/acq/wks/pacman.fig\\.  If you make a custom configuration file,
+it should be in your home directory and have the name \b\pacman.fig\\.
+Alternately, a configuration file can have any name provided it is the argument
+on the command line to invoke pacman.  For example:
+CYB$
+         /usr/acq/wks/pacman  /usr/users/mcsq/hili.fig
+ODP$
+4).... The default run-time help file is \b\/usr/acq/wks/pacman.hep\\.
+To make a custom help file, use the default as an example.  The main
+rule is that a line starting with \b\$$$$\\ defines a help topic.  Lines
+following this line up to the next \b\$$$$\\ or the end-of-file are
+the messages for this help topic.
+QIT$

@@ -1,0 +1,275 @@
+$$$$CON  - For Contents List
+CODE   CONTENTS
+----   --------
+GEN  - Commands General
+CMD  - Command  File Operations
+ASSN - Commands to  Assign Tapes and Files
+CONT - Commands for Tape & File Control
+EXAM - Commands to  Examine a Tape or LDF
+LOG  - Commands to  Display/Log Special Records from a Tape or LDF
+COPY - Commands for Simple  Copy from (Tape of LDF) to (Tape or LDF)
+MOC  - Commands for Modify--Copy from (Tape or LDF) to (Tape or LDF)
+SIM  - Commands to  Copy Simulations from Disk to (Tape or LDF)
+PAC  - Commands to  Copy PAC-files from (Tape or LDF) to Disk
+ASCI - Commands to  Copy ASCII Files (Tape-to-Disk or Disk-to-Tape)
+$$$$GEN  - For Commands General
+----------------------------------------------------------------------------
+General Commands 
+----------------------------------------------------------------------------
+H             ;Displays directory to list of commands
+
+LON           ;Enable  output to log-file lemor.log (default)
+LOF           ;Disable output to log-file lemor.log
+
+STAT          ;Displays/logs open tapes, LDFs, options, etc.
+
+STAT GATE     ;Displays/logs currently defined gates
+
+STX           ;Display/log tape status (MB-used, MB-left, Errors/MB)
+              ;(for all tape units which are open)
+
+UCOM TEXT     ;Send TEXT to USERCMP
+
+END           ;Terminates program
+$$$$CMD  - For Command  File Operations
+----------------------------------------------------------------------------
+Commands for Command-file Operations
+----------------------------------------------------------------------------
+CMD  FIL.CMD  ;Assign FIL.CMD as CMD-file (not read yet)
+
+CCMD          ;Continue reading  CMDS from CMD-file
+
+CLCM          ;Continue with last CMD from file (backspaces)
+
+CCON          ;Continue reading  CMDS from VDT (Terminal)
+
+MSG  TEXT     ;Display TEXT (44 bytes) on VDT
+
+Ctrl/C        ;Interrupts command file processing
+$$$$ASSN - For Commands to  Assign Tapes and Files
+----------------------------------------------------------------------------
+Commands to Assign Tapes and Files
+----------------------------------------------------------------------------
+IN   stx      ;Specifies tape (st0 or st1) for INPUT
+
+OU   stx      ;Specifies tape (st0 or st1) for OUTPUT
+
+INF  file.ldf ;Opens LDF (file.ldf) for input
+
+OUF  file.ldf ;Opens/creates LDF (file.ldf) for output 
+
+ELDF          ;Erases output LDF (i.e. deletes & recreates)
+
+GAT  file.gat ;Open and read 1-D gates from file.gat
+
+GATZ          ;Reset all previously defined gates to "impossible"
+
+BAN  file.ban ;Open file.ban for banana testing
+
+BANZ          ;Zero banana archive
+$$$$CONT - For Commands for Tape & File Control
+----------------------------------------------------------------------------
+Commands for Tape and File Control
+----------------------------------------------------------------------------
+RDI  N        ;Read    N records from INPUT
+RDO  N        ;Read    N records from OUTPUT
+
+FRI  N        ;Forward N records on   INPUT
+FRO  N        ;Forward N records on   OUTPUT
+
+BRI  N        ;Backup  N records on   INPUT
+BRO  N        ;Backup  N records on   OUTPUT
+
+FFI  N        ;Forward N files   on   INPUT
+FFO  N        ;Forward N files   on   OUTPUT
+
+BFI  N        ;Backup  N files   on   INPUT
+BFO  N        ;Backup  N files   on   OUTPUT
+
+RWI           ;Rewind                 INPUT
+RWO           ;Rewind                 OUTPUT
+
+BTI           ;Go to BOTTOM of INPUT  (to DBL EOF, Backup 1 F)
+BTO           ;Go to BOTTOM of OUTPUT (to DBL EOF, Backup 1 F)
+
+CLI           ;Close                  INPUT
+CLO           ;Close                  OUTPUT
+
+ULI           ;Unload and Close       INPUT  tape
+ULO           ;Unload and Close       OUTPUT tape
+$$$$EXAM - For Commands to  Examine a Tape or LDF
+----------------------------------------------------------------------------
+Commands to Examine a Tape or LDF
+----------------------------------------------------------------------------
+RDI  N        ;Read    N records from INPUT
+RDO  N        ;Read    N records from OUTPUT
+
+PEV  IA,IB    ;Print 16-bit word IA thru IB in EVENT   Format (integer)
+DEV  IA,IB    ;Disp  16-bit word IA thru IB in EVENT   Format (integer)
+
+PEVZ IA,IB    ;Print 16-bit word IA thru IB in EVENT   Format (hex)
+DEVZ IA,IB    ;Disp  16-bit word IA thru IB in EVENT   Format (hex)
+
+PZ   IA,IB    ;Print 16-bit word IA thru IB in HEX     Format
+DZ   IA,IB    ;Disp  16-bit word IA thru IB in HEX     Format
+
+PA   IA,IB    ;Print 16-bit word IA thru IB in ASCII   Format
+DA   IA,IB    ;Disp  16-bit word IA thru IB in ASCII   Format
+
+PI   IA,IB    ;Print 16-bit word IA thru IB in INTEGER Format
+DI   IA,IB    ;Disp  16-bit word IA thru IB in INTEGER Format
+
+PIF  IA,IB    ;Print 32-bit word IA thru IB in INTEGER Format
+DIF  IA,IB    ;Disp  32-bit word IA thru IB in INTEGER Format
+$$$$LOG  - For Commands to  Display/Log Special Records from a Tape or LDF
+----------------------------------------------------------------------------
+Commands to Display/Log Special Records from a Tape or LDF
+----------------------------------------------------------------------------
+LISF filename ;Open output file for recording records
+
+LISI          ;Display/log HEAD, DEAD, PAC, & SCAL records from 
+              ;INPUT tape or LDF
+
+LISI SCAL     ;Display/log SCAL (scaler) records only
+
+LISI TYPA TYPB .. ;Display/log record types TYPA, TYPB, etc. where,
+                  ;legal types are HEAD, DEAD, PAC, SCAL
+
+LISO          ;Same function as LISI but for OUTPUT tape or LDF
+$$$$COPY - For Commands for Simple  Copy from (Tape of LDF) to (Tape or LDF)
+----------------------------------------------------------------------------
+Commands for Simple Copy from (Tape of LDF) to (Tape or LDF)
+----------------------------------------------------------------------------
+IN   stx      ;Specifies input  tape (st0 or st1)
+
+INF  file.ldf ;Specifies the input LDF (file.ldf)
+
+OU   stx      ;Specifies output tape (st0 or st1)
+
+OUF  file.ldf ;Specifies the output LDF (file.ldf)
+
+STX           ;Display/log tape status (MB-used, MB-left, Errors/MB)
+              ;(for all tape units which are open)
+
+ELDF          ;Erases output LDF (i.e. deletes & recreates) 
+
+STAT          ;Displays/logs open tapes, LDFs, options, etc.
+
+RECI          ;Says max input record length be auto-detected (default)
+RECI RECL     ;Sets max input record length to be RECL
+
+SWAB          ;Request    byte-swap of input buffers 
+SWOF          ;Request no byte-swap (default)
+SHON          ;Says byte-swap headers once more than data
+SHOF          ;Says byte-swap headers & data the same way (default)
+
+COPY N        ;Copy N files   from INPUT to OUTPUT
+CREC N        ;Copy N records from INPUT to OUTPUT
+CC            ;Continue COPY - saves file- or record-count
+
+Ctrl/C        ;Interrupts copy process
+
+EOF           ;Write EOF on OUTPUT (not normally needed)
+$$$$MOC  - For Commands for Modify--Copy from (Tape or LDF) to (Tape or LDF)
+----------------------------------------------------------------------------
+Commands for Modify-Copy from (Tape of LDF) to (Tape or LDF)
+----------------------------------------------------------------------------
+IN   stx        ;Specifies input  tape (st0 or st1)
+
+INF  file.ldf   ;Opens LDF (file.ldf) for input
+
+OU   stx        ;Specifies output tape (st0 or st1)
+
+OUF  file.ldf   ;Opens/creates LDF (file.ldf) for output 
+
+STX             ;Display/log tape status (MB-used, MB-left, Errors/MB)
+                ;(for all tape units which are open)
+
+ELDF            ;Erases output LDF (i.e. deletes & recreates)
+
+STAT            ;Displays/logs open tapes, LDFs & record pointers
+
+FMTI L001 NS NP ;Specify non-standard           Input 
+FMTI L002       ;Specify old     HHIRF standard Input  format
+FMTI L003       ;Specify current HIRBF standard Input  format (default)
+
+FMTO L001 NS NP ;Specify non-standard           Output
+FMTO L002       ;Specify old     HHIRF standard Output format
+FMTO L003       ;Specify current HIRBF standard Output format (default)
+
+RECI            ;Says max input record length be auto-detected (default)
+RECI RECL       ;Sets max input record length to be RECL
+
+RECO            ;Sets output data record length to 32768 bytes (default)
+RECO RECL       ;Sets output data record length to RECL  bytes 
+                ;(Allowed range is 2048 to 32768 bytes)
+
+UPON NPRAW      ;Turn User-processing ON 
+                ;NPRAW = Max # of raw parameters (for user only)
+UPON            ;Turn User-processing ON (NPRAW=0) (default)
+
+UPOF            ;Disable User-processing (enable CHIL processing)
+MILF file.mil   ;Read & process CHIL generated mil-file
+ 
+UCOM TEXT       ;Send TEXT to USERCMP
+
+SWAB            ;Request    byte-swap of input buffers
+SWOF            ;Request no byte-swap (default)
+SHON            ;Says byte-swap headers once more than data
+SHOF            ;Says byte-swap headers & data the same way (default)
+
+INIT            ;Resets Modify-Copy Input & Output buffers
+ZBUC            ;Zero total Input & Output buffer counters
+
+MOC  N,M        ;Modify-Copy (N-files/M-recs - 1st to occur)
+MOCE N,M        ;Modify-Copy (END on request complete)
+
+Ctrl/C          ;Interrupts Modify-Copy process
+
+INIT            ;Resets MODIFY-COPY INPUT & OUTPUT buffers
+ZBUC            ;Zero total INPUT & OUTPUT buffer counters
+$$$$SIM  - For Commands to  Copy Simulations from Disk to (Tape or LDF)
+----------------------------------------------------------------------------
+Commands to Copy Simulations from Disk to (Tape or LDF)
+----------------------------------------------------------------------------
+RECI RECL     ;Sets input  data record length to be RECL
+RECI          ;Sets input  data record length to be default (32768)
+
+RECO RECL     ;Sets output data record length to RECL  bytes 
+RECO          ;Sets output data record length to be default (32768)
+
+INEV filname  ;Specify input file for exam (RDI, DEV) & copy
+
+OU   ryyy     ;Specifies output tape (rmyy denotes rmt0, rmt1, etc)
+
+OUF  file.ldf ;Opens/creates LDF file.ldf for output 
+
+STAT          ;Displays/logs open tapes, evel-files & record pointers
+
+SWAB          ;Request    byte-swap of input buffers
+
+SWOF          ;Request no byte-swap (default)
+
+HTIT  TITLE   ;TITLE contains title for next tape header 
+
+HNUM  HN      ;HN specifies next tape header number to use
+
+HOUT          ;Outputs tape header and increments HN
+
+COPY  1       ;Copies one file input-to-output
+
+Ctrl/C        ;Interrupts copy process
+$$$$PAC  - For Commands to  Copy PAC-files from (Tape or LDF) to Disk
+----------------------------------------------------------------------------
+Commands to Copy PAC-files from (Tape or LDF) to Disk
+----------------------------------------------------------------------------
+STEX filname  ;Store text records (PAC source) on filename
+$$$$ASCI - For Commands to  Copy ASCII Files (Tape-to-Disk or Disk-to-Tape)
+FCOP filename ;Copies filename to output-tape (previously opened)
+              ;Variable length records from filename are de-tabbed and
+              ;written as fixed length (80 byte) records on tape.
+              ;(DEC's rules for Fortran tabs are used in de-tabbing)
+
+TCOP filename ;Copies 1 file from input-tape to filename (created)
+              ;Fixed length (80 byte) records from tape are
+              ;written as variable length records on filename.

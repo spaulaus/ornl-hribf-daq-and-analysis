@@ -1,0 +1,63 @@
+$BANNER {
+****************************************************************************
+*                                ORPHAS                                    *
+*                                                                          *
+*                               pacman II                                  *
+*                      Physics Acquisition Manager                         *
+*                                                                          *
+*     Welcome to DOE land - land of safety and efficiency!                 *
+* New command requirements - courtesy of DOE and the OMB                   *
+* Before starting -                                                        *
+*   setenv EXPT RIBxxx - where xxx is your experiment number               *
+* In pacman:                                                               *
+*   TRUN [bon, boff]  for "beam on" (bon) or "beam off" (boff)             *
+*   TON  [bon, boff]  for "beam on" (bon) or "beam off" (boff)             *
+****************************************************************************}
+$BUFFER_SIZE 32768
+$LOG_INTERVAL 300
+$HELP_FILE  /usr/acq/wks/pacman.hep
+
+#if   tektronix  display
+
+$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32-0+10 #-52-46
+-sb -ls -iconic }
+
+$WINDOW {
+damm = { /usr/bin/X11/xterm -geometry 80x32+10+400 #-57-24 -sb -ls
+-iconic } }
+
+#endif
+
+#if   alpha  display
+
+$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32-0+10 #-52-46
+-font 8x13 -sb -ls -iconic }
+
+$WINDOW {
+damm = { /usr/bin/X11/xterm -geometry 80x32+10+432 #-57-24 -sb -ls
+-font 8x13 -iconic } }
+
+#endif
+
+$USER_CMD {emacs = /usr/local/bin/emacs}
+
+$USER_CMD {
+dmon = {
+       /usr/bin/X11/xterm
+       -geometry
+       80x50+10+10
+       -sb
+       -e
+       /usr/acq/wks/dmon };
+}
+
+#if   decstation  or unknown type displays
+
+$WINDOW scan = {/usr/bin/X11/xterm -geometry 80x32+345+10 #+955+722 -sb -ls
+-font 8x13bold -iconic }
+
+$WINDOW {
+damm = { /usr/bin/X11/xterm -geometry 80x32+10+320 #+950+744 -sb -ls
+-font 8x13bold -iconic } }
+
+#endif

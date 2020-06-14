@@ -1,0 +1,3 @@
+#!/bin/bash
+#
+install -o hhirf -p scatlibr.a /usr/acq/wks
