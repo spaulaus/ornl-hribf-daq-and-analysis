@@ -1,0 +1,452 @@
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   1
+ 
+ 
+ 
+   Sec Page     Contents
+ 
+   000   1  Linux workstation software
+   010   1  VMEterm window
+   020   1  Preparing your VME processor bootstrap program - CPU-40
+   030   2  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-40
+   040   2  Initial setup of the VME processor - CPU-40
+   050   2  Loading bootstrap code into the VME processor - CPU-40
+   060   5  Initial setup of the VME processor - CPU-60
+   070   6  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-60
+   080   6  Loading bootstrap code into the VME processor - CPU-60
+ 
+ 
+   Setup of the Linux workstation acquisition software is documented at
+ 
+   ACQS.000  Linux workstation software
+ 
+   Setup  of  the  Linux  workstation  acquisition  software  is documented at
+   http://www.phy.ornl.gov/local/computer/daq/daqsupport.shtml
+ 
+ 
+   ACQS.010  VMEterm window
+ 
+   Connect the first serial port on the workstation to the first  serial  port
+   on  the Force processor module. The cable connecting the workstation to the
+   Force processor must include the RS-232 signals RTS  and  CTS.   The  cable
+   must also be a "null modem".
+ 
+   Open a window on the workstation and start /usr/acq/vme/VMEterm.
+ 
+   For  additional  information  on  VMEterm,  see /usr/hhirf/vme/doc/VMEterm.
+   Use dodoc to print a copy or viewdoc to view online.
+ 
+ 
+   ACQS.020  Preparing your VME processor bootstrap program - CPU-40
+ 
+   FORCE Computers should supply with the documentation the hardware  ethernet
+   address  assigned  to  your  VME  processor  module.  That hardware address
+   should be put in the bootstrap code for the VME processor.  The file  to be
+   changed  is  in  the  directory mcsq/Dlinux/Dvme.  The file is vme1_boot.s.
+   Edit this file and find the following line:
+ 
+   LAN_ADDR        DC.B    $00,$80,$42,$00,$29,$79         ;Our address
+ 
+   This file was prepared for a VME  processor  having  an  ethernet  hardware
+   address of  00-80-42-00-29-79.
+ 
+   Change the address to that assigned to YOUR processor.
+ 
+   Now  you  must  assemble  and  link  the   program.    Use   the   makefile
+   vme1_boot.make.
+ 
+      make -f vme1_boot.make
+ 
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   2
+ 
+   If  you  have  a second VME processor, you can use the file vme2_boot.s for
+   it's bootstrap.  This file  is  identical  to  vme1_boot.s  except  for the
+   ethernet address.
+ 
+ 
+   ACQS.030  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-40
+ 
+   This  file  assigns  names to physical ethernet addresses.  It is extremely
+   important that names vme1  and  vme2  be  changed  to  reflect  the  actual
+   physical  ethernet  addresses  of  YOUR  VME  processors.  Furthermore, the
+   ethernet addresses you enter here MUST agree with those  in  the  bootstrap
+   files(SEC  020).   All  workstation  software uses this file to translate a
+   name to a physical address.  The distribution file is:
+ 
+   #  Host table for Oak Ridge PHysics VME based acquisition system
+   #   Format-  hostname: address (hexadecimal)
+   #   Text after # is ignored.
+   vme1:   eth1 00-80-42-00-29-79
+   vme2:   eth1 00-80-42-04-65-26
+   vme20:  eth1 00-80-42-0d-03-62       #CPU-60
+ 
+   Assuming you have two VME processor modules, vme1 should  be  assigned  the
+   physical  address  of  the  first processor and vme2 should be the physical
+   address of the other.
+ 
+   You must set the environment variable VME, to select a specific  processor.
+   For example,
+ 
+         setenv VME vme2
+ 
+   would  cause  all codes which communicate with the VME processor to use the
+   physical address associated with the name vme2.
+ 
+ 
+   ACQS.040  Initial setup of the VME processor - CPU-40
+ 
+   Step one is to install the battery.  FORCE  ships  the  module  without the
+   battery  installed.   This  is important because the bootstrap code will be
+   stored in the battery backed RAM.
+ 
+   Check all jumpers and switches to see that  they  are  installed  in  their
+   DEFAULT positions.  See FORCE documentation for the default settings.
+ 
+   Install  the  VME  processor  in slot 1 and the Kinetics CAMAC interface in
+   slot 2. Turn on power to the VME crate.   Within  approx.  45  seconds, you
+   should get a banner and a prompt in the VMEterm window.
+ 
+   Verify  that  the  VME  processor  works  and  in  particular  that the VME
+   interface works.  Using the VMEPROM, access registers in  the  Kinetics VME
+   module to verify that the VME processor can access the VMEbus.
+ 
+ 
+   ACQS.050  Loading bootstrap code into the VME processor - CPU-40
+ 
+   You can load the bootstrap code using VMEterm.
+ 
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   3
+ 
+   ? load vme1_boot.run
+   Loading File: vme1_boot.run
+   bp $b01,1
+ 
+   ? lo <1 ,,
+ 
+ 
+ 
+   ? 0300B547
+ 
+   VMEPROM Error 50   Invalid file name
+ 
+   ? S9030000FC
+ 
+   VMEPROM Error 50   Invalid file name
+ 
+   ?
+   ?
+ 
+   The  two  "VMEPROM  Error  50"  messages are normal. Using VMEPROM, you can
+   examine memory starting at address FFC10000 to see if  the  bootstrap  code
+   has  been  loaded.   If  everything  looks good, start the VME processor at
+   address FFC10000.
+ 
+          go $ffc10000
+ 
+   When you start the VME processor, you get a banner in  the  VMEterm  window
+   which includes:
+ 
+          VME Processor ready for download
+ 
+   Connect  the  Ethernet  between  the  workstation and the VME processor and
+   login at the workstation console.  If  the  VME  processor  is  working, it
+   will  be sending an ethernet packet to the workstation every 10 seconds. To
+   test this type the following:
+ 
+         /usr/acq/vme/listen eth1
+ 
+   You should get the following(with date, time and  ethernet  source  address
+   changes):
+ 
+   daqdev2> /usr/acq/vme/listen eth1
+   Device H/W address: 00:02:b3:96:b0:f1
+   Interface flags = 0x1043
+   Interface eth1 is UP
+   Interface MTU = 1500
+   *********************  Packet  *************************
+   Time - Fri Oct 22 11:50:46 2004
+    Packet Length: 64
+   Multicast
+      Destination: 03-6d-63-73-71-00
+           Source: 00-80-42-04-65-26
+         Protocol: 4f-51
+    Buffer Length: 50
+     Ack: 0
+   Order: 0
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   4
+ 
+     PID: 0
+   56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V2.0 IPL Force C
+   50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-40 : Ready fo
+   72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+ 
+   *********************  Packet  *************************
+   Time - Fri Oct 22 11:50:56 2004
+    Packet Length: 64
+   Multicast
+      Destination: 03-6d-63-73-71-00
+           Source: 00-80-42-04-65-26
+         Protocol: 4f-51
+    Buffer Length: 50
+     Ack: 0
+   Order: 0
+     PID: 0
+   56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V2.0 IPL Force C
+   50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-40 : Ready fo
+   72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+ 
+   daqdev2>
+ 
+   There  are  just  a  few more steps to setup the VME processor.  We need to
+   load a code /usr/acq/vme/vme_listen and then load and  execute  a  code  to
+   make  a  backup  copy  of  our  bootstrap  in the onboard flash EEPROM. The
+   following should do all this:
+ 
+       1) Set the enviroment variable VME to the processor you
+          are using.  For example, if you are using vme2, type
+ 
+          setenv VME vme2
+ 
+       2) Reset VME processor and type  go $ffc10000
+ 
+       3) At the workstation type:
+ 
+          /usr/acq/vme/srload /usr/acq/vme/vme_listen
+ 
+          In the VMEterm window, you should get a message:
+ 
+          CPU-40 Loaded with VME_LISTEN
+ 
+       4) Reset VME processor and type  go $ffc10000
+ 
+       5) At the workstation type:
+ 
+          /usr/acq/vme/srload /usr/acq/vme/sav_res
+ 
+          In the VMEterm window, you should get a message:
+ 
+          CPU-40 Loaded with SAV_RES
+ 
+       6) Reset VME processor and type  go $80000
+ 
+       7) To copy to flash EEPROM, type:
+ 
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   5
+ 
+          prog $100000 $ffc80000 0
+ 
+ 
+   This last step takes a few seconds.  When finished you have  a  backup copy
+   of the bootstrap.
+ 
+   To restore the SRAM from the flash EEPROM,
+ 
+          go $ffc80000
+ 
+   If  you made it here successfully, things are going to be a lot easier from
+   now on.  Happy days are here again!
+ 
+   From now on we will use the ethernet for all  communication  with  the  VME
+   processor.   To  do  this, change switch 1 on the VME processor front panel
+   from F to B and reset the processor. Now after reset,  the  processor  will
+   start at address ffc10000 and can be downloaded via ethernet.
+ 
+ 
+   ACQS.060  Initial setup of the VME processor - CPU-60
+ 
+   FORCE  ships  the  module  with  battery backup for the SRAM disabled.  You
+   MUST enable battery backup of the SRAM because the bootstrap code  will  be
+   stored in SRAM.  To enable battery backup set the following switches to ON:
+ 
+            SW5 - 2    ON    Enable battery backup
+            SW5 - 3    ON    Enable RTC and SRAM
+ 
+   In  addition, it is recommended that you write proctect the System PROM. To
+   do this switch to ON:
+ 
+            SW10 - 3   ON    Write proctect System PROM
+ 
+   All other switches on the CPU-60 module should be set to  OFF.   The  front
+   panel switches 1 and 2 should be set to F.
+ 
+   Install  the  VME  processor  in slot 1 and the Kinetics CAMAC interface in
+   slot 2. Turn on power to the VME crate.   Within  approx.  45  seconds, you
+   should get a banner and a prompt in the VMEterm window.
+ 
+   Verify  that  the  VME  processor  works  and  in  particular  that the VME
+   interface works.  Using the VMEPROM, access registers in  the  Kinetics VME
+   module to verify that the VME processor can access the VMEbus.
+ 
+   There  is  a single bootstrap program for ALL CPU-60 processors.  FORCE now
+   has the Ethernet address stored on-board.  The code is mcsqvme_boot60.s.
+ 
+   However, you still need to determine the ethernet address for  each  CPU-60
+   so  that  the  proper entry can be made in the ORPH_nodes.lst file( See SEC
+   070).
+ 
+   To get the ethernet address, use the VMEPROM command
+ 
+         info
+ 
+ 
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   6
+ 
+   ACQS.070  Edit file /usr/acq/etc/ORPH_nodes.lst - CPU-60
+ 
+   This file assigns names to physical ethernet addresses.   It  is  extremely
+   important  that names vme1, vme2 and vme20 be changed to reflect the actual
+   physical ethernet addresses  of  YOUR  VME  processors.   Furthermore,  the
+   ethernet  addresses  you  enter  here MUST agree with those stored on-board
+   the VME module (See SEC 130). All workstation software uses  this  file  to
+   translate  a  name  to  a physical address.  CPU-60 modules MUST have names
+   starting with vme20.  The distribution file is:
+ 
+   #  Host table for Oak Ridge PHysics VME based acquisition system
+   #   Format-  hostname: address (hexadecimal)
+   #   Text after # is ignored.
+   vme1:   eth1 00-80-42-00-29-79
+   vme2:   eth1 00-80-42-04-65-26
+   vme20:  eth1 00-80-42-0d-03-62       #CPU-60
+ 
+   Assuming you have two VME processor modules, vme1 should  be  assigned  the
+   physical  address  of  the  first processor and vme2 should be the physical
+   address of the other.
+ 
+   You must set the environment variable VME, to select a specific  processor.
+   For example,
+ 
+         setenv VME vme20
+ 
+   would  cause  all codes which communicate with the VME processor to use the
+   physical address associated with the name vme20.
+ 
+ 
+ 
+   ACQS.080  Loading bootstrap code into the VME processor - CPU-60
+ 
+   You can load the bootstrap code using VMEterm. Type
+ 
+          load vme_boot60.run
+ 
+   The two "VMEPROM Error 50" messages are  normal.  Using  VMEPROM,  you  can
+   examine  memory  starting  at address FFC08000 to see if the bootstrap code
+   has been loaded.  If everything looks  good,  start  the  VME  processor at
+   address FFC08000.
+ 
+          go $ffc08000
+ 
+   When  you  start  the VME processor, you get a banner in the VMEterm window
+   which includes:
+ 
+          VME Processor ready for download
+ 
+   Connect the Ethernet between the workstation  and  the  VME  processor  and
+   login  at  the  workstation  console.   If the VME processor is working, it
+   will be sending an ethernet packet to the workstation every 10 seconds.  To
+   test this, type the following:
+ 
+         /usr/acq/vme/listen eth1
+ 
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   7
+ 
+   You  should  get  the following(with date, time and ethernet source address
+   changes):
+ 
+   daqdev2> /usr/acq/vme/listen eth1
+   Device H/W address: 00:02:b3:96:b0:f1
+   Interface flags = 0x1043
+   Interface eth1 is UP
+   Interface MTU = 1500
+   *********************  Packet  *************************
+   Time - Fri Oct 22 11:50:46 2004
+    Packet Length: 64
+   Multicast
+      Destination: 03-6d-63-73-71-00
+           Source: 00-80-42-0d-03-62
+         Protocol: 4f-51
+    Buffer Length: 50
+     Ack: 0
+   Order: 0
+     PID: 0
+   56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V3.0 IPL Force C
+   50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-60 : Ready fo
+   72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+ 
+   *********************  Packet  *************************
+   Time - Fri Oct 22 11:50:56 2004
+    Packet Length: 64
+   Multicast
+      Destination: 03-6d-63-73-71-00
+           Source: 00-80-42-0d-03-62
+         Protocol: 4f-51
+    Buffer Length: 50
+     Ack: 0
+   Order: 0
+     PID: 0
+   56 32 2e 30 20 49 50 4c 20 46 6f 72 63 65 20 43    V3.0 IPL Force C
+   50 55 2d 34 30 20 3a 20 52 65 61 64 79 20 66 6f    PU-60 : Ready fo
+   72 20 64 6f 77 6e 6c 6f 61 64 0d 00                r download..
+ 
+   daqdev2>
+ 
+   There are just a few more steps to setup the VME  processor.   We  need  to
+   load  a  code /usr/acq/vme/vme_listen60 and then load and execute a code to
+   make a backup copy of our bootstrap  in  the  on-board  flash  EEPROM.  The
+   following should do all this:
+ 
+       1) Set the enviroment variable VME to the processor you
+          using.  For example, if you are using vme20, type
+ 
+          setenv VME vme20
+ 
+       2) Reset VME processor and type  go $ffc08000
+ 
+       3) At the workstation type:
+ 
+          /usr/acq/vme/srload /usr/acq/vme/vme_listen60
+ 
+    
+   22-Sep-17 .... ACQS  - Setup of workstation and VME for acq ...... PAGE   8
+ 
+          In the VMEterm window you should get a message:
+ 
+          CPU-60 Loaded with VME_LISTEN60
+ 
+       4) Reset VME processor and type  go $ffc08000
+ 
+       5) At the workstation type:
+ 
+          /usr/acq/vme/srload /usr/acq/vme/sav_res60
+ 
+          In the VMEterm window you should get a message:
+ 
+          CPU-60 Loaded with SAV_RES60
+ 
+       6) Reset VME processor and type  go $80000
+ 
+       7) To copy to flash EEPROM, execute the following two commands:
+ 
+          ferase user_flash
+ 
+          fprog user_flash,$100000
+ 
+ 
+   This  last  step takes a few seconds.  When finished you have a backup copy
+   of the bootstrap.
+ 
+   To restore the SRAM from the flash EEPROM,
+ 
+          go $ffc80000
+ 
+   If you made it here successfully, things are going to be a lot easier  from
+   now on.  Happy days are here again!
+ 
+   From  now  on  we  will use the ethernet for all communication with the VME
+   processor.  To do this, change switch 1 on the  VME  processor  front panel
+   from  F  to  7 and reset the processor. Now after reset, the processor will
+   start at address ffc08000 and can be downloaded via ethernet.

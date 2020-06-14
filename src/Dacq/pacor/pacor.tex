@@ -1,0 +1,691 @@
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   1
+ 
+ 
+ 
+   Sec Page Contents
+ 
+   010   1  Introduction
+ 
+   020   2  Hardware Description & Compiler Directives - Syntax
+ 
+   030   3  Hardware Description & Compiler Directives - Definitions
+ 
+   035   4  Module Type Table (MOTYP)                  - Definitions
+ 
+   040   5  Hardware Description & Compiler Directives - Discussion
+ 
+   050   7  Conditional (programmed) CAMAC Readout     - Syntax
+ 
+   060   7  Conditional (programmed) CAMAC Readout     - Discussion
+ 
+   070   8  Conditional (programmed) CAMAC Readout     - Example
+ 
+   080   9  PACOR Output Tables (for McConnell & Milner only)
+ 
+ 
+   U210.010  Introduction
+ 
+   User-supplied  front-end  programming  of  the  DECstation/VME-based   data
+   acquisition system consists of two principal parts:
+ 
+   (1)....A  hardware  description table in which the locations of all modules
+          to be read out are given along with associated device  names  (ADCs,
+          TDCs, etc.), parameter-IDs, function codes for module clearing, etc.
+ 
+ 
+   (2)....A  conditional  readout section in which certain CAMAC sub-addresses
+          may be read (or not) depending on pattern word  bits.  Given  module
+          types of Fastbus or Ferabus may also be conditionally read.
+ 
+   It  is  intended that the hardware description table should be more or less
+   self documenting with the device names serving as the primary label as well
+   being   used   in  any  subsequent  conditional  readout  section  to  make
+   connections to hardware locations, etc.
+ 
+                               Data Stream Format
+ 
+   At this first stage of development, the data stream format will be what  we
+   will  call  L003  -  that is: a sequence of (parameter-ID, data-word) pairs
+   terminated by two hex FFFFs.
+ 
+                               How to Get Started
+ 
+   Type: /usr/hhirf/pacc prog    ;To compile prog.pac.
+                                 ;Expanded listing & diagnostics
+                                 ;are written to prog.lst
+ 
+   Type: /usr/hhirf/pacc prog L  ;To compile prog.pac and
+                                 ;download to VME front-end.
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   2
+ 
+   U210.020  Hardware Description & Compiler Directives - Syntax
+ 
+   $ini  cnaf C,N,A,F,DATA      ;Executed at start-up time only    (200 max)
+   $dun  cnaf C,N,A,F,DATA      ;Executed at end-of-event or kill  (200 max)
+   $run  cnaf C,N,A,F,DATA      ;Executed at TRUN or STARTVME      (200 max)
+   ---------------------------------------------------------------------------
+   $dla  uncondit  DT           ;Delay-time for  unconditional CAMAC   readout
+   $dla  condit    DT           ;Delay-time for    conditional CAMAC   readout
+   $dla  camac     DT           ;Delay-time for block-transfer CAMAC   readout
+   $dla  fastbus   DT           ;Delay-tine for                Fastbus readout
+   $dla  fera      DT           ;Delay-time for                Fera    readout
+   $dla  vme       DT           ;Delay-time for                VME     readout
+                                ;Valid DT range is 0 to 255 microseconds
+   ---------------------------------------------------------------------------
+   $lat  c0C  n0N  f0F  a0A     NAME:0N              fc0F  ac0A
+   $lat  c0C  n0N  f0F  a0A     NAME:0N     id0N     fc0F  ac0A
+   ---------------------------------------------------------------------------
+   $cam  c0C  n0N  f0F  a0A-0B  NAME:0N,0I  id0N,0I  fc0F  ac0A
+ 
+   $cam  c0C  n0N       a0A-0B  NAME:0N,0I  id0N,0I  fc0F  ac0A  mt=MOTYP
+ 
+   $fer  c0C  n0N       a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
+ 
+   $fas  c0C  n0N       a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
+ 
+   $xia  c0C  n0N  v0V  g0G
+ 
+   $vme  adc0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
+ 
+   $vme  tdc0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=MOTYP
+ 
+   $vme  sis0N          a0A-0B  NAME:0N,0I  id0N,0I              mt=SIS_3820
+ 
+   $did  FASI,FERI,CAMI         ;IDs for illegal Fastbus, Fera, CAMAC  readout
+ 
+   $cid  idhi idlo              ;ID#s for hi- & lo-order parts of 100HZ clock
+   ---------------------------------------------------------------------------
+   $rgat GNAM(N) PNAM(I) LO,HI              ;define raw gate GNAM(N)
+   ....                                     ;on parameter    PNAM(I)
+   ....                                     ;gate limits  =  LO,HI
+ 
+   $cgat CNAM(N) = <N>GNAM(I) OP<N>GNAM(J)..;define constructed gate CNAM(N)
+   ....                                     ;from raw gates GNAM(I),GNAM(J)...
+   ....                                     ;<N> is optional and implies .not.
+   ....                                     ;OP is either .and. or .or.
+   ....                                     ;evaluation is left-to-right
+   ---------------------------------------------------------------------------
+   $kil any   LW(N),MSK         ;Kill event if any latch & mask bits match
+   $kil none  LW(N),MSK         ;Kill eveny if no  latch & mask bits match
+   $kil true  GNAM(N)           ;Kill event if gate GNAM(N) is true
+   $kil false GNAM(N)           ;Kill event if gate GNAM(N) is false
+ 
+   $rif LW(N)  MSK   MOTYP      ;If any latch & mask bits match, read MOTYP
+   $rif true GNAM(N) MOTYP      ;If gate GNAM(N) is true,        read MOTYP
+ 
+   $cdn GNAM(N) ICOUNT          ;If gate GNAM(N) true, "countdown" via ICOUNT
+   ---------------------------------------------------------------------------
+   $pat  PAT =  NAME(1),I1,I2  NAME(2),J1,J2  NAME(3),K1,K2 ....
+   ---------------------------------------------------------------------------
+   $lat, $cam, $fer, $fas, $xia, $vme denote: Gated-latch, CAMAC, Fera,
+                                              Fastbus, XIA & VME  modules
+   ---------------------------------------------------------------------------
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   3
+ 
+                   IMPORTANT COMMENTS RELATED TO GATES
+ 
+   (1)....All gates are inclusive.
+ 
+   (2)....All parameters on which gates are set must be CAMAC parameters.
+ 
+   (3)....Gates are only  supported  for  CAMAC  modules  which  allow  randon
+          access  to  the  data. No gate support is provided for modules which
+          generate only compressed data readout (i.e. sparce data  readout)  -
+          the LECROY-2277 TDC is a prime example.
+ 
+   U210.030  Hardware Description & Compiler Directives - Definitions
+ 
+   The  following  list  of  definitions  apply to quantities specified in the
+   $lat, $cam, $fas, $fer, $xia, and $vme directives above.
+ 
+   c     ;Labels the crate number (see Note-1)   - denoted by 0C
+ 
+   n     ;Labels the slot  number                - denoted by 0N
+ 
+   a     ;Labels sub-address range for read      - denoted by 0A-0B
+ 
+   f     ;Labels function-code for read          - denoted by 0F
+ 
+   fc    ;Labels function-code for clear         - denoted by 0F
+ 
+   ac    ;Labels sub-address for clear           - denoted by 0A
+ 
+   v     ;Labels the virtual station number      - denoted by 0V - $xia only
+ 
+   g     ;Labels the group number (optional)     - denoted by 0G - $xia only
+ 
+   tdc   ;Labels CAEN TDC 775 number             - denoted by 0N - $vme only
+ 
+   adc   ;Labels CAEN ADC 785, 791 number        - denoted by 0N - $vme only
+ 
+   sis   ;Labels SIS 3820 number                 - denoted by 0N - $vme only
+ 
+   mt    ;Labels Fera or Fastbus module-type     - denoted by MOTYP
+         ;(Required for all Fera & Fastbus modules - optional for CAMAC)
+ 
+   NAME  ;User-supplied name for program reference (12 bytes max)
+         ;0N denotes first index (corresponds to sub-addr 0A)
+         ;0I denotes the   index increment
+ 
+   id    ;Labels parameter-ID and parameter-ID-increment entry
+         ;0N denotes parameter-ID corresponding to sub-address 0A
+         ;0I denotes parameter-ID increment
+   ---------------------------------------------------------------------------
+   PAT   ;See discussion of $pat (SECT# 040)below
+   ---------------------------------------------------------------------------
+   Note-1 CAMAC crate numbers are supported as indicated below:
+ 
+   Crate# 0-7           are supported for CAMAC data readout (via $lat & $cam)
+ 
+   Crate# 0-7 and 10-17 are supported for Fera  data readout (via $fer)
+ 
+   Crate# 0-7 and 10-17 are supported for writing (i.e. via $ini, $dun & $run)
+   ---------------------------------------------------------------------------
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   4
+ 
+ 
+   U210.035  Module Type Table (MOTYP) - Definitions
+ 
+   MOTYP = LRS_4300     for LECROY-4300   (Fera    ADC) - Code-01
+   MOTYP = GAN_812F     for GANELEC-812F  (Fera    TDC) - Code-02
+   MOTYP = SILENA_4418  for SILENA-4418   (Fera    ADC) - Code-03
+ 
+   MOTYP = BAKLASH      for Clover module (Fera    ADC) - Code-06 ***
+   MOTYP = BAKLASH      for Clover module (Fera    ADC) - Code-07 ***
+   MOTYP = BAKLASH      for Clover module (Fera    ADC) - Code-08 ***
+ 
+   MOTYP = AD_413       for ORTEC AD_413  (Fera    ADC) - code-09
+ 
+   MOTYP = LRS_1885     for LECROY-1885   (Fastbus ADC) - Code-11
+   MOTYP = PHIL_10C6    for PHILLIPS-10C6 (Fastbus TDC) - Code-12
+   MOTYP = LRS_1872     for LECROY-1872   (Fastbus TDC) - Code-13
+ 
+   MOTYP = LRS_1875     for LECROY-1875   (Fastbus TDC) - Code-13
+   MOTYP = LRS_1881     for LECROY-1881   (Fastbus ADC) - Code-14
+   MOTYP = LRS_1877     for LECROY-1877   (Fastbus ADC) - Code-15
+ 
+   MOTYP = PHIL_7164    for PHILLIPS-7164 (CAMAC   ADC) - Code-21
+   MOTYP = PHIL_7186    for PHILLIPS-7186 (CAMAC   TDC) - Code-22
+   MOTYP = LRS_2277     for LECROY-2277   (CAMAC   TDC) - Code-23
+ 
+   MOTYP = SILENA_4418C for SILENA-4418   (CAMAC   ADC) - Code-24
+   MOTYP = LRS_4300C    for LECROY-4300C  (CAMAC   ADC) - Code-26
+   MOTYP = LRS_3377C    for LECROY-3377C  (CAMAC   ADC) - Code-27
+ 
+   MOTYP = XIA_TIME     for XIA TIME      (CAMAC   MOD) - Code-28
+   MOTYP = AD_413C      for ORTEC AD_413C (CAMAC   ADC) - Code-29
+ 
+   MOTYP = CAEN-775     for CAEN-775 TDC                - Code-41
+   MOTYP = CAEN-785     for CAEN-785 ADC                - Code-42
+   MOTYP = CAEN-792     for CAEN-792 ADC                - Code-43
+ 
+   MOTYP = SIS-3820     for SIS-3820 scaler             - Code-44
+ 
+   MOTYP = MYRIAD       for Myriad trigger, clock       - Code-45
+   ---------------------------------------------------------------------------
+ 
+   *** Data readout by the BAKLASH module types:
+ 
+   Currently there are three module types:  BAKLASH,  BAKLASH2  and  BAKLASH3.
+   Zero-suppression  is  done  on  each  module  individually. The data from a
+   clover module and corresponding output vs module type is:
+ 
+   Word#  Parameter                 Module types which readout listed param
+   -----  -----------------------   ---------------------------------------
+       1  VSN (internal use only)
+       2  ??? (junk word)
+       3  Hit pattern               BAKLASH, BAKLASH2, BAKLASH3
+       4  Hires GE                  BAKLASH, BAKLASH2, BAKLASH3
+       5  Hires GE                  BAKLASH, BAKLASH2, BAKLASH3
+       6  Hires GE                  BAKLASH, BAKLASH2, BAKLASH3
+       7  Hires GE                  BAKLASH, BAKLASH2, BAKLASH3
+       8  GE time                   BAKLASH, BAKLASH2
+       9  GE time                   BAKLASH, BAKLASH2
+      10  GE time                   BAKLASH, BAKLASH2
+      11  GE time                   BAKLASH, BAKLASH2
+      12  side channel              BAKLASH, BAKLASH2
+      13  side channel              BAKLASH, BAKLASH2
+      14  side channel              BAKLASH, BAKLASH2
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   5
+      15  BGO                       BAKLASH
+      16  BGO                       BAKLASH
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   6
+ 
+ 
+   U210.040  Hardware Description & Compiler Directives - Discussion
+ 
+   $ini...defines CAMAC operations which are to be  executed  at  "init  time"
+          only  (i.e. when the INITVME command is issued). Only operations for
+          which F.GT.7 are allowed.
+ 
+   $run...defines CAMAC operations which are to be executed each time  a  TRUN
+          or  STARTVME  command  is executed. Only operations for which F.GT.7
+          are allowed.
+ 
+   $dun...defines CAMAC operations which are to be  executed  at  the  end  of
+          every  event  (whether  normal or killed). Only operations for which
+          F.GT.7 are allowed.
+ 
+   $dla...specifies a time delay (in microseconds) to be imposed prior to  the
+          readout  of  the  specified  "class"  of  modules  or  readout  type
+          (conditional or unconditional).
+ 
+   $lat...specifies that a gated latch is to be read  and  saved.  That  latch
+          may  be  subsequently referenced (in pattern register definitions or
+          in conditional CAMAC readout) by  the  associated  NAME.  The  latch
+          will be loaded into the data stream only if the id field is entered.
+ 
+ 
+   $cam...defines  the sub-addresses and associated parameter NAMEs and IDs to
+          be read from one CAMAC module. A given $cam can only  reference  one
+          module  but  one  module may be referenced by more than one $cam. If
+          the fc & ac fields are entered, that module will be cleared  at  the
+          end of each event. Otherwise, an external clear is expected.
+ 
+          Any  $cam  entries which are not referenced in the conditional CAMAC
+          readout program will be read unconditionally for  every  "un-killed"
+          event.
+ 
+   $fer...defines  Ferra  modules,  sub-addresses,  associated parameter NAMEs
+          and IDs to be read. The module  type  mt=MOTYP  must  be  given  and
+          MOTYP  must  be either LRS_4300 or GAN_812F. All existing parameters
+          specified for a given module type  will  be  loaded  into  the  data
+          stream  unless  a  conditional  readout  is  specified  via the $rif
+          directive defined below.
+ 
+   $fas...defines Fastbus module  sub-addresses,  associated  parameter  NAMEs
+          and  IDs  to  be  read.  The  module type mt=MOTYP must be given and
+          MOTYP must be either LRS_1885 or PHIL_10C6. All existing  parameters
+          specified  for  a  given  module  type  will be loaded into the data
+          stream unless a  conditional  readout  is  specified  via  the  $rif
+          directive defined below.
+ 
+   $xia...defines  the  crate#, slot#, virtual-station#, and group# (c0C, n0N,
+          v0V, g0G) for XIA modules which are to be read. The group number  is
+          optional at this time.
+ 
+   $vme...defines  the  adc#  (or  tdc#),  sub-addresses, associated parameter
+          NAMEs and IDs to be read. The module type must also be given.
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   7
+ 
+ 
+ 
+   U210.040  Hardware Description & Compiler Directives - Discussion (cont)
+ 
+   $rif...defines the conditional readout of a given Fera,  Fastbus  or  CAMAC
+          module  type.  Only  one  conditional  entry  is allowed for a given
+          module type. It says, if any bits in the specified latch word  LW(N)
+          and mask MSK match,  read module type MOTYP.
+ 
+          Note:  LW  must  be  a name defined in a previous $lat specification
+          and the index N must be a number (not a symbol) for now at least.
+ 
+   $kil...defines the conditional "killing"  of  events.  The  any-type  says,
+          kill  the  event  if  any bits in the specified latch word LW(N) and
+          mask MSK match. The none-type says kill the event if no bits match.
+ 
+   $did...specifies default parameter IDs FASI &  FERI  to  be  used  for  any
+          illegally  reported  slot#  and  sub-address  from  Fastbus and Fera
+          readout, respectively. This is for  diagnostic  purposes  only.  For
+          example,  you  could  histogram  parameters FASI & FERI and look for
+          non-zero spectra. If you do not enter $did, PAC will assign to  FASI
+          and  FERI  the  values  MAX-ID+1  and MAX-ID+2, respectively, where,
+          MAX-ID is the maximum parameter-ID specified  anywhere  in  the  PAC
+          program.
+ 
+   $cid...specifies  two ID-numbers to be associated with the hi- and lo-order
+          parts of VME processor's  internal  100HZ  clock  which  are  to  be
+          entered  into the data stream. If the #cid directive is not entered,
+          then no clock parameters will be recorded.
+ 
+   $pat...provides the user with a method of defining one or more  (up  to  5)
+          indexed  pattern  word  names  (denoted PAT in the definition table)
+          each of whose elements refer to one bit of one latch word. The  idea
+          is  to  make  it  easier  to  construct loops which involve multiple
+          latch words.
+ 
+          In   the   definition   table,  PAT  denotes  a  user-supplied  name
+          associated  with a multi-word   bit-pattern  composed  of  bits from
+          one  or  more  latch-words  which  have  been  defined  via the $lat
+          directive. The example given in  the  table  uses  bits  I1-I2  from
+          NAME(1),  J1-J2  from  NAME(2)  ....   In   subsequent   conditional
+          programming PAT(I) refers to 1 bit of one latch-word.
+ 
+ 
+                                    COMMENTS
+ 
+   (1)....At  this time no scalar symbols (representing numbers) are supported
+          for any of the $-type directives. Examble: for the  $ini  directive,
+          C,N,A,F,DATA  must  all  be  numbers.  DATA must be hex and the DATA
+          field must be present for ALL CAMAC function codes whether  used  or
+          not.
+ 
+   (2)....Hex  numbers  are  entered with a numeric first-digit and a trailing
+          "h" or "H". That is, in the usual way.
+ 
+   (3)....A ! or ; introduces a comment field on a statement line.
+ 
+   (4)....Any   non-printing   characters  (including  TABs)  will  cause  the
+          compiler to ABORT!
+ 
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   8
+ 
+ 
+ 
+   U210.050  Conditional (Programmed) CAMAC Readout - Syntax
+ 
+   In the following list:
+   LW(I)   denotes Ith latch-wd      defined via $lat      - always indexed
+   PAT(J)  denotes Jth pattern-bit   defined via $pat      - always indexed
+   ADC(J)  denotes Jth named-hwd dev defined via $cam      - always indexed
+   GNAM(J) denotes jth gatename defined via $rgat or $cgat - always indexed
+   MSK is a mask - number or scaler symbol
+   LAB is a statement label
+ 
+   IFU(PAT(J))GOTO LAB    ;If latch-bit implied by PAT(J) not set,  GOTO LAB
+   IFS(PAT(J))GOTO LAB    ;If latch-bit implied by PAT(J)  is set,  GOTO LAB
+ 
+   IFT(GNAM(J))GOTO LAB   ;If raw or calculated gate GNAM(J) true,  GOTO LAB
+   IFF(GNAM(J))GOTO LAB   ;If raw or calculated gate GNAM(J) false, GOTO LAB
+ 
+   IFA(LW(I),MSK)GOTO LAB ;If any bits set in MSK are set in LW(I), GOTO LAB
+   IFN(LW(I),MSK)GOTO LAB ;If no  bits set in MSK are set in LW(I), GOTO LAB
+ 
+   GOTO LAB               ;Unconditional GOTO LAB
+ 
+   READ ADC(J)            ;Read ADC(J) (C,N,A,F defined in $CAM statement)
+ 
+   CNAF C,N,A,F,DATA      ;Explicit CNAF (DATA field is optional)
+ 
+   LABL  CONTINUE         ;Labeled continue statement
+ 
+ 
+ 
+   U210.060  Conditional (Programmed) CAMAC Readout - Discussion
+ 
+ 
+   (1)....Statement labels  must  start  in  col-1  and  be  no  more  than  4
+          characters.
+ 
+   (2)....Statements must start in col-7 or greater (like FORTRAN).
+ 
+   (3)....A ! or ; introduces a comment field on a statement line.
+ 
+   (4)....Hex  numbers  are  entered with a numeric first-digit and a trailing
+          "h" or "H". That is, in the usual way.
+ 
+   (5)....Any   non-printing   characters  (including  TABs)  will  cause  the
+          compiler to ABORT!
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE   9
+ 
+ 
+ 
+   U210.070  Conditional (Programmed) CAMAC Readout - Example
+ 
+   The $lat directive specifies devices (normally gated latches) which are  to
+   be  read  first  and  saved  under  the  name  specified  for  later use in
+   bit-tests or in constructing multi-word bit patterns. Such  data  may  also
+   be $kil-tested for event crashing.
+ 
+   If  fc0F & ac0A are included in the $lat & $cam directives, clearing of the
+   modules will be automatic. If you  do  not  enter  this,  you  must  supply
+   explicit CNAFs or clear by some other method.
+ 
+   The  $lat & $cam directives on the preceding page imply full readout unless
+   "conditional" readout is specified by a  subsequent  "conditional  readout"
+   program  section. Anything not included in the conditional section is still
+   readout. A conditional readout program section might look as follows:
+ 
+   Example--1 ----------------------------------------------------------------
+ 
+         I=0                     ;Init pattern-word bit counter
+         J=20                    ;Init ADC, TDC, index value
+ 
+         LOOP 40                 ;Loop over 40 "detectors"
+         I=I+1                   ;Increment bit-counter
+         J=J+1                   ;Increment ADC, TDC index
+         IFU(PAT(I))GOTO LAB1    ;Tst pattern bit - read if set
+         READ ADC1(J)            ;Read ADC1
+         READ ADC2(J)            ;Read ADC2
+         READ TDC1(J)            ;Read TDC1
+         READ TDC2(J)            ;Read TDC2
+   LAB1  ENDLOOP                 ;End-of-loop
+ 
+   Example-2 -----------------------------------------------------------------
+ 
+   $ini cnaf 0,5,0,9,0H
+ 
+   $dun cnaf 0,5,0,16,222h
+ 
+   $lat c00 n02 f00 a00    GLAT:1              fc09 ac00
+ 
+   $cam c00 n05 f00 a00-07 CADC:1,1  id01,1    fc09 ac00   dt120
+ 
+   $fas c01 n02 a00-95     FADC:1,1  id101,1   mt=lrs_1885
+ 
+   $fas c01 n10 a00-95     FTDC:1,1  id201,1   mt=phil_10c6
+ 
+   $pat PAT = GLAT(1)1,16
+ 
+   $kil none GLAT(1) 0FFFFh
+ 
+         I=0
+         LOOP 4
+         I=I+1
+         IFU(PAT(I)) GOTO L1
+         READ CADC(I)
+   L1    ENDL
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  10
+ 
+ 
+   U210.080  PAC Output Tables - POB Structure
+ 
+   ******************  WD#  *****************************************DIRECTORY
+ 
+   IOF  #ENT  DELAY -  1-3  ;IOF locates PAC-SOURCE FILENAME
+   IOF  #ENT  DELAY -  4-6  ;IOF locates CAMAC CRATE TABLE
+   IOF  #ENT  DELAY -  7-9  ;IOF locates CNAF-INIT LIST
+   IOF  #ENT  DELAY - 10-12 ;IOF locates CAMAC   MODULE TABLE
+   IOF  #ENT  DELAY - 13-15 ;IOF locates FASTBUS MODULE TABLE
+   IOF  #ENT  DELAY - 16-18 ;IOF locates FERA    MODULE TABLE
+   IOF  #ENT  DELAY - 19-21 ;IOF locates GATED LATCH    TABLE
+   IOF  #ENT  DELAY - 22-24 ;IOF locates GATE PARAMETER READOUT TABLE
+   IOF  #ENT  DELAY - 25-27 ;IOF locates RAW         GATE SPEC  TABLE
+   IOF  #ENT  DELAY - 28-30 ;IOF locates CALCULATED  GATE SPEC  TABLE
+   IOF  #ENT  DELAY - 31-33 ;IOF locates COUNT-DOWN LIST
+   IOF  #ENT  DELAY - 34-36 ;IOF locates CONDITIIONAL  KILL TABLE
+   IOF  #ENT  DELAY - 37-39 ;IOF locates UNCONDITIONAL READOUT TABLE
+   IOF  #ENT  DELAY - 40-42 ;IOF locates CONDITIOINAL  READOUT PROGRAM
+   IOF  #ENT  DELAY - 43-45 ;IOF locates CNAF-LIST FOR CONDITIONAL READOUT
+   IOF  #ENT  DELAY - 46-48 ;IOF locates ID-LIST   FOR CONDITIONAL READOUT
+   IOF  #ENT  DELAY - 49-51 ;IOF locates CAMAC   COND MODULE-TYPE  READOUT
+   IOF  #ENT  DELAY - 52-54 ;IOF locates FASTBUS COND MODULE-TYPE  READOUT
+   IOF  #ENT  DELAY - 55-57 ;IOF locates FERA    COND MODULE-TYPE  READOUT
+   IOF  #ENT  DELAY - 58-60 ;IOF locates CAMAC     ID-TABLE
+   IOF  #ENT  DELAY - 61-63 ;IOF locates FASTBUS   ID-TABLE
+   IOF  #ENT  DELAY - 64-66 ;IOF locates FERA      ID-TABLE
+   IOF  #ENT  DELAY - 67-69 ;IOF locates WINDUP  CNAF LIST
+   IOF  #ENT  DELAY - 70-72 ;IOF locates RUN     CNAF LIST
+   IOF  #ENT  DELAY - 73-75 ;IOF locates XIA MODULE TABLE
+   IOF  #ENT  DELAY - 76-78 ;IOF locates VME COND MODULE-TYPE READOUT
+   IOF  #ENT  DELAY - 79-81 ;IOF locates CAEN ADC HARDWARE MAP
+   IOF  #ENT  DELAY - 82-84 ;IOF locates CAEN TDC HARDWARE MAP
+   IOF  #ENT  DELAY - 85-87 ;IOF locates CAEN QDC HARDWARE MAP
+   IOF  #ENT  DELAY - 88-90 ;IOF locates CAEN ADC ID-TABLE
+   IOF  #ENT  DELAY - 91-93 ;IOF locates CAEN TDC ID-TABLE
+   IOF  #ENT  DELAY - 94-96 ;IOF locates CAEN QDC ID-TABLE
+   IOF  #ENT  DELAY - 97-99 ;IOF locates 100HZ CLOCK-ID TABLE
+   IOF  #ENT  DELAY -100-102;IOF locates SIS3820 Hardware Map
+   IOF  #ENT  DELAY -103-105;IOF locates SIS3820 Table
+   IOF  #ENT  DELAY -106-108;IOF locates MYRIAD Hardware Map
+   IOF  #ENT  DELAY -109-111;IOF locates MYRIAD Table
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  11
+ 
+   U210.080  PAC Output Tables - POB Structure (continued)
+ 
+   *************************************************PAC FILENAME.......(01-03)
+   ASCII FILENAME (80 BYTES)
+   *************************************************CRATE-LIST.........(04-06)
+   CRATE#
+   *************************************************CNAF INIT-LIST.....(07-09)
+   CNAF DATA
+   *************************************************CAMAC MODULE TABLE (10-12)
+   CN0T           (Packed C,N,dummy,MODTYP)
+   *************************************************FAST  MODULE TABLE (13-15)
+   CN0T           (Packed C,N,dummy,MODTYP)
+   *************************************************FERA  MODULE TABLE (16-18)
+   CN0T           (Packed C,N,dummy,MODTYP)
+   *************************************************GATED-LATCH TABLE..(19-21)
+   CNAF
+   *************************************************GATE READ TABLE....(22-24)
+   C N A F MOTYP
+   *************************************************RAW GATE SPEC TABLE(25-27)
+   GPI LO HI PATNDX MSK
+   *************************************************CAL GATE SPEC TABLE(28-30)
+   See separate discription
+   *************************************************COUNT-DOWN-TABLE...(31-33)
+   PATNDX MSK COUNT
+   *************************************************COND KILL TABLE....(34-36)
+   PATNDX MSK KILTYP
+   *************************************************UN-COND CAMAC READ.(37-39)
+   CNAF   ID
+   *************************************************COND-CAMAC PROGRAM.(40-42)
+   PATNDX MSK T-IDX T-NUM T-NXT F-IDX F-NUM F-NXT
+   *************************************************COND-CAMAC CNAFs...(43-45)
+   CNAF
+   *************************************************COND-CAMAC ID-TABL.(46-48)
+   ID
+   *************************************************CAMAC   MOTY READ..(49-51)
+   PATNDX MSK MOTY
+   *************************************************FASTBUS MOTY READ..(52-54)
+   PATNDX MSK MOTY
+   *************************************************FERA    MOTY READ..(55-57)
+   PATNDX MSK MOTY
+   *************************************************CAMAC     ID-TABLE (58-60)
+   ID (32,32,8) = 8192
+   *************************************************FASTBUS   ID-TABLE (61-63)
+   ID (256,32)  = 8192
+   *************************************************FERA      ID-TABLE (64-66)
+   ID (32,576)  = 18432
+   *************************************************WINDUP/CLR TABLE...(67-69)
+   CNAF DATA
+   *************************************************RUN CNAF   TABLE...(70-72)
+   CNAF DATA
+   *************************************************XIA MODULE TABLE...(73-75)
+   CNVG           (Packed C,N,VSN,GR)
+   *************************************************CAEN    MOTY READ..(76-78)
+   PATNDX MSK MOTY
+   *************************************************CAEN ADC HWD MAP...(79-81)
+   ADC (24)
+   *************************************************CAEN TDC HWD MAP...(82-84)
+   TDC (12)
+   *************************************************CAEN QDC HWD MAP...(85-87)
+   QDC (12)
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  12
+ 
+ 
+ 
+   U210.080  PAC Output Tables - POB Structure (continued)
+ 
+ 
+   *************************************************CAEN ADC ID-TABLE..(88-90)
+   ID (34,24) = 816
+   *************************************************CAEN TDC ID-TABLE..(91-93)
+   ID (34,12) = 408
+   *************************************************CAEN QDC ID-TABLE..(94-96)
+   ID (34,12) = 408
+   *************************************************CLOCK ID-TABLE.....(97-99)
+   CLOCID(2)
+   *************************************************SIS 3820 HWD MAP...(100-102)
+   SIS3820 (192)
+   *************************************************SIS 3820 ID-Table.(101-103)
+   ID (32,6) = 192
+   *************************************************MYRIAD HWD MAP....(107-109)
+   MYRIAD (3)
+   *************************************************MYRIAD ID-Table...(110-112)
+   ID (1,3) = 3
+   ===========================================================================
+ 
+ 
+   PATNDX = Pattern-word index
+ 
+   MSK    = mask - (do IAND(LATCH(PATNDX),MSK) and test for .TRUE. or .FALSE.
+ 
+   T-IDX  = CNAF/ID table indices     if test TRUE
+ 
+   T-NUM  = CNAF/ID #entries to use   if test TRUE
+ 
+   T-NXT  = next COND_PROG index      if test TRUE
+ 
+   F-IDX  = CNAF/ID table indices     if test FALSE
+ 
+   F-NUM  = CNAF/ID #entries to use   if test FALSE
+ 
+   F-NXT  = next COND-PROG index      if test FALSE
+ 
+    
+   29-Dec-17 .... U210  PACOR -  Physics Acq Compiler - Revise ...... PAGE  13
+ 
+ 
+   U210.080  PAC Output Tables - POB Structure (continued)
+ 
+   -------------------------------------------------------------------------
+ 
+   GATE PARM READ TABLE
+ 
+   C  N  A  F  MOTYP
+   C  N  A  F  MOTYP
+   .
+   .
+   RAW GATE SPECIFICATION TABLE
+ 
+   GPI LO HI PATNDX MSK  ;GPI    = gate parm index (index in read table)
+                         ;LO, HI = gate limits
+                         ;PATNDX = pattern word number (index)
+                         ;MSK    = defines bit# to set if gate true
+   .
+   .
+   CALCULATED GATE SPECIFICATION TABLE
+ 
+   PATNDX                ;pattern array index (word#)
+   MSK                   ;MSK defines bit# to set
+   NOTCODE               ; 0  implies normal  1  implies .not.
+   IDX                   ;index in raw gate specification table
+   OPCODE                ; 0  implies .and.  1  implies .or.
+   NOTCODE
+   IDX                   ;index in raw gate specification table
+   ENDCODE = -1          ; -1  implies end of spec for this bit
+   PATNDX
+   MSK
+   NOTCODE
+   IDX                   ;index in raw gate specification table
+   ENDCODE = -1
+   PATNDX
+   MSK
+   NOTCODE
+   IDX
+   OPCODE
+   NOTCODE
+   IDX
+   OPCODE
+   NOTCODE
+   IDX
+   ENDCODE = -1
+   .
+   .
+   COUNT DOWN LIST
+ 
+   PATNDX  MSK  COUNT    ;down-count if bit is set
+   .
+   .

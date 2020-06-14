@@ -1,0 +1,55 @@
+   22-Aug-99 ........... SCAT  -  Scaler Dump Procedure ............. PAGE   1
+ 
+ 
+ 
+   SCAT200  How to Copy CAMAC Scalers to Tape
+ 
+   CAMAC  scalers  may be read and written to the data acquisition output tape
+   during the data acquisition process. The following features are supported:
+ 
+   (1)....Scalers to be  read  are  specified  in  exactly  the  same  way  as
+          described  for  program  SCAD  (i.e. for real time display). See the
+          SCAD section of the ORPHAS manual.
+ 
+   (2)....Scaler records may be written to tape  at  timed  intervals  (10  to
+          1000 seconds are allowed), preceeding file-marks or both.
+ 
+   (3)....Scalers may be cleared after each reading if desired.
+ 
+   (4)....The  date  and  time  of  the  scaler record dump is included in the
+          record.
+ 
+   (5)....Scaler records are 32000 bytes long and written in ASCII.
+ 
+   (6)....Program lemo supports the retrival, display  and  logging  of  these
+          records. While running lemo, Type: H LIST, to see relevant commands.
+ 
+ 
+   (7)....The  maximum  number  of  scalers  supported  at this time (raw plus
+          computed) is 790.
+ 
+   User commands:
+   ---------------------------------------------------------------------------
+   SCAT  filename         ;Process "snit file"
+ 
+   SCAT  ON               ;Dump before EOF only
+   SCAT  ON  CLR          ;Dump before EOF and (clr post dump)
+   SCAT  ON  TSEC         ;Dump every TSEC and before EOF
+   SCAT  ON  TSEC  CLR    ;Dump every TSEC and before EOF (clr post dump)
+   SCAT  OFF              ;Disable scaler dumps
+ 
+   SCAT  NORT             ;Normalize count rates to internal clock
+   SCAT  NORS             ;Normalize count rates as specified by snit-file
+   SCAT  UNOR             ;Count rates un-normalized
+ 
+   SCAT  STAT             ;Displays/logs setup status
+   SCAT  HELP             ;Displays on-line help
+   SCAT  H                ;Displays on-line help
+ 
+   SCAT  LERR ON/OFF      ;Turns error display/logging ON
+   SCAT  LERR OFF         ;Turns error display/logging OFF
+ 
+   SCAT  ZERR             ;Zeros read-error  counters
+   SCAT  ZDUM             ;Zeros scaler dump counter
+   SCAT  ZERO             ;Zero all scalers
+ 

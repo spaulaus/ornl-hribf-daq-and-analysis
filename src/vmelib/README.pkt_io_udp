@@ -1,0 +1,125 @@
+PKT_IO_UDP Library Description
+
+
+Include files:
+
+pkt_io_udp.h  ( for client software)
+spkt_io_udp.h ( for server software)
+
+
+
+
+pkt_io - utility to send a packet to a server and get the reply. 
+         This routine calls pkt_open, pkt_send and pkt_recv, for
+         simple client-server applications.
+
+  Call: int pkt_io(struct UDP_Packet *out, 
+	           struct UDP_Packet *in,
+	           int proto, int tmo)
+
+  Arguments:
+          *out - Pointer to output buffer, must be UDP_Packet
+          *in  - Pointer to input buffer
+          proto - Protocol type, see orph_udp.h for details
+          tmo  - Timeout in seconds
+
+  Return:  0 -> OK
+          -1 -> An error.  Check errno on return.
+
+  Special errnos: 
+          ETIMEDOUT - waiting for an acknowledgement failed
+          EPKTSEQ   - the received packet had a different sequence than
+                      that expected.
+          EDESTADDRREQ - The VME environment variable was either not set or
+                         not set to a valid TCP/IP node name.
+
+---------
+
+pkt_open - open a socket and prepare for sending messages to a VME server
+   Call:  
+         int pkt_open(char *node)
+
+   Arguments:
+          *node is an optional node name for the destination
+
+
+           If *node is NULL, then the VME environment variable must 
+           be set to the name of the server.  
+            
+   Returns:  0  - successful open.  The connection information is stored in
+                  the global structures cli_addr and serv_addr.
+            -1  - failed open.  Check errno for the nature of the problem
+
+   Errno:
+            No  valid node name produces an errno of:
+
+            EDESTADDRREQ - The node name *node or the env VME
+                           was either not set or
+                         not set to a valid TCP/IP node name.
+
+-----------
+
+pkt_close - closes the socket specified in the global "sockfd".
+
+Call:
+    int pkt_close(void)
+
+Args:
+     none
+
+Returns:
+    0 - successfully closed the socket
+   -1 - an error occurred in the close(). Check errno for the details
+
+Errors:
+     Only those returned by close().
+
+-----------
+
+pkt_send - Send a UDP_packet to a server. The data buffer is supplied 
+           by the user.  The packet is sent to the port specified in
+           proto, using a socket opened by pkt_open.
+
+Call:
+   int pkt_send(struct UDP_Packet *out, int proto)
+
+Args:
+    *out - buffer of outgoing data
+    proto - ORPAS protocol number, see orph_udp.h
+
+Returns:
+    0 - successfully sent the packet
+    -1 - an error occurred.  Check errno for the details
+
+Errors:
+    EINVAL - one of the arguments was not valid
+             (1) buffer size too large
+             (2) protocol number outside allowed range
+
+    other messages - from system services, require debugging
+
+-----------
+
+pkt_recv - Receive a UDP_packet from a server, usually a reply to a message
+           sent with pkt_send. The socket is globally defined by pkt_open
+           but the caller must specify the proto number in this call.
+
+Call:
+    int pkt_recv(struct UDP_Packet *in, int proto, int tmo)
+
+Args:
+    *in - buffer for incoming data
+    proto - ORPAS protocol number, see orph_udp.h
+    tmo - timeout in seconds to wait for data.  tmo=0 implies
+          waiting forever
+
+Returns:
+    0 - successfully received a packet
+    -1 - an error occurred.  Check errno for the details
+
+Errors:
+    EINVAL - one of the arguments was not valid
+    ETIMEDOUT - the recvfrom call timed out
+    other messages - from system services, require debugging
+
+

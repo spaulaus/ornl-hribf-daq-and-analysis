@@ -1,0 +1,3 @@
+glim MASTER       0  70
+glim PSAC-LEFT  300  500
+glim PSAC-RIGHT 500 2000

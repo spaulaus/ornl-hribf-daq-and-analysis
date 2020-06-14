@@ -1,0 +1,85 @@
+  scadlib.for                                                                    
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+      &                       KI(512),VN(512),VO(512),VD(512),PV(512),           
+      &                       LO(512),HI(512),NR,     NT,    NDD,                
+      &                       NORI, NORF                                         
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+      &             RATDSP,   NRATE                                              
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+       COMMON/DD03/ NCALLR                                                       
+       COMMON/DD11/ RATFLG,   RATAVG(9),   RATPAR(9),   RATTYP(9),               
+       COMMON/DD12/ NRATSCA(16)                                                  
+       COMMON/DD13/ CC(16),NN(16),AA(16),FF(16),LAG(3,16),NSCA                   
+       COMMON/DD15/ NCALLRI                                                      
+       COMMON/HEP/  IHEPF                                                        
+       COMMON/III/  LIN,LCM,LCI,LOU                                              
+       COMMON/LLL/  MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF                  
+       COMMON/LLL/ MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF                   
+       COMMON/ME00/SQSIZ(20),FACRAD(20),NUDSP(20),NUDEC(20)                      
+       COMMON/ML01/ IWD(20),LWD(2,40),ITYP(40),NF,NTER                           
+       COMMON/ML02/ IWDRAW(20)                                                   
+       COMMON/SCD1/ GNITNAM                                                      
+       COMMON/SCD2/ MSPRED,DISPSEC                                               
+       COMMON/SCD3/ DISPTYP                                                      
+       COMMON/SD01/ LA(3,512),CN(512),SN(512), A(512), F(512),TY(512),           
+       COMMON/SD02/ POL(512),GOL(512),ECN(20),ESN(20),NPO,NEC                    
+       COMMON/SD03/ LALOC(2,512),DALOC(2,512),DATLOC(2),HOMLOC(2)                
+       COMMON/SD04/ SNITFIL(20)                                                  
+       COMMON/SD05/ LISI(400),SYM(3,50),OPR(50),NLS, NSY, DSPF                   
+       COMMON/SD06/ NERR                                                         
+       COMMON/SD07/ KMD,SEC,LSEC                                                 
+       COMMON/SD08/ KTERM                                                        
+       COMMON/SD09/ CC(512),NN(512),AA(512),FF(512),VBUF(512),NLIST              
+       COMMON/SD10/ MODEGO                                                       
+       COMMON/SD11/ MAXR, MAXC, MAXD, MAXT, MAXS                                 
+       COMMON/SD12/ SCNDX(10),LIMLO(10),LIMHI(10),NLIM,MXLIM                     
+       COMMON/SD13/ ISET,LULG                                                    
+       COMMON/SD14/ MXBEEP,MXGOOD,BELL,BELLV,NBEEP                               
+       COMMON/SD14/ MXBEEP,MXGOOD                                                
+       COMMON/SD15/ LUAL,THUSH,TNOW,ALFLG                                        
+       COMMON/SD16/ PRNAM                                                        
+       COMMON/SDXX/ ISKIP(512),SKIPLAB(8,512),NSKIP                              
+       COMMON/XLAA/ DPY,WDID(20),XN(20),YN(20),NUWIN(20),WN                      
+       COMMON/XLBB/ AA(2,20),BB(2,20),PLOTYP(20)                                 
+       COMMON/XLCC/ WINDAT(10,20),WINFLG(6,20),NUMWIN,ISOPEN                     
+       COMMON/XLDD/ FIGDAT(4,20)                                                 
+       COMMON/XLEE/ MASKEV,MODE_OR,MODE_PL                                       
+       COMMON/XLFF/ GCOR(7),GCON(35)                                             
+       COMMON/XLHH/ ITITL(20),IBANNER                                            

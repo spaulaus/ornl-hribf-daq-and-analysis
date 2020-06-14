@@ -1,0 +1,24 @@
+C$PROG LSNB
+      FUNCTION LSNB(IBY,IA,IB)
+C
+      BYTE     IBY(*)
+C
+      BYTE     X20,X21,X3B
+C
+      DATA     X20,X21,X3B/'20'X,'21'X,'3B'X/
+C
+      SAVE
+C
+C     FUNCTION TO RETURN LOCATION OF LAST NON-BLANK
+C     TERMINATES ON ; OR !
+C
+      LNB=0
+      DO 10 I=IA,IB
+      IF(IBY(I).EQ.X3B) GO TO 50
+      IF(IBY(I).EQ.X21) GO TO 50
+      IF(IBY(I).NE.X20) LNB=I
+   10 CONTINUE
+C
+   50 LSNB=LNB
+      RETURN
+      END

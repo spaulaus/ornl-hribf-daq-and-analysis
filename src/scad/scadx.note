@@ -1,0 +1,19 @@
+
+
+      SCADX is a test version of SCAD which
+
+      supports the display of graphic "limit alarms"
+
+      It works just like SCAD but with additional features
+
+      See page-6 of document for a list of "glim commands"
+
+      The log-file is still scad.log
+
+      Report problems to:
+
+      milner@mail.phy.ornl.gov 
+
+      or
+
+      wtmilner@bellsouth.net

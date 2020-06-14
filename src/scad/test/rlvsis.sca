@@ -1,0 +1,13 @@
+struct1   SIS3820 1 0
+struct2   SIS3820 1 1
+struct3   SIS3820 1 2
+struct4   SIS3820 1 3
+struct5   SIS3820 1 4
+struct6   SIS3820 1 5
+struct7   SIS3820 1 6
+struct8   SIS3820 1 7
+struct9   SIS3820 1 16
+struct32  SIS3820 1 31
+ovflow    SIS3820 1 32
+$END
+

@@ -1,0 +1,2 @@
+#!/bin/csh -f
+/usr/acq2/bin/acq_run zero

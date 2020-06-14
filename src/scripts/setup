@@ -1,0 +1,41 @@
+#!/bin/csh -f
+# A setup script suitable for PowerPC nodes, and next gen data acquisition
+# Not for use with M68K
+#
+if ($1 == "") then
+  echo ' '
+  echo 'Usage:  setup filename'
+  echo ' '
+  exit
+endif
+#
+#  Try to stop the VME processor.  
+#  If it will not speak to us, reboot it.
+#
+/usr/acq2/bin/acq_run stop >& /dev/null
+set err = $status
+if ($err == 0) then
+   echo "****** WARNING:  VME acquisition has been stopped ******"
+endif
+#
+echo "Executing  m_setup"
+/usr/acq2/bin/m_setup $1 $2
+set err = $status
+if ($err != 0) then
+  echo "*** modu_setup FAILED ***"
+  exit $err
+endif
+#
+#  Do init to finish setup
+#
+echo "Executing  initvme"
+/usr/acq2/bin/acq_run init
+set err = $status
+if ($err != 0) then
+  echo "initvme has FAILED!  You MUST do the following:"
+  echo ""
+  echo "1) pac  userfile l"
+  echo ""
+  echo "2) initvme"
+  exit $err
+endif

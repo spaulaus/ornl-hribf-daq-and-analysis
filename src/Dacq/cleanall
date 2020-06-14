@@ -1,0 +1,15 @@
+#!/bin/csh
+rm acq_run.o acq_run
+rm caenr.o caenr
+rm caenw.o caenw
+rm cnaf.o cnaf
+rm docnaf.o docnaf
+rm femsg.o femsg
+rm fifo.o fifo
+rm ipcmon.o ipcmon
+rm logger.o logger
+rm m_setup.o m_setup
+cd pacor;rm *.o pacor 
+cd ../
+rm udpmon.o udpmon
+rm vmehardware.o vmehardware

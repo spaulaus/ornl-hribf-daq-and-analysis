@@ -1,0 +1,2 @@
+#!/bin/csh -f
+cp -i o-optimize/vmetest.ralf /home/tftpboot

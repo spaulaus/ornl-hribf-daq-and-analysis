@@ -1,0 +1,63 @@
+RPD$075059001
+NPS$01
+CHP$UTIL  - VMEterm and VMEconsole -
+TPF$
+SP1$
+CY1$
+  SECTION   ROUTINE             FUNCTION
+
+      010  INTRODUCTION
+
+      020  Setup
+      030  Built-in commands
+      040  Differences between VMEterm and VMEconsole
+
+BLP$
+SEC$.010 INTRODUCTION
+SIN$
+BLP$
+This document describes "Dumb" terminal emulator programs for
+use in the setup and maintenance of Force VME processors used
+in the Physics division data acquisition system.
+BLP$
+This document is available online - \b\/usr/hhirf/vme/doc/VMEterm.doc\\.
+Use \b\dodoc\\ to print a copy or \b\viewdoc\\ to view online.
+BLP$
+SEC$.020 Setup
+SIN$
+BLP$
+These codes use \b\/dev/ttyS0\\ on the Linux machine.  The device is
+by default owned by root and only user root has 
+read/write privileges.
+You may want to give all users read/write access.  Otherwise,
+you must run these codes as user root.
+BLP$
+The device ttyS0 is the first serial port on the PC.  The cable connecting
+the serial port and the Force processor module must include the RS-232
+signals RTS and CTS.  The cable must also be a "null modem".
+BLP$
+SEC$.030 Built-in commands
+SIN$
+BLP$
+There are five built-in commands for VMEterm and VMEconsole.  These
+are:
+CY1$
+
+?             - List the four other built-in commands
+break         - Send a BREAK to the VME processor
+ctrlc         - Send a control C to the VME processor
+load filename - Download an S-record file to the VME processor
+                Example: load vme3_boot.run loads the boot
+                         program to processor vme3
+end           - Exit this program
+
+BLP$
+SEC$.030 Differences between VMEterm and VMEconsole
+SIN$
+BLP$
+VMEterm and VMEconsole are functionally equivalent.  The only difference
+is in the way the "load" command works.  With VMEterm, characters received
+from the VME processor are output to the screen while the file download
+is in progress.  VMEconsole delays this output until the file download is
+complete.
+QIT$

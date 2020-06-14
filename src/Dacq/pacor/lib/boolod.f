@@ -1,0 +1,34 @@
+C$PROG BOOLOD
+
+C
+C     ************************************************************
+C     BY WT MILNER AT HHIRF - LAST MODIFIED 07/01/93
+C     ************************************************************
+C
+      SUBROUTINE BOOLOD(IV)
+C
+      IMPLICIT INTEGER*4 (A-Z)
+C
+      PARAMETER (MXC=500)
+C
+      COMMON/PACK/ BOOLIST(MXC),NBOO
+C
+      COMMON/LLL/  MSSG(28),NAMPROG(2),LOGUT,LOGUP,LISFLG,MSGF
+C
+      CHARACTER*112 CMSSG
+C
+      EQUIVALENCE (CMSSG,MSSG)
+C
+      SAVE
+C
+      NBOO=NBOO+1
+      IF(NBOO.GT.MXC) GO TO 100
+C
+      BOOLIST(NBOO)=IV
+      RETURN
+C
+  100 WRITE(CMSSG,105)NBOO
+  105 FORMAT('CALCULATED-GATE BOOLEAN TABLE OVERFLO AT ',I4)
+      CALL ERRLOG(LOGUT,LOGUP)
+      RETURN
+      END

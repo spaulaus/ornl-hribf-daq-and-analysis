@@ -1,0 +1,138 @@
+474a475,476
+> /**********   External data  ************/
+> 
+478a481,482
+> /**********   Data shared with external routines **********/
+> 
+481d484
+< char ACQ_PARAMS[131072];
+482a486
+> char ACQ_PARAMS[131072];
+486,490d489
+< /*************
+< #define  TRUE   1
+< #define  FALSE  0
+< *************/
+< 
+512,514d510
+< #define  DEBUG
+< #define  LOCAL_MSG
+< 
+995c991,994
+< static void host_message(int ,char *);
+---
+> 
+> void host_message(int ,char *);
+> 
+> #ifdef  DEBUG
+997a997
+> #endif
+1162,1166d1161
+< /**********
+<           in_hdr = (struct Ether_Packet *)(inbuf - ORPH_HDR_LEN);
+<           memcpy(share->Host_Ether_Adr,in_hdr->Source,6);
+< **********/
+< 
+1169,1178d1163
+< /***********
+< ksc1_ptr->cma = 0;
+< for(i=0; i<64; i+=2)
+< {
+< wd1 = ksc1_ptr->cmr;
+< wd2 = ksc1_ptr->cmr;
+< printf("Addr = %x. data = %x %x\n",i,wd1,wd2);
+< }
+< ***********/
+< 
+1230,1232d1214
+< /*********
+<           memcpy(outbuf+1,share->Host_Ether_Adr,6);
+< *********/
+1289,1304d1270
+< /*
+< *    To stop acquisition we disable the event interrupt from the trigger
+< *    module.  However, the in the process of doing this there is a time
+< *    window for a new interrupt to be asserted just before the interrupt
+< *    is disabled.  The hardware sees the interrupt request but when
+< *    the interrupt acknowledge bus cycle is run there is no interrupt
+< *    request because we have disabled it.  This results in a spurious
+< *    VMEbus interrupt which goes to vector 255.
+< *
+< *    The correct procedure is:
+< *
+< *       1)  Save vector 255
+< *       2)  Set vector 255 to the do nothing routine - spurious_vme_.
+< *       3)  Disable event interrupts
+< *       4)  Restore vector 255
+< */
+1307,1309d1272
+< /************
+<    *((void (**)())(255*4)) = spurious_vme_;
+< ************/
+1311,1313d1273
+< /************
+<    *((char **)(255*4)) = cptr;
+< ************/
+1328,1331d1287
+< printf("Buf1 = %p, Buf2 = %p\n",&Buf1,&Buf2);
+< printf("AcqBuf = %p, NewBuf = %p\n",AcqBuf,NewBuf);
+< printf("Que1buf = %p, %p\n",&Que1buf,Que1buf);
+< 
+1342,1347d1297
+< /****************
+<                while(!send_ptr_(DATA_MSG_SLOT,(char *)AcqBuf))
+<                                                       wait_evts_(-DATA_MSG,0);
+<                wait_phys_(0x07,(char *)&(AcqBuf->Bufhdr.busy),NULL);
+< ****************/
+< 
+1836,1842d1785
+< *   Initialize message pointer for data packets
+< */
+< /*****************
+<    receive_ptr_(DATA_MSG_SLOT,&task,&cptr);
+<    clr_evt_(DATA_MSG);
+< *****************/
+< /*
+1848,1849d1790
+< printf("VMEacq: Data pointer = %p\n",AcqBuf);
+< 
+4187,4189d4127
+< /**********
+< printf("tdc = %i, thres = %i\n",i+1,tmp);
+< **********/
+4193,4195d4130
+< /**********
+< printf("tdc = %i, thres = %i\n",i+1,tmp);
+< **********/
+5658c5593
+< static void host_message(int type,char *msg)
+---
+> void host_message(int type,char *msg)
+7813d7747
+<             eieio();
+7822,7826c7756,7759
+<                 val = caen->buf[0];
+<                 eieio();
+<                 ch = (val & CHAN) >> 16;
+<                 val = val & 0xfff;
+<                 if ((val < 0xf00) && (id[ch] != 0))
+---
+>                  val = caen->buf[0];
+>                  ch = (val & CHAN) >> 16;
+>                  val = val & 0xfff;
+>                  if ((val < 0xf00) && (id[ch] != 0))
+7864d7796
+<             eieio();
+7874,7875c7806
+<                 val = caen->buf[0];
+<                 eieio();
+---
+>                  val = caen->buf[0];
+7877,7879c7808,7810
+<                 ch = (val & CHAN) >> 16;
+<                 val = val & 0xfff;
+<                 if ((val < 0xf00) && (id[ch] != 0))
+---
+>                  ch = (val & CHAN) >> 16;
+>                  val = val & 0xfff;
+>                  if ((val < 0xf00) && (id[ch] != 0))
